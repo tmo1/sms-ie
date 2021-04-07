@@ -1,6 +1,6 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports SMS messages from and to JSON files. The current release is version 1.0.
+SMS Import / Export is a simple Android app that imports and exports SMS messages from and to JSON files. Root is not required. The current release is version 1.0.
 
 ## Installation
 
@@ -10,6 +10,8 @@ SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). 
 
  - Import: Click the `Import` button, then select an import source.
  - Export: Click the `Export` button, then select an export destination.
+
+These operations can take some time for large numbers of messages. The app will report the total number of messages imported or exported upon successful conclusion.
 
 ### Permissions
 
@@ -27,7 +29,7 @@ SMS messages include phone numbers ("addresses") but no further information abou
 
 SMS Import / Export currently supports only SMS messages. MMS support may be added in the future.
 
-Curently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message.
+Currently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message.
 
 ## sms-db
 

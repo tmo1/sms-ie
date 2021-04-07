@@ -1,0 +1,8 @@
+SMS Import / Export imports and exports SMS messages from and to JSON files. It
+does not require root.
+
+SMS Import / Export is a sibling project to <a
+href="https://github.com/tmo1/sms-db">sms-db</a>, a Linux tool to build an
+SQLite database out of collections of SMS and MMS messages in various formats.
+sms-db can import JSON files created by SMS Import / Export, and it can export
+its database to JSON files that can be imported by SMS Import / Export.

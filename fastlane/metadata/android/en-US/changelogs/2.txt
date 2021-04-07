@@ -1,0 +1,3 @@
+ - Added fastlane metadata
+ - Added custom icon
+ - Modified text output strings

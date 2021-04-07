@@ -21,8 +21,8 @@
     <string name="app_name">SMS Import / Export</string>
     <string name="begin_exporting_msg">Exporting SMS messages …</string>
     <string name="begin_importing_msg">Importing SMS messages …</string>
-    <string name="export_results">Exported %1$d SMS message(s).</string>
-    <string name="import_results">Imported %1$d SMS message(s).</string>
+    <string name="export_results">%1$d SMS message(s) exported.</string>
+    <string name="import_results">%1$d SMS message(s) imported.</string>
     <string name="export_button_label">Export</string>
     <string name="import_button_label">Import</string>
     <string name="permissions_required_message">Exporting SMSs requires permission to read SMSs and contacts.</string>
