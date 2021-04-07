@@ -1,0 +1,31 @@
+<!--
+  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
+  ~ Copyright (c) 2021 Thomas More
+  ~
+  ~ This file is part of SMS Import / Export.
+  ~ Foobar is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Foobar is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="app_name">SMS Import / Export</string>
+    <string name="begin_exporting_msg">Exporting SMS messages …</string>
+    <string name="begin_importing_msg">Importing SMS messages …</string>
+    <string name="export_results">Exported %1$d SMS message(s).</string>
+    <string name="import_results">Imported %1$d SMS message(s).</string>
+    <string name="export_button_label">Export</string>
+    <string name="import_button_label">Import</string>
+    <string name="permissions_required_message">Exporting SMSs requires permission to read SMSs and contacts.</string>
+    <string name="default_sms_app_requirement_message">This app must be the default SMS app in order to import messages.</string>
+    <string name="not_jsonarray_message">File does not seem to contain a valid JSONArray.</string>
+</resources>
