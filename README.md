@@ -2,6 +2,10 @@
 
 SMS Import / Export is a simple Android app that imports and exports SMS messages from and to JSON files. Root is not required. The current release is version 1.1.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.github.tmo1.sms_ie/)
+
 ## Installation
 
 SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, by importing it into Android Studio or other means. Prebuilt APK packages can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases).
