@@ -26,6 +26,8 @@ import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build.VERSION.SDK
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Telephony
@@ -120,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
-                type = "application/json"
+                type = if (SDK_INT < 29) "*/*" else "application/json"
             }
             startActivityForResult(intent, IMPORT)
         } else {

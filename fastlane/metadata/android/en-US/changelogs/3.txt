@@ -1,0 +1,1 @@
+ - Fixed a bug (https://github.com/tmo1/sms-ie/issues/3) which prevented import from working on Android 9 (and earlier?)
