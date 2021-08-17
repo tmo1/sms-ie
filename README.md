@@ -1,6 +1,6 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports SMS messages from and to JSON files. Root is not required. The current release is version 1.1.
+SMS Import / Export is a simple Android app that imports and exports SMS messages from and to JSON files. Root is not required. The current release is version 1.1.1.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
