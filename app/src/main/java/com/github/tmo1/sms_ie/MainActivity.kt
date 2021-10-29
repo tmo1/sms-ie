@@ -26,12 +26,10 @@ import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-//import android.os.Build.VERSION.SDK
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Telephony
-//import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -52,10 +50,12 @@ import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
-//const val LOG_TAG = "MainActivity"
+//import android.util.Log
+
 const val EXPORT = 1
 const val IMPORT = 2
 
+//const val LOG_TAG = "MainActivity"
 //const val SMS_READ_REQUEST = 1
 //const val CONTACTS_READ_REQUEST = 2
 const val PERMISSIONS_REQUEST = 1
@@ -183,33 +183,11 @@ class MainActivity : AppCompatActivity() {
                         it.columnNames.forEachIndexed { i, columnName ->
                             sms.put(columnName, it.getString(i))
                         }
-                        // look up display name by phone number
-                        val address = sms.optString("address")
-                        //Log.v(LOG_TAG, "address: $address")
-                        if (address != "") {
-                            val uri = Uri.withAppendedPath(
-                                ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-                                Uri.encode(sms.optString("address"))
-                            )
-                            val nameCursor = contentResolver.query(
-                                uri,
-                                arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME),
-                                null,
-                                null,
-                                null
-                            )
-                            val displayName = nameCursor.use {
-                                var name = "<UNAVAILABLE>"
-                                if (it != null && it.moveToFirst()) {
-                                    name =
-                                        it.getString(it.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME))
-                                }
-                                name
-                            }
-                            sms.put("display_name", displayName)
-                        }
+                        val displayName = getDisplayName(sms.optString("address"))
+                        if (displayName != null) sms.put("display_name", displayName)
                         json.put(sms)
                         smsTotal++
+                        //if (smsTotal == 5) break // for debugging only!
                     } while (it.moveToNext())
                 }
                 //Log.v(LOG_TAG, "$smsTotal SMSs exported")
@@ -220,13 +198,46 @@ class MainActivity : AppCompatActivity() {
             // the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
             mmsCursor?.use { it ->
                 if (it.moveToFirst()) {
+                    val msgIdIndex = it.getColumnIndexOrThrow("_id")
                     do {
                         val mms = JSONObject()
                         it.columnNames.forEachIndexed { i, columnName ->
                             mms.put(columnName, it.getString(i))
                         }
+                        // the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
+                        val msgId = it.getString(msgIdIndex)
+                        val addressCursor = contentResolver.query(
+                            Uri.parse("content://mms/$msgId/addr"),
+                            null,
+                            "msg_id=$msgId",
+                            null,
+                            null
+                        )
+                        val recipientAddresses = JSONArray()
+                        addressCursor?.use { it1 ->
+                            if (it1.moveToFirst()) {
+                                do {
+                                    val address = JSONObject()
+                                    it1.columnNames.forEachIndexed { i, columnName ->
+                                        address.put(columnName, it1.getString(i))
+                                    }
+                                    val displayName = getDisplayName(address.optString("address"))
+                                    if (displayName != null) address.put(
+                                        "display_name",
+                                        displayName
+                                    )
+                                    if (address.optString("type") == "137") mms.put(
+                                        "sender_address",
+                                        address
+                                    )
+                                    else recipientAddresses.put(address)
+                                } while (it1.moveToNext())
+                            }
+                        }
+                        mms.put("recipient_addresses", recipientAddresses)
                         json.put(mms)
                         mmsTotal++
+                        //if (mmsTotal == 5) break // for debugging only!
                     } while (it.moveToNext())
                 }
                 //Log.v(LOG_TAG, "$mmsTotal MMSs exported")
@@ -243,6 +254,31 @@ class MainActivity : AppCompatActivity() {
             }
             MessageTotal(smsTotal, mmsTotal)
         }
+    }
+
+    private fun getDisplayName(address: String): String? {
+        // look up display name by phone number
+        if (address == "") return null
+        val uri = Uri.withAppendedPath(
+            ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+            Uri.encode(address)
+        )
+        val nameCursor = contentResolver.query(
+            uri,
+            arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME),
+            null,
+            null,
+            null
+        )
+        val displayName: String?
+        nameCursor.use {
+            displayName = if (it != null && it.moveToFirst()) it.getString(
+                it.getColumnIndex(
+                    ContactsContract.PhoneLookup.DISPLAY_NAME
+                )
+            ) else null
+        }
+        return displayName
     }
 
     private suspend fun jsonToSms(uri: Uri): Int {
@@ -265,7 +301,6 @@ class MainActivity : AppCompatActivity() {
                 val messages = JSONArray(stringBuilder.toString())
                 for (i in 0 until messages.length()) {
                     val message = messages[i]
-                    //Log.v(LOG_TAG, "Message: " + message.toString())
                     if (message is JSONObject && !message.has("m_type")) { // we don't import MMS yet
                         val values = ContentValues()
                         for (key in listOf(
@@ -281,9 +316,7 @@ class MainActivity : AppCompatActivity() {
                             contentResolver.insert(Telephony.Sms.CONTENT_URI, values)
                         if (insertUri == null) {
                             //Log.v(LOG_TAG, "Insert failed!")
-                        } else {
-                            total++
-                        }
+                        } else total++
                     } /*else {
                         Log.v(LOG_TAG, "Found non-JSONObject!")
                     }*/
