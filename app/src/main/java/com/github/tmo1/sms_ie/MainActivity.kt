@@ -49,6 +49,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.*
+//import kotlin.system.measureNanoTime
 
 //import android.util.Log
 
@@ -171,11 +172,12 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun smsToJson(file: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
-            var smsTotal = 0
             val json = JSONArray()
+            var smsTotal = 0
             val smsCursor =
                 contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
             // the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
+            //val startTime = measureNanoTime {
             smsCursor?.use { it ->
                 if (it.moveToFirst()) {
                     do {
@@ -187,7 +189,7 @@ class MainActivity : AppCompatActivity() {
                         if (displayName != null) sms.put("display_name", displayName)
                         json.put(sms)
                         smsTotal++
-                        //if (smsTotal == 5) break // for debugging only!
+                        if (smsTotal == 5) break // for debugging only!
                     } while (it.moveToNext())
                 }
                 //Log.v(LOG_TAG, "$smsTotal SMSs exported")
@@ -237,19 +239,19 @@ class MainActivity : AppCompatActivity() {
                         mms.put("recipient_addresses", recipientAddresses)
                         json.put(mms)
                         mmsTotal++
-                        //if (mmsTotal == 5) break // for debugging only!
+                        if (mmsTotal == 5) break // for debugging only!
                     } while (it.moveToNext())
                 }
-                //Log.v(LOG_TAG, "$mmsTotal MMSs exported")
-                // Android Studio flags all the IO calls here and in jsonToSms() as "Inappropriate blocking method call",
-                // despite the fact that they're wrapped with withContext(Dispatchers.IO) - I don't understand why
-                // see https://stackoverflow.com/questions/58680028/how-to-make-inappropriate-blocking-method-call-appropriate
-                contentResolver.openOutputStream(file).use { outputStream ->
-                    BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                        writer.write(
-                            json.toString(2)
-                        )
-                    }
+            }
+            //Log.v(LOG_TAG, "$mmsTotal MMSs exported")
+            // Android Studio flags all the IO calls here and in jsonToSms() as "Inappropriate blocking method call",
+            // despite the fact that they're wrapped with withContext(Dispatchers.IO) - I don't understand why
+            // see https://stackoverflow.com/questions/58680028/how-to-make-inappropriate-blocking-method-call-appropriate
+            contentResolver.openOutputStream(file).use { outputStream ->
+                BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
+                    writer.write(
+                        json.toString(2)
+                    )
                 }
             }
             MessageTotal(smsTotal, mmsTotal)
@@ -273,7 +275,7 @@ class MainActivity : AppCompatActivity() {
         val displayName: String?
         nameCursor.use {
             displayName = if (it != null && it.moveToFirst()) it.getString(
-                it.getColumnIndex(
+                it.getColumnIndexOrThrow(
                     ContactsContract.PhoneLookup.DISPLAY_NAME
                 )
             ) else null
