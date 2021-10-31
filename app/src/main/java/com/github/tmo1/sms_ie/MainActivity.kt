@@ -49,14 +49,15 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.*
-//import kotlin.system.measureNanoTime
 
+//import kotlin.system.measureNanoTime
 //import android.util.Log
 
 const val EXPORT = 1
 const val IMPORT = 2
 
-//const val LOG_TAG = "MainActivity"
+//const val LOG_TAG = "DEBUG"
+
 //const val SMS_READ_REQUEST = 1
 //const val CONTACTS_READ_REQUEST = 2
 const val PERMISSIONS_REQUEST = 1
@@ -174,10 +175,12 @@ class MainActivity : AppCompatActivity() {
         return withContext(Dispatchers.IO) {
             val json = JSONArray()
             var smsTotal = 0
+            var mmsTotal = 0
+//          the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
+//          val time = measureNanoTime {
+//              val displayNames = mutableMapOf<String, String?>()
             val smsCursor =
                 contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
-            // the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
-            //val startTime = measureNanoTime {
             smsCursor?.use { it ->
                 if (it.moveToFirst()) {
                     do {
@@ -185,19 +188,24 @@ class MainActivity : AppCompatActivity() {
                         it.columnNames.forEachIndexed { i, columnName ->
                             sms.put(columnName, it.getString(i))
                         }
+//                            val address = sms.optString("address")
+//                            val displayName: String?
+//                            if (displayNames[address] != null) displayName = displayNames[address]
+//                            else {
+//                                displayName = getDisplayName(address)
+//                                displayNames[address] = displayName
+//                            }
                         val displayName = getDisplayName(sms.optString("address"))
                         if (displayName != null) sms.put("display_name", displayName)
                         json.put(sms)
                         smsTotal++
-                        if (smsTotal == 5) break // for debugging only!
+//                      if (smsTotal == 100) break // for debugging only!
                     } while (it.moveToNext())
                 }
-                //Log.v(LOG_TAG, "$smsTotal SMSs exported")
+//                Log.v(LOG_TAG, "$smsTotal SMSs exported")
             }
-            var mmsTotal = 0
             val mmsCursor =
                 contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
-            // the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
             mmsCursor?.use { it ->
                 if (it.moveToFirst()) {
                     val msgIdIndex = it.getColumnIndexOrThrow("_id")
@@ -206,7 +214,7 @@ class MainActivity : AppCompatActivity() {
                         it.columnNames.forEachIndexed { i, columnName ->
                             mms.put(columnName, it.getString(i))
                         }
-                        // the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
+//                        the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
                         val msgId = it.getString(msgIdIndex)
                         val addressCursor = contentResolver.query(
                             Uri.parse("content://mms/$msgId/addr"),
@@ -223,7 +231,8 @@ class MainActivity : AppCompatActivity() {
                                     it1.columnNames.forEachIndexed { i, columnName ->
                                         address.put(columnName, it1.getString(i))
                                     }
-                                    val displayName = getDisplayName(address.optString("address"))
+                                    val displayName =
+                                        getDisplayName(address.optString("address"))
                                     if (displayName != null) address.put(
                                         "display_name",
                                         displayName
@@ -239,14 +248,15 @@ class MainActivity : AppCompatActivity() {
                         mms.put("recipient_addresses", recipientAddresses)
                         json.put(mms)
                         mmsTotal++
-                        if (mmsTotal == 5) break // for debugging only!
+//                            if (mmsTotal == 100) break // for debugging only!
                     } while (it.moveToNext())
+//                    }
                 }
             }
-            //Log.v(LOG_TAG, "$mmsTotal MMSs exported")
-            // Android Studio flags all the IO calls here and in jsonToSms() as "Inappropriate blocking method call",
-            // despite the fact that they're wrapped with withContext(Dispatchers.IO) - I don't understand why
-            // see https://stackoverflow.com/questions/58680028/how-to-make-inappropriate-blocking-method-call-appropriate
+//            Log.v(LOG_TAG, "Elapsed time: $time")
+            /*Android Studio flags all the IO calls here and in jsonToSms() as "Inappropriate blocking method call",
+            despite the fact that they're wrapped with withContext(Dispatchers.IO) - I don't understand why
+            see https://stackoverflow.com/questions/58680028/how-to-make-inappropriate-blocking-method-call-appropriate*/
             contentResolver.openOutputStream(file).use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
                     writer.write(
@@ -259,7 +269,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getDisplayName(address: String): String? {
-        // look up display name by phone number
+//        look up display name by phone number
         if (address == "") return null
         val uri = Uri.withAppendedPath(
             ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
@@ -298,7 +308,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            //Log.v(LOG_TAG, "Message: " + stringBuilder.toString())
+//            Log.v(LOG_TAG, "Message: " + stringBuilder.toString())
             try {
                 val messages = JSONArray(stringBuilder.toString())
                 for (i in 0 until messages.length()) {
@@ -317,7 +327,7 @@ class MainActivity : AppCompatActivity() {
                         val insertUri =
                             contentResolver.insert(Telephony.Sms.CONTENT_URI, values)
                         if (insertUri == null) {
-                            //Log.v(LOG_TAG, "Insert failed!")
+//                            Log.v(LOG_TAG, "Insert failed!")
                         } else total++
                     } /*else {
                         Log.v(LOG_TAG, "Found non-JSONObject!")
