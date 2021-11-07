@@ -30,6 +30,8 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Telephony
+import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -49,10 +51,8 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.*
-
-import kotlin.system.measureNanoTime
-import android.util.Log
 import java.util.concurrent.TimeUnit
+import kotlin.system.measureNanoTime
 
 const val EXPORT = 1
 const val IMPORT = 2
@@ -190,14 +190,6 @@ class MainActivity : AppCompatActivity() {
                             it.columnNames.forEachIndexed { i, columnName ->
                                 sms.put(columnName, it.getString(i))
                             }
-//                            val address = sms.optString("address")
-//                            val displayName: String?
-//                            if (displayNames[address] != null) displayName =
-//                                displayNames[address]
-//                            else {
-//                                displayName = lookupDisplayName(displayNames, address)
-//                                displayNames[address] = displayName
-//                            }
                             val displayName =
                                 lookupDisplayName(displayNames, sms.optString("address"))
                             if (displayName != null) sms.put("display_name", displayName)
@@ -266,10 +258,27 @@ class MainActivity : AppCompatActivity() {
                             )
                             partCursor?.use { it1 ->
                                 if (it1.moveToFirst()) {
+                                    val partIdIndex = it1.getColumnIndexOrThrow("_id")
+                                    val dataIndex = it1.getColumnIndexOrThrow("_data")
+
                                     do {
                                         val part = JSONObject()
                                         it1.columnNames.forEachIndexed { i, columnName ->
                                             part.put(columnName, it1.getString(i))
+                                        }
+                                        if (it1.getString(dataIndex) != null) {
+                                            val inputStream = contentResolver.openInputStream(
+                                                Uri.parse(
+                                                    "content://mms/part/" + it1.getString(partIdIndex)
+                                                )
+                                            )
+                                            val data = inputStream.use {
+                                                Base64.encodeToString(
+                                                    it?.readBytes(),
+                                                    Base64.NO_WRAP // Without NO_WRAP, we end up with corrupted files upon decoding - see https://stackoverflow.com/questions/16091883/sending-base64-encoded-image-results-in-a-corrupt-image
+                                                )
+                                            }
+                                            part.put("binary_data", data)
                                         }
                                         parts.put(part)
                                     } while (it1.moveToNext())
@@ -348,7 +357,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-//            Log.v(LOG_TAG, "Message: " + stringBuilder.toString())
             try {
                 val messages = JSONArray(stringBuilder.toString())
                 for (i in 0 until messages.length()) {
