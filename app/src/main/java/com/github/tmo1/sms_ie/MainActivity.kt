@@ -34,6 +34,7 @@ import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -64,6 +65,7 @@ data class MessageTotal(var sms: Int, var mms: Int)
 
 class MainActivity : AppCompatActivity() {
 
+    private var includeBinaryData: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -260,13 +262,12 @@ class MainActivity : AppCompatActivity() {
                                 if (it1.moveToFirst()) {
                                     val partIdIndex = it1.getColumnIndexOrThrow("_id")
                                     val dataIndex = it1.getColumnIndexOrThrow("_data")
-
                                     do {
                                         val part = JSONObject()
                                         it1.columnNames.forEachIndexed { i, columnName ->
                                             part.put(columnName, it1.getString(i))
                                         }
-                                        if (it1.getString(dataIndex) != null) {
+                                        if (includeBinaryData && it1.getString(dataIndex) != null) {
                                             val inputStream = contentResolver.openInputStream(
                                                 Uri.parse(
                                                     "content://mms/part/" + it1.getString(partIdIndex)
@@ -391,7 +392,13 @@ class MainActivity : AppCompatActivity() {
             total
         }
     }
-}
+
+    fun onCheckBoxClicked(view: View) {
+        if (view is CheckBox) {
+            includeBinaryData = view.isChecked
+            }
+        }
+    }
 
 // From https://stackoverflow.com/a/51394768
 fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {

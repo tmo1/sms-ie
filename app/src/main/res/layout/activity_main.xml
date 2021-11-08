@@ -64,4 +64,20 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.3652531" />
 
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20sp"
+        android:checked="true"
+        android:onClick="onCheckBoxClicked"
+        android:text="@string/include_binary_data"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.828" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
