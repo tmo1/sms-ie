@@ -1,0 +1,7 @@
+ - Full MMS export
+
+ - Fix for a bug (https://github.com/tmo1/sms-ie/issues/4) that caused the app to crash on SMS messages with empty "address" field
+
+ - Significant export performance improvement via the caching of contact names
+
+ - Code quality improvement
