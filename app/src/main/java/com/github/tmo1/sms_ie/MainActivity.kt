@@ -30,6 +30,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Telephony
+import android.provider.Telephony.Threads.getOrCreateThreadId
 import android.util.Base64
 import android.util.Log
 import android.view.View
@@ -60,6 +61,8 @@ const val IMPORT = 2
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "DEBUG"
 const val MAX_MESSAGES = -1
+const val SMS = true
+const val MMS = true
 
 data class MessageTotal(var sms: Int, var mms: Int)
 
@@ -169,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                 statusReportText.visibility = View.VISIBLE
                 GlobalScope.launch(Dispatchers.Main) {
                     val total = jsonToSms(it)
-                    statusReportText.text = getString(R.string.import_results, total)
+                    statusReportText.text = getString(R.string.import_results, total.sms, total.mms)
                 }
             }
         }
@@ -270,7 +273,9 @@ class MainActivity : AppCompatActivity() {
                                         if (includeBinaryData && it1.getString(dataIndex) != null) {
                                             val inputStream = contentResolver.openInputStream(
                                                 Uri.parse(
-                                                    "content://mms/part/" + it1.getString(partIdIndex)
+                                                    "content://mms/part/" + it1.getString(
+                                                        partIdIndex
+                                                    )
                                                 )
                                             )
                                             val data = inputStream.use {
@@ -343,9 +348,10 @@ class MainActivity : AppCompatActivity() {
         return displayName
     }
 
-    private suspend fun jsonToSms(uri: Uri): Int {
+    private suspend fun jsonToSms(uri: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
-            var total = 0
+            var smsTotal = 0
+            var mmsTotal = 0
             val stringBuilder = StringBuilder()
             uri.let {
                 contentResolver.openInputStream(it).use { inputStream ->
@@ -362,22 +368,142 @@ class MainActivity : AppCompatActivity() {
                 val messages = JSONArray(stringBuilder.toString())
                 for (i in 0 until messages.length()) {
                     val message = messages[i]
-                    if (message is JSONObject && !message.has("m_type")) { // we don't import MMS yet
-                        val values = ContentValues()
-                        for (key in listOf(
-                            Telephony.Sms.ADDRESS,
-                            Telephony.Sms.BODY,
-                            Telephony.Sms.DATE,
-                            Telephony.Sms.DATE_SENT,
-                            Telephony.Sms.TYPE
-                        )) {
-                            values.put(key, message.optString(key))
+                    if (message is JSONObject) {
+                        if (!message.has("m_type")) { // it's SMS
+                            if (BuildConfig.DEBUG && (!SMS || smsTotal == MAX_MESSAGES)) continue
+                            val smsMetadata = ContentValues()
+                            for (key in listOf(
+                                Telephony.Sms.ADDRESS,
+                                Telephony.Sms.BODY,
+                                Telephony.Sms.DATE,
+                                Telephony.Sms.DATE_SENT,
+                                Telephony.Sms.TYPE
+                            )) {
+                                smsMetadata.put(key, message.optString(key))
+                            }
+                            val insertUri =
+                                contentResolver.insert(Telephony.Sms.CONTENT_URI, smsMetadata)
+                            if (insertUri == null) {
+                                Log.v(LOG_TAG, "SMS insert failed!")
+                            } else smsTotal++
+                        } else { //it's MMS
+                            /*the following is adapted from here https://stackoverflow.com/questions/25584442/android-save-or-insert-mms-in-content-provider-programmatically
+                            here https://stackoverflow.com/questions/11673543/inserting-sent-mms-into-sent-box
+                            and here https://coderedirect.com/questions/310606/sending-mms-in-android-4-4
+                            MMS insertion seems to work fine without the dummy SMS, so we omit it*/
+                            if (BuildConfig.DEBUG && (!MMS || mmsTotal == MAX_MESSAGES)) continue
+                            val addresses = mutableSetOf<JSONObject>()
+                            val senderAddress = message.optJSONObject("sender_address")
+                            if (senderAddress != null) addresses.add(senderAddress)
+                            val recipientAddresses = message.optJSONArray("recipient_addresses")
+                            if (recipientAddresses != null) {
+                                for (j in 0 until recipientAddresses.length()) {
+                                    addresses.add(recipientAddresses[j] as JSONObject)
+                                }
+                            }
+                            val threadId = getOrCreateThreadId(
+                                this@MainActivity,
+                                addresses.map { it.optString("address") }.toSet()
+                            )
+                            val mmsMetadata = ContentValues()
+                            mmsMetadata.put("thread_id", threadId)
+                            val keys = message.keys()
+                            while (keys.hasNext()) {
+                                val key = keys.next()
+                                if (key !in setOf(
+                                        "sender_address",
+                                        "recipient_addresses",
+                                        "parts",
+                                        "thread_id",
+                                        "_id"
+                                    )
+                                ) mmsMetadata.put(
+                                    key,
+                                    message.optString(key)
+                                )
+                            }
+                            val insertUri =
+                                contentResolver.insert(Telephony.Mms.CONTENT_URI, mmsMetadata)
+                            if (insertUri == null) {
+                                Log.v(LOG_TAG, "MMS insert failed!")
+                            } else {
+                                mmsTotal++
+//                                Log.v(LOG_TAG, "MMS insert succeeded!")
+                                val messageId = insertUri.lastPathSegment
+                                val addressUri = Uri.parse("content://mms/$messageId/addr")
+                                addresses.forEach { address ->
+                                    val addressValues = ContentValues()
+                                    addressValues.put(Telephony.Mms.Addr.MSG_ID, messageId)
+                                    for (key in listOf(
+                                        Telephony.Mms.Addr.ADDRESS,
+                                        Telephony.Mms.Addr.CHARSET,
+                                        Telephony.Mms.Addr.TYPE
+                                    )) {
+                                        addressValues.put(key, address.optString(key))
+                                    }
+                                    val insertAddressUri =
+                                        contentResolver.insert(addressUri, addressValues)
+                                    if (insertAddressUri == null) {
+                                        Log.v(LOG_TAG, "MMS address insert failed!")
+                                    } /*else {
+                                        Log.v(LOG_TAG, "MMS address insert succeeded. Address metadata:" + address.toString())
+                                    }*/
+                                }
+                                val partUri = Uri.parse("content://mms/$messageId/part")
+                                val parts = message.optJSONArray("parts")
+                                if (parts != null) {
+                                    for (j in 0 until parts.length()) {
+                                        val part = parts[j] as JSONObject
+                                        val partMetadata = ContentValues()
+                                        val partKeys = part.keys()
+                                        while (partKeys.hasNext()) {
+                                            val key = partKeys.next()
+                                            if (key !in setOf(
+                                                    Telephony.Mms.Part.MSG_ID,
+                                                    Telephony.Mms.Part._ID,
+                                                    Telephony.Mms.Part._DATA,
+                                                    Telephony.Mms.Part._COUNT,
+                                                    "binary_data"
+                                                )
+                                            ) partMetadata.put(
+                                                key,
+                                                part.optString(key)
+                                            )
+                                        }
+                                        partMetadata.put(Telephony.Mms.Part.MSG_ID, messageId)
+                                        val insertPartUri =
+                                            contentResolver.insert(partUri, partMetadata)
+                                        if (insertPartUri == null) {
+                                            Log.v(
+                                                LOG_TAG,
+                                                "MMS part insert failed! Part metadata:$part"
+                                            )
+                                        } else {
+                                            if (part.has("binary_data")) {
+                                                val binaryData = Base64.decode(
+                                                    part.optString("binary_data"),
+                                                    Base64.NO_WRAP
+                                                )
+                                                val os =
+                                                    contentResolver.openOutputStream(
+                                                        insertPartUri
+                                                    )
+                                                if (os != null) {
+                                                    os.use {
+                                                        os.write(binaryData)
+                                                    }
+                                                } else {
+                                                    Log.v(
+                                                        LOG_TAG,
+                                                        "Failed to open OutputStream!"
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        val insertUri =
-                            contentResolver.insert(Telephony.Sms.CONTENT_URI, values)
-                        if (insertUri == null) {
-//                            Log.v(LOG_TAG, "Insert failed!")
-                        } else total++
                     } /*else {
                         Log.v(LOG_TAG, "Found non-JSONObject!")
                     }*/
@@ -389,16 +515,16 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
-            total
+            MessageTotal(smsTotal, mmsTotal)
         }
     }
 
     fun onCheckBoxClicked(view: View) {
         if (view is CheckBox) {
             includeBinaryData = view.isChecked
-            }
         }
     }
+}
 
 // From https://stackoverflow.com/a/51394768
 fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {

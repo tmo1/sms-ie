@@ -1,8 +1,6 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports messages from and to JSON files. Root is not required. The current release is version 1.2.
-
-Currently, both SMS and MMS messages are exported, but only SMS messages are imported.
+SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages from and to JSON files. Root is not required. The current release is version 1.2.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
@@ -19,7 +17,7 @@ SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). 
 
 These operations can take some time for large numbers of messages. The app will report the total number of SMS and MMS messages imported or exported upon successful conclusion.
 
-By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a file that is much smaller and more easily browsable by humans.
+By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a file that is much smaller and more easily browsable by humans. (The checkbox is currently ignored on import.)
 
 ### Permissions
 
@@ -42,7 +40,7 @@ The exported JSON is an array of JSON objects representing messages, SMSs follow
 
 ### SMS Messages
 
-In a SMS message, the value of `type` specifices (among other things) the direction of the message: the two most common values are `1`, denoting "inbox" (i.e., received), and `2`, denoting "sent".
+In SMS messages, the value of `type` specifies (among other things) the direction of the message: the two most common values are `1`, denoting "inbox" (i.e., received), and `2`, denoting "sent".
 
 SMS messages contain a single `address` tag; depending on the message direction, this is either the sender or receiver address. SMS Import / Export attempts to look up the address in the Android Contacts database. If this is successful, a tag-value pair of the form `"display_name": "Alice"` is added to the SMS message object.
 
@@ -57,8 +55,6 @@ MMS message objects have the following additions to the tag-value pairs of their
  - A tag-value pair of the form `"parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part), plus, for parts containing binary data (assuming binary data inclusion is checked), a tag-value pair of the form `"binary_data": "<Base64 encoded binary data>"`.
 
 ## Limitations
-
-MMS import is not yet supported..
 
 Currently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message.
 
