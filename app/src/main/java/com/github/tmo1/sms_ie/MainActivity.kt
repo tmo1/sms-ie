@@ -32,6 +32,7 @@ import android.provider.ContactsContract
 import android.provider.Telephony
 import android.provider.Telephony.Threads.getOrCreateThreadId
 import android.util.Base64
+import android.util.JsonWriter
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -40,21 +41,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.system.measureNanoTime
 
 const val EXPORT = 1
 const val IMPORT = 2
@@ -64,7 +58,12 @@ const val MAX_MESSAGES = -1
 const val SMS = true
 const val MMS = true
 
-data class MessageTotal(var sms: Int, var mms: Int)
+// PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
+// and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
+// but apparently unavailable in a public class
+const val PDU_HEADERS_FROM = "137"
+
+data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
 class MainActivity : AppCompatActivity() {
 
@@ -149,6 +148,8 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int, resultCode: Int, resultData: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, resultData)
+        var total: MessageTotal
+        val startTime = System.nanoTime()
         if (requestCode == EXPORT
             && resultCode == Activity.RESULT_OK
         ) {
@@ -156,10 +157,10 @@ class MainActivity : AppCompatActivity() {
                 val statusReportText: TextView = findViewById(R.id.status_report)
                 statusReportText.text = getString(R.string.begin_exporting_msg)
                 statusReportText.visibility = View.VISIBLE
-                GlobalScope.launch(Dispatchers.Main) {
-                    val total = smsToJson(it)
-                    statusReportText.text =
-                        getString(R.string.export_results, total.sms, total.mms)
+                CoroutineScope(Dispatchers.Main).launch {
+                    total = exportJSON(it)
+                    statusReportText.text = getString(R.string.export_results, total.sms, total.mms)
+                    logElapsedTime(startTime)
                 }
             }
         }
@@ -170,150 +171,192 @@ class MainActivity : AppCompatActivity() {
                 val statusReportText: TextView = findViewById(R.id.status_report)
                 statusReportText.text = getString(R.string.begin_importing_msg)
                 statusReportText.visibility = View.VISIBLE
-                GlobalScope.launch(Dispatchers.Main) {
-                    val total = jsonToSms(it)
+                CoroutineScope(Dispatchers.Main).launch {
+                    total = jsonToSms(it)
                     statusReportText.text = getString(R.string.import_results, total.sms, total.mms)
+                    logElapsedTime(startTime)
                 }
             }
         }
     }
 
-    private suspend fun smsToJson(file: Uri): MessageTotal {
+    private fun logElapsedTime(since: Long) {
+        if (BuildConfig.DEBUG) {
+            val elapsedTime = System.nanoTime() - since
+            val seconds =
+                TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS).toString()
+            Log.v(LOG_TAG, "Elapsed time: $seconds seconds ($elapsedTime nanoseconds)")
+        }
+    }
+
+    private suspend fun exportJSON(file: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
-            val json = JSONArray()
-            var smsTotal = 0
-            var mmsTotal = 0
-            val time = measureNanoTime {
-                val displayNames = mutableMapOf<String, String?>()
-                // the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
-                val smsCursor =
-                    contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
-                smsCursor?.use { it ->
-                    if (it.moveToFirst()) {
-                        do {
-                            val sms = JSONObject()
-                            it.columnNames.forEachIndexed { i, columnName ->
-                                sms.put(columnName, it.getString(i))
-                            }
-                            val displayName =
-                                lookupDisplayName(displayNames, sms.optString("address"))
-                            if (displayName != null) sms.put("display_name", displayName)
-                            json.put(sms)
-                            smsTotal++
-                            if (BuildConfig.DEBUG && smsTotal == MAX_MESSAGES) break
-                        } while (it.moveToNext())
-                    }
-                }
-                val mmsCursor =
-                    contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
-                mmsCursor?.use { it ->
-                    if (it.moveToFirst()) {
-                        val msgIdIndex = it.getColumnIndexOrThrow("_id")
-                        do {
-                            val mms = JSONObject()
-                            it.columnNames.forEachIndexed { i, columnName ->
-                                mms.put(columnName, it.getString(i))
-                            }
-//                        the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
-                            val msgId = it.getString(msgIdIndex)
-                            val recipientAddresses = JSONArray()
-                            val addressCursor = contentResolver.query(
-//                                Uri.parse("content://mms/addr"),
-                                Uri.parse("content://mms/$msgId/addr"),
-                                null,
-//                                "msg_id=?",
-//                                arrayOf(msgId),
-                                null,
-                                null,
-                                null
-                            )
-                            addressCursor?.use { it1 ->
-                                if (it1.moveToFirst()) {
-                                    do {
-                                        val address = JSONObject()
-                                        it1.columnNames.forEachIndexed { i, columnName ->
-                                            address.put(columnName, it1.getString(i))
-                                        }
-                                        val displayName =
-                                            lookupDisplayName(
-                                                displayNames,
-                                                address.optString("address")
-                                            )
-                                        if (displayName != null) address.put(
-                                            "display_name",
-                                            displayName
-                                        )
-                                        if (address.optString("type") == "137") mms.put(
-                                            "sender_address",
-                                            address
-                                        )
-                                        else recipientAddresses.put(address)
-                                    } while (it1.moveToNext())
-                                }
-                            }
-                            mms.put("recipient_addresses", recipientAddresses)
-                            val parts = JSONArray()
-                            val partCursor = contentResolver.query(
-                                Uri.parse("content://mms/part"),
-//                                Uri.parse("content://mms/$msgId/part"),
-                                null,
-                                "mid=?",
-                                arrayOf(msgId),
-                                "seq ASC"
-                            )
-                            partCursor?.use { it1 ->
-                                if (it1.moveToFirst()) {
-                                    val partIdIndex = it1.getColumnIndexOrThrow("_id")
-                                    val dataIndex = it1.getColumnIndexOrThrow("_data")
-                                    do {
-                                        val part = JSONObject()
-                                        it1.columnNames.forEachIndexed { i, columnName ->
-                                            part.put(columnName, it1.getString(i))
-                                        }
-                                        if (includeBinaryData && it1.getString(dataIndex) != null) {
-                                            val inputStream = contentResolver.openInputStream(
-                                                Uri.parse(
-                                                    "content://mms/part/" + it1.getString(
-                                                        partIdIndex
-                                                    )
-                                                )
-                                            )
-                                            val data = inputStream.use {
-                                                Base64.encodeToString(
-                                                    it?.readBytes(),
-                                                    Base64.NO_WRAP // Without NO_WRAP, we end up with corrupted files upon decoding - see https://stackoverflow.com/questions/16091883/sending-base64-encoded-image-results-in-a-corrupt-image
-                                                )
-                                            }
-                                            part.put("binary_data", data)
-                                        }
-                                        parts.put(part)
-                                    } while (it1.moveToNext())
-                                }
-                            }
-                            mms.put("parts", parts)
-                            json.put(mms)
-                            mmsTotal++
-                            if (BuildConfig.DEBUG && mmsTotal == MAX_MESSAGES) break
-                        } while (it.moveToNext())
-                    }
-                }
-            }
-            if (BuildConfig.DEBUG) {
-                val seconds = TimeUnit.SECONDS.convert(time, TimeUnit.NANOSECONDS).toString()
-                Log.v(LOG_TAG, "Elapsed time: $seconds seconds ($time nanoseconds)")
-            }
-            /*Android Studio flags all the IO calls here and in jsonToSms() as "Inappropriate blocking method call",
-            despite the fact that they're wrapped with withContext(Dispatchers.IO) - I don't understand why
-            see https://stackoverflow.com/questions/58680028/how-to-make-inappropriate-blocking-method-call-appropriate*/
+            val totals = MessageTotal()
+            val displayNames = mutableMapOf<String, String?>()
+            // the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
             contentResolver.openOutputStream(file).use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                    writer.write(
-                        json.toString(2)
-                    )
+                    val jsonWriter = JsonWriter(writer)
+                    jsonWriter.setIndent("  ")
+                    jsonWriter.beginArray()
+                    if (!BuildConfig.DEBUG || SMS) totals.sms = smsToJSON(jsonWriter, displayNames)
+                    if (!BuildConfig.DEBUG || MMS) totals.mms = mmsToJSON(jsonWriter, displayNames)
+                    jsonWriter.endArray()
                 }
             }
-            MessageTotal(smsTotal, mmsTotal)
+            totals
         }
+    }
+
+    private fun smsToJSON(
+        jsonWriter: JsonWriter,
+        displayNames: MutableMap<String, String?>
+    ): Int {
+        var total = 0
+        val smsCursor =
+            contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
+        smsCursor?.use { it ->
+            if (it.moveToFirst()) {
+                val addressIndex = it.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
+                do {
+                    jsonWriter.beginObject()
+                    it.columnNames.forEachIndexed { i, columnName ->
+                        val value = it.getString(i)
+                        if (value != null) jsonWriter.name(columnName).value(value)
+                    }
+                    val displayName =
+                        lookupDisplayName(displayNames, it.getString(addressIndex))
+                    if (displayName != null) jsonWriter.name("display_name").value(displayName)
+                    jsonWriter.endObject()
+                    total++
+                    if (BuildConfig.DEBUG && total == MAX_MESSAGES) break
+                } while (it.moveToNext())
+            }
+        }
+        return total
+    }
+
+    private fun mmsToJSON(
+        jsonWriter: JsonWriter,
+        displayNames: MutableMap<String, String?>
+    ): Int {
+        var total = 0
+        val mmsCursor =
+            contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
+        mmsCursor?.use { it ->
+            if (it.moveToFirst()) {
+                val msgIdIndex = it.getColumnIndexOrThrow("_id")
+                // write MMS metadata
+                do {
+                    jsonWriter.beginObject()
+                    it.columnNames.forEachIndexed { i, columnName ->
+                        val value = it.getString(i)
+                        if (value != null) jsonWriter.name(columnName).value(value)
+                    }
+//                        the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
+                    val msgId = it.getString(msgIdIndex)
+                    val addressCursor = contentResolver.query(
+//                                Uri.parse("content://mms/addr"),
+                        Uri.parse("content://mms/$msgId/addr"),
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                    addressCursor?.use { it1 ->
+                        val addressTypeIndex =
+                            addressCursor.getColumnIndexOrThrow(Telephony.Mms.Addr.TYPE)
+                        val addressIndex =
+                            addressCursor.getColumnIndexOrThrow(Telephony.Mms.Addr.ADDRESS)
+                        // write sender address object
+                        if (it1.moveToFirst()) {
+                            do {
+                                if (addressTypeIndex.let { it2 -> it1.getString(it2) } == PDU_HEADERS_FROM) {
+                                    jsonWriter.name("sender_address")
+                                    jsonWriter.beginObject()
+                                    it1.columnNames.forEachIndexed { i, columnName ->
+                                        val value = it1.getString(i)
+                                        if (value != null) jsonWriter.name(columnName).value(value)
+                                    }
+                                    val displayName =
+                                        lookupDisplayName(displayNames, it1.getString(addressIndex))
+                                    if (displayName != null) jsonWriter.name("display_name")
+                                        .value(displayName)
+                                    jsonWriter.endObject()
+                                    break
+                                }
+                            } while (it1.moveToNext())
+                        }
+                        // write array of recipient address objects
+                        if (it1.moveToFirst()) {
+                            jsonWriter.name("recipient_addresses")
+                            jsonWriter.beginArray()
+                            do {
+                                if (addressTypeIndex.let { it2 -> it1.getString(it2) } != PDU_HEADERS_FROM) {
+                                    jsonWriter.beginObject()
+                                    it1.columnNames.forEachIndexed { i, columnName ->
+                                        val value = it1.getString(i)
+                                        if (value != null) jsonWriter.name(columnName).value(value)
+                                    }
+                                    val displayName =
+                                        lookupDisplayName(displayNames, it1.getString(addressIndex))
+                                    if (displayName != null) jsonWriter.name("display_name")
+                                        .value(displayName)
+                                    jsonWriter.endObject()
+                                }
+                            } while (it1.moveToNext())
+                            jsonWriter.endArray()
+                        }
+                    }
+                    val partCursor = contentResolver.query(
+                        Uri.parse("content://mms/part"),
+//                      Uri.parse("content://mms/$msgId/part"),
+                        null,
+                        "mid=?",
+                        arrayOf(msgId),
+                        "seq ASC"
+                    )
+                    // write array of MMS parts
+                    partCursor?.use { it1 ->
+                        if (it1.moveToFirst()) {
+                            jsonWriter.name("parts")
+                            jsonWriter.beginArray()
+                            val partIdIndex = it1.getColumnIndexOrThrow("_id")
+                            val dataIndex = it1.getColumnIndexOrThrow("_data")
+                            do {
+                                jsonWriter.beginObject()
+                                it1.columnNames.forEachIndexed { i, columnName ->
+                                    val value = it1.getString(i)
+                                    if (value != null) jsonWriter.name(columnName).value(value)
+                                }
+                                if (includeBinaryData && it1.getString(dataIndex) != null) {
+                                    val inputStream = contentResolver.openInputStream(
+                                        Uri.parse(
+                                            "content://mms/part/" + it1.getString(
+                                                partIdIndex
+                                            )
+                                        )
+                                    )
+                                    val data = inputStream.use {
+                                        Base64.encodeToString(
+                                            it?.readBytes(),
+                                            Base64.NO_WRAP // Without NO_WRAP, we end up with corrupted files upon decoding - see https://stackoverflow.com/questions/16091883/sending-base64-encoded-image-results-in-a-corrupt-image
+                                        )
+                                    }
+                                    jsonWriter.name("binary_data").value(data)
+                                }
+                                jsonWriter.endObject()
+                            } while (it1.moveToNext())
+                            jsonWriter.endArray()
+                        }
+                    }
+                    jsonWriter.endObject()
+                    total++
+                    if (BuildConfig.DEBUG && total == MAX_MESSAGES) break
+                } while (it.moveToNext())
+            }
+        }
+        return total
     }
 
     private fun lookupDisplayName(
