@@ -1,1 +1,1 @@
-Imports SMS and exports SMS and MMS messages from and to JSON files.
+Imports and exports SMS and MMS messages from and to JSON files.
