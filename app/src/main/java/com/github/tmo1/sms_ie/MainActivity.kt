@@ -31,6 +31,7 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Telephony
 import android.provider.Telephony.Threads.getOrCreateThreadId
+import android.text.format.DateUtils.formatElapsedTime
 import android.util.Base64
 import android.util.JsonReader
 import android.util.JsonWriter
@@ -157,8 +158,16 @@ class MainActivity : AppCompatActivity() {
                 statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
                     total = exportJSON(it)
-                    statusReportText.text = getString(R.string.export_results, total.sms, total.mms)
-                    logElapsedTime(startTime)
+                    statusReportText.text = getString(
+                        R.string.export_results,
+                        total.sms,
+                        total.mms,
+                        formatElapsedTime(TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime,
+                            TimeUnit.NANOSECONDS
+                        ))
+                    )
+//                    logElapsedTime(startTime)
                 }
             }
         }
@@ -171,21 +180,29 @@ class MainActivity : AppCompatActivity() {
                 statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
                     total = importJson(it)
-                    statusReportText.text = getString(R.string.import_results, total.sms, total.mms)
-                    logElapsedTime(startTime)
+                    statusReportText.text = getString(
+                        R.string.import_results,
+                        total.sms,
+                        total.mms,
+                        formatElapsedTime(TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime,
+                            TimeUnit.NANOSECONDS
+                        ))
+                    )
+//                    logElapsedTime(startTime)
                 }
             }
         }
     }
 
-    private fun logElapsedTime(since: Long) {
+    /*private fun logElapsedTime(since: Long) {
         if (BuildConfig.DEBUG) {
             val elapsedTime = System.nanoTime() - since
             val seconds =
                 TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS).toString()
             Log.v(LOG_TAG, "Elapsed time: $seconds seconds ($elapsedTime nanoseconds)")
         }
-    }
+    }*/
 
     private suspend fun exportJSON(file: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
@@ -565,7 +582,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onCheckBoxClicked(view: View) { if (view is CheckBox) includeBinaryData = view.isChecked }
+    fun onCheckBoxClicked(view: View) {
+        if (view is CheckBox) includeBinaryData = view.isChecked
+    }
 }
 
 // From https://stackoverflow.com/a/51394768
@@ -574,4 +593,6 @@ fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String 
     return formatter.format(this)
 }
 
-fun getCurrentDateTime(): Date { return Calendar.getInstance().time }
+fun getCurrentDateTime(): Date {
+    return Calendar.getInstance().time
+}
