@@ -20,14 +20,14 @@
 
 <resources>
     <string name="app_name">SMS Import / Export</string>
-    <string name="begin_exporting_msg">Exporting messages …</string>
-    <string name="begin_importing_msg">Importing messages …</string>
-    <string name="export_results">%1$d SMS(s) and %2$d MMS(s) exported.\nElapsed time: %3$s</string>
-    <string name="import_results">%1$d SMS(s) and %2$d MMS(s) imported.\nElapsed time: %3$s</string>
+    <string name="begin_exporting_msg">Nachrichten exportieren …</string>
+    <string name="begin_importing_msg">Nachrichten importieren …</string>
+    <string name="export_results">%1$d SMS(s) und %2$d MMS(s) exportiert.\nZeitaufwand: %3$s</string>
+    <string name="import_results">%1$d SMS(s) und %2$d MMS(s) importiert.\nZeitaufwand: %3$s</string>
     <string name="export_button_label">Export</string>
     <string name="import_button_label">Import</string>
-    <string name="permissions_required_message">Exporting messages requires permission to read SMSs and contacts.</string>
-    <string name="default_sms_app_requirement_message">This app must be the default SMS app in order to import messages.</string>
-    <string name="not_jsonarray_message">File does not seem to contain a valid JSONArray.</string>
-    <string name="include_binary_data">Include (encoded) binary MMS data</string>
+    <string name="permissions_required_message">Das Exportieren von Nachrichten erfordert die Berechtigung zum Lesen von SMS und Kontakten.</string>
+    <string name="default_sms_app_requirement_message">Diese App muss die Standard-SMS-App sein, damit Nachrichten importiert werden können.</string>
+    <string name="not_jsonarray_message">Die Datei scheint kein gültiges JSON-Array zu enthalten.</string>
+    <string name="include_binary_data">Einschließlich (verschlüsselter) binärer MMS-Daten</string>
 </resources>
