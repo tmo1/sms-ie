@@ -1,23 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021 Thomas More
-  ~
-  ~ This file is part of SMS Import / Export.
-  ~
-  ~ SMS Import / Export is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ SMS Import / Export is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
-  -->
-
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.tmo1.sms_ie">
 
@@ -30,10 +11,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Smsie2">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity"/>
 
         <receiver
-            android:name="com.github.tmo1.sms_ie.MmsReceiver"
+            android:name=".MmsReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BROADCAST_WAP_PUSH">
@@ -42,9 +29,8 @@
                 <data android:mimeType="application/vnd.wap.mms-message" />
             </intent-filter>
         </receiver>
-
         <receiver
-            android:name="com.github.tmo1.sms_ie.SmsReceiver"
+            android:name=".SmsReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
@@ -54,12 +40,13 @@
         </receiver>
 
         <service
-            android:name="com.github.tmo1.sms_ie.HeadlessSmsSendService"
+            android:name=".HeadlessSmsSendService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE">
             <intent-filter>
                 <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="sms" />
@@ -70,7 +57,7 @@
         </service>
 
         <activity
-            android:name="com.github.tmo1.sms_ie.ComposeSmsActivity"
+            android:name=".ComposeSmsActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -85,14 +72,15 @@
                 <data android:scheme="mmsto" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.github.tmo1.sms_ie.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
