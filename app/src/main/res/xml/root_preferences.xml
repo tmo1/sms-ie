@@ -1,0 +1,69 @@
+<!--
+  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
+  ~ Copyright (c) 2021 Thomas More
+  ~
+  ~ This file is part of SMS Import / Export.
+  ~
+  ~ SMS Import / Export is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ SMS Import / Export is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<PreferenceCategory android:title="Schedule">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="schedule_export"
+            android:title="Schedule export" />
+
+    </PreferenceCategory>-->
+
+    <PreferenceCategory app:title="Export options">
+
+        <SwitchPreferenceCompat
+            android:key="include_binary_data"
+            android:title="@string/include_binary_data"
+            app:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Debugging options">
+
+        <SwitchPreferenceCompat
+            android:key="debugging"
+            android:title="Enable debugging options"
+            app:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="max_messages"
+            android:title="Max messages (per message type) to import or export (leave empty or set to 0 for all)"
+            app:defaultValue=""
+            app:dependency="debugging" />
+
+        <SwitchPreferenceCompat
+            android:key="sms"
+            android:title="Process SMS messages"
+            app:defaultValue="true"
+            app:dependency="debugging" />
+
+        <SwitchPreferenceCompat
+            android:key="mms"
+            android:title="Process MMS messages"
+            app:defaultValue="true"
+            app:dependency="debugging" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

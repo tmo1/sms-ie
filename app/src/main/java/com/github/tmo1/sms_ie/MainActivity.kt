@@ -24,6 +24,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
@@ -35,13 +36,16 @@ import android.util.Base64
 import android.util.JsonReader
 import android.util.JsonWriter
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import java.io.*
 import java.text.SimpleDateFormat
@@ -52,9 +56,6 @@ const val EXPORT = 1
 const val IMPORT = 2
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "DEBUG"
-const val MAX_MESSAGES = -1
-const val SMS = true
-const val MMS = true
 
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
 // and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
@@ -65,7 +66,25 @@ data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
 class MainActivity : AppCompatActivity() {
 
-    private var includeBinaryData: Boolean = true
+    private lateinit var prefs: SharedPreferences
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.options_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings -> {
+                val launchSettingsActivity = Intent(this, SettingsActivity::class.java)
+                startActivity(launchSettingsActivity)
+                //finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,10 +111,14 @@ class MainActivity : AppCompatActivity() {
 
         // set up UI
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById(R.id.toolbar))
         val exportButton: Button = findViewById(R.id.export_button)
         val importButton: Button = findViewById(R.id.import_button)
         exportButton.setOnClickListener { exportFile() }
         importButton.setOnClickListener { importFile() }
+        //actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     private fun exportFile() {
@@ -191,14 +214,13 @@ class MainActivity : AppCompatActivity() {
         return withContext(Dispatchers.IO) {
             val totals = MessageTotal()
             val displayNames = mutableMapOf<String, String?>()
-            // the following is adapted from https://www.gsrikar.com/2018/12/convert-content-provider-cursor-to-json.html
             contentResolver.openOutputStream(file).use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
                     val jsonWriter = JsonWriter(writer)
                     jsonWriter.setIndent("  ")
                     jsonWriter.beginArray()
-                    if (!BuildConfig.DEBUG || SMS) totals.sms = smsToJSON(jsonWriter, displayNames)
-                    if (!BuildConfig.DEBUG || MMS) totals.mms = mmsToJSON(jsonWriter, displayNames)
+                    if (prefs.getBoolean("sms", true)) totals.sms = smsToJSON(jsonWriter, displayNames)
+                    if (prefs.getBoolean("mms", true)) totals.mms = mmsToJSON(jsonWriter, displayNames)
                     jsonWriter.endArray()
                 }
             }
@@ -227,7 +249,7 @@ class MainActivity : AppCompatActivity() {
                     if (displayName != null) jsonWriter.name("display_name").value(displayName)
                     jsonWriter.endObject()
                     total++
-                    if (BuildConfig.DEBUG && total == MAX_MESSAGES) break
+                    if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) break
                 } while (it.moveToNext())
             }
         }
@@ -327,7 +349,9 @@ class MainActivity : AppCompatActivity() {
                                     val value = it1.getString(i)
                                     if (value != null) jsonWriter.name(columnName).value(value)
                                 }
-                                if (includeBinaryData && it1.getString(dataIndex) != null) {
+
+                                //if (includeBinaryData && it1.getString(dataIndex) != null) {
+                                if (prefs.getBoolean("include_binary_data", true) && it1.getString(dataIndex) != null) {
                                     val inputStream = contentResolver.openInputStream(
                                         Uri.parse(
                                             "content://mms/part/" + it1.getString(
@@ -350,7 +374,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     jsonWriter.endObject()
                     total++
-                    if (BuildConfig.DEBUG && total == MAX_MESSAGES) break
+                    if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) break
                 } while (it.moveToNext())
             }
         }
@@ -392,7 +416,6 @@ class MainActivity : AppCompatActivity() {
     private suspend fun importJson(uri: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
             val totals = MessageTotal()
-            //val stringBuilder = StringBuilder()
             uri.let {
                 contentResolver.openInputStream(it).use { inputStream ->
                     BufferedReader(InputStreamReader(inputStream)).use { reader ->
@@ -497,7 +520,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             jsonReader.endObject()
                             if (!messageMetadata.containsKey("m_type")) { // it's SMS
-                                if (BuildConfig.DEBUG && (!SMS || totals.sms == MAX_MESSAGES)) continue
+                                if (!prefs.getBoolean("sms", true) || totals.sms == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) continue
                                 val insertUri =
                                     contentResolver.insert(
                                         Telephony.Sms.CONTENT_URI,
@@ -507,7 +530,7 @@ class MainActivity : AppCompatActivity() {
                                     Log.v(LOG_TAG, "SMS insert failed!")
                                 } else totals.sms++
                             } else { // it's MMS
-                                if (BuildConfig.DEBUG && (!MMS || totals.mms == MAX_MESSAGES)) continue
+                                if (!prefs.getBoolean("mms", true) || totals.mms == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) continue
                                 val threadId = getOrCreateThreadId(
                                     this@MainActivity,
                                     addresses.map { it1 -> it1.getAsString("address") }.toSet()
@@ -565,7 +588,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onCheckBoxClicked(view: View) { if (view is CheckBox) includeBinaryData = view.isChecked }
 }
 
 // From https://stackoverflow.com/a/51394768
@@ -574,4 +596,6 @@ fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String 
     return formatter.format(this)
 }
 
-fun getCurrentDateTime(): Date { return Calendar.getInstance().time }
+fun getCurrentDateTime(): Date {
+    return Calendar.getInstance().time
+}
