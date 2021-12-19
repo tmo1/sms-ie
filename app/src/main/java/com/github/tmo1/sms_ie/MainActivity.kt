@@ -29,6 +29,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.provider.CallLog
 import android.provider.ContactsContract
 import android.provider.Telephony
 import android.provider.Telephony.Threads.getOrCreateThreadId
@@ -55,6 +56,7 @@ import java.util.concurrent.TimeUnit
 
 const val EXPORT = 1
 const val IMPORT = 2
+const val EXPORT_CALL_LOG = 3
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "DEBUG"
 
@@ -114,9 +116,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         val exportButton: Button = findViewById(R.id.export_button)
+        val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
         val importButton: Button = findViewById(R.id.import_button)
         exportButton.setOnClickListener { exportFile() }
         importButton.setOnClickListener { importFile() }
+        exportCallLogButton.setOnClickListener { exportCallLogFile() }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -144,6 +148,33 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(
                 this,
                 getString(R.string.permissions_required_message),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun exportCallLogFile() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_CALL_LOG
+            ) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val date = getCurrentDateTime()
+            val dateInString = date.toString("yyyy-MM-dd")
+            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/json"
+                putExtra(Intent.EXTRA_TITLE, "call-log-$dateInString.json")
+            }
+            startActivityForResult(intent, EXPORT_CALL_LOG)
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.permissions_required_call_log),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -216,6 +247,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        if (requestCode == EXPORT_CALL_LOG
+            && resultCode == Activity.RESULT_OK
+        ) {
+            resultData?.data?.let {
+                val statusReportText: TextView = findViewById(R.id.status_report)
+                statusReportText.text = getString(R.string.begin_exporting_call_log)
+                statusReportText.visibility = View.VISIBLE
+                CoroutineScope(Dispatchers.Main).launch {
+                    total = exportCallLog(it)
+                    statusReportText.text = getString(
+                        R.string.import_results_call_log,
+                        total.sms,
+                        formatElapsedTime(TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime,
+                            TimeUnit.NANOSECONDS
+                        ))
+                    )
+                }
+            }
+        }
     }
 
     /*private fun logElapsedTime(since: Long) {
@@ -243,6 +294,51 @@ class MainActivity : AppCompatActivity() {
             }
             totals
         }
+    }
+
+    private suspend fun exportCallLog(file: Uri): MessageTotal {
+        return withContext(Dispatchers.IO) {
+            val totals = MessageTotal()
+            val displayNames = mutableMapOf<String, String?>()
+            contentResolver.openOutputStream(file).use { outputStream ->
+                BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
+                    val jsonWriter = JsonWriter(writer)
+                    jsonWriter.setIndent("  ")
+                    jsonWriter.beginArray()
+                    if (prefs.getBoolean("sms", true)) totals.sms = callLogToJSON(jsonWriter, displayNames)
+                    jsonWriter.endArray()
+                }
+            }
+            totals
+        }
+    }
+
+    private fun callLogToJSON(
+        jsonWriter: JsonWriter,
+        displayNames: MutableMap<String, String?>
+    ): Int {
+        var total = 0
+        val smsCursor =
+            contentResolver.query(Uri.parse("content://call_log/calls"), null, null, null, null)
+        smsCursor?.use { it ->
+            if (it.moveToFirst()) {
+                val addressIndex = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
+                do {
+                    jsonWriter.beginObject()
+                    it.columnNames.forEachIndexed { i, columnName ->
+                        val value = it.getString(i)
+                        if (value != null) jsonWriter.name(columnName).value(value)
+                    }
+                    val displayName =
+                        lookupDisplayName(displayNames, it.getString(addressIndex))
+                    if (displayName != null) jsonWriter.name("display_name").value(displayName)
+                    jsonWriter.endObject()
+                    total++
+                    if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) break
+                } while (it.moveToNext())
+            }
+        }
+        return total
     }
 
     private fun smsToJSON(
