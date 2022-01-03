@@ -1,6 +1,6 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021 Thomas More
+ * Copyright (c) 2021-2022 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -185,10 +185,12 @@ class MainActivity : AppCompatActivity() {
                         R.string.export_results,
                         total.sms,
                         total.mms,
-                        formatElapsedTime(TimeUnit.SECONDS.convert(
-                            System.nanoTime() - startTime,
-                            TimeUnit.NANOSECONDS
-                        ))
+                        formatElapsedTime(
+                            TimeUnit.SECONDS.convert(
+                                System.nanoTime() - startTime,
+                                TimeUnit.NANOSECONDS
+                            )
+                        )
                     )
 //                    logElapsedTime(startTime)
                 }
@@ -207,10 +209,12 @@ class MainActivity : AppCompatActivity() {
                         R.string.import_results,
                         total.sms,
                         total.mms,
-                        formatElapsedTime(TimeUnit.SECONDS.convert(
-                            System.nanoTime() - startTime,
-                            TimeUnit.NANOSECONDS
-                        ))
+                        formatElapsedTime(
+                            TimeUnit.SECONDS.convert(
+                                System.nanoTime() - startTime,
+                                TimeUnit.NANOSECONDS
+                            )
+                        )
                     )
 //                    logElapsedTime(startTime)
                 }
@@ -236,8 +240,10 @@ class MainActivity : AppCompatActivity() {
                     val jsonWriter = JsonWriter(writer)
                     jsonWriter.setIndent("  ")
                     jsonWriter.beginArray()
-                    if (prefs.getBoolean("sms", true)) totals.sms = smsToJSON(jsonWriter, displayNames)
-                    if (prefs.getBoolean("mms", true)) totals.mms = mmsToJSON(jsonWriter, displayNames)
+                    if (prefs.getBoolean("sms", true)) totals.sms =
+                        smsToJSON(jsonWriter, displayNames)
+                    if (prefs.getBoolean("mms", true)) totals.mms =
+                        mmsToJSON(jsonWriter, displayNames)
                     jsonWriter.endArray()
                 }
             }
@@ -266,7 +272,9 @@ class MainActivity : AppCompatActivity() {
                     if (displayName != null) jsonWriter.name("display_name").value(displayName)
                     jsonWriter.endObject()
                     total++
-                    if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) break
+                    if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
+                            ?.toIntOrNull() ?: -1
+                    ) break
                 } while (it.moveToNext())
             }
         }
@@ -368,7 +376,10 @@ class MainActivity : AppCompatActivity() {
                                 }
 
                                 //if (includeBinaryData && it1.getString(dataIndex) != null) {
-                                if (prefs.getBoolean("include_binary_data", true) && it1.getString(dataIndex) != null) {
+                                if (prefs.getBoolean("include_binary_data", true) && it1.getString(
+                                        dataIndex
+                                    ) != null
+                                ) {
                                     val inputStream = contentResolver.openInputStream(
                                         Uri.parse(
                                             "content://mms/part/" + it1.getString(
@@ -391,7 +402,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     jsonWriter.endObject()
                     total++
-                    if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) break
+                    if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
+                            ?.toIntOrNull() ?: -1
+                    ) break
                 } while (it.moveToNext())
             }
         }
@@ -433,6 +446,15 @@ class MainActivity : AppCompatActivity() {
     private suspend fun importJson(uri: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
             val totals = MessageTotal()
+            // get column names of local SMS and MMS tables
+            val smsColumns = mutableSetOf<String>()
+            val smsCursor =
+                contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
+            smsCursor?.use { smsColumns.addAll(it.columnNames) }
+            val mmsColumns = mutableSetOf<String>()
+            val mmsCursor =
+                contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
+            mmsCursor?.use { mmsColumns.addAll(it.columnNames) }
             uri.let {
                 contentResolver.openInputStream(it).use { inputStream ->
                     BufferedReader(InputStreamReader(inputStream)).use { reader ->
@@ -537,7 +559,18 @@ class MainActivity : AppCompatActivity() {
                             }
                             jsonReader.endObject()
                             if (!messageMetadata.containsKey("m_type")) { // it's SMS
-                                if (!prefs.getBoolean("sms", true) || totals.sms == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) continue
+                                if (!prefs.getBoolean("sms", true) || totals.sms == prefs.getString(
+                                        "max_messages",
+                                        ""
+                                    )?.toIntOrNull() ?: -1
+                                ) continue
+                                val fieldNames = mutableSetOf<String>()
+                                fieldNames.addAll(messageMetadata.keySet())
+                                fieldNames.forEach { key ->
+                                    if (!smsColumns.contains(key)) {
+                                        messageMetadata.remove(key)
+                                    }
+                                }
                                 val insertUri =
                                     contentResolver.insert(
                                         Telephony.Sms.CONTENT_URI,
@@ -547,7 +580,18 @@ class MainActivity : AppCompatActivity() {
                                     Log.v(LOG_TAG, "SMS insert failed!")
                                 } else totals.sms++
                             } else { // it's MMS
-                                if (!prefs.getBoolean("mms", true) || totals.mms == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) continue
+                                if (!prefs.getBoolean("mms", true) || totals.mms == prefs.getString(
+                                        "max_messages",
+                                        ""
+                                    )?.toIntOrNull() ?: -1
+                                ) continue
+                                val fieldNames = mutableSetOf<String>()
+                                fieldNames.addAll(messageMetadata.keySet())
+                                fieldNames.forEach { key ->
+                                    if (!mmsColumns.contains(key)) {
+                                        messageMetadata.remove(key)
+                                    }
+                                }
                                 val threadId = getOrCreateThreadId(
                                     this@MainActivity,
                                     addresses.map { it1 -> it1.getAsString("address") }.toSet()

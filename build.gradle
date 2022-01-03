@@ -1,6 +1,6 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021 Thomas More
+ * Copyright (c) 2021-2022 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -28,7 +28,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

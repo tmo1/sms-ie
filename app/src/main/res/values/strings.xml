@@ -1,6 +1,6 @@
 <!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021 Thomas More
+  ~ Copyright (c) 2021-2022 Thomas More
   ~
   ~ This file is part of SMS Import / Export.
   ~
@@ -31,20 +31,5 @@
     <string name="not_jsonarray_message">File does not seem to contain a valid JSONArray.</string>
     <string name="include_binary_data">Include (encoded) binary MMS data</string>
     <string name="title_activity_settings">SettingsActivity</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="settings">Settings</string>
 </resources>
