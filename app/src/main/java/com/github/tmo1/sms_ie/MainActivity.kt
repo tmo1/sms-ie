@@ -115,9 +115,9 @@ class MainActivity : AppCompatActivity() {
         // set up UI
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        val exportButton: Button = findViewById(R.id.export_button)
+        val exportButton: Button = findViewById(R.id.export_messages_button)
         val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
-        val importButton: Button = findViewById(R.id.import_button)
+        val importButton: Button = findViewById(R.id.import_messages_button)
         exportButton.setOnClickListener { exportFile() }
         importButton.setOnClickListener { importFile() }
         exportCallLogButton.setOnClickListener { exportCallLogFile() }
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this,
-                getString(R.string.permissions_required_message),
+                getString(R.string.sms_permissions_required),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this,
-                getString(R.string.permissions_required_call_log),
+                getString(R.string.call_logs_permissions_required),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this@MainActivity,
-                getString(R.string.default_sms_app_requirement_message),
+                getString(R.string.default_sms_app_requirement),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -208,12 +208,12 @@ class MainActivity : AppCompatActivity() {
         ) {
             resultData?.data?.let {
                 val statusReportText: TextView = findViewById(R.id.status_report)
-                statusReportText.text = getString(R.string.begin_exporting_msg)
+                statusReportText.text = getString(R.string.begin_exporting_messages)
                 statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
                     total = exportJSON(it)
                     statusReportText.text = getString(
-                        R.string.export_results,
+                        R.string.export_messages_results,
                         total.sms,
                         total.mms,
                         formatElapsedTime(
@@ -232,12 +232,12 @@ class MainActivity : AppCompatActivity() {
         ) {
             resultData?.data?.let {
                 val statusReportText: TextView = findViewById(R.id.status_report)
-                statusReportText.text = getString(R.string.begin_importing_msg)
+                statusReportText.text = getString(R.string.begin_importing_messages)
                 statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
                     total = importJson(it)
                     statusReportText.text = getString(
-                        R.string.import_results,
+                        R.string.import_messages_results,
                         total.sms,
                         total.mms,
                         formatElapsedTime(
@@ -261,7 +261,7 @@ class MainActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.Main).launch {
                     total = exportCallLog(it)
                     statusReportText.text = getString(
-                        R.string.import_results_call_log,
+                        R.string.export_call_log_results,
                         total.sms,
                         formatElapsedTime(TimeUnit.SECONDS.convert(
                             System.nanoTime() - startTime,
@@ -324,9 +324,9 @@ class MainActivity : AppCompatActivity() {
         displayNames: MutableMap<String, String?>
     ): Int {
         var total = 0
-        val smsCursor =
+        val callCursor =
             contentResolver.query(Uri.parse("content://call_log/calls"), null, null, null, null)
-        smsCursor?.use { it ->
+        callCursor?.use { it ->
             if (it.moveToFirst()) {
                 val addressIndex = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
                 do {
@@ -335,6 +335,10 @@ class MainActivity : AppCompatActivity() {
                         val value = it.getString(i)
                         if (value != null) jsonWriter.name(columnName).value(value)
                     }
+                    // The call logs do have a CACHED_NAME ("name") field, but it may still be useful to add the current display name, if available
+                    // From the documentation at https://developer.android.com/reference/android/provider/CallLog.Calls#CACHED_NAME
+                    // "The cached name associated with the phone number, if it exists.
+                    // This value is typically filled in by the dialer app for the caching purpose, so it's not guaranteed to be present, and may not be current if the contact information associated with this number has changed."
                     val displayName =
                         lookupDisplayName(displayNames, it.getString(addressIndex))
                     if (displayName != null) jsonWriter.name("display_name").value(displayName)

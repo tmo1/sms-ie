@@ -20,19 +20,21 @@
 
 <resources>
     <string name="app_name">SMS Import / Export</string>
-    <string name="begin_exporting_msg">Exporting messages …</string>
+    <string name="begin_exporting_messages">Exporting messages …</string>
+    <string name="begin_importing_messages">Importing messages …</string>
     <string name="begin_exporting_call_log">Exporting call log …</string>
-    <string name="begin_importing_msg">Importing messages …</string>
-    <string name="export_results">%1$d SMS(s) and %2$d MMS(s) exported.\nElapsed time: %3$s</string>
-    <string name="import_results">%1$d SMS(s) and %2$d MMS(s) imported.\nElapsed time: %3$s</string>
-    <string name="import_results_call_log">%1$d Call(s) exported.\nElapsed time: %2$s</string>
-    <string name="export_button_label">Export</string>
-    <string name="import_button_label">Import</string>
-    <string name="permissions_required_message">Exporting messages requires permission to read SMSs and contacts.</string>
-    <string name="permissions_required_call_log">Exporting call log requires permission to read Call log and contacts.</string>
-    <string name="default_sms_app_requirement_message">This app must be the default SMS app in order to import messages.</string>
+    <string name="export_messages_results">%1$d SMS(s) and %2$d MMS(s) exported.\nElapsed time: %3$s</string>
+    <string name="import_messages_results">%1$d SMS(s) and %2$d MMS(s) imported.\nElapsed time: %3$s</string>
+    <string name="export_call_log_results">%1$d call(s) exported.\nElapsed time: %2$s</string>
+    <string name="export_messages_button_label">Export Messages</string>
+    <string name="import_messages_button_label">Import Messages</string>
+    <string name="export_call_log_button_label">Export Call Log</string>
+    <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and Contacts.</string>
+    <string name="default_sms_app_requirement">This app must be the default SMS app in order to import messages.</string>
+    <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call logs and Contacts.</string>
     <string name="not_jsonarray_message">File does not seem to contain a valid JSONArray.</string>
     <string name="include_binary_data">Include (encoded) binary MMS data</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="settings">Settings</string>
+
 </resources>
