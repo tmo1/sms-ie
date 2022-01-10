@@ -36,5 +36,4 @@
     <string name="include_binary_data">Include (encoded) binary MMS data</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="settings">Settings</string>
-
 </resources>

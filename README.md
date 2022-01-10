@@ -75,9 +75,13 @@ Currently, no deduplication is done. For example, if messages are exported and t
 
 SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms-db), a Linux tool to build an SQLite database out of collections of SMS and MMS messages in various formats. sms-db can import JSON files created by SMS Import / Export, and it can export its database to JSON files that can be imported by SMS Import / Export.
 
-## Authors
+## Contributors
 
-The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). Call log export support was implemented by [sxwxs](https://github.com/sxwxs).
+The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app:
+
+ - [sxwxs](https://github.com/sxwxs): call log export support
+ - [nautilusx](https://github.com/nautilusx): German translation
+ - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
 
 ## Background
 

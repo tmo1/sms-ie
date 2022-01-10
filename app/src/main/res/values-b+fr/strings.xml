@@ -22,19 +22,18 @@
     <string name="app_name">SMS Import / Export</string>
     <string name="begin_exporting_messages">Exportation des messages…</string>
     <string name="begin_importing_messages">Importation des messages…</string>
-    <string name="begin_exporting_call_log">Exportation de l'historique des appels…</string>
+    <string name="begin_exporting_call_log">Exportation de l\'historique des appels…</string>
     <string name="export_messages_results">%1$d SMS(s) et %2$d MMS(s) exportés.\nElapsed time: %3$s</string>
     <string name="import_messages_results">%1$d SMS(s) et %2$d MMS(s) importés.\nElapsed time: %3$s</string>
     <string name="export_call_log_results">%1$d appel(s) exportés.\nElapsed time: %2$s</string>
     <string name="export_messages_button_label">Exporter les messages</string>
     <string name="import_messages_button_label">Importer les messages</string>
-    <string name="export_call_log_button_label">Exporter l'historique des appels</string>
-    <string name="sms_permissions_required">L'exportation des messages nécessite l'autorisation de lire les SMSs et les Contacts.</string>
-    <string name="default_sms_app_requirement">Cette application doit être définie comme application SMS par défaut afin d'importer les messages.</string>
-    <string name="call_logs_permissions_required">L'exportation de l'historique des appels nécessite l'autorisation de lire l'historique des appels et les Contacts.</string>
+    <string name="export_call_log_button_label">Exporter l\'historique des appels</string>
+    <string name="sms_permissions_required">L\'exportation des messages nécessite l\'autorisation de lire les SMSs et les Contacts.</string>
+    <string name="default_sms_app_requirement">Cette application doit être définie comme application SMS par défaut afin d\'importer les messages.</string>
+    <string name="call_logs_permissions_required">L\'exportation de l\'historique des appels nécessite l\'autorisation de lire l\'historique des appels et les Contacts.</string>
     <string name="not_jsonarray_message">Le fichier ne semble pas contenir de JSONArray valide.</string>
     <string name="include_binary_data">Inclure les données binaires MMS (encodées)</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="settings">Paramètres</string>
-
 </resources>

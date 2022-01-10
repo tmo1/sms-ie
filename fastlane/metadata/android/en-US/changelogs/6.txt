@@ -1,0 +1,11 @@
+ - Preferences screen
+ 
+ - Call log export
+
+ - Fixed a bug (issues #11, #12, #14) that caused crashes when importing
+   messages that were exported from an Android version that had message fields
+not present in the current version
+
+ - (Partial) German translation
+
+ - French translation

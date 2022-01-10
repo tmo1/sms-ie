@@ -20,11 +20,11 @@
 
 <resources>
     <string name="app_name">SMS Import / Export</string>
-    <string name="begin_exporting_msg">Nachrichten exportieren …</string>
-    <string name="begin_importing_msg">Nachrichten importieren …</string>
+    <string name="begin_exporting_messages">Nachrichten exportieren …</string>
+    <string name="begin_importing_messages">Nachrichten importieren …</string>
     <string name="begin_exporting_call_log">Exporting call log …</string>
-    <string name="export_results">%1$d SMS(s) und %2$d MMS(s) exportiert.\nZeitaufwand: %3$s</string>
-    <string name="import_results">%1$d SMS(s) und %2$d MMS(s) importiert.\nZeitaufwand: %3$s</string>
+    <string name="export_messages_results">%1$d SMS(s) und %2$d MMS(s) exportiert.\nZeitaufwand: %3$s</string>
+    <string name="import_messages_results">%1$d SMS(s) und %2$d MMS(s) importiert.\nZeitaufwand: %3$s</string>
     <string name="export_call_log_results">%1$d call(s) exported.\nElapsed time: %2$s</string>
     <string name="export_messages_button_label">Export Messages</string>
     <string name="import_messages_button_label">Import Messages</string>
@@ -36,5 +36,4 @@
     <string name="include_binary_data">Einschließlich (verschlüsselter) binärer MMS-Daten</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="settings">Settings</string>
-
 </resources>
