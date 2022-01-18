@@ -1,6 +1,6 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages from and to JSON files, and also exports call logs. Root is not required. The current release is version 1.3.
+SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages from and to JSON files, and also exports call logs. Root is not required. The current release is version 1.3.1.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
@@ -80,8 +80,9 @@ SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms
 The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app:
 
  - [sxwxs](https://github.com/sxwxs): call log export support
- - [nautilusx](https://github.com/nautilusx): German translation
+ - [nautilusx](https://github.com/nautilusx): initial German translation
  - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
+ - [baitmooth](https://github.com/baitmooth): additions to German translation
 
 ## Background
 
