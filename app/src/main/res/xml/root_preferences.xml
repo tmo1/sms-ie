@@ -21,14 +21,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--<PreferenceCategory android:title="Schedule">
+    <PreferenceCategory android:title="Scheduled export">
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="schedule_export"
-            android:title="Schedule export" />
+            android:title="Enable scheduled export" />
 
-    </PreferenceCategory>-->
+        <com.github.tmo1.sms_ie.TimePickerPreference
+            android:key="export_time"
+            android:title="Export messages at:"
+            app:dependency="schedule_export" />
+
+    </PreferenceCategory>
 
     <PreferenceCategory app:title="Export options">
 

@@ -22,6 +22,7 @@ package com.github.tmo1.sms_ie
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 
 class SettingsActivity : AppCompatActivity() {
@@ -43,23 +44,16 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
         }
+
+        // from: https://old.black/2020/09/18/building-custom-timepicker-dialog-preference-in-android-kotlin/
+        override fun onDisplayPreferenceDialog(preference: Preference?) {
+            if (preference is TimePickerPreference) {
+                val timePickerDialog = CustomPreferenceDialogs.newInstance(preference.key)
+                timePickerDialog.setTargetFragment(this, 0)
+                timePickerDialog.show(parentFragmentManager, "TimePickerDialog")
+            } else {
+                super.onDisplayPreferenceDialog(preference)
+            }
+        }
     }
-
-    /*class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
-
-        override fun onCreateDialog(savedInstanceState: Bundle): Dialog {
-            // Use the current time as the default values for the picker
-            val c = Calendar.getInstance()
-            val hour = c.get(Calendar.HOUR_OF_DAY)
-            val minute = c.get(Calendar.MINUTE)
-
-            // Create a new instance of TimePickerDialog and return it
-            return TimePickerDialog(activity, this, hour, minute, is24HourFormat(activity))
-        }
-
-        override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-            // Do something with the time chosen by the user
-        }
-    }*/
-
 }
