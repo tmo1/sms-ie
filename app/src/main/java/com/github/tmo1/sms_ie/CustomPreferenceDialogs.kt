@@ -27,7 +27,7 @@ import android.widget.TimePicker
 import androidx.preference.PreferenceDialogFragmentCompat
 
 // from: https://old.black/2020/09/18/building-custom-timepicker-dialog-preference-in-android-kotlin/
-class CustomPreferenceDialogs : PreferenceDialogFragmentCompat() {
+class TimePreferenceDialog : PreferenceDialogFragmentCompat() {
 
     private lateinit var timePicker: TimePicker
 
@@ -55,8 +55,8 @@ class CustomPreferenceDialogs : PreferenceDialogFragmentCompat() {
     }
 
     companion object {
-        fun newInstance(key: String): CustomPreferenceDialogs {
-            val fragment = CustomPreferenceDialogs()
+        fun newInstance(key: String): TimePreferenceDialog {
+            val fragment = TimePreferenceDialog()
             val bundle = Bundle(1)
             bundle.putString(ARG_KEY, key)
             fragment.arguments = bundle

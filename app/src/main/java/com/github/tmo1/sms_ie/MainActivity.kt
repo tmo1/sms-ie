@@ -58,7 +58,7 @@ const val EXPORT = 1
 const val IMPORT = 2
 const val EXPORT_CALL_LOG = 3
 const val PERMISSIONS_REQUEST = 1
-const val LOG_TAG = "DEBUG"
+const val LOG_TAG = "MYLOG"
 
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
 // and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
