@@ -28,6 +28,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 
 const val REQUEST_EXPORT_FOLDER = 4
 const val EXPORT_DIR = "export_dir"
@@ -91,7 +94,6 @@ class SettingsActivity : AppCompatActivity() {
             if (requestCode == REQUEST_EXPORT_FOLDER && resultCode == RESULT_OK && intent != null) {
                 val treeUri = intent.data
                 //Log.v(LOG_TAG, "Tree acquired: ${Uri.decode(treeUri.toString())}")
-                //Log.v(LOG_TAG, "Tree acquired: ${treeUri.toString()}")
                 if (treeUri != null) {
                     // TODO: we should probably call releasePersistableUriPermission on the current URI
                     context?.contentResolver?.takePersistableUriPermission(
@@ -114,6 +116,15 @@ class SettingsActivity : AppCompatActivity() {
                     putString(EXPORT_DIR, treeUri.toString())
                 }
                 updateExportDirPreferenceSummary()
+                // for worker testing: https://developer.android.com/topic/libraries/architecture/workmanager/basics#samples
+                //val context = applicationContext
+                val exportRequest: WorkRequest =
+                    OneTimeWorkRequestBuilder<ExportWorker>()
+                        .build()
+                WorkManager
+                    .getInstance()
+                    .enqueue(exportRequest)
+
             } else {
                 Log.e(
                     LOG_TAG,
