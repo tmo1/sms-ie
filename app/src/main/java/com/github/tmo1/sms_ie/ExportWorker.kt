@@ -34,7 +34,7 @@ import java.io.OutputStreamWriter
 class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
     override fun doWork(): Result {
-        // Do the work here--in this case, upload the images.
+        // Do the work here
         val context = applicationContext
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val treeUri = Uri.parse(prefs.getString(EXPORT_DIR, ""))

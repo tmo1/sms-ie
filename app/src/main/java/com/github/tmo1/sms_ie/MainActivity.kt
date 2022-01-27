@@ -22,22 +22,13 @@ package com.github.tmo1.sms_ie
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.provider.CallLog
-import android.provider.ContactsContract
 import android.provider.Telephony
-import android.provider.Telephony.Threads.getOrCreateThreadId
 import android.text.format.DateUtils.formatElapsedTime
-import android.util.Base64
-import android.util.JsonReader
-import android.util.JsonWriter
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -48,18 +39,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.*
-import java.io.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-const val EXPORT = 1
-const val IMPORT = 2
+const val EXPORT_MESSAGES = 1
+const val IMPORT_MESSAGES = 2
 const val EXPORT_CALL_LOG = 3
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "MYLOG"
-
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
 // and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
 // but are apparently unavailable in a public class
@@ -118,16 +109,16 @@ class MainActivity : AppCompatActivity() {
         val exportButton: Button = findViewById(R.id.export_messages_button)
         val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
         val importButton: Button = findViewById(R.id.import_messages_button)
-        exportButton.setOnClickListener { exportFile() }
-        importButton.setOnClickListener { importFile() }
+        exportButton.setOnClickListener { exportMessagesFile() }
+        importButton.setOnClickListener { importMessagesFile() }
         exportCallLogButton.setOnClickListener { exportCallLogFile() }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
-    private fun exportFile() {
-        if (ContextCompat.checkSelfPermission(
+    private fun exportMessagesFile() {
+        /*if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_SMS
             ) == PackageManager.PERMISSION_GRANTED
@@ -135,7 +126,8 @@ class MainActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.READ_CONTACTS
             ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        )*/
+        if (checkReadSMSContactsPermissions(this)){
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
@@ -143,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                 type = "application/json"
                 putExtra(Intent.EXTRA_TITLE, "messages-$dateInString.json")
             }
-            startActivityForResult(intent, EXPORT)
+            startActivityForResult(intent, EXPORT_MESSAGES)
         } else {
             Toast.makeText(
                 this,
@@ -154,15 +146,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun exportCallLogFile() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_CALL_LOG
-            ) == PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (checkReadCallLogsContactsPermissions(this)) {
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
@@ -180,14 +164,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun importFile() {
+    private fun importMessagesFile() {
         if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type =
                     if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
             }
-            startActivityForResult(intent, IMPORT)
+            startActivityForResult(intent, IMPORT_MESSAGES)
         } else {
             Toast.makeText(
                 this@MainActivity,
@@ -203,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, resultData)
         var total: MessageTotal
         val startTime = System.nanoTime()
-        if (requestCode == EXPORT
+        if (requestCode == EXPORT_MESSAGES
             && resultCode == Activity.RESULT_OK
         ) {
             resultData?.data?.let {
@@ -211,7 +195,7 @@ class MainActivity : AppCompatActivity() {
                 statusReportText.text = getString(R.string.begin_exporting_messages)
                 statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = exportJSON(it)
+                    total = exportMessages(applicationContext, it)
                     statusReportText.text = getString(
                         R.string.export_messages_results,
                         total.sms,
@@ -227,7 +211,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        if (requestCode == IMPORT
+        if (requestCode == IMPORT_MESSAGES
             && resultCode == Activity.RESULT_OK
         ) {
             resultData?.data?.let {
@@ -235,7 +219,7 @@ class MainActivity : AppCompatActivity() {
                 statusReportText.text = getString(R.string.begin_importing_messages)
                 statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = importJson(it)
+                    total = importMessages(applicationContext, it)
                     statusReportText.text = getString(
                         R.string.import_messages_results,
                         total.sms,
@@ -259,7 +243,7 @@ class MainActivity : AppCompatActivity() {
                 statusReportText.text = getString(R.string.begin_exporting_call_log)
                 statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = exportCallLog(it)
+                    total = exportCallLog(applicationContext, it)
                     statusReportText.text = getString(
                         R.string.export_call_log_results,
                         total.sms,
@@ -282,7 +266,7 @@ class MainActivity : AppCompatActivity() {
         }
     }*/
 
-    private suspend fun exportJSON(file: Uri): MessageTotal {
+    /*private suspend fun exportJSON(file: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
             val totals = MessageTotal()
             val displayNames = mutableMapOf<String, String?>()
@@ -300,9 +284,9 @@ class MainActivity : AppCompatActivity() {
             }
             totals
         }
-    }
+    }*/
 
-    private suspend fun exportCallLog(file: Uri): MessageTotal {
+    /*private suspend fun exportCallLog(file: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
             val totals = MessageTotal()
             val displayNames = mutableMapOf<String, String?>()
@@ -317,9 +301,9 @@ class MainActivity : AppCompatActivity() {
             }
             totals
         }
-    }
+    }*/
 
-    private fun callLogToJSON(
+    /*private fun callLogToJSON(
         jsonWriter: JsonWriter,
         displayNames: MutableMap<String, String?>
     ): Int {
@@ -541,9 +525,9 @@ class MainActivity : AppCompatActivity() {
         }
         displayNames[address] = displayName
         return displayName
-    }
+    }*/
 
-    private suspend fun importJson(uri: Uri): MessageTotal {
+    /*private suspend fun importMessages(uri: Uri): MessageTotal {
         return withContext(Dispatchers.IO) {
             val totals = MessageTotal()
             // get column names of local SMS and MMS tables
@@ -715,9 +699,9 @@ class MainActivity : AppCompatActivity() {
                                             contentResolver.insert(addressUri, address1)
                                         if (insertAddressUri == null) {
                                             Log.v(LOG_TAG, "MMS address insert failed!")
-                                        } /*else {
+                                        } *//*else {
                                         Log.v(LOG_TAG, "MMS address insert succeeded. Address metadata:" + address.toString())
-                                    }*/
+                                    }*//*
                                     }
                                     val partUri = Uri.parse("content://mms/$messageId/part")
                                     parts.forEachIndexed { j, part1 ->
@@ -747,7 +731,7 @@ class MainActivity : AppCompatActivity() {
                 totals
             }
         }
-    }
+    }*/
 
 }
 
