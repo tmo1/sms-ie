@@ -21,6 +21,7 @@
 package com.github.tmo1.sms_ie
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -28,12 +29,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
 
 const val REQUEST_EXPORT_FOLDER = 4
 const val EXPORT_DIR = "export_dir"
+const val EXPORT_WORK_TAG = "export"
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -72,6 +71,17 @@ class SettingsActivity : AppCompatActivity() {
                 true
             }
             updateExportDirPreferenceSummary()
+
+            // see: https://stackoverflow.com/questions/26242581/call-method-after-changing-preferences-in-android
+            // https://stackoverflow.com/questions/7020446/android-registeronsharedpreferencechangelistener-causes-crash-in-a-custom-view#7021068
+            // https://stackoverflow.com/questions/66449883/kotlin-onsharedpreferencechangelistener
+            val prefListener =
+                SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                    if (key == "schedule_export") {
+                        context?.let { updateExportWork(it) }
+                    }
+                }
+            prefs.registerOnSharedPreferenceChangeListener(prefListener)
         }
 
         // from: https://old.black/2020/09/18/building-custom-timepicker-dialog-preference-in-android-kotlin/
@@ -117,14 +127,15 @@ class SettingsActivity : AppCompatActivity() {
                 }
                 updateExportDirPreferenceSummary()
                 // for worker testing: https://developer.android.com/topic/libraries/architecture/workmanager/basics#samples
-                //val context = applicationContext
-                val exportRequest: WorkRequest =
+                /*val exportRequest: WorkRequest =
                     OneTimeWorkRequestBuilder<ExportWorker>()
+                        .addTag(EXPORT_WORK_TAG)
                         .build()
-                WorkManager
-                    .getInstance()
-                    .enqueue(exportRequest)
-
+                activity?.let {
+                    WorkManager
+                        .getInstance(it)
+                        .enqueue(exportRequest)
+                }*/
             } else {
                 Log.e(
                     LOG_TAG,
@@ -136,8 +147,6 @@ class SettingsActivity : AppCompatActivity() {
         private fun updateExportDirPreferenceSummary() {
             findPreference<Preference>(EXPORT_DIR)?.summary =
                 Uri.decode(prefs.getString(EXPORT_DIR, ""))
-            //val v = prefs.getString(EXPORT_DIR, "")
-            //Log.v(LOG_TAG, "Setting pref to: $v")
         }
     }
 }

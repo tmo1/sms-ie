@@ -37,6 +37,7 @@ class TimePickerPreference(context: Context?, attrs: AttributeSet?) : DialogPref
     fun persistMinutesFromMidnight(minutesFromMidnight: Int) {
         super.persistInt(minutesFromMidnight)
         notifyChanged()
+        updateExportWork(context)
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {
@@ -49,32 +50,6 @@ class TimePickerPreference(context: Context?, attrs: AttributeSet?) : DialogPref
         // default is 2:00 a.m.
         private const val DEFAULT_HOUR = 2
         const val DEFAULT_MINUTES_FROM_MIDNIGHT = DEFAULT_HOUR * 60
-    }
-}
-
-class DirectoryPickerPreference(context: Context?, attrs: AttributeSet?) : DialogPreference(context, attrs) {
-
-    // Get saved preference value (in minutes from midnight, so 1 AM is represented as 1*60 here
-    fun getPersistedDirectory(): String {
-        return super.getPersistedString(null)
-    }
-
-    // Save preference
-    fun persistDirectory(directory: String) {
-        super.persistString(directory)
-        notifyChanged()
-    }
-
-    override fun onSetInitialValue(defaultValue: Any?) {
-        super.onSetInitialValue(defaultValue)
-        summary = getPersistedDirectory()
-    }
-
-    // Mostly for default values
-    companion object {
-        // default is 2:00 a.m.
-        //private const val DEFAULT_HOUR = 2
-        //const val DEFAULT_MINUTES_FROM_MIDNIGHT = DEFAULT_HOUR * 60
     }
 }
 

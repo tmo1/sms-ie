@@ -26,9 +26,7 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="schedule_export"
-            android:title="Enable scheduled export"
-
-            />
+            android:title="Enable scheduled export" />
 
         <com.github.tmo1.sms_ie.TimePickerPreference
             android:key="export_time"
@@ -61,9 +59,9 @@
         <EditTextPreference
             android:key="max_messages"
             android:title="Max messages (per message type) to import or export (leave empty or set to 0 for all)"
-            app:useSimpleSummaryProvider="true"
             app:defaultValue=""
-            app:dependency="debugging" />
+            app:dependency="debugging"
+            app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
             android:key="sms"

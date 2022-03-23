@@ -22,34 +22,78 @@ package com.github.tmo1.sms_ie
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
-import androidx.work.Worker
-import androidx.work.WorkerParameters
-import java.io.BufferedWriter
-import java.io.OutputStreamWriter
+import androidx.work.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
 class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
     override fun doWork(): Result {
-        // Do the work here
         val context = applicationContext
+        var result = Result.failure()
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val treeUri = Uri.parse(prefs.getString(EXPORT_DIR, ""))
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
-        val file = documentTree?.createFile("text/plain", "sms-ie-worker.test")
+        val date = getCurrentDateTime()
+        val dateInString = date.toString("yyyy-MM-dd")
+        val file = documentTree?.createFile("application/json", "messages-$dateInString.json")
+//        val file = documentTree?.createFile("text/plain", "sms-ie-worker.test")
         val fileUri = file?.uri
         if (fileUri != null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                Log.v(LOG_TAG, "Beginning message export ...")
+                val total = exportMessages(context, fileUri)
+                Log.v(
+                    LOG_TAG,
+                    "Message export successful: ${total.sms} SMSs and ${total.mms} MMSs exported"
+                )
+                result = Result.success()
+            }
 //                  Log.v(LOG_TAG, "File acquired: $fileUri")
-            context.contentResolver?.openOutputStream(fileUri).use { outputStream ->
+/*            context.contentResolver?.openOutputStream(fileUri).use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
                     writer.write("Worker works!")
                 }
-            }
+            }*/
         }
-        // Indicate whether the work finished successfully with the Result
-        return Result.success()
+        updateExportWork(context)
+        return result
+    }
+}
+
+fun updateExportWork(context: Context) {
+    WorkManager.getInstance(context)
+        .cancelAllWorkByTag(EXPORT_WORK_TAG)
+    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+    if (prefs.getBoolean("schedule_export", false)) {
+        // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java
+        val now = Calendar.getInstance()
+        val exportTime = Calendar.getInstance()
+        exportTime.set(Calendar.HOUR_OF_DAY, 0)
+        exportTime.set(Calendar.MINUTE, 0)
+        exportTime.set(Calendar.SECOND, 0)
+        exportTime.set(Calendar.MILLISECOND, 0)
+        exportTime.add(Calendar.MINUTE, prefs.getInt("export_time", 0))
+        if (exportTime < now) {
+            exportTime.add(Calendar.DAY_OF_MONTH, 1)
+        }
+        val deferMillis = exportTime.timeInMillis - now.timeInMillis
+        Log.v(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
+        val exportRequest: WorkRequest =
+            OneTimeWorkRequestBuilder<ExportWorker>()
+                .addTag(EXPORT_WORK_TAG)
+                .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS)
+                .build()
+        WorkManager
+            .getInstance(context)
+            .enqueue(exportRequest)
     }
 }
