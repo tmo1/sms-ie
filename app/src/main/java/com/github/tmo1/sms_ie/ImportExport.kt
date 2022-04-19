@@ -81,6 +81,17 @@ fun checkReadCallLogsContactsPermissions(appContext: Context): Boolean {
     return false
 }
 
+fun checkReadWriteCallLogPermissions(appContext: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+            appContext,
+            Manifest.permission.WRITE_CALL_LOG
+        ) == PackageManager.PERMISSION_GRANTED
+        && ContextCompat.checkSelfPermission(
+            appContext,
+            Manifest.permission.READ_CALL_LOG
+        ) == PackageManager.PERMISSION_GRANTED
+}
+
 suspend fun exportMessages(appContext: Context, file: Uri): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
@@ -554,6 +565,46 @@ suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
                 }
             }
             totals
+        }
+    }
+}
+
+suspend fun importCallLog(appContext: Context, uri: Uri): Int {
+    return withContext(Dispatchers.IO) {
+        val callLogColumns = mutableSetOf<String>()
+        val callLogCursor = appContext.contentResolver.query(CallLog.Calls.CONTENT_URI,
+            null, null, null, null)
+        callLogCursor?.use { callLogColumns.addAll(it.columnNames) }
+        var callLogCount = 0
+        uri.let {
+            appContext.contentResolver.openInputStream(it).use { inputStream ->
+                BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                    val jsonReader = JsonReader(reader)
+                    val callLogMetadata = ContentValues()
+                    jsonReader.beginArray()
+                    while (jsonReader.hasNext()) {
+                        jsonReader.beginObject()
+                        callLogMetadata.clear()
+                        while (jsonReader.hasNext()) {
+                            val name = jsonReader.nextName()
+                            val value = jsonReader.nextString()
+                            if (callLogColumns.contains(name)) {
+                                callLogMetadata.put(name, value)
+                            }
+                        }
+                        var insertUri: Uri? = null
+                        if (callLogMetadata.keySet().contains(CallLog.Calls.NUMBER)) {
+                            insertUri = appContext.contentResolver.insert(CallLog.Calls.CONTENT_URI, callLogMetadata)
+                        }
+                        if (insertUri == null) {
+                            Log.v(LOG_TAG, "Call log insert failed!")
+                        } else callLogCount++
+                        jsonReader.endObject()
+                    }
+                    jsonReader.endArray()
+                }
+            }
+            callLogCount
         }
     }
 }

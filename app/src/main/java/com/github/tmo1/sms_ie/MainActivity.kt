@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit
 const val EXPORT_MESSAGES = 1
 const val IMPORT_MESSAGES = 2
 const val EXPORT_CALL_LOG = 3
+const val IMPORT_CALL_LOG = 4
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "MYLOG"
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
@@ -84,21 +85,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // get necessary permissions on startup
+        val allPermissions = listOf(
+            Manifest.permission.READ_SMS,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.WRITE_CALL_LOG
+        )
         val necessaryPermissions = mutableListOf<String>()
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_SMS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            necessaryPermissions.add(Manifest.permission.READ_SMS)
+        allPermissions.forEach{
+            if (ContextCompat.checkSelfPermission(this, it)
+                != PackageManager.PERMISSION_GRANTED) {
+                necessaryPermissions.add(it)
+            }
         }
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_CONTACTS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            necessaryPermissions.add(Manifest.permission.READ_CONTACTS)
-        }
+
         if (necessaryPermissions.any()) {
             requestPermissions(necessaryPermissions.toTypedArray(), PERMISSIONS_REQUEST)
         }
@@ -109,9 +109,11 @@ class MainActivity : AppCompatActivity() {
         val exportButton: Button = findViewById(R.id.export_messages_button)
         val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
         val importButton: Button = findViewById(R.id.import_messages_button)
+        val importCallLogButton: Button = findViewById(R.id.import_call_log_button)
         exportButton.setOnClickListener { exportMessagesFile() }
         importButton.setOnClickListener { importMessagesFile() }
         exportCallLogButton.setOnClickListener { exportCallLogFile() }
+        importCallLogButton.setOnClickListener { importCallLogFile() }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -251,6 +253,25 @@ class MainActivity : AppCompatActivity() {
                             System.nanoTime() - startTime,
                             TimeUnit.NANOSECONDS
                         ))
+                    )
+                }
+            }
+        }
+        if (requestCode == IMPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
+            resultData?.data?.let {
+                val statusReportText: TextView = findViewById(R.id.status_report)
+                statusReportText.text = getString(R.string.begin_importing_call_log)
+                statusReportText.visibility = View.VISIBLE
+                CoroutineScope(Dispatchers.Main).launch {
+                    val callsImported = importCallLog(applicationContext, it)
+                    statusReportText.text = getString(
+                        R.string.import_call_log_results,
+                        callsImported,
+                        formatElapsedTime(TimeUnit.SECONDS.convert(
+                                System.nanoTime() - startTime,
+                                TimeUnit.NANOSECONDS
+                            )
+                        )
                     )
                 }
             }
@@ -732,6 +753,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }*/
+
+    private fun importCallLogFile() {
+        if (checkReadWriteCallLogPermissions(this)) {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/json"
+            }
+            startActivityForResult(intent, IMPORT_CALL_LOG)
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.call_logs_write_permissions_required),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
 }
 
