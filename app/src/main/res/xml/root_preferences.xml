@@ -30,12 +30,24 @@
 
         <com.github.tmo1.sms_ie.TimePickerPreference
             android:key="export_time"
-            android:title="Export messages at:"
+            android:title="Export at:"
             app:dependency="schedule_export" />
 
         <Preference
             android:key="export_dir"
             android:title="Export to directory:"
+            app:dependency="schedule_export" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="export_messages"
+            android:title="Export messages"
+            app:dependency="schedule_export" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="export_call_logs"
+            android:title="Export call logs"
             app:dependency="schedule_export" />
 
     </PreferenceCategory>

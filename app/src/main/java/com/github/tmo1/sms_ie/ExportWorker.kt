@@ -38,32 +38,50 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
     override fun doWork(): Result {
         val context = applicationContext
-        var result = Result.failure()
+        var result = Result.success()
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val treeUri = Uri.parse(prefs.getString(EXPORT_DIR, ""))
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
         val date = getCurrentDateTime()
         val dateInString = date.toString("yyyy-MM-dd")
-        val file = documentTree?.createFile("application/json", "messages-$dateInString.json")
+        if (prefs.getBoolean("export_messages", true)) {
+            val file = documentTree?.createFile("application/json", "messages-$dateInString.json")
 //        val file = documentTree?.createFile("text/plain", "sms-ie-worker.test")
-        val fileUri = file?.uri
-        if (fileUri != null) {
-            CoroutineScope(Dispatchers.Main).launch {
-                Log.v(LOG_TAG, "Beginning message export ...")
-                val total = exportMessages(context, fileUri)
-                Log.v(
-                    LOG_TAG,
-                    "Message export successful: ${total.sms} SMSs and ${total.mms} MMSs exported"
-                )
-                result = Result.success()
+            val fileUri = file?.uri
+            if (fileUri != null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Log.v(LOG_TAG, "Beginning message export ...")
+                    val total = exportMessages(context, fileUri)
+                    Log.v(
+                        LOG_TAG,
+                        "Message export successful: ${total.sms} SMSs and ${total.mms} MMSs exported"
+                    )
+                }
             }
+            else result = Result.failure()
+        }
+        if (prefs.getBoolean("export_call_logs", true)) {
+            val file = documentTree?.createFile("application/json", "call-logs-$dateInString.json")
+            val fileUri = file?.uri
+            if (fileUri != null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Log.v(LOG_TAG, "Beginning call logs export ...")
+                    val total = exportCallLog(context, fileUri)
+                    Log.v(
+                        LOG_TAG,
+                        "Call logs export successful: ${total.sms} calls exported"
+                    )
+                }
+            }
+            else result = Result.failure()
+        }
 //                  Log.v(LOG_TAG, "File acquired: $fileUri")
 /*            context.contentResolver?.openOutputStream(fileUri).use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
                     writer.write("Worker works!")
                 }
             }*/
-        }
+
         updateExportWork(context)
         return result
     }
