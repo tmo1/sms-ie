@@ -31,7 +31,7 @@
     <string name="export_call_log_button_label">Export Call Log</string>
     <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and Contacts.</string>
     <string name="default_sms_app_requirement">This app must be the default SMS app in order to import messages.</string>
-    <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call logs and Contacts.</string>
+    <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call Logs and Contacts.</string>
     <string name="not_jsonarray_message">File does not seem to contain a valid JSONArray.</string>
     <string name="include_binary_data">Include (encoded) binary MMS data</string>
     <string name="title_activity_settings">SettingsActivity</string>
@@ -39,5 +39,5 @@
     <string name="import_call_log_button_label">Import Call Log</string>
     <string name="begin_importing_call_log">Importing call log</string>
     <string name="import_call_log_results">%1$d call(s) imported.\nElapsed time: %2$s</string>
-    <string name="call_logs_write_permissions_required">Importing call logs requires permission to Read and write call logs</string>
+    <string name="call_logs_read_write_permissions_required">Importing call logs requires permission to read and write Call Logs.</string>
 </resources>

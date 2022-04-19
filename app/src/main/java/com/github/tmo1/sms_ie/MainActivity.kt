@@ -764,7 +764,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this,
-                getString(R.string.call_logs_write_permissions_required),
+                getString(R.string.call_logs_read_write_permissions_required),
                 Toast.LENGTH_LONG
             ).show()
         }
