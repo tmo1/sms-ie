@@ -22,9 +22,12 @@ package com.github.tmo1.sms_ie
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.Telephony
@@ -52,6 +55,7 @@ const val EXPORT_CALL_LOG = 3
 const val IMPORT_CALL_LOG = 4
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "MYLOG"
+const val CHANNEL_ID = "MYCHANNEL"
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
 // and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
 // but are apparently unavailable in a public class
@@ -92,9 +96,10 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.WRITE_CALL_LOG
         )
         val necessaryPermissions = mutableListOf<String>()
-        allPermissions.forEach{
+        allPermissions.forEach {
             if (ContextCompat.checkSelfPermission(this, it)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED
+            ) {
                 necessaryPermissions.add(it)
             }
         }
@@ -117,6 +122,22 @@ class MainActivity : AppCompatActivity() {
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        // Create and register notification channel
+        // https://developer.android.com/training/notify-user/channels
+        // https://developer.android.com/training/notify-user/build-notification#Priority
+        if (SDK_INT >= Build.VERSION_CODES.O) {
+            // Create the NotificationChannel
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
+            mChannel.description = descriptionText
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(mChannel)
+        }
     }
 
     private fun exportMessagesFile() {
@@ -129,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.READ_CONTACTS
             ) == PackageManager.PERMISSION_GRANTED
         )*/
-        if (checkReadSMSContactsPermissions(this)){
+        if (checkReadSMSContactsPermissions(this)) {
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
@@ -249,10 +270,12 @@ class MainActivity : AppCompatActivity() {
                     statusReportText.text = getString(
                         R.string.export_call_log_results,
                         total.sms,
-                        formatElapsedTime(TimeUnit.SECONDS.convert(
-                            System.nanoTime() - startTime,
-                            TimeUnit.NANOSECONDS
-                        ))
+                        formatElapsedTime(
+                            TimeUnit.SECONDS.convert(
+                                System.nanoTime() - startTime,
+                                TimeUnit.NANOSECONDS
+                            )
+                        )
                     )
                 }
             }
@@ -267,7 +290,8 @@ class MainActivity : AppCompatActivity() {
                     statusReportText.text = getString(
                         R.string.import_call_log_results,
                         callsImported,
-                        formatElapsedTime(TimeUnit.SECONDS.convert(
+                        formatElapsedTime(
+                            TimeUnit.SECONDS.convert(
                                 System.nanoTime() - startTime,
                                 TimeUnit.NANOSECONDS
                             )

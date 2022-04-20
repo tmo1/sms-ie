@@ -23,12 +23,12 @@ package com.github.tmo1.sms_ie
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import androidx.work.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -39,50 +39,69 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
     override fun doWork(): Result {
         val context = applicationContext
         var result = Result.success()
+        var messageTotal = MessageTotal()
+        var callsTotal = 0
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val treeUri = Uri.parse(prefs.getString(EXPORT_DIR, ""))
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
         val date = getCurrentDateTime()
         val dateInString = date.toString("yyyy-MM-dd")
-        if (prefs.getBoolean("export_messages", true)) {
-            val file = documentTree?.createFile("application/json", "messages-$dateInString.json")
-//        val file = documentTree?.createFile("text/plain", "sms-ie-worker.test")
-            val fileUri = file?.uri
-            if (fileUri != null) {
-                CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (prefs.getBoolean("export_messages", true)) {
+                val file =
+                    documentTree?.createFile("application/json", "messages-$dateInString.json")
+                val fileUri = file?.uri
+                if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning message export ...")
-                    val total = exportMessages(context, fileUri)
+                    messageTotal = exportMessages(context, fileUri)
                     Log.v(
                         LOG_TAG,
-                        "Message export successful: ${total.sms} SMSs and ${total.mms} MMSs exported"
+                        "Message export successful: ${messageTotal.sms} SMSs and ${messageTotal.mms} MMSs exported"
                     )
+                } else {
+                    Log.e(LOG_TAG, "Message export failed - could not create file.")
+                    result = Result.failure()
                 }
             }
-            else result = Result.failure()
-        }
-        if (prefs.getBoolean("export_call_logs", true)) {
-            val file = documentTree?.createFile("application/json", "call-logs-$dateInString.json")
-            val fileUri = file?.uri
-            if (fileUri != null) {
-                CoroutineScope(Dispatchers.Main).launch {
+            if (prefs.getBoolean("export_call_logs", true)) {
+                val file =
+                    documentTree?.createFile("application/json", "call-logs-$dateInString.json")
+                val fileUri = file?.uri
+                if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning call logs export ...")
                     val total = exportCallLog(context, fileUri)
+                    callsTotal = total.sms
                     Log.v(
                         LOG_TAG,
-                        "Call logs export successful: ${total.sms} calls exported"
+                        "Call logs export successful: $callsTotal calls exported"
                     )
+                } else {
+                    Log.e(LOG_TAG, "Call logs export failed - could not create file.")
+                    result = Result.failure()
                 }
             }
-            else result = Result.failure()
+            // see: https://stackoverflow.com/a/8765766
+            val notification = if (result == Result.success()) context.getString(
+                R.string.scheduled_export_success,
+                messageTotal.sms,
+                messageTotal.mms,
+                callsTotal
+            ) else context.getString(R.string.scheduled_export_failure)
+            // https://developer.android.com/training/notify-user/build-notification#builder
+            val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(context.getString(R.string.scheduled_export_executed))
+                .setContentText(notification)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            // https://developer.android.com/training/notify-user/build-notification#notify
+            with(NotificationManagerCompat.from(applicationContext))
+            {
+                // notificationId is a unique int for each notification that you must define
+                notify(0, builder.build())
+            }
         }
-//                  Log.v(LOG_TAG, "File acquired: $fileUri")
-/*            context.contentResolver?.openOutputStream(fileUri).use { outputStream ->
-                BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                    writer.write("Worker works!")
-                }
-            }*/
-
         updateExportWork(context)
+        //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
         return result
     }
 }
