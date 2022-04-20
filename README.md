@@ -21,6 +21,10 @@ These operations may take some time for large numbers of messages or calls. The 
 
 By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a file that is much smaller and more easily browsable by humans. (The setting is currently ignored on import.)
 
+### Scheduled Export
+
+To enable the scheduled export of messages and / or call logs, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select whether to export messages and / or call logs.) The app will then attempt to export messages and / or call logs to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
+
 ### Permissions
 
 To export messages, SMS Import / Export must be granted permission to read SMSs and Contacts (the need for the latter is explained below). The app will ask for these permissions on startup, if it does not already have them.
@@ -94,6 +98,13 @@ Coming from a procedural, command line interface, synchronous, Linux, Perl and P
 ## Bugs, Feature Requests, and Other Issues
 
 Bugs, feature requests, and other issues can be filed at [the SMS Import / Export issue tracker](https://github.com/tmo1/sms-ie/issues). When reporting any problem with the app, please specify the version of the app used for export and / or import, as applicable. When reporting a crash, particularly a reproducible one, please attach a logcat. Instructions for doing so (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
+
+## TODO
+
+The following are various features and improvements to the app that have been suggested and may be implemented in the future:
+
+ - Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
+ - Progress meters for export and import ([issue #24](https://github.com/tmo1/sms-ie/issues/24))
 
 ## License
 
