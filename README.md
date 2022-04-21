@@ -77,6 +77,10 @@ The exported JSON is an array of JSON objects representing calls. Each JSON call
 
 Currently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message.
 
+### Call Log Maximum Capacity
+
+Although this is apparently not publicly officially documented, Android's Call Log has a fixed maximum number of calls that it will store ([500 in many / most versions of Android](https://android.gadgethacks.com/how-to/bypass-androids-call-log-limits-keep-unlimited-call-history-0175494/), 1000 in API 30 (version 11) on a Pixel (my own experience, corroborated [here](https://stackoverflow.com/questions/70501885/the-max-of-incoming-outgoing-or-missed-calls-logs-in-android)). Attempting to import calls when the log is full may fail, in which case the app will not report an error, but the reported number of imported calls will be lower then the number of calls provided for import. E.g., if calls are exported from a phone with a full log, and the output file is then reimported, the app will report 0 calls imported.
+
 ## sms-db
 
 SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms-db), a Linux tool to build an SQLite database out of collections of SMS and MMS messages in various formats. sms-db can import JSON files created by SMS Import / Export, and it can export its database to JSON files that can be imported by SMS Import / Export.
@@ -105,6 +109,7 @@ The following are various features and improvements to the app that have been su
 
  - Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
  - Progress meters for export and import ([issue #24](https://github.com/tmo1/sms-ie/issues/24))
+ - Message database wiping, to avoid duplicate messages when importing ([issue #23](https://github.com/tmo1/sms-ie/issues/23))
 
 ## License
 
