@@ -1,1 +1,1 @@
-Imports and exports SMS and MMS messages, and exports call logs.
+Imports and exports SMS and MMS messages and call logs.
