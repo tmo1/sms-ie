@@ -24,6 +24,7 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.provider.CallLog
 import android.provider.ContactsContract
@@ -32,6 +33,9 @@ import android.util.Base64
 import android.util.JsonReader
 import android.util.JsonWriter
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
@@ -83,16 +87,21 @@ fun checkReadCallLogsContactsPermissions(appContext: Context): Boolean {
 
 fun checkReadWriteCallLogPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
-            appContext,
-            Manifest.permission.WRITE_CALL_LOG
-        ) == PackageManager.PERMISSION_GRANTED
-        && ContextCompat.checkSelfPermission(
-            appContext,
-            Manifest.permission.READ_CALL_LOG
-        ) == PackageManager.PERMISSION_GRANTED
+        appContext,
+        Manifest.permission.WRITE_CALL_LOG
+    ) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(
+        appContext,
+        Manifest.permission.READ_CALL_LOG
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
-suspend fun exportMessages(appContext: Context, file: Uri): MessageTotal {
+suspend fun exportMessages(
+    appContext: Context,
+    file: Uri,
+    progressBar: ProgressBar?,
+    statusReportText: TextView?
+): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
@@ -102,10 +111,12 @@ suspend fun exportMessages(appContext: Context, file: Uri): MessageTotal {
                 val jsonWriter = JsonWriter(writer)
                 jsonWriter.setIndent("  ")
                 jsonWriter.beginArray()
-                if (prefs.getBoolean("sms", true)) totals.sms =
-                    smsToJSON(appContext, jsonWriter, displayNames)
-                if (prefs.getBoolean("mms", true)) totals.mms =
-                    mmsToJSON(appContext, jsonWriter, displayNames)
+                if (prefs.getBoolean("sms", true)) {
+                    totals.sms = smsToJSON(appContext, jsonWriter, displayNames, progressBar, statusReportText)
+                }
+                if (prefs.getBoolean("mms", true)) {
+                    totals.mms = mmsToJSON(appContext, jsonWriter, displayNames, progressBar, statusReportText)
+                }
                 jsonWriter.endArray()
             }
         }
@@ -113,7 +124,12 @@ suspend fun exportMessages(appContext: Context, file: Uri): MessageTotal {
     }
 }
 
-suspend fun exportCallLog(appContext: Context, file: Uri): MessageTotal {
+suspend fun exportCallLog(
+    appContext: Context,
+    file: Uri,
+    progressBar: ProgressBar?,
+    statusReportText: TextView?
+): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
@@ -123,7 +139,13 @@ suspend fun exportCallLog(appContext: Context, file: Uri): MessageTotal {
                 val jsonWriter = JsonWriter(writer)
                 jsonWriter.setIndent("  ")
                 jsonWriter.beginArray()
-                if (prefs.getBoolean("sms", true)) totals.sms = callLogToJSON(appContext, jsonWriter, displayNames)
+                if (prefs.getBoolean("sms", true)) totals.sms = callLogToJSON(
+                    appContext,
+                    jsonWriter,
+                    displayNames,
+                    progressBar,
+                    statusReportText
+                )
                 jsonWriter.endArray()
             }
         }
@@ -131,17 +153,27 @@ suspend fun exportCallLog(appContext: Context, file: Uri): MessageTotal {
     }
 }
 
-private fun callLogToJSON(
+private suspend fun callLogToJSON(
     appContext: Context,
     jsonWriter: JsonWriter,
-    displayNames: MutableMap<String, String?>
+    displayNames: MutableMap<String, String?>,
+    progressBar: ProgressBar?,
+    statusReportText: TextView?
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var total = 0
     val callCursor =
-        appContext.contentResolver.query(Uri.parse("content://call_log/calls"), null, null, null, null)
+        appContext.contentResolver.query(
+            Uri.parse("content://call_log/calls"),
+            null,
+            null,
+            null,
+            null
+        )
     callCursor?.use { it ->
         if (it.moveToFirst()) {
+            val totalCalls = it.count
+            initProgressBar(progressBar, it)
             val addressIndex = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
             do {
                 jsonWriter.beginObject()
@@ -158,17 +190,24 @@ private fun callLogToJSON(
                 if (displayName != null) jsonWriter.name("display_name").value(displayName)
                 jsonWriter.endObject()
                 total++
-                if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")?.toIntOrNull() ?: -1) break
+                incrementProgress(progressBar)
+                setStatusText(statusReportText, appContext.getString(R.string.call_log_export_progress, total, totalCalls))
+                if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
+                        ?.toIntOrNull() ?: -1
+                ) break
             } while (it.moveToNext())
+            hideProgressBar(progressBar)
         }
     }
     return total
 }
 
-fun smsToJSON(
+private suspend fun smsToJSON(
     appContext: Context,
     jsonWriter: JsonWriter,
-    displayNames: MutableMap<String, String?>
+    displayNames: MutableMap<String, String?>,
+    progressBar: ProgressBar?,
+    statusReportText: TextView?
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var total = 0
@@ -176,6 +215,8 @@ fun smsToJSON(
         appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
     smsCursor?.use { it ->
         if (it.moveToFirst()) {
+            initProgressBar(progressBar, it)
+            val totalSms = it.count
             val addressIndex = it.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
             do {
                 jsonWriter.beginObject()
@@ -188,19 +229,24 @@ fun smsToJSON(
                 if (displayName != null) jsonWriter.name("display_name").value(displayName)
                 jsonWriter.endObject()
                 total++
+                incrementProgress(progressBar)
+                setStatusText(statusReportText, appContext.getString(R.string.sms_export_progress, total, totalSms))
                 if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
                         ?.toIntOrNull() ?: -1
                 ) break
             } while (it.moveToNext())
+            hideProgressBar(progressBar)
         }
     }
     return total
 }
 
-fun mmsToJSON(
+private suspend fun mmsToJSON(
     appContext: Context,
     jsonWriter: JsonWriter,
-    displayNames: MutableMap<String, String?>
+    displayNames: MutableMap<String, String?>,
+    progressBar: ProgressBar?,
+    statusReportText: TextView?
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var total = 0
@@ -208,6 +254,8 @@ fun mmsToJSON(
         appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
     mmsCursor?.use { it ->
         if (it.moveToFirst()) {
+            val totalMms = it.count
+            initProgressBar(progressBar, it)
             val msgIdIndex = it.getColumnIndexOrThrow("_id")
             // write MMS metadata
             do {
@@ -242,7 +290,11 @@ fun mmsToJSON(
                                     if (value != null) jsonWriter.name(columnName).value(value)
                                 }
                                 val displayName =
-                                    lookupDisplayName(appContext, displayNames, it1.getString(addressIndex))
+                                    lookupDisplayName(
+                                        appContext,
+                                        displayNames,
+                                        it1.getString(addressIndex)
+                                    )
                                 if (displayName != null) jsonWriter.name("display_name")
                                     .value(displayName)
                                 jsonWriter.endObject()
@@ -262,7 +314,11 @@ fun mmsToJSON(
                                     if (value != null) jsonWriter.name(columnName).value(value)
                                 }
                                 val displayName =
-                                    lookupDisplayName(appContext, displayNames, it1.getString(addressIndex))
+                                    lookupDisplayName(
+                                        appContext,
+                                        displayNames,
+                                        it1.getString(addressIndex)
+                                    )
                                 if (displayName != null) jsonWriter.name("display_name")
                                     .value(displayName)
                                 jsonWriter.endObject()
@@ -292,7 +348,6 @@ fun mmsToJSON(
                                 val value = it1.getString(i)
                                 if (value != null) jsonWriter.name(columnName).value(value)
                             }
-
                             //if (includeBinaryData && it1.getString(dataIndex) != null) {
                             if (prefs.getBoolean("include_binary_data", true) && it1.getString(
                                     dataIndex
@@ -320,10 +375,13 @@ fun mmsToJSON(
                 }
                 jsonWriter.endObject()
                 total++
+                incrementProgress(progressBar)
+                setStatusText(statusReportText, appContext.getString(R.string.mms_export_progress, total, totalMms))
                 if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
                         ?.toIntOrNull() ?: -1
                 ) break
             } while (it.moveToNext())
+            hideProgressBar(progressBar)
         }
     }
     return total
@@ -362,7 +420,12 @@ private fun lookupDisplayName(
     return displayName
 }
 
-suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
+suspend fun importMessages(
+    appContext: Context,
+    uri: Uri,
+    progressBar: ProgressBar?,
+    statusReportText: TextView?
+): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
@@ -376,6 +439,7 @@ suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
             appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
         mmsCursor?.use { mmsColumns.addAll(it.columnNames) }
         uri.let {
+            initIndeterminateProgressBar(progressBar)
             appContext.contentResolver.openInputStream(it).use { inputStream ->
                 BufferedReader(InputStreamReader(inputStream)).use { reader ->
                     val jsonReader = JsonReader(reader)
@@ -498,7 +562,10 @@ suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
                                 )
                             if (insertUri == null) {
                                 Log.v(LOG_TAG, "SMS insert failed!")
-                            } else totals.sms++
+                            } else {
+                                totals.sms++
+                                setStatusText(statusReportText, appContext.getString(R.string.message_import_progress, totals.sms, totals.mms))
+                            }
                         } else { // it's MMS
                             if (!prefs.getBoolean("mms", true) || totals.mms == prefs.getString(
                                     "max_messages",
@@ -526,6 +593,7 @@ suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
                                 Log.v(LOG_TAG, "MMS insert failed!")
                             } else {
                                 totals.mms++
+                                setStatusText(statusReportText, appContext.getString(R.string.message_import_progress, totals.sms, totals.mms))
 //                                Log.v(LOG_TAG, "MMS insert succeeded!")
                                 val messageId = insertUri.lastPathSegment
                                 val addressUri = Uri.parse("content://mms/$messageId/addr")
@@ -552,7 +620,9 @@ suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
                                     } else {
                                         if (binaryData[j] != null) {
                                             val os =
-                                                appContext.contentResolver.openOutputStream(insertPartUri)
+                                                appContext.contentResolver.openOutputStream(
+                                                    insertPartUri
+                                                )
                                             if (os != null) os.use { os.write(binaryData[j]) }
                                             else Log.v(LOG_TAG, "Failed to open OutputStream!")
                                         }
@@ -564,6 +634,7 @@ suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
                     jsonReader.endArray()
                 }
             }
+            hideProgressBar(progressBar)
             totals
         }
     }
@@ -572,8 +643,10 @@ suspend fun importMessages(appContext: Context, uri: Uri): MessageTotal {
 suspend fun importCallLog(appContext: Context, uri: Uri): Int {
     return withContext(Dispatchers.IO) {
         val callLogColumns = mutableSetOf<String>()
-        val callLogCursor = appContext.contentResolver.query(CallLog.Calls.CONTENT_URI,
-            null, null, null, null)
+        val callLogCursor = appContext.contentResolver.query(
+            CallLog.Calls.CONTENT_URI,
+            null, null, null, null
+        )
         callLogCursor?.use { callLogColumns.addAll(it.columnNames) }
         var callLogCount = 0
         uri.let {
@@ -594,7 +667,10 @@ suspend fun importCallLog(appContext: Context, uri: Uri): Int {
                         }
                         var insertUri: Uri? = null
                         if (callLogMetadata.keySet().contains(CallLog.Calls.NUMBER)) {
-                            insertUri = appContext.contentResolver.insert(CallLog.Calls.CONTENT_URI, callLogMetadata)
+                            insertUri = appContext.contentResolver.insert(
+                                CallLog.Calls.CONTENT_URI,
+                                callLogMetadata
+                            )
                         }
                         if (insertUri == null) {
                             Log.v(LOG_TAG, "Call log insert failed!")
@@ -606,5 +682,37 @@ suspend fun importCallLog(appContext: Context, uri: Uri): Int {
             }
             callLogCount
         }
+    }
+}
+
+private suspend fun initProgressBar(progressBar: ProgressBar?, cursor: Cursor) {
+    withContext(Dispatchers.Main) {
+        progressBar?.isIndeterminate = false
+        progressBar?.progress = 0
+        progressBar?.visibility = View.VISIBLE
+        progressBar?.setMax(cursor.count)
+    }
+}
+
+private suspend fun initIndeterminateProgressBar(progressBar: ProgressBar?) {
+    withContext(Dispatchers.Main) {
+        progressBar?.isIndeterminate = true
+        progressBar?.visibility = View.VISIBLE
+    }
+}
+
+private suspend fun hideProgressBar(progressBar: ProgressBar?) {
+    withContext(Dispatchers.Main) {
+        progressBar?.visibility = View.INVISIBLE
+    }
+}
+
+private suspend fun setStatusText(statusReportText: TextView?, message: String) {
+    withContext(Dispatchers.Main) { statusReportText?.text = message }
+}
+
+private suspend fun incrementProgress(progressBar: ProgressBar?) {
+    withContext(Dispatchers.Main) {
+        progressBar?.incrementProgressBy(1)
     }
 }
