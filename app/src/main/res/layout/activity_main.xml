@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
   ~ Copyright (c) 2021-2022 Thomas More
   ~
@@ -30,9 +29,10 @@
         android:id="@+id/status_report"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:visibility="invisible"
         android:gravity="center_horizontal"
+        android:textSize="20sp"
+        android:visibility="visible"
+        android:text="@string/ready"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -95,6 +95,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:progress="0"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/status_report"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <!--<CheckBox
         android:id="@+id/checkBox"

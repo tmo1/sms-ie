@@ -53,7 +53,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 val fileUri = file?.uri
                 if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning message export ...")
-                    messageTotal = exportMessages(context, fileUri)
+                    messageTotal = exportMessages(context, fileUri, null, null)
                     Log.v(
                         LOG_TAG,
                         "Message export successful: ${messageTotal.sms} SMSs and ${messageTotal.mms} MMSs exported"
@@ -69,7 +69,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 val fileUri = file?.uri
                 if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning call logs export ...")
-                    val total = exportCallLog(context, fileUri)
+                    val total = exportCallLog(context, fileUri, null, null)
                     callsTotal = total.sms
                     Log.v(
                         LOG_TAG,

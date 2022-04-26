@@ -37,6 +37,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -56,6 +57,7 @@ const val IMPORT_CALL_LOG = 4
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "MYLOG"
 const val CHANNEL_ID = "MYCHANNEL"
+
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
 // and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
 // but are apparently unavailable in a public class
@@ -209,16 +211,17 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onActivityResult(requestCode, resultCode, resultData)
         var total: MessageTotal
+        val statusReportText: TextView = findViewById(R.id.status_report)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val startTime = System.nanoTime()
         if (requestCode == EXPORT_MESSAGES
             && resultCode == Activity.RESULT_OK
         ) {
             resultData?.data?.let {
-                val statusReportText: TextView = findViewById(R.id.status_report)
-                statusReportText.text = getString(R.string.begin_exporting_messages)
-                statusReportText.visibility = View.VISIBLE
+                //statusReportText.text = getString(R.string.begin_exporting_messages)
+                //statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = exportMessages(applicationContext, it)
+                    total = exportMessages(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.export_messages_results,
                         total.sms,
@@ -238,11 +241,8 @@ class MainActivity : AppCompatActivity() {
             && resultCode == Activity.RESULT_OK
         ) {
             resultData?.data?.let {
-                val statusReportText: TextView = findViewById(R.id.status_report)
-                statusReportText.text = getString(R.string.begin_importing_messages)
-                statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = importMessages(applicationContext, it)
+                    total = importMessages(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.import_messages_results,
                         total.sms,
@@ -262,11 +262,8 @@ class MainActivity : AppCompatActivity() {
             && resultCode == Activity.RESULT_OK
         ) {
             resultData?.data?.let {
-                val statusReportText: TextView = findViewById(R.id.status_report)
-                statusReportText.text = getString(R.string.begin_exporting_call_log)
-                statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = exportCallLog(applicationContext, it)
+                    total = exportCallLog(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.export_call_log_results,
                         total.sms,
@@ -282,9 +279,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (requestCode == IMPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
-                val statusReportText: TextView = findViewById(R.id.status_report)
-                statusReportText.text = getString(R.string.begin_importing_call_log)
-                statusReportText.visibility = View.VISIBLE
+                //val statusReportText: TextView = findViewById(R.id.status_report)
+                //statusReportText.text = getString(R.string.begin_importing_call_log)
+                //statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
                     val callsImported = importCallLog(applicationContext, it)
                     statusReportText.text = getString(
