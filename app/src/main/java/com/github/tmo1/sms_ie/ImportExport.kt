@@ -130,7 +130,7 @@ suspend fun exportCallLog(
     progressBar: ProgressBar?,
     statusReportText: TextView?
 ): MessageTotal {
-    val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    //val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
         val displayNames = mutableMapOf<String, String?>()
@@ -139,7 +139,7 @@ suspend fun exportCallLog(
                 val jsonWriter = JsonWriter(writer)
                 jsonWriter.setIndent("  ")
                 jsonWriter.beginArray()
-                if (prefs.getBoolean("sms", true)) totals.sms = callLogToJSON(
+                totals.sms = callLogToJSON(
                     appContext,
                     jsonWriter,
                     displayNames,
