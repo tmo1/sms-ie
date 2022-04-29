@@ -30,9 +30,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:text="@string/ready"
         android:textSize="20sp"
         android:visibility="visible"
-        android:text="@string/ready"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -43,47 +43,62 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/export_messages_button_label"
-        app:layout_constraintBottom_toBottomOf="@id/guideline3"
-        app:layout_constraintEnd_toStartOf="@+id/import_messages_button"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/export_call_log_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toStartOf="@+id/import_messages_button" />
 
     <Button
         android:id="@+id/import_messages_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/import_messages_button_label"
-        app:layout_constraintBottom_toBottomOf="@id/guideline3"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/import_call_log_button"
         app:layout_constraintStart_toEndOf="@+id/export_messages_button"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/export_call_log_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/export_call_log_button_label"
-        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintTop_toBottomOf="@+id/export_messages_button"
+        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
         app:layout_constraintEnd_toStartOf="@+id/import_call_log_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/export_messages_button" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/import_call_log_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/import_call_log_button_label"
+        app:layout_constraintTop_toBottomOf="@+id/import_messages_button"
+        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/export_call_log_button" />
+
+    <Button
+        android:id="@+id/wipe_all_messages_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wipe_messages"
+        app:layout_constraintTop_toBottomOf="@id/export_call_log_button"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/export_call_log_button"
-        app:layout_constraintTop_toBottomOf="@id/import_messages_button" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="303dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.3652531" />
+        app:layout_constraintGuide_percent="0.5" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -107,6 +122,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline3" />
+
+
 
     <!--<CheckBox
         android:id="@+id/checkBox"

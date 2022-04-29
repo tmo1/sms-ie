@@ -49,7 +49,7 @@
     <string name="import_call_log_results">%1$d call(s) imported.\nElapsed time: %2$s</string>
 
     <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and Contacts.</string>
-    <string name="default_sms_app_requirement">This app must be the default SMS app in order to import messages.</string>
+    <string name="default_sms_app_requirement">This app must be the default SMS app in order to import or wipe messages.</string>
     <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call Logs and Contacts.</string>
     <string name="call_logs_read_write_permissions_required">Importing call logs requires permission to read and write Call Logs.</string>
 
@@ -64,5 +64,14 @@
     <string name="scheduled_export_executed">Scheduled export executed</string>
     <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), and %3$d calls exported.</string>
     <string name="scheduled_export_failure">Export unsuccessful - see logcat for more details.</string>
+
+    <string name="wipe_messages">Wipe Messages</string>
+    <string name="dialog_confirm_wipe">WARNING: This will permanently wipe all messages from this device. This action cannot be undone! Are you sure you want to proceed?</string>
+    <string name="wipe">Wipe</string>
+    <string name="cancel">Cancel</string>
+    <string name="wipe_cancelled">Wipe cancelled</string>
+    <string name="messages_wiped">Messages wiped</string>
+    <string name="wiping_sms_messages">Wiping SMS messages …</string>
+    <string name="wiping_mms_messages">Wiping MMS messages …</string>
 
 </resources>

@@ -16,6 +16,7 @@ SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). 
  - Import messages: Click the `Import Messages` button, then select an import source.
  - Export call log: Click the `Export Call Log` button, then select an export destination.
  - Import call log: Click the `Import Call Log` button, then select an import source.
+ - Wipe messages: Click the `Wipe Messages` button, then confirm by pressing the `Wipe` button in the pop-up dialog box.
 
 These operations may take some time for large numbers of messages or calls. The app will report the total number of SMS and MMS messages or calls exported or imported, and the elapsed time, upon successful conclusion.
 
@@ -29,7 +30,7 @@ To enable the scheduled export of messages and / or call logs, enable the featur
 
 To export messages, SMS Import / Export must be granted permission to read SMSs and Contacts (the need for the latter is explained below). The app will ask for these permissions on startup, if it does not already have them.
 
-To import messages, SMS Import / Export must be the default messaging app. This is due to [an Android design decision](https://android-developers.googleblog.com/2013/10/getting-your-sms-apps-ready-for-kitkat.html).
+To import or wipe messages, SMS Import / Export must be the default messaging app. This is due to [an Android design decision](https://android-developers.googleblog.com/2013/10/getting-your-sms-apps-ready-for-kitkat.html).
 
 **Warning:** While an app is the default messaging app, it takes full responsibility for handling incoming SMS and MMS messages, and if does not store them, they will be lost. SMS Import / Export ignores incoming messages, so in order to avoid losing such messages, the device it is running on should be disconnected from the network (by putting it into airplane mode, or similar means) before the app is made the default messaging app, and only reconnected to the network after a proper messaging app is made the default.
 
@@ -75,7 +76,7 @@ The exported JSON is an array of JSON objects representing calls. Each JSON call
 
 ## Limitations
 
-Currently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message.
+Currently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message. To avoid this, the device can be wiped of all messages before importing by using the `Wipe Messages` button.
 
 ### Call Log Maximum Capacity
 
@@ -108,8 +109,6 @@ Bugs, feature requests, and other issues can be filed at [the SMS Import / Expor
 The following are various features and improvements to the app that have been suggested and may be implemented in the future:
 
  - Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
- - Progress meters for export and import ([issue #24](https://github.com/tmo1/sms-ie/issues/24))
- - Message database wiping, to avoid duplicate messages when importing ([issue #23](https://github.com/tmo1/sms-ie/issues/23))
 
 ## License
 

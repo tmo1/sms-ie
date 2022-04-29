@@ -685,6 +685,24 @@ suspend fun importCallLog(appContext: Context, uri: Uri): Int {
     }
 }
 
+suspend fun wipeSmsAndMmsMessages(appContext: Context, statusReportText: TextView, progressBar: ProgressBar) {
+    val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    withContext(Dispatchers.IO) {
+        if (prefs.getBoolean("sms", true)) {
+            setStatusText(statusReportText, appContext.getString(R.string.wiping_sms_messages))
+            initIndeterminateProgressBar(progressBar)
+            appContext.contentResolver.delete(Telephony.Sms.CONTENT_URI, null, null)
+            hideProgressBar(progressBar)
+        }
+        if (prefs.getBoolean("mms", true)) {
+            setStatusText(statusReportText, appContext.getString(R.string.wiping_mms_messages))
+            initIndeterminateProgressBar(progressBar)
+            appContext.contentResolver.delete(Telephony.Mms.CONTENT_URI, null, null)
+            hideProgressBar(progressBar)
+        }
+    }
+}
+
 private suspend fun initProgressBar(progressBar: ProgressBar?, cursor: Cursor) {
     withContext(Dispatchers.Main) {
         progressBar?.isIndeterminate = false

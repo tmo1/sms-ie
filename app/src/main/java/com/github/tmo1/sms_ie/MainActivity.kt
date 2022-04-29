@@ -22,8 +22,11 @@ package com.github.tmo1.sms_ie
 
 import android.Manifest
 import android.app.Activity
+import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -32,16 +35,18 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.Telephony
 import android.text.format.DateUtils.formatElapsedTime
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +70,7 @@ const val PDU_HEADERS_FROM = "137"
 
 data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener {
 
     private lateinit var prefs: SharedPreferences
 
@@ -113,14 +118,16 @@ class MainActivity : AppCompatActivity() {
         // set up UI
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        val exportButton: Button = findViewById(R.id.export_messages_button)
+        val exportMessagesButton: Button = findViewById(R.id.export_messages_button)
         val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
-        val importButton: Button = findViewById(R.id.import_messages_button)
+        val importMessagesButton: Button = findViewById(R.id.import_messages_button)
         val importCallLogButton: Button = findViewById(R.id.import_call_log_button)
-        exportButton.setOnClickListener { exportMessagesFile() }
-        importButton.setOnClickListener { importMessagesFile() }
+        val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
+        exportMessagesButton.setOnClickListener { exportMessagesFile() }
+        importMessagesButton.setOnClickListener { importMessagesFile() }
         exportCallLogButton.setOnClickListener { exportCallLogFile() }
         importCallLogButton.setOnClickListener { importCallLogFile() }
+        wipeAllMessagesButton.setOnClickListener { wipeMessages() }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -279,9 +286,6 @@ class MainActivity : AppCompatActivity() {
         }
         if (requestCode == IMPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
-                //val statusReportText: TextView = findViewById(R.id.status_report)
-                //statusReportText.text = getString(R.string.begin_importing_call_log)
-                //statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
                     val callsImported = importCallLog(applicationContext, it)
                     statusReportText.text = getString(
@@ -791,6 +795,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun wipeMessages() {
+        if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
+            ConfirmWipeFragment().show(supportFragmentManager, "wipe")
+        } else {
+            Toast.makeText(
+                this@MainActivity,
+                getString(R.string.default_sms_app_requirement),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    // From: https://developer.android.com/guide/topics/ui/dialogs#PassingEvents
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the NoticeDialogFragment.NoticeDialogListener interface
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        // User touched the dialog's positive button
+        val statusReportText: TextView = findViewById(R.id.status_report)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
+        CoroutineScope(Dispatchers.Main).launch {
+            wipeSmsAndMmsMessages(applicationContext, statusReportText, progressBar)
+            Log.v(LOG_TAG, "Pretending to wipe messages ...")
+            statusReportText.text = getString(R.string.messages_wiped)
+        }
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        // User touched the dialog's negative button
+        val statusReportText: TextView = findViewById(R.id.status_report)
+        statusReportText.text = getString(R.string.wipe_cancelled)
+    }
 }
 
 // From https://stackoverflow.com/a/51394768
@@ -801,4 +838,60 @@ fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String 
 
 fun getCurrentDateTime(): Date {
     return Calendar.getInstance().time
+}
+
+// https://developer.android.com/guide/topics/ui/dialogs
+// https://developer.android.com/guide/fragments/dialogs
+class ConfirmWipeFragment : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            // Use the Builder class for convenient dialog construction
+            val builder = AlertDialog.Builder(it)
+            builder.setMessage(R.string.dialog_confirm_wipe)
+                .setPositiveButton(R.string.wipe
+                ) { dialog, id ->
+                    // Send the positive button event back to the host activity
+                    listener.onDialogPositiveClick(this)
+                }
+                .setNegativeButton(R.string.cancel
+                ) { dialog, id ->
+                    // User cancelled the dialog
+                    // Send the negative button event back to the host activity
+                    listener.onDialogNegativeClick(this)
+                }
+                .setTitle(R.string.wipe_messages)
+                // https://stackoverflow.com/a/45386778
+                .setIcon(android.R.drawable.ic_dialog_alert)
+            // Create the AlertDialog object and return it
+            builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    // From: https://developer.android.com/guide/topics/ui/dialogs#PassingEvents
+    // Use this instance of the interface to deliver action events
+    private lateinit var listener: NoticeDialogListener
+
+    /* The activity that creates an instance of this dialog fragment must
+     * implement this interface in order to receive event callbacks.
+     * Each method passes the DialogFragment in case the host needs to query it. */
+    interface NoticeDialogListener {
+        fun onDialogPositiveClick(dialog: DialogFragment)
+        fun onDialogNegativeClick(dialog: DialogFragment)
+    }
+
+    // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            listener = context as NoticeDialogListener
+        } catch (e: ClassCastException) {
+            // The activity doesn't implement the interface, throw exception
+            throw ClassCastException(
+                (context.toString() +
+                        " must implement NoticeDialogListener")
+            )
+        }
+    }
 }
