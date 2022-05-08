@@ -26,7 +26,6 @@ import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -85,6 +84,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             R.id.settings -> {
                 val launchSettingsActivity = Intent(this, SettingsActivity::class.java)
                 startActivity(launchSettingsActivity)
+                //finish()
+                true
+            }
+            R.id.about -> {
+                val launchAboutActivity = Intent(this, AboutActivity::class.java)
+                startActivity(launchAboutActivity)
                 //finish()
                 true
             }

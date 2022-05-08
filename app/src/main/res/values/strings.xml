@@ -74,4 +74,13 @@
     <string name="wiping_sms_messages">Wiping SMS messages …</string>
     <string name="wiping_mms_messages">Wiping MMS messages …</string>
 
+    <string name="app_about_text">SMS Import / Export\n\nby Thomas More and other contributors\n\nVersion %1$s\n\nCopyright © 2021–22\n\nReleased under the GNU GPLv3</string>
+    <string name="homepage">Homepage:</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="documentation">Documentation:</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="issue_tracker">Issue tracker:</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="about">About</string>
+
 </resources>

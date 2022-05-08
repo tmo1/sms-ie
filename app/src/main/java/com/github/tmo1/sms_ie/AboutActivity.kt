@@ -18,30 +18,17 @@
  * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.github.tmo1.sms_ie
 
-buildscript {
-    ext.kotlin_version = "1.6.0"
-    repositories {
-        google()
-        mavenCentral()
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.TextView
+
+class AboutActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_about)
+        val aboutText: TextView = findViewById(R.id.aboutText)
+        aboutText.text = getString(R.string.app_about_text, BuildConfig.VERSION_NAME)
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.3'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.20'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
