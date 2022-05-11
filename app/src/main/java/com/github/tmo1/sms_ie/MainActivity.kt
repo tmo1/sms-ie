@@ -292,7 +292,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (requestCode == IMPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val callsImported = importCallLog(applicationContext, it)
+                    val callsImported = importCallLog(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.import_call_log_results,
                         callsImported,

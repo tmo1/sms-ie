@@ -112,10 +112,22 @@ suspend fun exportMessages(
                 jsonWriter.setIndent("  ")
                 jsonWriter.beginArray()
                 if (prefs.getBoolean("sms", true)) {
-                    totals.sms = smsToJSON(appContext, jsonWriter, displayNames, progressBar, statusReportText)
+                    totals.sms = smsToJSON(
+                        appContext,
+                        jsonWriter,
+                        displayNames,
+                        progressBar,
+                        statusReportText
+                    )
                 }
                 if (prefs.getBoolean("mms", true)) {
-                    totals.mms = mmsToJSON(appContext, jsonWriter, displayNames, progressBar, statusReportText)
+                    totals.mms = mmsToJSON(
+                        appContext,
+                        jsonWriter,
+                        displayNames,
+                        progressBar,
+                        statusReportText
+                    )
                 }
                 jsonWriter.endArray()
             }
@@ -191,9 +203,12 @@ private suspend fun callLogToJSON(
                 jsonWriter.endObject()
                 total++
                 incrementProgress(progressBar)
-                setStatusText(statusReportText, appContext.getString(R.string.call_log_export_progress, total, totalCalls))
-                if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
-                        ?.toIntOrNull() ?: -1
+                setStatusText(
+                    statusReportText,
+                    appContext.getString(R.string.call_log_export_progress, total, totalCalls)
+                )
+                if (BuildConfig.DEBUG && total == (prefs.getString("max_messages", "")
+                        ?.toIntOrNull() ?: -1)
                 ) break
             } while (it.moveToNext())
             hideProgressBar(progressBar)
@@ -230,9 +245,12 @@ private suspend fun smsToJSON(
                 jsonWriter.endObject()
                 total++
                 incrementProgress(progressBar)
-                setStatusText(statusReportText, appContext.getString(R.string.sms_export_progress, total, totalSms))
-                if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
-                        ?.toIntOrNull() ?: -1
+                setStatusText(
+                    statusReportText,
+                    appContext.getString(R.string.sms_export_progress, total, totalSms)
+                )
+                if (BuildConfig.DEBUG && total == (prefs.getString("max_messages", "")
+                        ?.toIntOrNull() ?: -1)
                 ) break
             } while (it.moveToNext())
             hideProgressBar(progressBar)
@@ -376,9 +394,12 @@ private suspend fun mmsToJSON(
                 jsonWriter.endObject()
                 total++
                 incrementProgress(progressBar)
-                setStatusText(statusReportText, appContext.getString(R.string.mms_export_progress, total, totalMms))
-                if (BuildConfig.DEBUG && total == prefs.getString("max_messages", "")
-                        ?.toIntOrNull() ?: -1
+                setStatusText(
+                    statusReportText,
+                    appContext.getString(R.string.mms_export_progress, total, totalMms)
+                )
+                if (BuildConfig.DEBUG && total == (prefs.getString("max_messages", "")
+                        ?.toIntOrNull() ?: -1)
                 ) break
             } while (it.moveToNext())
             hideProgressBar(progressBar)
@@ -543,10 +564,10 @@ suspend fun importMessages(
                         }
                         jsonReader.endObject()
                         if (!messageMetadata.containsKey("m_type")) { // it's SMS
-                            if (!prefs.getBoolean("sms", true) || totals.sms == prefs.getString(
+                            if (!prefs.getBoolean("sms", true) || totals.sms == (prefs.getString(
                                     "max_messages",
                                     ""
-                                )?.toIntOrNull() ?: -1
+                                )?.toIntOrNull() ?: -1)
                             ) continue
                             val fieldNames = mutableSetOf<String>()
                             fieldNames.addAll(messageMetadata.keySet())
@@ -564,13 +585,20 @@ suspend fun importMessages(
                                 Log.v(LOG_TAG, "SMS insert failed!")
                             } else {
                                 totals.sms++
-                                setStatusText(statusReportText, appContext.getString(R.string.message_import_progress, totals.sms, totals.mms))
+                                setStatusText(
+                                    statusReportText,
+                                    appContext.getString(
+                                        R.string.message_import_progress,
+                                        totals.sms,
+                                        totals.mms
+                                    )
+                                )
                             }
                         } else { // it's MMS
-                            if (!prefs.getBoolean("mms", true) || totals.mms == prefs.getString(
+                            if (!prefs.getBoolean("mms", true) || totals.mms == (prefs.getString(
                                     "max_messages",
                                     ""
-                                )?.toIntOrNull() ?: -1
+                                )?.toIntOrNull() ?: -1)
                             ) continue
                             val fieldNames = mutableSetOf<String>()
                             fieldNames.addAll(messageMetadata.keySet())
@@ -593,7 +621,14 @@ suspend fun importMessages(
                                 Log.v(LOG_TAG, "MMS insert failed!")
                             } else {
                                 totals.mms++
-                                setStatusText(statusReportText, appContext.getString(R.string.message_import_progress, totals.sms, totals.mms))
+                                setStatusText(
+                                    statusReportText,
+                                    appContext.getString(
+                                        R.string.message_import_progress,
+                                        totals.sms,
+                                        totals.mms
+                                    )
+                                )
 //                                Log.v(LOG_TAG, "MMS insert succeeded!")
                                 val messageId = insertUri.lastPathSegment
                                 val addressUri = Uri.parse("content://mms/$messageId/addr")
@@ -640,7 +675,12 @@ suspend fun importMessages(
     }
 }
 
-suspend fun importCallLog(appContext: Context, uri: Uri): Int {
+suspend fun importCallLog(
+    appContext: Context,
+    uri: Uri,
+    progressBar: ProgressBar,
+    statusReportText: TextView
+): Int {
     return withContext(Dispatchers.IO) {
         val callLogColumns = mutableSetOf<String>()
         val callLogCursor = appContext.contentResolver.query(
@@ -649,6 +689,7 @@ suspend fun importCallLog(appContext: Context, uri: Uri): Int {
         )
         callLogCursor?.use { callLogColumns.addAll(it.columnNames) }
         var callLogCount = 0
+        initIndeterminateProgressBar(progressBar)
         uri.let {
             appContext.contentResolver.openInputStream(it).use { inputStream ->
                 BufferedReader(InputStreamReader(inputStream)).use { reader ->
@@ -674,18 +715,32 @@ suspend fun importCallLog(appContext: Context, uri: Uri): Int {
                         }
                         if (insertUri == null) {
                             Log.v(LOG_TAG, "Call log insert failed!")
-                        } else callLogCount++
+                        } else {
+                            callLogCount++
+                            setStatusText(
+                                statusReportText,
+                                appContext.getString(
+                                    R.string.call_log_import_progress,
+                                    callLogCount
+                                )
+                            )
+                        }
                         jsonReader.endObject()
                     }
                     jsonReader.endArray()
                 }
             }
+            hideProgressBar(progressBar)
             callLogCount
         }
     }
 }
 
-suspend fun wipeSmsAndMmsMessages(appContext: Context, statusReportText: TextView, progressBar: ProgressBar) {
+suspend fun wipeSmsAndMmsMessages(
+    appContext: Context,
+    statusReportText: TextView,
+    progressBar: ProgressBar
+) {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     withContext(Dispatchers.IO) {
         if (prefs.getBoolean("sms", true)) {

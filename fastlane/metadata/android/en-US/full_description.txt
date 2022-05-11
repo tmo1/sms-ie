@@ -1,3 +1,10 @@
 SMS Import / Export imports and exports SMS and MMS messages and call logs from and to JSON files. It does not require root.
 
+The primary author of SMS Import / Export is Thomas More. Others have contributed code and translations. The software is copyright 2021-2022, and is released under the GNU General Public Licence version 3.
+
+Homepage:	https://github.com/tmo1/sms-ie
+Documentation:	https://github.com/tmo1/sms-ie#readme
+Issue tracker:	https://github.com/tmo1/sms-ie/issues
+
 SMS Import / Export is a sibling project to <a href="https://github.com/tmo1/sms-db">sms-db</a>, a Linux tool to build an SQLite database out of collections of SMS and MMS messages in various formats. sms-db can import JSON files created by SMS Import / Export, and it can export its database to JSON files that can be imported by SMS Import / Export.
+

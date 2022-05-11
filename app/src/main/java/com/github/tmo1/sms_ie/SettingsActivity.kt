@@ -81,11 +81,11 @@ class SettingsActivity : AppCompatActivity() {
                         context?.let { updateExportWork(it) }
                     }
                 }
-            prefs.registerOnSharedPreferenceChangeListener(prefListener)
+            prefs?.registerOnSharedPreferenceChangeListener(prefListener)
         }
 
         // from: https://old.black/2020/09/18/building-custom-timepicker-dialog-preference-in-android-kotlin/
-        override fun onDisplayPreferenceDialog(preference: Preference?) {
+        override fun onDisplayPreferenceDialog(preference: Preference) {
             when (preference) {
                 is TimePickerPreference -> {
                     val timePickerDialog = TimePreferenceDialog.newInstance(preference.key)
@@ -122,7 +122,7 @@ class SettingsActivity : AppCompatActivity() {
                         }
                     }*/
                 }
-                prefs.edit {
+                prefs?.edit {
                     putString(EXPORT_DIR, treeUri.toString())
                 }
                 updateExportDirPreferenceSummary()
@@ -146,7 +146,7 @@ class SettingsActivity : AppCompatActivity() {
 
         private fun updateExportDirPreferenceSummary() {
             findPreference<Preference>(EXPORT_DIR)?.summary =
-                Uri.decode(prefs.getString(EXPORT_DIR, ""))
+                Uri.decode(prefs?.getString(EXPORT_DIR, ""))
         }
     }
 }

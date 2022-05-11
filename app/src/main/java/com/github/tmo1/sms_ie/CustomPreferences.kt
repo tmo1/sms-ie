@@ -26,7 +26,7 @@ import android.util.AttributeSet
 import androidx.preference.DialogPreference
 
 // from: https://old.black/2020/09/18/building-custom-timepicker-dialog-preference-in-android-kotlin/
-class TimePickerPreference(context: Context?, attrs: AttributeSet?) : DialogPreference(context, attrs) {
+class TimePickerPreference(context: Context, attrs: AttributeSet?) : DialogPreference(context, attrs) {
 
     // Get saved preference value (in minutes from midnight, so 1 AM is represented as 1*60 here
     fun getPersistedMinutesFromMidnight(): Int {
