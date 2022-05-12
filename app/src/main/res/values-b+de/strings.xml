@@ -20,9 +20,6 @@
 
 <resources>
     <string name="app_name">SMS Import / Export</string>
-    <string name="begin_exporting_messages">Nachrichten exportieren …</string>
-    <string name="begin_importing_messages">Nachrichten importieren …</string>
-    <string name="begin_exporting_call_log">Exporting call log …</string>
     <string name="export_messages_results">%1$d SMS(s) und %2$d MMS(s) exportiert.\nZeitaufwand: %3$s</string>
     <string name="import_messages_results">%1$d SMS(s) und %2$d MMS(s) importiert.\nZeitaufwand: %3$s</string>
     <string name="export_call_log_results">%1$d Anruf(e) exportiert.\nZeitaufwand: %2$s</string>
