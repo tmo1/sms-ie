@@ -40,10 +40,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.*
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     if (ContextCompat.checkSelfPermission(
