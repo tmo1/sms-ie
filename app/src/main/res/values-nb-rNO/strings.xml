@@ -1,2 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">SMS-import/eksport</string>
+    <string name="import_call_log_button_label">Importer anropslogg</string>
+    <string name="ready">Klar</string>
+    <string name="call_log_import_progress">%1$d samtale(r) importert</string>
+    <string name="sms_export_progress">%1$d av %2$d SMS(-er) eksportert</string>
+    <string name="mms_export_progress">%1$d av %2$d MMS(-er) eksportert</string>
+    <string name="import_messages_results">%1$d SMS(-er) og %2$d MMS(er) importert
+\ni løpet av %3$s.</string>
+    <string name="export_call_log_results">%1$d anrop eksportert
+\ni løpet av %2$s.</string>
+    <string name="import_call_log_results">%1$d anrop importert
+\ni løpet av %2$s.</string>
+    <string name="call_logs_permissions_required">Eksportering av anropslogger krever tilgang til å lese anropslogg og kontaktliste.</string>
+    <string name="sms_permissions_required">Eksportering av meldinger krever tilgang til å lese SMS-er og kontaktliste.</string>
+    <string name="default_sms_app_requirement">Programmet må være forvalgt meldingsprogram for å importere eller slette meldinger.</string>
+    <string name="title_activity_settings">Innstillingsaktivitet</string>
+    <string name="channel_name">Merknadskanal</string>
+    <string name="scheduled_export_success">%1$d SMS(-er), %2$d MMS(-er), og %3$d anrop eksportert.</string>
+    <string name="wipe_messages">Tøm meldinger</string>
+    <string name="homepage">Hjemmeside:</string>
+    <string name="app_about_text">SMS-import/eksport
+\n
+\nav Thomas More og andre bidragsytere
+\n
+\nVersjon %1$s
+\n
+\nOpphavsrett © 2021–22
+\n
+\nLisensiert GPLv3+</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="scheduled_export_failure">Eksport mislyktes. Sjekk logcat for detaljer.</string>
+    <string name="dialog_confirm_wipe">Advarsel: Vil du slette alle meldinger fra enheten for godt, uten å kunne angre\?</string>
+    <string name="about">Om</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="export_messages_button_label">Eksporter meldinger</string>
+    <string name="import_messages_button_label">Importer meldinger</string>
+    <string name="export_call_log_button_label">Eksporter anropslogg</string>
+    <string name="call_log_export_progress">%1$d av %2$d samtale(r) eksportert</string>
+    <string name="documentation">Dokumentasjon:</string>
+    <string name="message_import_progress">%1$d SMS(-er) og %2$d MMS(-er) importert</string>
+    <string name="export_messages_results">%1$d SMS(-er) og %2$d MMS(er) eksportert
+\ni løpet av %3$s.</string>
+    <string name="issue_tracker">Feilsporer:</string>
+    <string name="settings">Innstillinger</string>
+    <string name="scheduled_export_executed">Planlagt eksport kjørt</string>
+    <string name="include_binary_data">Inkluder (kodet) binær MMS-data</string>
+    <string name="channel_description">Merknadskanal</string>
+    <string name="cancel">Avbryt</string>
+    <string name="not_jsonarray_message">Filen ser ikke ut til å være et gyldig JSON-array.</string>
+    <string name="wipe">Tøm</string>
+    <string name="wipe_cancelled">Tømming avbrutt</string>
+    <string name="messages_wiped">Meldinger tømt</string>
+    <string name="wiping_sms_messages">Tømmer SMS-meldinger …</string>
+    <string name="wiping_mms_messages">Tømmer MMS-meldinger …</string>
+    <string name="call_logs_read_write_permissions_required">Importering av anropslogger krever tilgang til å lese og skrive anropslogg.</string>
+</resources>
