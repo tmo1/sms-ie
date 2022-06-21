@@ -1,2 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="scheduled_export_success">导出了 %1$d 条短信、%2$d 条彩信、%3$d 条通话记录。</string>
+    <string name="scheduled_export_executed">已按指定时间导出</string>
+    <string name="wipe_messages">擦除消息</string>
+    <string name="cancel">取消</string>
+    <string name="homepage">主页：</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="export_messages_button_label">导出消息</string>
+    <string name="import_messages_button_label">导入消息</string>
+    <string name="export_call_log_button_label">导出通话记录</string>
+    <string name="ready">软件可以运行</string>
+    <string name="call_log_import_progress">导入了 %1$d 条通话记录</string>
+    <string name="sms_export_progress">共 %2$d 条短信，导出了 %1$d 条</string>
+    <string name="mms_export_progress">共 %2$d 条彩信，导出了 %1$d 条</string>
+    <string name="message_import_progress">导入了 %1$d 条短信、%2$d 条彩信</string>
+    <string name="export_messages_results">导出了 %1$d 条短信、%2$d 条彩信
+\n用时 %3$s</string>
+    <string name="default_sms_app_requirement">需将本应用程序作为默认的短信应用，以便导入及擦除消息。</string>
+    <string name="settings">设置</string>
+    <string name="include_binary_data">不排除掉（经编码的）二进制彩信数据</string>
+    <string name="wipe_cancelled">取消了擦除命令</string>
+    <string name="messages_wiped">消息已经擦除了</string>
+    <string name="wiping_sms_messages">正在擦除短信消息……</string>
+    <string name="wiping_mms_messages">正在擦除彩信消息……</string>
+    <string name="app_about_text">短信导入导出
+\n
+\n软件由 Thomas More 等人开发制作
+\n
+\n%1$s 版
+\n
+\nCopyright © 2021–22
+\n
+\n以 GNU GPLv3 发布</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="documentation">应用说明和开发背景：</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="issue_tracker">交流本软件的问题：</string>
+    <string name="about">应用简介</string>
+    <string name="scheduled_export_failure">导出失败——具体怎么回事，请查看软件日志。</string>
+    <string name="app_name">短信导入导出</string>
+    <string name="import_call_log_button_label">导入通话记录</string>
+    <string name="call_log_export_progress">共 %2$d 条通话记录，导出了 %1$d 条</string>
+    <string name="export_call_log_results">导出了 %1$d 条通话记录
+\n用时 %2$s</string>
+    <string name="wipe">删除</string>
+    <string name="import_messages_results">导入了 %1$d 条短信、%2$d 条彩信
+\n用时 %3$s</string>
+    <string name="import_call_log_results">导入了 %1$d 条通话记录
+\n用时 %2$s</string>
+    <string name="call_logs_permissions_required">导出通话记录的功能，需要读取通话记录及联系人的权限。</string>
+    <string name="sms_permissions_required">导出消息的功能，需要读取短信及联系人的权限。</string>
+    <string name="call_logs_read_write_permissions_required">导入通话记录的功能，需要读取、写入通话记录的权限。</string>
+    <string name="not_jsonarray_message">在文件中没找到有效的 JSONArray。</string>
+    <string name="dialog_confirm_wipe">警告：确定要永久删除本设备上的所有消息吗？无法撤销！</string>
+</resources>
