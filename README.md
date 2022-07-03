@@ -1,6 +1,6 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages and call logs from and to JSON files. Root is not required.
+SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages and call logs from and to JSON files. Root is not required. The app's primary language is English, but it is also available in German, French, Norwegian Bokmål, and Simplified Chinese.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
@@ -8,7 +8,7 @@ SMS Import / Export is a simple Android app that imports and exports SMS and MMS
 
 ## Installation
 
-SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, from the command line (e.g., by issuing `gradlew assembleDebug` in the root directory of the project) or within Android Studio. Prebuilt APK packages can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases).
+SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, from the command line (e.g., by issuing `gradlew assembleDebug` in the root directory of the project) or within Android Studio. Prebuilt APK packages can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/).
 
 ## Usage
 
@@ -82,25 +82,6 @@ Currently, no deduplication is done. For example, if messages are exported and t
 
 Although this is apparently not publicly officially documented, Android's Call Log has a fixed maximum number of calls that it will store ([500 in many / most versions of Android](https://android.gadgethacks.com/how-to/bypass-androids-call-log-limits-keep-unlimited-call-history-0175494/), 1000 in API 30 (version 11) on a Pixel (my own experience, corroborated [here](https://stackoverflow.com/questions/70501885/the-max-of-incoming-outgoing-or-missed-calls-logs-in-android)). Attempting to import calls when the log is full may fail, in which case the app will not report an error, but the reported number of imported calls will be lower then the number of calls provided for import. E.g., if calls are exported from a phone with a full log, and the output file is then reimported, the app will report 0 calls imported.
 
-## sms-db
-
-SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms-db), a Linux tool to build an SQLite database out of collections of SMS and MMS messages in various formats. sms-db can import JSON files created by SMS Import / Export, and it can export its database to JSON files that can be imported by SMS Import / Export.
-
-## Contributors
-
-The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app:
-
- - [sxwxs](https://github.com/sxwxs): call log export support
- - [vbh (Bindu)](https://github.com/vbh): call log import support
- - [nautilusx](https://github.com/nautilusx): German translation
- - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
- - [baitmooth](https://github.com/baitmooth): additions to German translation
- - [Jan Hustak (codingjourney)](https://github.com/codingjourney): [bug fix](https://github.com/tmo1/sms-ie/pull/30)
- 
-## Background
-
-Coming from a procedural, command line interface, synchronous, Linux, Perl and Python background, the development of SMS Import / Export served as a crash course in object-oriented, graphical user interface, asynchronous, Android, Kotlin programming, and consequently entailed a fair amount of amateurishness and cargo cult programming. After much work and learning, however, the app does seem to function correctly and effectively.
-
 ## Bugs, Feature Requests, and Other Issues
 
 Bugs, feature requests, and other issues can be filed at [the SMS Import / Export issue tracker](https://github.com/tmo1/sms-ie/issues). When reporting any problem with the app, please specify the version of the app used for export and / or import, as applicable. When reporting a crash, particularly a reproducible one, please attach a logcat. Instructions for doing so (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
@@ -111,6 +92,35 @@ The following are various features and improvements to the app that have been su
 
  - Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
 
+## Contributions
+
+Code can be contributed via [pull request](https://github.com/tmo1/sms-ie/pulls), but for any substantial changes or additions to the existing codebase, please first [open an issue](https://github.com/tmo1/sms-ie/issues) to discuss the proposed changes or additions. All contributed code should be licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) or later.
+
+SMS Import / Export is integrated with [Weblate](https://weblate.org). New translations, or additions, corrections, and improvements to existing ones, can be submitted via [SMS Import / Export @ Hosted Weblate](https://hosted.weblate.org/projects/sms-import-export/), or by ordinary [pull requests  against the SMS Import / Export repository](https://github.com/tmo1/sms-ie/pulls).
+
+The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app:
+
+ - [sxwxs](https://github.com/sxwxs): call log export support
+ - [Bindu (vbh)](https://github.com/vbh): call log import support
+ - [nautilusx](https://github.com/nautilusx): German translation
+ - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
+ - [baitmooth](https://github.com/baitmooth): additions to German translation
+ - [Jan Hustak (codingjourney)](https://github.com/codingjourney): [bug fix](https://github.com/tmo1/sms-ie/pull/30)
+ - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
+ - poi: Simplified Chinese translation
+
+## Privacy
+
+SMS Import / Export does no tracking, advertising, or phoning home. No user data is stored or transmitted anywhere except as explicitly designated by the user.
+
+## sms-db
+
+SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms-db), a Linux tool to build an SQLite database out of collections of SMS and MMS messages in various formats. sms-db can import JSON files created by SMS Import / Export, and it can export its database to JSON files that can be imported by SMS Import / Export.
+
+## Background
+
+Coming from a procedural, command line interface, synchronous, Linux, Perl and Python background, the development of SMS Import / Export served as a crash course in object-oriented, graphical user interface, asynchronous, Android, Kotlin programming, and consequently entailed a fair amount of amateurishness and cargo cult programming. After much work and learning, however, the app does seem to function correctly and effectively.
+
 ## License
 
-SMS Import / Export is free / open source software, released under the terms of the [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
+SMS Import / Export is free / open source software, released under the terms of the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) or later.
