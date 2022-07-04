@@ -43,7 +43,7 @@
     <string name="import_call_log_results">%1$d Anruf(e) importiert.\nZeitaufwand: %2$s</string>
     <string name="sms_permissions_required">Das Exportieren von Nachrichten erfordert die Berechtigung zum Lesen von SMS und Kontakten.</string>
     <string name="default_sms_app_requirement">Diese App muss die Standard-SMS-App sein, damit Nachrichten importiert oder gelöscht werden können.</string>
-    <string name="call_logs_permissions_required">Exportieren der Anrufliste erfordert die Berichtigungen zum Lesen der Anrufliste und Kontakte.</string>
+    <string name="call_logs_permissions_required">Das Exportieren der Anrufliste erfordert die Berichtigungen zum Lesen der Anrufliste und Kontakte.</string>
     <string name="call_logs_read_write_permissions_required">Der Import von Anruflisten erfordert die Berechtigung zum Lesen und Schreiben von Anruflisten.</string>
     <string name="not_jsonarray_message">Die Datei scheint kein gültiges JSON-Array zu enthalten.</string>
     <string name="title_activity_settings">Aktivitäten festlegen</string>
