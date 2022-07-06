@@ -194,9 +194,12 @@ private suspend fun callLogToJSON(
                 // From the documentation at https://developer.android.com/reference/android/provider/CallLog.Calls#CACHED_NAME
                 // "The cached name associated with the phone number, if it exists.
                 // This value is typically filled in by the dialer app for the caching purpose, so it's not guaranteed to be present, and may not be current if the contact information associated with this number has changed."
-                val displayName =
-                    lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
-                if (displayName != null) jsonWriter.name("display_name").value(displayName)
+                val address = it.getString(addressIndex)
+                if (address != null) {
+                    val displayName =
+                        lookupDisplayName(appContext, displayNames, address)
+                    if (displayName != null) jsonWriter.name("display_name").value(displayName)
+                }
                 jsonWriter.endObject()
                 total++
                 incrementProgress(progressBar)
@@ -236,9 +239,12 @@ private suspend fun smsToJSON(
                     val value = it.getString(i)
                     if (value != null) jsonWriter.name(columnName).value(value)
                 }
-                val displayName =
-                    lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
-                if (displayName != null) jsonWriter.name("display_name").value(displayName)
+                val address = it.getString(addressIndex)
+                if (address != null) {
+                    val displayName =
+                        lookupDisplayName(appContext, displayNames, address)
+                    if (displayName != null) jsonWriter.name("display_name").value(displayName)
+                }
                 jsonWriter.endObject()
                 total++
                 incrementProgress(progressBar)
