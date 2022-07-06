@@ -108,6 +108,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Jan Hustak (codingjourney)](https://github.com/codingjourney): [bug fix](https://github.com/tmo1/sms-ie/pull/30)
  - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
  - poi: Simplified Chinese translation
+ - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): [bug fix](https://github.com/tmo1/sms-ie/pull/39)
 
 ## Privacy
 
