@@ -1,2 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="export_messages_button_label">Exportar Mensagens</string>
+    <string name="import_messages_button_label">Importar Mensagens</string>
+    <string name="export_call_log_button_label">Exportar Registo de Chamadas</string>
+    <string name="import_call_log_button_label">Importar Registo de Chamadas</string>
+    <string name="ready">Preparado</string>
+    <string name="sms_export_progress">%1$d de %2$d SMS(s) exportadas</string>
+    <string name="mms_export_progress">%1$d de %2$d MMS(s) exportadas</string>
+    <string name="message_import_progress">%1$d SMS(s) e %2$d MMS(s) importadas</string>
+    <string name="export_messages_results">%1$d SMS(s) e %2$d MMS(s) exportadas
+\nTempo utilizado: %3$s</string>
+    <string name="import_messages_results">%1$d SMS(s) e %2$d MMS(s) importadas
+\nTempo utilizado: %3$s</string>
+    <string name="import_call_log_results">%1$d chamada(s) importadas
+\nTempo utilizado: %2$s</string>
+    <string name="export_call_log_results">%1$d chamada(s) exportadas
+\nTempo utilizado: %2$s</string>
+    <string name="sms_permissions_required">A exportação de mensagens requer permissão para ler SMSs e contactos.</string>
+    <string name="default_sms_app_requirement">Esta aplicação tem de ser a aplicação de SMS padrão para importar ou apagar mensagens.</string>
+    <string name="call_logs_permissions_required">A exportação de registo de chamadas requer permissão para ler os Registos das Chamadas e os Contactos.</string>
+    <string name="call_logs_read_write_permissions_required">A importação de Registos de Chamadas requer permissão para ler e escrever registos de chamadas.</string>
+    <string name="not_jsonarray_message">O ficheiro não parece conter um JSONArray válido.</string>
+    <string name="settings">Definições</string>
+    <string name="include_binary_data">Incluir dados binários (codificados) das MMS</string>
+    <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), e %3$d chamadas exportadas.</string>
+    <string name="wipe_messages">Apagar Mensagens</string>
+    <string name="dialog_confirm_wipe">Aviso: Apagar permanentemente todas as mensagens deste equipamento, sem possibilidade de as recuperar\?</string>
+    <string name="wipe">Apagar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="wipe_cancelled">Eliminação cancelada</string>
+    <string name="messages_wiped">Mensagens apagadas</string>
+    <string name="wiping_sms_messages">A apagar mensagens SMS …</string>
+    <string name="wiping_mms_messages">A apagar mensagens MMS …</string>
+    <string name="documentation">Documentação:</string>
+    <string name="homepage">Homepage:</string>
+    <string name="channel_name">notification_channel</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="call_log_import_progress">%1$d chamada(s) importadas</string>
+    <string name="issue_tracker">Reportar de erros:</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="app_name">Importar / Exportar SMS</string>
+    <string name="about">Sobre</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="call_log_export_progress">%1$d de %2$d chamada(s) exportadas</string>
+    <string name="channel_description">Canal de Notificação</string>
+    <string name="scheduled_export_failure">Exportação sem sucesso — ver logcat para mais detalhes.</string>
+    <string name="scheduled_export_executed">Exportação agendada executada</string>
+    <string name="app_about_text">SMS Import / Export
+\n
+\npor Thomas More e outros contribuidores
+\n
+\nVersão %1$s
+\n
+\nCopyright © 2021–22
+\n
+\nDisponibilizado sob a GNU GPLv3</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+</resources>
