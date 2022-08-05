@@ -1,6 +1,6 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages and call logs from and to JSON files. Root is not required. The app's primary language is English, but it is also available in German, French, Norwegian Bokmål, and Simplified Chinese.
+SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages and call logs from and to JSON files. Root is not required.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
@@ -86,17 +86,30 @@ Although this is apparently not publicly officially documented, Android's Call L
 
 Bugs, feature requests, and other issues can be filed at [the SMS Import / Export issue tracker](https://github.com/tmo1/sms-ie/issues). When reporting any problem with the app, please specify the version of the app used for export and / or import, as applicable. When reporting a crash, particularly a reproducible one, please attach a logcat. Instructions for doing so (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
 
+## Translations
+
+SMS Import / Export has been translated (from the original English) into the following languages:
+
+ - German
+ - French
+ - Norwegian Bokmål
+ - Simplified Chinese
+ - Portuguese
+ 
+ To add a translation into a new language, or to correct, update, or improve an existing translation, see the [Contributions](#contributions) section below.
+ 
 ## TODO
 
 The following are various features and improvements to the app that have been suggested and may be implemented in the future:
 
  - Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
+ - Contacts import / export ([issue #26](https://github.com/tmo1/sms-ie/issues/26))
 
 ## Contributions
 
 Code can be contributed via [pull request](https://github.com/tmo1/sms-ie/pulls), but for any substantial changes or additions to the existing codebase, please first [open an issue](https://github.com/tmo1/sms-ie/issues) to discuss the proposed changes or additions. All contributed code should be licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) or later.
 
-SMS Import / Export is integrated with [Weblate](https://weblate.org). New translations, or additions, corrections, and improvements to existing ones, can be submitted via [SMS Import / Export @ Hosted Weblate](https://hosted.weblate.org/projects/sms-import-export/), or by ordinary [pull requests  against the SMS Import / Export repository](https://github.com/tmo1/sms-ie/pulls).
+SMS Import / Export is integrated with [Weblate](https://weblate.org). Translations into new languages, as well as corrections, updates, and improvements to existing translations, can be submitted via [SMS Import / Export @ Hosted Weblate](https://hosted.weblate.org/projects/sms-import-export/), or by ordinary [pull requests  against the SMS Import / Export repository](https://github.com/tmo1/sms-ie/pulls).
 
 The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app:
 
@@ -109,6 +122,8 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
  - poi: Simplified Chinese translation
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): [bug fix](https://github.com/tmo1/sms-ie/pull/39)
+ - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon
+ - [Merlignux](https://github.com/Merlignux): Portuguese translation
 
 ## Privacy
 
@@ -121,6 +136,10 @@ SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms
 ## Background
 
 Coming from a procedural, command line interface, synchronous, Linux, Perl and Python background, the development of SMS Import / Export served as a crash course in object-oriented, graphical user interface, asynchronous, Android, Kotlin programming, and consequently entailed a fair amount of amateurishness and cargo cult programming. After much work and learning, however, the app does seem to function correctly and effectively.
+
+## Donations
+
+SMS Import / Export is absolutely free software, and there is no expectation of any sort of compensation or support for the project. That being said, if anyone wishes to donate (to Thomas More, the app's primary author), this can be done via [the Ko-fi platform](https://ko-fi.com/thomasmore).
 
 ## License
 
