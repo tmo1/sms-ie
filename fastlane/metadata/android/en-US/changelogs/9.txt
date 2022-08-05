@@ -1,0 +1,12 @@
+ - Bug fixes
+
+ - New application icon
+
+ - Norwegian Bokmål translation
+
+ - Simplified Chinese translation
+
+ - Portuguese translation
+
+ - Update to German translation
+
