@@ -52,5 +52,6 @@
     <string name="sms_permissions_required">导出消息的功能，需要读取短信及联系人的权限。</string>
     <string name="call_logs_read_write_permissions_required">导入通话记录的功能，需要读取、写入通话记录的权限。</string>
     <string name="not_jsonarray_message">在文件中没找到有效的 JSONArray。</string>
-    <string name="dialog_confirm_wipe">警告：确定要永久删除本设备上的所有消息吗？无法撤销！</string>
+    <string name="dialog_confirm_wipe">警告：要无法撤销地永久擦除此设备上的所有消息吗？</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>
