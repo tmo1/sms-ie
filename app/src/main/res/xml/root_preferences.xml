@@ -50,6 +50,12 @@
             android:title="Export call logs"
             app:dependency="schedule_export" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="export_contacts"
+            android:title="Export contacts"
+            app:dependency="schedule_export" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Export options">

@@ -58,6 +58,8 @@ const val EXPORT_MESSAGES = 1
 const val IMPORT_MESSAGES = 2
 const val EXPORT_CALL_LOG = 3
 const val IMPORT_CALL_LOG = 4
+const val EXPORT_CONTACTS = 5
+const val IMPORT_CONTACTS = 6
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "MYLOG"
 const val CHANNEL_ID = "MYCHANNEL"
@@ -128,10 +130,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val importMessagesButton: Button = findViewById(R.id.import_messages_button)
         val importCallLogButton: Button = findViewById(R.id.import_call_log_button)
         val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
+        val exportContactsButton: Button = findViewById(R.id.export_contacts_button)
+        val importContactsButton: Button = findViewById(R.id.import_contacts_button)
         exportMessagesButton.setOnClickListener { exportMessagesFile() }
         importMessagesButton.setOnClickListener { importMessagesFile() }
         exportCallLogButton.setOnClickListener { exportCallLogFile() }
         importCallLogButton.setOnClickListener { importCallLogFile() }
+        exportContactsButton.setOnClickListener { exportContactsFile() }
+        importContactsButton.setOnClickListener { importContactsFile() }
         wipeAllMessagesButton.setOnClickListener { wipeMessages() }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -199,6 +205,29 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 Toast.LENGTH_LONG
             ).show()
         }
+    }
+
+    private fun exportContactsFile() {
+        if (checkReadContactsPermission(this)) {
+            val date = getCurrentDateTime()
+            val dateInString = date.toString("yyyy-MM-dd")
+            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/json"
+                putExtra(Intent.EXTRA_TITLE, "contacts-$dateInString.json")
+            }
+            startActivityForResult(intent, EXPORT_CONTACTS)
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.contacts_read_permission_required),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun importContactsFile() {
+        //TODO
     }
 
     private fun importMessagesFile() {
@@ -297,6 +326,23 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     statusReportText.text = getString(
                         R.string.import_call_log_results,
                         callsImported,
+                        formatElapsedTime(
+                            TimeUnit.SECONDS.convert(
+                                System.nanoTime() - startTime,
+                                TimeUnit.NANOSECONDS
+                            )
+                        )
+                    )
+                }
+            }
+        }
+        if (requestCode == EXPORT_CONTACTS && resultCode == Activity.RESULT_OK) {
+            resultData?.data?.let {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val contactsExported = exportContacts(applicationContext, it, progressBar, statusReportText)
+                    statusReportText.text = getString(
+                        R.string.export_contacts_results,
+                        contactsExported,
                         formatElapsedTime(
                             TimeUnit.SECONDS.convert(
                                 System.nanoTime() - startTime,

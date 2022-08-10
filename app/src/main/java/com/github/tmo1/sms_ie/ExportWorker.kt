@@ -41,6 +41,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         var result = Result.success()
         var messageTotal = MessageTotal()
         var callsTotal = 0
+        var contacts = 0
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val treeUri = Uri.parse(prefs.getString(EXPORT_DIR, ""))
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
@@ -80,12 +81,30 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     result = Result.failure()
                 }
             }
+
+            if (prefs.getBoolean("export_contacts", true)) {
+                val file =
+                    documentTree?.createFile("application/json", "contacts-$dateInString.json")
+                val fileUri = file?.uri
+                if (fileUri != null) {
+                    Log.v(LOG_TAG, "Beginning contacts export ...")
+                    contacts = exportContacts(context, fileUri, null, null)
+                    Log.v(
+                        LOG_TAG,
+                        "Contacts export successful: $contacts contacts exported"
+                    )
+                } else {
+                    Log.e(LOG_TAG, "Call logs export failed - could not create file.")
+                    result = Result.failure()
+                }
+            }
             // see: https://stackoverflow.com/a/8765766
             val notification = if (result == Result.success()) context.getString(
                 R.string.scheduled_export_success,
                 messageTotal.sms,
                 messageTotal.mms,
-                callsTotal
+                callsTotal,
+                contacts
             ) else context.getString(R.string.scheduled_export_failure)
             // https://developer.android.com/training/notify-user/build-notification#builder
             val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)

@@ -1,6 +1,6 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages and call logs from and to JSON files. Root is not required.
+SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages and call logs from and to JSON files. There is currently experimental support for exporting contacts. Root is not required.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
@@ -12,19 +12,16 @@ SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). 
 
 ## Usage
 
- - Export messages: Click the `Export Messages` button, then select an export destination.
- - Import messages: Click the `Import Messages` button, then select an import source.
- - Export call log: Click the `Export Call Log` button, then select an export destination.
- - Import call log: Click the `Import Call Log` button, then select an import source.
+ - Import or export messages, call log, or contacts: Click the respective button, then select an import or export source or destination. (Contacts import is not yet implemented.)
  - Wipe messages: Click the `Wipe Messages` button, then confirm by pressing the `Wipe` button in the pop-up dialog box.
 
-These operations may take some time for large numbers of messages or calls. The app will report the total number of SMS and MMS messages or calls exported or imported, and the elapsed time, upon successful conclusion.
+These operations may take some time for large numbers of messages, calls or contacts. The app will report the total number of SMS and MMS messages, calls, or contacts imported or exported, and the elapsed time, upon successful conclusion.
 
 By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a file that is much smaller and more easily browsable by humans. (The setting is currently ignored on import.)
 
 ### Scheduled Export
 
-To enable the scheduled export of messages and / or call logs, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select whether to export messages and / or call logs.) The app will then attempt to export messages and / or call logs to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
+To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
 
 ### Permissions
 
@@ -37,6 +34,8 @@ To import or wipe messages, SMS Import / Export must be the default messaging ap
 To export call logs, SMS Import / Export must be granted permission to read Call Logs and Contacts (the need for the latter is explained below). Currently, the app does not ask for the former permission, and it must be granted by the user on his own initiative.
 
 To import call logs, SMS Import / Export must be granted permission to read and write Call Logs.
+
+To export contacts, SMS Import / Export must be granted permisson to read Contacts.
 
 ### Contacts
 
@@ -74,13 +73,29 @@ The exported JSON is an array of JSON objects representing calls. Each JSON call
 >
 > This value is typically filled in by the dialer app for the caching purpose, so it's not guaranteed to be present, and may not be current if the contact information associated with this number has changed.
 
+### Contacts
+
+As explained in [the official documentation](https://developer.android.com/guide/topics/providers/contacts-provider), Android stores contacts in a complex system of three related database tables:
+
+ - `[ContactsContract.Contacts](https://developer.android.com/reference/android/provider/ContactsContract.Contacts)`: Rows representing different people, based on aggregations of raw contact rows.
+ - `[ContactsContract.RawContacts](https://developer.android.com/reference/android/provider/ContactsContract.RawContacts)`: Rows containing a summary of a person's data, specific to a user account and type. 
+ - `[ContactsContract.Data](https://developer.android.com/reference/android/provider/ContactsContract.Data)`: Rows containing the details for raw contact, such as email addresses or phone numbers.
+ 
+SMS Import / Export simply dumps these tables in structured JSON format, resulting in a rather cluttered representation of the data with a great deal of repetition and redundancy. This is in accordance with the design principles of the app, which prioritize making sure that no useful information is excluded from the export, and avoiding the code complexity and coding time that would be necessary to filter and / or reorganize the raw data.
+
+The exported JSON is an array of JSON objects representing aggregated contacts, each containing a series of tag-value pairs taken directly from the `Contacts` table. To each contact JSON object, a tag-value pair of the form `"raw_contacts": [ { ... }, { ... }]` is added, where the child JSON objects represent the (aggregated) contacts' associated raw contacts, and each contain a series of tag-value pairs taken directly from the `RawContacts` table. To each raw contact JSON object, a tag-value pair of the form `"contacts_data": [ { ... }, { ... }]` is added, where the child JSON objects represent the raw contacts' associated data (i.e., the actual details of the contacts, such as phone numbers, postal mail addresses, and email addresses), and each contain a series of tag-value pairs taken directly from the `Data` table.
+
+Currently, [social stream data](https://developer.android.com/guide/topics/providers/contacts-provider#SocialStream), [contact groups](https://developer.android.com/guide/topics/providers/contacts-provider#Groups), and [contact photos](https://developer.android.com/guide/topics/providers/contacts-provider#Photos) are not exported.
+
+Contacts export is currently considered experimental, and the JSON format is subject to change. Contacts import is not yet supported, but will hopefully be added soon.
+
 ## Limitations
 
 Currently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message. To avoid this, the device can be wiped of all messages before importing by using the `Wipe Messages` button.
 
 ### Call Log Maximum Capacity
 
-Although this is apparently not publicly officially documented, Android's Call Log has a fixed maximum number of calls that it will store ([500 in many / most versions of Android](https://android.gadgethacks.com/how-to/bypass-androids-call-log-limits-keep-unlimited-call-history-0175494/), 1000 in API 30 (version 11) on a Pixel (my own experience, corroborated [here](https://stackoverflow.com/questions/70501885/the-max-of-incoming-outgoing-or-missed-calls-logs-in-android)). Attempting to import calls when the log is full may fail, in which case the app will not report an error, but the reported number of imported calls will be lower then the number of calls provided for import. E.g., if calls are exported from a phone with a full log, and the output file is then reimported, the app will report 0 calls imported.
+Although this is apparently not publicly officially documented, Android's Call Log has a fixed maximum number of calls that it will store ([500 in many / most versions of Android](https://android.gadgethacks.com/how-to/bypass-androids-call-log-limits-keep-unlimited-call-history-0175494/), 1000 in API 30 (version 11) on a Pixel [my own experience, corroborated [here](https://stackoverflow.com/questions/70501885/the-max-of-incoming-outgoing-or-missed-calls-logs-in-android)]). Attempting to import calls when the log is full may fail, in which case the app will not report an error, but the reported number of imported calls will be lower then the number of calls provided for import. E.g., if calls are exported from a phone with a full log, and the output file is then imported to the same phone, the app will report 0 calls imported.
 
 ## Bugs, Feature Requests, and Other Issues
 
@@ -124,6 +139,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): [bug fix](https://github.com/tmo1/sms-ie/pull/39)
  - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon
  - [Merlignux](https://github.com/Merlignux): Portuguese translation
+ - Eric: update to Simplified Chinese translation
 
 ## Privacy
 

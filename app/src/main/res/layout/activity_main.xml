@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:text="@string/export_call_log_button_label"
         app:layout_constraintTop_toBottomOf="@+id/export_messages_button"
-        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+        app:layout_constraintBottom_toTopOf="@id/export_contacts_button"
         app:layout_constraintEnd_toStartOf="@+id/import_call_log_button"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
@@ -77,17 +77,39 @@
         android:layout_height="wrap_content"
         android:text="@string/import_call_log_button_label"
         app:layout_constraintTop_toBottomOf="@+id/import_messages_button"
-        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+        app:layout_constraintBottom_toTopOf="@id/import_contacts_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/export_call_log_button" />
+
+    <Button
+        android:id="@+id/export_contacts_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/export_contacts"
+        app:layout_constraintTop_toBottomOf="@+id/export_call_log_button"
+        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+        app:layout_constraintEnd_toStartOf="@+id/import_contacts_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/import_contacts_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/import_contacts"
+        app:layout_constraintTop_toBottomOf="@+id/import_call_log_button"
+        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/export_contacts_button" />
 
     <Button
         android:id="@+id/wipe_all_messages_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/wipe_messages"
-        app:layout_constraintTop_toBottomOf="@id/export_call_log_button"
+        app:layout_constraintTop_toBottomOf="@id/export_contacts_button"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

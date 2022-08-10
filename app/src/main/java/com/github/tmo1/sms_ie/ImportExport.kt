@@ -91,6 +91,13 @@ fun checkReadWriteCallLogPermissions(appContext: Context): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
+fun checkReadContactsPermission(appContext: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        appContext,
+        Manifest.permission.READ_CONTACTS
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
 fun lookupDisplayName(
     appContext: Context,
     displayNames: MutableMap<String, String?>,

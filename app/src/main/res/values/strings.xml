@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
   ~ Copyright (c) 2021-2022 Thomas More
   ~
@@ -17,7 +16,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  -->
+<resources>
     <string name="app_name">SMS Import / Export</string>
     <string name="export_messages_button_label">Export Messages</string>
     <string name="import_messages_button_label">Import Messages</string>
@@ -37,14 +37,17 @@
     <string name="sms_export_progress">%1$d of %2$d SMS(s) exported</string>
     <string name="mms_export_progress">%1$d of %2$d MMS(s) exported</string>
     <string name="message_import_progress">%1$d SMS(s) and %2$d MMS(s) imported</string>
+    <string name="contacts_export_progress">%1$d of %2$d contact(s) exported</string>
     <string name="export_messages_results">%1$d SMS(s) and %2$d MMS(s) exported\nElapsed time: %3$s</string>
     <string name="import_messages_results">%1$d SMS(s) and %2$d MMS(s) imported\nElapsed time: %3$s</string>
     <string name="export_call_log_results">%1$d call(s) exported\nElapsed time: %2$s</string>
     <string name="import_call_log_results">%1$d call(s) imported\nElapsed time: %2$s</string>
+    <string name="export_contacts_results">%1$d contact(s) exported\nElapsed time: %2$s.</string>
     <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and contacts.</string>
     <string name="default_sms_app_requirement">This app must be the default SMS app to import or wipe messages.</string>
     <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call Logs and Contacts.</string>
     <string name="call_logs_read_write_permissions_required">Importing call logs requires permission to read and write call logs.</string>
+    <string name="contacts_read_permission_required">Exporting contacts requires permission to read Contacts.</string>
     <string name="not_jsonarray_message">The file does not seem to contain a valid JSONArray.</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="settings">Settings</string>
@@ -52,7 +55,7 @@
     <string name="channel_name">notification_channel</string>
     <string name="channel_description">Notification Channel</string>
     <string name="scheduled_export_executed">Scheduled export executed</string>
-    <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), and %3$d calls exported.</string>
+    <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d calls, and %4$d contacts exported.</string>
     <string name="scheduled_export_failure">Export unsuccessful — see logcat for more details.</string>
     <string name="wipe_messages">Wipe Messages</string>
     <string name="dialog_confirm_wipe">Warning: Wipe all messages from this device permanently, without being able to undo it\?</string>
@@ -70,4 +73,6 @@
     <string name="issue_tracker">Issue tracker:</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="about">About</string>
+    <string name="export_contacts">Export Contacts</string>
+    <string name="import_contacts">Import Contacts</string>
 </resources>
