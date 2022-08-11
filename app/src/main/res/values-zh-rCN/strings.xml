@@ -54,4 +54,5 @@
     <string name="not_jsonarray_message">在文件中没找到有效的 JSONArray。</string>
     <string name="dialog_confirm_wipe">警告：要无法撤销地永久擦除此设备上的所有消息吗？</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="channel_description">通知通道</string>
 </resources>
