@@ -34,7 +34,6 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.Telephony
 import android.text.format.DateUtils.formatElapsedTime
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -132,13 +131,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
         val exportContactsButton: Button = findViewById(R.id.export_contacts_button)
         val importContactsButton: Button = findViewById(R.id.import_contacts_button)
-        exportMessagesButton.setOnClickListener { exportMessagesFile() }
-        importMessagesButton.setOnClickListener { importMessagesFile() }
-        exportCallLogButton.setOnClickListener { exportCallLogFile() }
-        importCallLogButton.setOnClickListener { importCallLogFile() }
-        exportContactsButton.setOnClickListener { exportContactsFile() }
-        importContactsButton.setOnClickListener { importContactsFile() }
-        wipeAllMessagesButton.setOnClickListener { wipeMessages() }
+        exportMessagesButton.setOnClickListener { exportMessagesManual() }
+        importMessagesButton.setOnClickListener { importMessagesManual() }
+        exportCallLogButton.setOnClickListener { exportCallLogManual() }
+        importCallLogButton.setOnClickListener { importCallLogManual() }
+        exportContactsButton.setOnClickListener { exportContactsManual() }
+        importContactsButton.setOnClickListener { importContactsManual() }
+        wipeAllMessagesButton.setOnClickListener { wipeMessagesManual() }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -160,7 +159,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    private fun exportMessagesFile() {
+    private fun exportMessagesManual() {
         /*if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_SMS
@@ -188,7 +187,24 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    private fun exportCallLogFile() {
+    private fun importMessagesManual() {
+        if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type =
+                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+            }
+            startActivityForResult(intent, IMPORT_MESSAGES)
+        } else {
+            Toast.makeText(
+                this@MainActivity,
+                getString(R.string.default_sms_app_requirement),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun exportCallLogManual() {
         if (checkReadCallLogsContactsPermissions(this)) {
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
@@ -207,7 +223,24 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    private fun exportContactsFile() {
+    private fun importCallLogManual() {
+        if (checkReadWriteCallLogPermissions(this)) {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type =
+                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+            }
+            startActivityForResult(intent, IMPORT_CALL_LOG)
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.call_logs_read_write_permissions_required),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun exportContactsManual() {
         if (checkReadContactsPermission(this)) {
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
@@ -226,18 +259,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    private fun importContactsFile() {
+    private fun importContactsManual() {
         //TODO
     }
 
-    private fun importMessagesFile() {
+    private fun wipeMessagesManual() {
         if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type =
-                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-            }
-            startActivityForResult(intent, IMPORT_MESSAGES)
+            ConfirmWipeFragment().show(supportFragmentManager, "wipe")
         } else {
             Toast.makeText(
                 this@MainActivity,
@@ -322,7 +350,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (requestCode == IMPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val callsImported = importCallLog(applicationContext, it, progressBar, statusReportText)
+                    val callsImported =
+                        importCallLog(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.import_call_log_results,
                         callsImported,
@@ -339,7 +368,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (requestCode == EXPORT_CONTACTS && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val contactsExported = exportContacts(applicationContext, it, progressBar, statusReportText)
+                    val contactsExported =
+                        exportContacts(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.export_contacts_results,
                         contactsExported,
@@ -355,35 +385,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    private fun importCallLogFile() {
-        if (checkReadWriteCallLogPermissions(this)) {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type =
-                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-            }
-            startActivityForResult(intent, IMPORT_CALL_LOG)
-        } else {
-            Toast.makeText(
-                this,
-                getString(R.string.call_logs_read_write_permissions_required),
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    private fun wipeMessages() {
-        if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
-            ConfirmWipeFragment().show(supportFragmentManager, "wipe")
-        } else {
-            Toast.makeText(
-                this@MainActivity,
-                getString(R.string.default_sms_app_requirement),
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
     // From: https://developer.android.com/guide/topics/ui/dialogs#PassingEvents
     // The dialog fragment receives a reference to this Activity through the
     // Fragment.onAttach() callback, which it uses to call the following methods
@@ -395,7 +396,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         CoroutineScope(Dispatchers.Main).launch {
             wipeSmsAndMmsMessages(applicationContext, statusReportText, progressBar)
-            Log.v(LOG_TAG, "Pretending to wipe messages ...")
             statusReportText.text = getString(R.string.messages_wiped)
         }
     }
@@ -407,16 +407,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 }
 
-// From https://stackoverflow.com/a/51394768
-fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {
-    val formatter = SimpleDateFormat(format, locale)
-    return formatter.format(this)
-}
-
-fun getCurrentDateTime(): Date {
-    return Calendar.getInstance().time
-}
-
 // https://developer.android.com/guide/topics/ui/dialogs
 // https://developer.android.com/guide/fragments/dialogs
 class ConfirmWipeFragment : DialogFragment() {
@@ -425,12 +415,14 @@ class ConfirmWipeFragment : DialogFragment() {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(it)
             builder.setMessage(R.string.dialog_confirm_wipe)
-                .setPositiveButton(R.string.wipe
+                .setPositiveButton(
+                    R.string.wipe
                 ) { dialog, id ->
                     // Send the positive button event back to the host activity
                     listener.onDialogPositiveClick(this)
                 }
-                .setNegativeButton(R.string.cancel
+                .setNegativeButton(
+                    R.string.cancel
                 ) { dialog, id ->
                     // User cancelled the dialog
                     // Send the negative button event back to the host activity
@@ -471,4 +463,14 @@ class ConfirmWipeFragment : DialogFragment() {
             )
         }
     }
+}
+
+// From https://stackoverflow.com/a/51394768
+fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {
+    val formatter = SimpleDateFormat(format, locale)
+    return formatter.format(this)
+}
+
+fun getCurrentDateTime(): Date {
+    return Calendar.getInstance().time
 }
