@@ -140,6 +140,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon
  - [Merlignux](https://github.com/Merlignux): Portuguese translation
  - Eric: update to Simplified Chinese translation
+ - [Shopimisrel](https://github.com/Shopimisrel): Hebrew translation
 
 ## Privacy
 
