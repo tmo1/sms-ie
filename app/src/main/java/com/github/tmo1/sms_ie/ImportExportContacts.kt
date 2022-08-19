@@ -20,17 +20,22 @@
 
 package com.github.tmo1.sms_ie
 
+import android.content.ContentProviderOperation
 import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns
 import android.provider.ContactsContract
+import android.util.JsonReader
 import android.util.JsonWriter
+import android.util.Log
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 suspend fun exportContacts(
@@ -42,7 +47,6 @@ suspend fun exportContacts(
     //val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         var total: Int
-        //val displayNames = mutableMapOf<String, String?>()
         appContext.contentResolver.openOutputStream(file).use { outputStream ->
             BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
                 val jsonWriter = JsonWriter(writer)
@@ -157,4 +161,112 @@ private suspend fun contactsToJSON(
         }
     }
     return total
+}
+
+suspend fun importContacts(
+    appContext: Context,
+    uri: Uri,
+    progressBar: ProgressBar,
+    statusReportText: TextView
+): Int {
+    return withContext(Dispatchers.IO) {
+        var contactsCount = 0
+        initIndeterminateProgressBar(progressBar)
+        uri.let {
+            appContext.contentResolver.openInputStream(it).use { inputStream ->
+                BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                    val jsonReader = JsonReader(reader)
+                    val contactDataFields = mutableSetOf<String>()
+                    for (i in 1..15) {
+                        contactDataFields.add("data$i")
+                    }
+                    contactDataFields.add("mimetype")
+                    jsonReader.beginArray()
+                    // Loop through Contact fields until we find the array of Raw Contacts
+                    while (jsonReader.hasNext()) {
+                        jsonReader.beginObject()
+                        while (jsonReader.hasNext()) {
+                            var name = jsonReader.nextName()
+                            if (name == "raw_contacts") {
+                                jsonReader.beginArray()
+                                while (jsonReader.hasNext()) {
+                                    // See https://developer.android.com/guide/topics/providers/contacts-provider#Transactions
+                                    val ops = arrayListOf<ContentProviderOperation>()
+                                    var op: ContentProviderOperation.Builder =
+                                        ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                                            .withValue(
+                                                ContactsContract.RawContacts.ACCOUNT_TYPE,
+                                                null
+                                            )
+                                            .withValue(
+                                                ContactsContract.RawContacts.ACCOUNT_NAME,
+                                                null
+                                            )
+                                    ops.add(op.build())
+                                    jsonReader.beginObject()
+                                    // Loop through Raw Contact fields until we find the array of Contacts Data
+                                    while (jsonReader.hasNext()) {
+                                        name = jsonReader.nextName()
+                                        if (name == "contacts_data") {
+                                            jsonReader.beginArray()
+                                            while (jsonReader.hasNext()) {
+                                                jsonReader.beginObject()
+                                                op = ContentProviderOperation.newInsert(
+                                                    ContactsContract.Data.CONTENT_URI
+                                                )
+                                                    .withValueBackReference(
+                                                        ContactsContract.Data.RAW_CONTACT_ID,
+                                                        0
+                                                    )
+                                                while (jsonReader.hasNext()) {
+                                                    name = jsonReader.nextName()
+                                                    val dataValue = jsonReader.nextString()
+                                                    if (name in contactDataFields) {
+                                                        op.withValue(name, dataValue)
+                                                    }
+                                                }
+                                                op.withYieldAllowed(true)
+                                                ops.add(op.build())
+                                                jsonReader.endObject()
+                                            }
+                                            jsonReader.endArray()
+                                        } else {
+                                            jsonReader.nextString()
+                                        }
+                                    }
+                                    try {
+                                        appContext.contentResolver.applyBatch(
+                                            ContactsContract.AUTHORITY,
+                                            ops
+                                        )
+                                        contactsCount++
+                                        setStatusText(
+                                            statusReportText,
+                                            appContext.getString(
+                                                R.string.contacts_import_progress,
+                                                contactsCount
+                                            )
+                                        )
+                                    } catch (e: Exception) {
+                                        Log.e(
+                                            LOG_TAG,
+                                            "Exception encountered while inserting contact: $e"
+                                        )
+                                    }
+                                    jsonReader.endObject()
+                                }
+                                jsonReader.endArray()
+                            } else {
+                                jsonReader.nextString()
+                            }
+                        }
+                        jsonReader.endObject()
+                    }
+                    jsonReader.endArray()
+                }
+            }
+            hideProgressBar(progressBar)
+            contactsCount
+        }
+    }
 }
