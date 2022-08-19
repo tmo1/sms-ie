@@ -98,6 +98,13 @@ fun checkReadContactsPermission(appContext: Context): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
+fun checkWriteContactsPermission(appContext: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        appContext,
+        Manifest.permission.WRITE_CONTACTS
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
 fun lookupDisplayName(
     appContext: Context,
     displayNames: MutableMap<String, String?>,

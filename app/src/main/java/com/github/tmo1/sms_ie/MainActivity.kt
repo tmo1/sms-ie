@@ -260,7 +260,20 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     private fun importContactsManual() {
-        //TODO
+        if (checkWriteContactsPermission(this)) {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type =
+                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+            }
+            startActivityForResult(intent, IMPORT_CONTACTS)
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.contacts_write_permissions_required),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun wipeMessagesManual() {
@@ -373,6 +386,25 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     statusReportText.text = getString(
                         R.string.export_contacts_results,
                         contactsExported,
+                        formatElapsedTime(
+                            TimeUnit.SECONDS.convert(
+                                System.nanoTime() - startTime,
+                                TimeUnit.NANOSECONDS
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
+        if (requestCode == IMPORT_CONTACTS && resultCode == Activity.RESULT_OK) {
+            resultData?.data?.let {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val contactsImported =
+                        importContacts(applicationContext, it, progressBar, statusReportText)
+                    statusReportText.text = getString(
+                        R.string.import_contacts_results,
+                        contactsImported,
                         formatElapsedTime(
                             TimeUnit.SECONDS.convert(
                                 System.nanoTime() - startTime,
