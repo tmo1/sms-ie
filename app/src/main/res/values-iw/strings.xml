@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_call_log_button_label">ייצוא יומן שיחות</string>
+    <string name="ready">מוכן</string>
+    <string name="call_log_import_progress">%1$d שיחות יובאו</string>
+    <string name="sms_export_progress">%1$d מתוך %2$d סמס(ים) יוצאו</string>
+    <string name="mms_export_progress">%1$d מתוך %2$d MMS שיוצאו</string>
+    <string name="message_import_progress">%1$d סמס ו-%2$d mms יובאו</string>
+    <string name="contacts_export_progress">%1$d מתוך %2$d אנשי קשר יוצאו</string>
+    <string name="import_messages_results">%1$d SMS ו-%2$d MMS יובאו
+\nזמן שחלף: %3$s</string>
+    <string name="export_messages_results">%1$d SMS ו-%2$d MMS יוצאו
+\nזמן שחלף: %3$s</string>
+    <string name="export_contacts_results">%1$d אנשי קשר יוצאו
+\nזמן שחלף: %2$s.</string>
+    <string name="call_logs_permissions_required">ייצוא יומני שיחות דורש הרשאה לקרוא יומני שיחות ואנשי קשר.</string>
+    <string name="call_logs_read_write_permissions_required">ייבוא יומני שיחות דורש הרשאה לקרוא ולכתוב יומני שיחות.</string>
+    <string name="include_binary_data">כלול נתוני MMS בינאריים (מקודדים)</string>
+    <string name="channel_description">notification Channel</string>
+    <string name="scheduled_export_executed">ייצוא מתוזמן בוצע</string>
+    <string name="channel_name">Notification_channel</string>
+    <string name="scheduled_export_success">%1$d הודעות סמס, %2$d mms, %3$d שיחות ו-%4$d אנשי קשר יוצאו.</string>
+    <string name="scheduled_export_failure">הייצוא לא הצליח - ראה logcat לפרטים נוספים.</string>
+    <string name="dialog_confirm_wipe">אזהרה: למחוק את כל ההודעות מהמכשיר הזה לצמיתות, מבלי שתוכל לבטל זאת\?</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="cancel">בטל</string>
+    <string name="wipe_cancelled">המחיקה בוטלה</string>
+    <string name="messages_wiped">הודעות נמחקו</string>
+    <string name="wiping_sms_messages">מוחק הודעות סמס…</string>
+    <string name="wiping_mms_messages">מוחק הודעות MMS…</string>
+    <string name="homepage">דף הבית:</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="documentation">תיעוד:</string>
+    <string name="import_contacts">ייבוא אנשי קשר</string>
+    <string name="app_name">ייבוא/ייצוא של SMS</string>
+    <string name="export_messages_button_label">ייצוא הודעות</string>
+    <string name="import_messages_button_label">ייבאו הודעות</string>
+    <string name="import_call_log_button_label">ייבוא יומן שיחות</string>
+    <string name="call_log_export_progress">%1$d מתוך %2$d שיחות יוצאו</string>
+    <string name="sms_permissions_required">ייצוא הודעות דורש הרשאה לקרוא הודעות סמס ואנשי קשר.</string>
+    <string name="export_contacts">ייצאו אנשי קשר</string>
+    <string name="wipe">מחק</string>
+    <string name="export_call_log_results">%1$d שיחות יוצאו
+\nזמן שחלף: %2$s</string>
+    <string name="not_jsonarray_message">נראה שהקובץ אינו מכיל JSONArray חוקי.</string>
+    <string name="settings">הגדרות</string>
+    <string name="about">אודות</string>
+    <string name="wipe_messages">מחק הודעות</string>
+    <string name="import_call_log_results">%1$d שיחות יובאו
+\nזמן שחלף: %2$s</string>
+    <string name="default_sms_app_requirement">אפליקציה זו חייבת להיות אפליקציית ה-סמס המוגדרת כברירת מחדל כדי לייבא או למחוק הודעות (תוכל לשנות בסיום הפעולה).</string>
+    <string name="contacts_read_permission_required">ייצוא אנשי קשר דורש הרשאה לקריאת אנשי קשר.</string>
+    <string name="title_activity_settings">הגדרות פעילות</string>
+    <string name="issue_tracker">מאתר בעיות:</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="app_about_text">ייבוא/ייצוא של SMS
+\n
+\nמאת Thomas More ותורמים אחרים
+\n
+\nגרסה %1$s
+\n
+\nזכויות יוצרים © 2021–22
+\n
+\nשוחרר תחת GNU GPLv3</string>
+</resources>
