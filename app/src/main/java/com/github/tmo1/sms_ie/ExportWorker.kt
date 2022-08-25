@@ -47,7 +47,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
         val date = getCurrentDateTime()
         val dateInString = date.toString("yyyy-MM-dd")
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             if (prefs.getBoolean("export_messages", true)) {
                 val file =
                     documentTree?.createFile("application/json", "messages-$dateInString.json")
