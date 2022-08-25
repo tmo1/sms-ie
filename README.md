@@ -116,6 +116,7 @@ SMS Import / Export has been translated (from the original English) into the fol
  - Norwegian Bokmål
  - Simplified Chinese
  - Portuguese
+ - Hebrew
  
  To add a translation into a new language, or to correct, update, or improve an existing translation, see the [Contributions](#contributions) section below.
  
