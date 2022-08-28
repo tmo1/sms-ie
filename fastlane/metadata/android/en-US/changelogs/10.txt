@@ -1,0 +1,6 @@
+ - Contacts import and export (experimental)
+
+ - Hebrew translation
+
+ - Fix for a crash upon scheduled export to a Nextcloud destination
+

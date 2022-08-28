@@ -1,4 +1,4 @@
-SMS Import / Export imports and exports SMS and MMS messages and call logs from and to JSON files. It does not require root.
+SMS Import / Export imports and exports SMS and MMS messages, call logs, and contacts from and to JSON files. (Contacts import and export are currently functional but considered experimental.) It does not require root.
 
 The primary author of SMS Import / Export is Thomas More. Others have contributed code and translations. The software is copyright 2021-2022, and is released under the GNU General Public Licence version 3.
 
