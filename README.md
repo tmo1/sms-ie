@@ -65,7 +65,7 @@ MMS message objects have the following additions to the tag-value pairs of their
  
  - A tag-value pair of the form `"recipient_addresses": [ { ... }, { ... } ]`. The child JSON objects associated with `sender_address` and `recipient_addresses` contain a series of tag-value pairs taken directly from Android's internal MMS address structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Addr), plus possibly a single added tag-value pair of the form `"display_name": "Alice"`, as with SMS messages.
  
- - A tag-value pair of the form `"parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part), plus, for parts containing binary data (assuming binary data inclusion is checked), a tag-value pair of the form `"binary_data": "<Base64 encoded binary data>"`.
+ - A tag-value pair of the form `"parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part), plus, for parts containing binary data (assuming binary data inclusion is checked), a tag-value pair of the form `"binary_data": "<Base64 encoded binary data>"`. (If there is [a problem accessing the binary data](https://github.com/tmo1/sms-ie/issues/42), then this tag-value pair may not be present.)
 
 ### Call Logs
 
