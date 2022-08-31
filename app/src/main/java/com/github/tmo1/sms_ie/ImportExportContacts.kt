@@ -22,9 +22,11 @@ package com.github.tmo1.sms_ie
 
 import android.content.ContentProviderOperation
 import android.content.Context
+import android.database.Cursor.FIELD_TYPE_BLOB
 import android.net.Uri
 import android.provider.BaseColumns
 import android.provider.ContactsContract
+import android.util.Base64
 import android.util.JsonReader
 import android.util.JsonWriter
 import android.util.Log
@@ -132,9 +134,20 @@ private suspend fun contactsToJSON(
                                     do {
                                         jsonWriter.beginObject()
                                         data.columnNames.forEachIndexed { i, columnName ->
-                                            val value = data.getString(i)
-                                            if (value != null) jsonWriter.name(columnName)
-                                                .value(value)
+                                            if (data.getType(i) != FIELD_TYPE_BLOB) {
+                                                val value = data.getString(i)
+                                                if (value != null) jsonWriter.name(columnName)
+                                                    .value(value)
+                                            } else {
+                                                val value = data.getBlob(i)
+                                                if (value != null) jsonWriter.name("${columnName}__base64__")
+                                                    .value(
+                                                        Base64.encodeToString(
+                                                            value,
+                                                            Base64.NO_WRAP
+                                                        )
+                                                    )
+                                            }
                                         }
                                         jsonWriter.endObject()
                                     } while (data.moveToNext())
@@ -221,8 +234,23 @@ suspend fun importContacts(
                                                 while (jsonReader.hasNext()) {
                                                     name = jsonReader.nextName()
                                                     val dataValue = jsonReader.nextString()
+                                                    var base64 = false
+                                                    if (name.length > 10 && name.substring(name.length - 10) == "__base64__") {
+                                                        base64 = true
+                                                        name = name.substring(0, name.length - 10)
+                                                    }
                                                     if (name in contactDataFields) {
-                                                        op.withValue(name, dataValue)
+                                                        if (base64) {
+                                                            op.withValue(
+                                                                name,
+                                                                Base64.decode(
+                                                                    dataValue,
+                                                                    Base64.NO_WRAP
+                                                                )
+                                                            )
+                                                        } else {
+                                                            op.withValue(name, dataValue)
+                                                        }
                                                     }
                                                 }
                                                 op.withYieldAllowed(true)
