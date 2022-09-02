@@ -115,9 +115,7 @@ private suspend fun smsToJSON(
                     statusReportText,
                     appContext.getString(R.string.sms_export_progress, total, totalSms)
                 )
-                if (BuildConfig.DEBUG && total == (prefs.getString("max_messages", "")
-                        ?.toIntOrNull() ?: -1)
-                ) break
+                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
             hideProgressBar(progressBar)
         }
@@ -264,9 +262,7 @@ private suspend fun mmsToJSON(
                     statusReportText,
                     appContext.getString(R.string.mms_export_progress, total, totalMms)
                 )
-                if (BuildConfig.DEBUG && total == (prefs.getString("max_messages", "")
-                        ?.toIntOrNull() ?: -1)
-                ) break
+                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
             hideProgressBar(progressBar)
         }
@@ -398,7 +394,7 @@ suspend fun importMessages(
                         jsonReader.endObject()
                         if (!messageMetadata.containsKey("m_type")) { // it's SMS
                             if (!prefs.getBoolean("sms", true) || totals.sms == (prefs.getString(
-                                    "max_messages",
+                                    "max_records",
                                     ""
                                 )?.toIntOrNull() ?: -1)
                             ) continue
@@ -429,7 +425,7 @@ suspend fun importMessages(
                             }
                         } else { // it's MMS
                             if (!prefs.getBoolean("mms", true) || totals.mms == (prefs.getString(
-                                    "max_messages",
+                                    "max_records",
                                     ""
                                 )?.toIntOrNull() ?: -1)
                             ) continue

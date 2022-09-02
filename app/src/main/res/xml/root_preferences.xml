@@ -75,8 +75,8 @@
             app:defaultValue="false" />
 
         <EditTextPreference
-            android:key="max_messages"
-            android:title="Max messages (per message type) to import or export (leave empty or set to 0 for all)"
+            android:key="max_records"
+            android:title="Maximum records (SMS messages, MMS messages, contacts, and calls) to import (messages only) or export. (Leave empty or set to 0 for all.)"
             app:defaultValue=""
             app:dependency="debugging"
             app:useSimpleSummaryProvider="true" />

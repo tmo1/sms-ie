@@ -166,9 +166,7 @@ private suspend fun contactsToJSON(
                     statusReportText,
                     appContext.getString(R.string.contacts_export_progress, total, totalContacts)
                 )
-                if (BuildConfig.DEBUG && total == (prefs.getString("max_messages", "")
-                        ?.toIntOrNull() ?: -1)
-                ) break
+                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
             hideProgressBar(progressBar)
         }

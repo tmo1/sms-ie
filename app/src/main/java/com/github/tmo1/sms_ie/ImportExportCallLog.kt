@@ -113,9 +113,7 @@ private suspend fun callLogToJSON(
                     statusReportText,
                     appContext.getString(R.string.call_log_export_progress, total, totalCalls)
                 )
-                if (BuildConfig.DEBUG && total == (prefs.getString("max_messages", "")
-                        ?.toIntOrNull() ?: -1)
-                ) break
+                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
             hideProgressBar(progressBar)
         }
