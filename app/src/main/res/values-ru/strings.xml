@@ -49,4 +49,5 @@
     <string name="contacts_read_permission_required">Для экспорта контактов требуется разрешение на чтение контактов.</string>
     <string name="wipe_cancelled">Очистка отменена</string>
     <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
+    <string name="include_binary_data">Включать (зашифрованные) двоичные данные MMS</string>
 </resources>
