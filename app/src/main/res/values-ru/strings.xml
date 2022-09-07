@@ -1,2 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="ready">Готово</string>
+    <string name="sms_export_progress">%1$d из %2$d SMS экспортирован(о)</string>
+    <string name="mms_export_progress">%1$d из %2$d MMS экспортирован(о)</string>
+    <string name="contacts_export_progress">%1$d из %2$d контакт(а/ов) экспонтирован(о)</string>
+    <string name="cancel">Отмена</string>
+    <string name="export_contacts">Экспорт контактов</string>
+    <string name="import_contacts">Импорт контактов</string>
+    <string name="documentation">Документация:</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="about">О</string>
+    <string name="issue_tracker">Issue трекер:</string>
+    <string name="import_contacts_results">%1$d контакт(ов) импортирован(о)
+\nЗатрачено времени: %2$s.</string>
+    <string name="default_sms_app_requirement">Это приложение должно быть SMS-приложением по умолчанию для импорта или очистки сообщений.</string>
+    <string name="messages_wiped">Сообщения очищены</string>
+    <string name="homepage">Домашняя страница:</string>
+    <string name="app_name">SMS Import / Export</string>
+    <string name="import_call_log_button_label">Импорт журнала вызовов</string>
+    <string name="export_messages_button_label">Экспорт сообщений</string>
+    <string name="import_messages_button_label">Импорт сообщений</string>
+    <string name="export_call_log_button_label">Экспорт журнала вызовов</string>
+    <string name="settings">Настройки</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="sms_permissions_required">Для экспорта сообщений требуется разрешение на чтение SMS и контактов.</string>
+    <string name="call_logs_permissions_required">Для экспорта журнала вызовов требуется разрешение на чтение журнала вызовов и контактов.</string>
+    <string name="wipe">Очистка</string>
+    <string name="wipe_messages">Очистка сообщений</string>
+    <string name="contacts_import_progress">%1$d контакт(ов) импортировано</string>
+    <string name="export_contacts_results">%1$d контакт(ов) экспортирован(о)
+\nЗатрачено времени: %2$s.</string>
+    <string name="import_call_log_results">%1$d звонок(ов) импортирован(о)
+\nЗатрачено времени: %2$s</string>
+    <string name="export_call_log_results">%1$d звонок(ов) экспортирован(о)
+\nЗатрачено времени: %2$s</string>
+    <string name="export_messages_results">%1$d SMS и %2$d MMS экспортировано
+\nЗатрачено времени: %3$s</string>
+    <string name="import_messages_results">%1$d SMS и %2$d MMS импортировано
+\nЗатрачено времени: %3$s</string>
+    <string name="call_log_import_progress">%1$d звонок(ов) импортирован(о)</string>
+    <string name="call_log_export_progress">%1$d из %2$d звонк(а/ов) экспортирован(о)</string>
+    <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d звонок(ов) и %4$d контакт(ов) экспортировано.</string>
+    <string name="message_import_progress">%1$d SMS и %2$d MMS импортировано</string>
+    <string name="wiping_mms_messages">Очистка MMS сообщений …</string>
+    <string name="contacts_write_permissions_required">Для импорта контактов требуется разрешение на запись контактов.</string>
+    <string name="call_logs_read_write_permissions_required">Для импорта журналов вызовов требуется разрешение на чтение и запись журнала вызовов.</string>
+    <string name="contacts_read_permission_required">Для экспорта контактов требуется разрешение на чтение контактов.</string>
+    <string name="wipe_cancelled">Очистка отменена</string>
+    <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
+    <string name="include_binary_data">Включать (зашифрованные) двоичные данные MMS</string>
+</resources>
