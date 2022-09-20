@@ -70,10 +70,14 @@
     <string name="issue_tracker">Fehlermeldung:</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="about">Über</string>
-    <string name="contacts_export_progress">%1$d von %2$d exportierte(r) Kontakt(e)</string>
-    <string name="export_contacts_results">%1$d exportierte(r) Kontakt(e)
+    <string name="contacts_export_progress">%1$d von %2$d Kontakt(e) exportiert</string>
+    <string name="export_contacts_results">%1$d Kontakt(e) exportiert
 \nZeitaufwand: %2$s.</string>
     <string name="contacts_read_permission_required">Das Exportieren von Kontakten erfordert die Berechtigung zum Lesen von Kontakten.</string>
     <string name="export_contacts">Exportiere Kontakte</string>
     <string name="import_contacts">Importiere Kontakte</string>
+    <string name="import_contacts_results">%1$d Kontakt(e) importiert
+\nZeitaufwand: %2$s.</string>
+    <string name="contacts_import_progress">%1$d Kontakt(e) importiert</string>
+    <string name="contacts_write_permissions_required">Der Import von Kontakten erfordert die Berechtigung zum Schreiben von Kontakten.</string>
 </resources>

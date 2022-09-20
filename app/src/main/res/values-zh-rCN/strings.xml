@@ -62,4 +62,8 @@
     <string name="export_contacts">导出联系人</string>
     <string name="import_contacts">导入联系人</string>
     <string name="contacts_export_progress">导出了 %2$d 位联系人中的 %1$d 位</string>
+    <string name="contacts_import_progress">导入了 %1$d 名联系人</string>
+    <string name="import_contacts_results">导入了 %1$d 名联系人
+\n耗时: %2$s。</string>
+    <string name="contacts_write_permissions_required">导入联系人需要写入联系人的权限。</string>
 </resources>

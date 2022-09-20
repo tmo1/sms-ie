@@ -117,6 +117,7 @@ SMS Import / Export has been translated (from the original English) into the fol
  - Simplified Chinese
  - Portuguese
  - Hebrew
+ - Russian
  
  To add a translation into a new language, or to correct, update, or improve an existing translation, see the [Contributions](#contributions) section below.
  
@@ -145,8 +146,9 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): [bug fix](https://github.com/tmo1/sms-ie/pull/39)
  - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon
  - [Merlignux](https://github.com/Merlignux): Portuguese translation
- - Eric: update to Simplified Chinese translation
+ - Eric: updates to Simplified Chinese translation
  - [Shopimisrel](https://github.com/Shopimisrel): Hebrew translation
+ - Артём: Russian translation
 
 ## Privacy
 
