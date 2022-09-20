@@ -26,19 +26,13 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.Telephony
-import android.util.Base64
-import android.util.JsonReader
-import android.util.JsonWriter
-import android.util.Log
+import android.util.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.*
 
 suspend fun exportMessages(
     appContext: Context,
@@ -230,25 +224,33 @@ private suspend fun mmsToJSON(
                                 val value = it1.getString(i)
                                 if (value != null) jsonWriter.name(columnName).value(value)
                             }
-                            //if (includeBinaryData && it1.getString(dataIndex) != null) {
                             if (prefs.getBoolean("include_binary_data", true) && it1.getString(
                                     dataIndex
                                 ) != null
                             ) {
-                                val inputStream = appContext.contentResolver.openInputStream(
-                                    Uri.parse(
-                                        "content://mms/part/" + it1.getString(
-                                            partIdIndex
+                                try {
+                                    val inputStream = appContext.contentResolver.openInputStream(
+                                        Uri.parse(
+                                            "content://mms/part/" + it1.getString(
+                                                partIdIndex
+                                            )
                                         )
                                     )
-                                )
-                                val data = inputStream.use {
-                                    Base64.encodeToString(
-                                        it?.readBytes(),
-                                        Base64.NO_WRAP // Without NO_WRAP, we end up with corrupted files upon decoding - see https://stackoverflow.com/questions/16091883/sending-base64-encoded-image-results-in-a-corrupt-image
+                                    val data = inputStream.use {
+                                        Base64.encodeToString(
+                                            it?.readBytes(),
+                                            Base64.NO_WRAP // Without NO_WRAP, we end up with corrupted files upon decoding - see https://stackoverflow.com/questions/16091883/sending-base64-encoded-image-results-in-a-corrupt-image
+                                        )
+                                    }
+                                    jsonWriter.name("binary_data").value(data)
+                                } catch (e: Exception) {
+                                    Log.e(
+                                        LOG_TAG,
+                                        "Error accessing binary data for MMS message part " + it1.getString(
+                                            partIdIndex
+                                        ) + ": $e"
                                     )
                                 }
-                                jsonWriter.name("binary_data").value(data)
                             }
                             jsonWriter.endObject()
                         } while (it1.moveToNext())
