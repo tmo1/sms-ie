@@ -141,39 +141,48 @@ suspend fun importCallLog(
                 BufferedReader(InputStreamReader(inputStream)).use { reader ->
                     val jsonReader = JsonReader(reader)
                     val callLogMetadata = ContentValues()
-                    jsonReader.beginArray()
-                    while (jsonReader.hasNext()) {
-                        jsonReader.beginObject()
-                        callLogMetadata.clear()
+                    try {
+                        jsonReader.beginArray()
                         while (jsonReader.hasNext()) {
-                            val name = jsonReader.nextName()
-                            val value = jsonReader.nextString()
-                            if (callLogColumns.contains(name)) {
-                                callLogMetadata.put(name, value)
+                            jsonReader.beginObject()
+                            callLogMetadata.clear()
+                            while (jsonReader.hasNext()) {
+                                val name = jsonReader.nextName()
+                                val value = jsonReader.nextString()
+                                if (callLogColumns.contains(name)) {
+                                    callLogMetadata.put(name, value)
+                                }
                             }
-                        }
-                        var insertUri: Uri? = null
-                        if (callLogMetadata.keySet().contains(CallLog.Calls.NUMBER)) {
-                            insertUri = appContext.contentResolver.insert(
-                                CallLog.Calls.CONTENT_URI,
-                                callLogMetadata
-                            )
-                        }
-                        if (insertUri == null) {
-                            Log.v(LOG_TAG, "Call log insert failed!")
-                        } else {
-                            callLogCount++
-                            setStatusText(
-                                statusReportText,
-                                appContext.getString(
-                                    R.string.call_log_import_progress,
-                                    callLogCount
+                            var insertUri: Uri? = null
+                            if (callLogMetadata.keySet().contains(CallLog.Calls.NUMBER)) {
+                                insertUri = appContext.contentResolver.insert(
+                                    CallLog.Calls.CONTENT_URI,
+                                    callLogMetadata
                                 )
-                            )
+                            }
+                            if (insertUri == null) {
+                                Log.v(LOG_TAG, "Call log insert failed!")
+                            } else {
+                                callLogCount++
+                                setStatusText(
+                                    statusReportText,
+                                    appContext.getString(
+                                        R.string.call_log_import_progress,
+                                        callLogCount
+                                    )
+                                )
+                            }
+                            jsonReader.endObject()
                         }
-                        jsonReader.endObject()
+                        jsonReader.endArray()
+                    } catch (e: Exception) {
+                        displayError(
+                            appContext,
+                            e,
+                            "Error importing call log",
+                            "Error parsing JSON"
+                        )
                     }
-                    jsonReader.endArray()
                 }
             }
             hideProgressBar(progressBar)

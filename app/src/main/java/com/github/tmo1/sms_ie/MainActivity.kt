@@ -297,6 +297,15 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val statusReportText: TextView = findViewById(R.id.status_report)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val startTime = System.nanoTime()
+        // Throughout this function, we pass 'this@MainActivity' to the import functions, since they
+        // currently create AlertDialogs upon catching exceptions, and AlertDialogs need
+        // Activity context - see:
+        // https://stackoverflow.com/a/7229248
+        // https://stackoverflow.com/a/52224145
+        // https://stackoverflow.com/a/51516252
+        // But we pass 'applicationContext' to the export functions, since they don't currently
+        // create AlertDialogs. Perhaps we should just pass Activity context to them as well, to be
+        // consistent.
         if (requestCode == EXPORT_MESSAGES
             && resultCode == Activity.RESULT_OK
         ) {
@@ -325,7 +334,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         ) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = importMessages(applicationContext, it, progressBar, statusReportText)
+                    total = importMessages(this@MainActivity, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.import_messages_results,
                         total.sms,
@@ -364,7 +373,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val callsImported =
-                        importCallLog(applicationContext, it, progressBar, statusReportText)
+                        importCallLog(this@MainActivity, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.import_call_log_results,
                         callsImported,
@@ -401,7 +410,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val contactsImported =
-                        importContacts(applicationContext, it, progressBar, statusReportText)
+                        importContacts(this@MainActivity, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.import_contacts_results,
                         contactsImported,

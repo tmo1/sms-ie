@@ -26,6 +26,7 @@
 package com.github.tmo1.sms_ie
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -189,5 +190,18 @@ suspend fun setStatusText(statusReportText: TextView?, message: String) {
 suspend fun incrementProgress(progressBar: ProgressBar?) {
     withContext(Dispatchers.Main) {
         progressBar?.incrementProgressBy(1)
+    }
+}
+
+// From: https://stackoverflow.com/a/18143773
+suspend fun displayError(appContext: Context, e: Exception, title: String, message: String) {
+    e.printStackTrace()
+    val errorBox = AlertDialog.Builder(appContext)
+    errorBox.setTitle(title)
+        .setMessage("$message:\n\n\"$e\"\n\nSee logcat for more information.")
+        .setCancelable(false)
+        .setNeutralButton("Okay", null)
+    withContext(Dispatchers.Main) {
+        errorBox.show()
     }
 }

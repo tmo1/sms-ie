@@ -26,13 +26,19 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.Telephony
-import android.util.*
+import android.util.Base64
+import android.util.JsonReader
+import android.util.JsonWriter
+import android.util.Log
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 
 suspend fun exportMessages(
     appContext: Context,
@@ -299,38 +305,20 @@ suspend fun importMessages(
                     val addresses = mutableSetOf<ContentValues>()
                     val parts = mutableListOf<ContentValues>()
                     val binaryData = mutableListOf<ByteArray?>()
-                    jsonReader.beginArray()
-                    while (jsonReader.hasNext()) {
-                        jsonReader.beginObject()
-                        messageMetadata.clear()
-                        addresses.clear()
-                        parts.clear()
-                        binaryData.clear()
-                        var name: String?
-                        var value: String?
+                    try {
+                        jsonReader.beginArray()
                         while (jsonReader.hasNext()) {
-                            name = jsonReader.nextName()
-                            when (name) {
-                                "sender_address" -> {
-                                    jsonReader.beginObject()
-                                    val address = ContentValues()
-                                    while (jsonReader.hasNext()) {
-                                        val name1 = jsonReader.nextName()
-                                        val value1 = jsonReader.nextString()
-                                        if (name1 !in setOf(
-                                                Telephony.Mms.Addr._ID,
-                                                Telephony.Mms.Addr._COUNT,
-                                                Telephony.Mms.Addr.MSG_ID,
-                                                "display_name"
-                                            )
-                                        ) address.put(name1, value1)
-                                    }
-                                    addresses.add(address)
-                                    jsonReader.endObject()
-                                }
-                                "recipient_addresses" -> {
-                                    jsonReader.beginArray()
-                                    while (jsonReader.hasNext()) {
+                            jsonReader.beginObject()
+                            messageMetadata.clear()
+                            addresses.clear()
+                            parts.clear()
+                            binaryData.clear()
+                            var name: String?
+                            var value: String?
+                            while (jsonReader.hasNext()) {
+                                name = jsonReader.nextName()
+                                when (name) {
+                                    "sender_address" -> {
                                         jsonReader.beginObject()
                                         val address = ContentValues()
                                         while (jsonReader.hasNext()) {
@@ -347,157 +335,190 @@ suspend fun importMessages(
                                         addresses.add(address)
                                         jsonReader.endObject()
                                     }
-                                    jsonReader.endArray()
-                                }
-                                "parts" -> {
-                                    jsonReader.beginArray()
-                                    while (jsonReader.hasNext()) {
-                                        jsonReader.beginObject()
-                                        val part = ContentValues()
-                                        var hasBinaryData = false
+                                    "recipient_addresses" -> {
+                                        jsonReader.beginArray()
                                         while (jsonReader.hasNext()) {
-                                            val name1 = jsonReader.nextName()
-                                            val value1 = jsonReader.nextString()
-                                            if (name1 !in setOf(
-                                                    Telephony.Mms.Part.MSG_ID,
-                                                    Telephony.Mms.Part._ID,
-                                                    Telephony.Mms.Part._DATA,
-                                                    Telephony.Mms.Part._COUNT,
-                                                    "binary_data"
-                                                )
-                                            ) part.put(name1, value1)
-                                            if (name1 == "binary_data") {
-                                                binaryData.add(
-                                                    Base64.decode(
-                                                        value1,
-                                                        Base64.NO_WRAP
+                                            jsonReader.beginObject()
+                                            val address = ContentValues()
+                                            while (jsonReader.hasNext()) {
+                                                val name1 = jsonReader.nextName()
+                                                val value1 = jsonReader.nextString()
+                                                if (name1 !in setOf(
+                                                        Telephony.Mms.Addr._ID,
+                                                        Telephony.Mms.Addr._COUNT,
+                                                        Telephony.Mms.Addr.MSG_ID,
+                                                        "display_name"
                                                     )
-                                                )
-                                                hasBinaryData = true
+                                                ) address.put(name1, value1)
                                             }
+                                            addresses.add(address)
+                                            jsonReader.endObject()
                                         }
-                                        if (!hasBinaryData) binaryData.add(null)
-                                        parts.add(part)
-                                        jsonReader.endObject()
+                                        jsonReader.endArray()
                                     }
-                                    jsonReader.endArray()
+                                    "parts" -> {
+                                        jsonReader.beginArray()
+                                        while (jsonReader.hasNext()) {
+                                            jsonReader.beginObject()
+                                            val part = ContentValues()
+                                            var hasBinaryData = false
+                                            while (jsonReader.hasNext()) {
+                                                val name1 = jsonReader.nextName()
+                                                val value1 = jsonReader.nextString()
+                                                if (name1 !in setOf(
+                                                        Telephony.Mms.Part.MSG_ID,
+                                                        Telephony.Mms.Part._ID,
+                                                        Telephony.Mms.Part._DATA,
+                                                        Telephony.Mms.Part._COUNT,
+                                                        "binary_data"
+                                                    )
+                                                ) part.put(name1, value1)
+                                                if (name1 == "binary_data") {
+                                                    binaryData.add(
+                                                        Base64.decode(
+                                                            value1,
+                                                            Base64.NO_WRAP
+                                                        )
+                                                    )
+                                                    hasBinaryData = true
+                                                }
+                                            }
+                                            if (!hasBinaryData) binaryData.add(null)
+                                            parts.add(part)
+                                            jsonReader.endObject()
+                                        }
+                                        jsonReader.endArray()
+                                    }
+                                    else -> {
+                                        value = jsonReader.nextString()
+                                        if (name !in setOf(
+                                                "_id",
+                                                "thread_id",
+                                                "display_name"
+                                            )
+                                        ) messageMetadata.put(name, value)
+                                    }
                                 }
-                                else -> {
-                                    value = jsonReader.nextString()
-                                    if (name !in setOf(
-                                            "_id",
-                                            "thread_id",
-                                            "display_name"
+                            }
+                            jsonReader.endObject()
+                            if (!messageMetadata.containsKey("m_type")) { // it's SMS
+                                if (!prefs.getBoolean(
+                                        "sms",
+                                        true
+                                    ) || totals.sms == (prefs.getString(
+                                        "max_records",
+                                        ""
+                                    )?.toIntOrNull() ?: -1)
+                                ) continue
+                                val fieldNames = mutableSetOf<String>()
+                                fieldNames.addAll(messageMetadata.keySet())
+                                fieldNames.forEach { key ->
+                                    if (!smsColumns.contains(key)) {
+                                        messageMetadata.remove(key)
+                                    }
+                                }
+                                val insertUri =
+                                    appContext.contentResolver.insert(
+                                        Telephony.Sms.CONTENT_URI,
+                                        messageMetadata
+                                    )
+                                if (insertUri == null) {
+                                    Log.v(LOG_TAG, "SMS insert failed!")
+                                } else {
+                                    totals.sms++
+                                    setStatusText(
+                                        statusReportText,
+                                        appContext.getString(
+                                            R.string.message_import_progress,
+                                            totals.sms,
+                                            totals.mms
                                         )
-                                    ) messageMetadata.put(name, value)
-                                }
-                            }
-                        }
-                        jsonReader.endObject()
-                        if (!messageMetadata.containsKey("m_type")) { // it's SMS
-                            if (!prefs.getBoolean("sms", true) || totals.sms == (prefs.getString(
-                                    "max_records",
-                                    ""
-                                )?.toIntOrNull() ?: -1)
-                            ) continue
-                            val fieldNames = mutableSetOf<String>()
-                            fieldNames.addAll(messageMetadata.keySet())
-                            fieldNames.forEach { key ->
-                                if (!smsColumns.contains(key)) {
-                                    messageMetadata.remove(key)
-                                }
-                            }
-                            val insertUri =
-                                appContext.contentResolver.insert(
-                                    Telephony.Sms.CONTENT_URI,
-                                    messageMetadata
-                                )
-                            if (insertUri == null) {
-                                Log.v(LOG_TAG, "SMS insert failed!")
-                            } else {
-                                totals.sms++
-                                setStatusText(
-                                    statusReportText,
-                                    appContext.getString(
-                                        R.string.message_import_progress,
-                                        totals.sms,
-                                        totals.mms
                                     )
-                                )
-                            }
-                        } else { // it's MMS
-                            if (!prefs.getBoolean("mms", true) || totals.mms == (prefs.getString(
-                                    "max_records",
-                                    ""
-                                )?.toIntOrNull() ?: -1)
-                            ) continue
-                            val fieldNames = mutableSetOf<String>()
-                            fieldNames.addAll(messageMetadata.keySet())
-                            fieldNames.forEach { key ->
-                                if (!mmsColumns.contains(key)) {
-                                    messageMetadata.remove(key)
                                 }
-                            }
-                            val threadId = Telephony.Threads.getOrCreateThreadId(
-                                appContext,
-                                addresses.map { it1 -> it1.getAsString("address") }.toSet()
-                            )
-                            messageMetadata.put("thread_id", threadId)
-                            val insertUri =
-                                appContext.contentResolver.insert(
-                                    Telephony.Mms.CONTENT_URI,
-                                    messageMetadata
+                            } else { // it's MMS
+                                if (!prefs.getBoolean(
+                                        "mms",
+                                        true
+                                    ) || totals.mms == (prefs.getString(
+                                        "max_records",
+                                        ""
+                                    )?.toIntOrNull() ?: -1)
+                                ) continue
+                                val fieldNames = mutableSetOf<String>()
+                                fieldNames.addAll(messageMetadata.keySet())
+                                fieldNames.forEach { key ->
+                                    if (!mmsColumns.contains(key)) {
+                                        messageMetadata.remove(key)
+                                    }
+                                }
+                                val threadId = Telephony.Threads.getOrCreateThreadId(
+                                    appContext,
+                                    addresses.map { it1 -> it1.getAsString("address") }.toSet()
                                 )
-                            if (insertUri == null) {
-                                Log.v(LOG_TAG, "MMS insert failed!")
-                            } else {
-                                totals.mms++
-                                setStatusText(
-                                    statusReportText,
-                                    appContext.getString(
-                                        R.string.message_import_progress,
-                                        totals.sms,
-                                        totals.mms
+                                messageMetadata.put("thread_id", threadId)
+                                val insertUri =
+                                    appContext.contentResolver.insert(
+                                        Telephony.Mms.CONTENT_URI,
+                                        messageMetadata
                                     )
-                                )
+                                if (insertUri == null) {
+                                    Log.v(LOG_TAG, "MMS insert failed!")
+                                } else {
+                                    totals.mms++
+                                    setStatusText(
+                                        statusReportText,
+                                        appContext.getString(
+                                            R.string.message_import_progress,
+                                            totals.sms,
+                                            totals.mms
+                                        )
+                                    )
 //                                Log.v(LOG_TAG, "MMS insert succeeded!")
-                                val messageId = insertUri.lastPathSegment
-                                val addressUri = Uri.parse("content://mms/$messageId/addr")
-                                addresses.forEach { address1 ->
-                                    address1.put(Telephony.Mms.Addr.MSG_ID, messageId)
-                                    val insertAddressUri =
-                                        appContext.contentResolver.insert(addressUri, address1)
-                                    if (insertAddressUri == null) {
-                                        Log.v(LOG_TAG, "MMS address insert failed!")
-                                    } /*else {
+                                    val messageId = insertUri.lastPathSegment
+                                    val addressUri = Uri.parse("content://mms/$messageId/addr")
+                                    addresses.forEach { address1 ->
+                                        address1.put(Telephony.Mms.Addr.MSG_ID, messageId)
+                                        val insertAddressUri =
+                                            appContext.contentResolver.insert(addressUri, address1)
+                                        if (insertAddressUri == null) {
+                                            Log.v(LOG_TAG, "MMS address insert failed!")
+                                        } /*else {
                                         Log.v(LOG_TAG, "MMS address insert succeeded. Address metadata:" + address.toString())
                                     }*/
-                                }
-                                val partUri = Uri.parse("content://mms/$messageId/part")
-                                parts.forEachIndexed { j, part1 ->
-                                    part1.put(Telephony.Mms.Part.MSG_ID, messageId)
-                                    val insertPartUri =
-                                        appContext.contentResolver.insert(partUri, part1)
-                                    if (insertPartUri == null) {
-                                        Log.v(
-                                            LOG_TAG,
-                                            "MMS part insert failed! Part metadata:$part1"
-                                        )
-                                    } else {
-                                        if (binaryData[j] != null) {
-                                            val os =
-                                                appContext.contentResolver.openOutputStream(
-                                                    insertPartUri
-                                                )
-                                            if (os != null) os.use { os.write(binaryData[j]) }
-                                            else Log.v(LOG_TAG, "Failed to open OutputStream!")
+                                    }
+                                    val partUri = Uri.parse("content://mms/$messageId/part")
+                                    parts.forEachIndexed { j, part1 ->
+                                        part1.put(Telephony.Mms.Part.MSG_ID, messageId)
+                                        val insertPartUri =
+                                            appContext.contentResolver.insert(partUri, part1)
+                                        if (insertPartUri == null) {
+                                            Log.v(
+                                                LOG_TAG,
+                                                "MMS part insert failed! Part metadata:$part1"
+                                            )
+                                        } else {
+                                            if (binaryData[j] != null) {
+                                                val os =
+                                                    appContext.contentResolver.openOutputStream(
+                                                        insertPartUri
+                                                    )
+                                                if (os != null) os.use { os.write(binaryData[j]) }
+                                                else Log.v(LOG_TAG, "Failed to open OutputStream!")
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                        jsonReader.endArray()
+                    } catch (e: Exception) {
+                        displayError(
+                            appContext,
+                            e,
+                            "Error importing messages",
+                            "Error parsing JSON"
+                        )
                     }
-                    jsonReader.endArray()
                 }
             }
             hideProgressBar(progressBar)
