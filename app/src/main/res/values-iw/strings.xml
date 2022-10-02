@@ -62,4 +62,8 @@
 \nזכויות יוצרים © 2021–22
 \n
 \nשוחרר תחת GNU GPLv3</string>
+    <string name="contacts_import_progress">%1$d אנשי קשר יובאו</string>
+    <string name="import_contacts_results">%1$d אנשי קשר יובאו
+\nזמן שחלף: %2$s.</string>
+    <string name="contacts_write_permissions_required">ייבוא אנשי קשר דורש הרשאה לכתוב אנשי קשר.</string>
 </resources>
