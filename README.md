@@ -23,6 +23,12 @@ By default, binary MMS data (such as images and videos) are exported. The user c
 
 To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
 
+#### Retention
+
+When scheduled exports are enabled, the following option can be used to control retention:
+
+ - `delete_old_exports` - If this option is not enabled (the default), then any old exports will be left untouched (i.e., all exports are retained indefinitely). If it is enabled, then for each data type (contacts, call log, and messages), upon successful export, the app will try to delete any old exports (i.e., all files with names of the form `<data-type>-<yyyy-MM-dd>.json`, where `<data-type>` is the data type successfully exported, and `<yyyy-MM-dd>` is a datestamp). Selective retention of a subset of old exports can be accomplished by enabling this option in conjunction with the use of external software with snapshotting and selective retention functionality, such as [rsnapshot](https://rsnapshot.org/) or [borg](https://borgbackup.readthedocs.io/en/stable/usage/prune.html), running either on the local device, or on a system to which the exports are synced via software such as [Syncthing](https://syncthing.net/). This software should be scheduled to run between exports, and configured to preserve copies of the previous exports before the app deletes them following its next scheduled exports.
+
 ### Permissions
 
 To export messages, permission to read SMSs and Contacts is required (the need for the latter is explained below). The app will ask for these permissions on startup, if it does not already have them.
@@ -35,7 +41,7 @@ To export call logs, permission to read Call Logs and Contacts is required (the 
 
 To import call logs, permission to read and write Call Logs is required.
 
-To export contacts, permisson to read Contacts is required.
+To export contacts, permission to read Contacts is required.
 
 To import contacts, permission to write Contacts is required. (Granting the app permission to access Contacts grants both read and write permission, although if the app is upgraded from an earlier version which did not declare that it uses permission to write Contacts, then it may be necessary to deny and re-grant Contacts permission in order to enable permission to write Contacts.)
 

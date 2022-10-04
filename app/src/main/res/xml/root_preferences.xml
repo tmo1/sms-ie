@@ -39,6 +39,12 @@
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="delete_old_exports"
+            android:title="Delete old exports"
+            app:dependency="schedule_export"/>
+
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_messages"
             android:title="Export messages"
@@ -46,8 +52,8 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
-            android:key="export_call_logs"
-            android:title="Export call logs"
+            android:key="export_calls"
+            android:title="Export calls"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat

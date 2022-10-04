@@ -211,7 +211,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "application/json"
-                putExtra(Intent.EXTRA_TITLE, "call-log-$dateInString.json")
+                putExtra(Intent.EXTRA_TITLE, "calls-$dateInString.json")
             }
             startActivityForResult(intent, EXPORT_CALL_LOG)
         } else {

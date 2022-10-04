@@ -108,7 +108,7 @@ class SettingsActivity : AppCompatActivity() {
                     // TODO: we should probably call releasePersistableUriPermission on the current URI
                     context?.contentResolver?.takePersistableUriPermission(
                         treeUri,
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
                     )
                     /*val documentTree = activity?.let { DocumentFile.fromTreeUri(it, treeUri) }
                     val file = documentTree?.createFile("text/plain", "sms-ie.test")
