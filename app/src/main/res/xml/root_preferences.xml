@@ -45,6 +45,12 @@
             app:dependency="schedule_export"/>
 
         <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="remove_datestamps_from_filenames"
+            android:title="Remove datestamps from filenames"
+            app:dependency="delete_old_exports" />
+
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_messages"
             android:title="Export messages"

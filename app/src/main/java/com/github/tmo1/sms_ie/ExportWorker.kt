@@ -52,13 +52,8 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         val dateInString = "-${date.toString("yyyy-MM-dd")}"
         CoroutineScope(Dispatchers.IO).launch {
             if (prefs.getBoolean("export_messages", true)) {
-                var filename = "messages$dateInString.json"
                 val file =
-                    documentTree?.createFile("application/json", filename)
-                // The following line is necessary in case there already existed a file with the
-                // provided filename, in which case Android will add a numeric suffix to the new
-                // file's filename ("messages-yyyy-MM-dd (1).json")
-                filename = file?.name.toString()
+                    documentTree?.createFile("application/json", "messages$dateInString.json")
                 val fileUri = file?.uri
                 if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning messages export ...")
@@ -67,17 +62,15 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                         LOG_TAG,
                         "Messages export successful: ${messageTotal.sms} SMSs and ${messageTotal.mms} MMSs exported"
                     )
-                    deleteOldExports(prefs, documentTree, filename, "messages")
+                    deleteOldExports(prefs, documentTree, file, "messages")
                 } else {
                     Log.e(LOG_TAG, "Messages export failed - could not create file")
                     result = Result.failure()
                 }
             }
             if (prefs.getBoolean("export_calls", true)) {
-                var filename = "calls$dateInString.json"
                 val file =
-                    documentTree?.createFile("application/json", filename)
-                filename = file?.name.toString()
+                    documentTree?.createFile("application/json", "calls$dateInString.json")
                 val fileUri = file?.uri
                 if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning call log export ...")
@@ -87,17 +80,15 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                         LOG_TAG,
                         "Call log export successful: $callsTotal calls exported"
                     )
-                    deleteOldExports(prefs, documentTree, filename, "calls")
+                    deleteOldExports(prefs, documentTree, file, "calls")
                 } else {
                     Log.e(LOG_TAG, "Call log export failed - could not create file")
                     result = Result.failure()
                 }
             }
             if (prefs.getBoolean("export_contacts", true)) {
-                var filename = "contacts$dateInString.json"
                 val file =
-                    documentTree?.createFile("application/json", filename)
-                filename = file?.name.toString()
+                    documentTree?.createFile("application/json", "contacts$dateInString.json")
                 val fileUri = file?.uri
                 if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning contacts export ...")
@@ -106,7 +97,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                         LOG_TAG,
                         "Contacts export successful: $contacts contacts exported"
                     )
-                    deleteOldExports(prefs, documentTree, filename, "contacts")
+                    deleteOldExports(prefs, documentTree, file, "contacts")
                 } else {
                     Log.e(LOG_TAG, "Contacts export failed - could not create file")
                     result = Result.failure()
@@ -172,22 +163,30 @@ fun updateExportWork(context: Context) {
 fun deleteOldExports(
     prefs: SharedPreferences,
     documentTree: DocumentFile,
-    filename: String,
+    newExport: DocumentFile?,
     prefix: String
 ) {
     if (prefs.getBoolean("delete_old_exports", false)) {
         Log.v(LOG_TAG, "Deleting old exports ...")
+        // The following line is necessary in case there already existed a file with the
+        // provided filename, in which case Android will add a numeric suffix to the new
+        // file's filename ("messages-yyyy-MM-dd (1).json")
+        val newFilename = newExport?.name.toString()
         val files = documentTree.listFiles()
         var total = 0
         files.forEach {
             val name = it.name
-            if (name != null && name != filename && name.startsWith(prefix) && name.endsWith(
+            if (name != null && name != newFilename && name.startsWith(prefix) && name.endsWith(
                     ".json"
                 )
             ) {
                 it.delete()
                 total++
             }
+        }
+        if (prefs.getBoolean("remove_datestamps_from_filenames", false)
+        ) {
+            newExport?.renameTo("$prefix.json")
         }
         Log.v(LOG_TAG, "$total exports deleted")
     }
