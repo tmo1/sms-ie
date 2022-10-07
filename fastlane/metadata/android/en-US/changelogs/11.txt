@@ -1,0 +1,12 @@
+ - New export retention options: "Delete old exports" and "Remove datestamps from filenames"
+
+ - Correct handling of non-text contact data (e.g. pictures)
+ 
+ - Fix for crash on missing MMS part binary data
+
+ - Graceful recovery from errors encountered while importing (e.g. JSON parsing errors)
+
+ - Russian translation
+
+ - Updates to several previous translations
+
