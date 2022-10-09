@@ -25,6 +25,7 @@ package com.github.tmo1.sms_ie
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.provider.BaseColumns
 import android.provider.CallLog
 import android.util.JsonReader
 import android.util.JsonWriter
@@ -149,7 +150,11 @@ suspend fun importCallLog(
                             while (jsonReader.hasNext()) {
                                 val name = jsonReader.nextName()
                                 val value = jsonReader.nextString()
-                                if (callLogColumns.contains(name)) {
+                                if ((callLogColumns.contains(name)) and (name !in setOf(
+                                        BaseColumns._ID,
+                                        BaseColumns._COUNT
+                                    ))
+                                ) {
                                     callLogMetadata.put(name, value)
                                 }
                             }
