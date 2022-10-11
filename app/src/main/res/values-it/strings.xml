@@ -1,2 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="call_log_export_progress">%1$d di %2$d chiamate esportate</string>
+    <string name="message_import_progress">%1$d SMS e %2$d MMS importati</string>
+    <string name="contacts_export_progress">%1$d di %2$d contatti esportati</string>
+    <string name="contacts_import_progress">%1$d contatto/i importato/i</string>
+    <string name="export_messages_results">%1$d SMS e %2$d MMS esportati
+\nTempo trascorso: %3$s</string>
+    <string name="import_call_log_results">%1$d chiamata/e importata/e
+\nTempo trascorso: %2$s</string>
+    <string name="import_contacts_results">%1$d contatto/i importato/i
+\nTempo trascorso: %2$s.</string>
+    <string name="export_contacts_results">%1$d contatto/i esportato/i
+\nTempo trascorso: %2$s.</string>
+    <string name="sms_permissions_required">L\'esportazione dei messaggi richiede l\'autorizzazione per leggere SMS e contatti.</string>
+    <string name="app_name">Importa/Esporta SMS</string>
+    <string name="sms_export_progress">%1$d di %2$d SMS esportati</string>
+    <string name="import_messages_results">%1$d SMS e %2$d MMS importati
+\nTempo trascorso: %3$s</string>
+    <string name="export_call_log_results">%1$d chiamata/e esportata/e
+\nTempo trascorso: %2$s</string>
+    <string name="default_sms_app_requirement">Questa applicazione deve essere l\'applicazione SMS predefinita per importare o cancellare i messaggi.</string>
+    <string name="call_logs_permissions_required">L\'esportazione del registro delle chiamate richiede l\'autorizzazione per leggere il registro delle chiamate e i contatti.</string>
+    <string name="call_logs_read_write_permissions_required">L\'importazione del registro delle chiamate richiede l\'autorizzazione per leggere e scrivere il registro delle chiamate.</string>
+    <string name="contacts_read_permission_required">L\'esportazione dei contatti richiede l\'autorizzazione per leggere i contatti.</string>
+    <string name="contacts_write_permissions_required">L\'importazione dei contatti richiede l\'autorizzazione per scrivere i contatti.</string>
+    <string name="not_jsonarray_message">Il file non sembra contenere un JSONArray valido.</string>
+    <string name="settings">Impostazioni</string>
+    <string name="include_binary_data">Includi dati MMS binari (codificati)</string>
+    <string name="scheduled_export_executed">Esportazione pianificata eseguita</string>
+    <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d chiamate e %4$d contatti esportati.</string>
+    <string name="dialog_confirm_wipe">Attenzione: cancellare permanentemente tutti i messaggi da questo dispositivo\?</string>
+    <string name="wipe_messages">Elimina messaggi</string>
+    <string name="wipe">Elimina</string>
+    <string name="cancel">Annulla</string>
+    <string name="wipe_cancelled">Eliminazione annullata</string>
+    <string name="messages_wiped">Messaggi eliminati</string>
+    <string name="wiping_sms_messages">Eliminazione messaggi SMS…</string>
+    <string name="wiping_mms_messages">Eliminazione messaggi MMS…</string>
+    <string name="homepage">Pagina principale:</string>
+    <string name="import_messages_button_label">Importa messaggi</string>
+    <string name="import_call_log_button_label">Importa registro chiamate</string>
+    <string name="mms_export_progress">%1$d di %2$d MMS esportati</string>
+    <string name="call_log_import_progress">%1$d chiamata/e importata/e</string>
+    <string name="export_messages_button_label">Esporta messaggi</string>
+    <string name="export_call_log_button_label">Esporta registro chiamate</string>
+    <string name="ready">Pronto</string>
+    <string name="import_contacts">Importa contatti</string>
+    <string name="scheduled_export_failure">Esportazione non riuscita: vedere logcat per maggiori dettagli.</string>
+    <string name="app_about_text">Importa/Esporta SMS
+\n
+\ndi Thomas More e altri collaboratori
+\n
+\nVersione %1$s
+\n
+\nCopyright © 2021-22
+\n
+\nRilasciato sotto GNU GPLv3</string>
+    <string name="documentation">Documentazione:</string>
+    <string name="issue_tracker">Segnalazione problemi:</string>
+    <string name="about">Informazioni</string>
+    <string name="export_contacts">Esporta contatti</string>
+</resources>
