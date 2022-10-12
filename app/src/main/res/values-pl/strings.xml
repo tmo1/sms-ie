@@ -1,2 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="about">O aplikacji</string>
+    <string name="import_contacts">Importuj kontakty</string>
+    <string name="export_contacts">Eksportuj kontakty</string>
+    <string name="homepage">Strona internetowa:</string>
+    <string name="documentation">Dokumentacja:</string>
+    <string name="issue_tracker">Zgłoś problem:</string>
+    <string name="export_messages_button_label">Eksportuj wiadomości</string>
+    <string name="import_messages_button_label">Importuj wiadomości</string>
+    <string name="export_call_log_button_label">Eksportuj listę połączeń</string>
+    <string name="import_call_log_button_label">Importuj listę połączeń</string>
+    <string name="ready">Gotowe</string>
+    <string name="app_name">Import / Eksport SMS</string>
+    <string name="call_logs_permissions_required">Eksportowanie listy połączeń wymaga uprawnień do odczytu listy połączeń i kontaktów.</string>
+    <string name="contacts_write_permissions_required">Importowanie kontaktów wymaga uprawnień do zapisywania kontaktów.</string>
+    <string name="scheduled_export_failure">Eksport nie powiódł się — zobacz logcat, aby uzyskać więcej informacji.</string>
+    <string name="dialog_confirm_wipe">Ostrzeżenie: czy chcesz usunąć wszystkie wiadomości z tego urządzenia bez możliwości ich przywrócenia\?</string>
+    <string name="export_contacts_results">Wyeksportowano %1$d kontaktów
+\nZajęło to: %2$s.</string>
+    <string name="mms_export_progress">Wyeksportowano %1$d z %2$d MMSów</string>
+    <string name="message_import_progress">Zaimportowano %1$d SMSów i %2$d MMSów</string>
+    <string name="call_log_import_progress">Zaimportowano %1$d połączeń</string>
+    <string name="contacts_export_progress">Wyeksportowano %1$d z %2$d kontaktów</string>
+    <string name="contacts_import_progress">Zaimportowano %1$d kontaktów</string>
+    <string name="export_messages_results">Wyeksportowano %1$d SMSów i %2$d MMSów
+\nZajęło to: %3$s</string>
+    <string name="import_messages_results">Zaimportowano %1$d SMSów i %2$d MMSów
+\nZajęło to: %3$s</string>
+    <string name="export_call_log_results">Wyeksportowano %1$d połączeń
+\nZajęło to: %2$s</string>
+    <string name="import_call_log_results">Zaimportowano %1$d połączeń
+\nZajęło to: %2$s</string>
+    <string name="import_contacts_results">Zaimportowano %1$d kontaktów
+\nZajęło to: %2$s.</string>
+    <string name="sms_export_progress">Wyeksportowano %1$d z %2$d SMSów</string>
+    <string name="sms_permissions_required">Eksportowanie wiadomości wymaga uprawnień do odczytu SMSów i kontaktów.</string>
+    <string name="default_sms_app_requirement">Ta aplikacja musi być domyślną aplikacją do obsługi SMSów, aby można było importować lub usuwać wiadomości.</string>
+    <string name="call_logs_read_write_permissions_required">Importowanie listy połączeń wymaga uprawnień do odczytu i zapisu listy połączeń.</string>
+    <string name="contacts_read_permission_required">Eksportowanie kontaktów wymaga uprawnień do odczytu kontaktów.</string>
+    <string name="not_jsonarray_message">Wydaje się, że plik nie zawiera poprawnej tablicy JSONArray.</string>
+    <string name="settings">Ustawienia</string>
+    <string name="include_binary_data">Dołącz (zakodowane) binarne dane MMS</string>
+    <string name="channel_description">Kanał powiadomień</string>
+    <string name="scheduled_export_executed">Zaplanowany eksport wykonany</string>
+    <string name="scheduled_export_success">Wyeksportowano %1$d SMSów, %2$d MMSów, %3$d połączeń i %4$d kontaktów.</string>
+    <string name="wipe_messages">Usuń wiadomości</string>
+    <string name="wipe">Usuń</string>
+    <string name="cancel">Anuluj</string>
+    <string name="wipe_cancelled">Anulowano usuwanie</string>
+    <string name="messages_wiped">Usunięto wiadomości</string>
+    <string name="wiping_sms_messages">Usuwanie wiadomości SMS …</string>
+    <string name="wiping_mms_messages">Usuwanie wiadomości MMS …</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="app_about_text">Import / Eksport SMS
+\n
+\nStworzone przez Thomasa More\'a oraz innych współpracowników
+\n
+\nWersja %1$s
+\n
+\nPrawa autorskie © 2021–22
+\n
+\nWydane na licencji GNU GPLv3</string>
+    <string name="channel_name">kanał_powiadomień</string>
+    <string name="title_activity_settings">UstawieniaAktywności</string>
+    <string name="call_log_export_progress">Wyeksportowano %1$d z %2$d połączeń</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+</resources>
