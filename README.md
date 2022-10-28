@@ -108,7 +108,13 @@ Contacts import only imports basic contact data (name, phone numbers, email and 
 
 ### Call Log Maximum Capacity
 
-Although this is apparently not publicly officially documented, Android's Call Log has a fixed maximum number of calls that it will store ([500 in many / most versions of Android](https://android.gadgethacks.com/how-to/bypass-androids-call-log-limits-keep-unlimited-call-history-0175494/), 1000 in API 30 (version 11) on a Pixel [my own experience, corroborated [here](https://stackoverflow.com/questions/70501885/the-max-of-incoming-outgoing-or-missed-calls-logs-in-android)]). Attempting to import calls when the log is full may fail, in which case the app will not report an error, but the reported number of imported calls will be lower then the number of calls provided for import. E.g., if calls are exported from a phone with a full log, and the output file is then imported to the same phone, the app will report 0 calls imported.
+Although this is apparently not publicly officially documented, Android's Call Log has a fixed maximum number of calls that it will store ([500 in many / most versions of Android](https://android.gadgethacks.com/how-to/bypass-androids-call-log-limits-keep-unlimited-call-history-0175494/), 1000 in API 30 (version 11) on a Pixel [my own experience, corroborated [here](https://stackoverflow.com/questions/70501885/the-max-of-incoming-outgoing-or-missed-calls-logs-in-android)]).
+
+Earlier versions of this document stated that:
+
+> Attempting to import calls when the log is full may fail, in which case the app will not report an error, but the reported number of imported calls will be lower then the number of calls provided for import. E.g., if calls are exported from a phone with a full log, and the output file is then imported to the same phone, the app will report 0 calls imported.
+
+This was a misinterpretation of observed call import failures, which were actually caused by [a bug in the app](https://github.com/tmo1/sms-ie/issues/63), which has since been [fixed](https://github.com/tmo1/sms-ie/commit/718e8b214c03be5858d161860377604c2da7e1db).
 
 ## Bugs, Feature Requests, and Other Issues
 
@@ -116,8 +122,9 @@ Bugs, feature requests, and other issues can be filed at [the SMS Import / Expor
 
 ## Translations
 
-SMS Import / Export has been translated (from the original English) into the following languages:
+SMS Import / Export has been translated (from the original English) into the following languages (note that some of these translations may contain inaccuracies, due to changes to the app's original text since they were made):
 
+<!---
  - German
  - French
  - Norwegian Bokmål
@@ -125,8 +132,15 @@ SMS Import / Export has been translated (from the original English) into the fol
  - Portuguese
  - Hebrew
  - Russian
+ - Italian
+ - Polish
+--->
  
- To add a translation into a new language, or to correct, update, or improve an existing translation, see the [Contributions](#contributions) section below.
+<a href="https://hosted.weblate.org/engage/sms-import-export/">
+	<img src="https://hosted.weblate.org/widgets/sms-import-export/-/ui-strings/multi-auto.svg" alt="Translation status" />
+</a>
+  
+To add a translation into a new language, or to correct, update, or improve an existing translation, see the [Contributions](#contributions) section below.
  
 ## TODO
 
@@ -138,7 +152,7 @@ The following are various features and improvements to the app that have been su
 
 Code can be contributed via [pull request](https://github.com/tmo1/sms-ie/pulls), but for any substantial changes or additions to the existing codebase, please first [open an issue](https://github.com/tmo1/sms-ie/issues) to discuss the proposed changes or additions. All contributed code should be licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) or later.
 
-SMS Import / Export is integrated with [Weblate](https://weblate.org). Translations into new languages, as well as corrections, updates, and improvements to existing translations, can be submitted via [SMS Import / Export @ Hosted Weblate](https://hosted.weblate.org/projects/sms-import-export/), or by ordinary [pull requests  against the SMS Import / Export repository](https://github.com/tmo1/sms-ie/pulls).
+SMS Import / Export is integrated with [Weblate](https://weblate.org). Translations into new languages, as well as corrections, updates, and improvements to existing translations, can be submitted via [SMS Import / Export @ Hosted Weblate](https://hosted.weblate.org/engage/sms-import-export/), or by ordinary [pull requests against the SMS Import / Export repository](https://github.com/tmo1/sms-ie/pulls).
 
 The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app:
 
@@ -153,9 +167,11 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): [bug fix](https://github.com/tmo1/sms-ie/pull/39)
  - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon
  - [Merlignux](https://github.com/Merlignux): Portuguese translation
- - Eric: updates to Simplified Chinese translation
+ - [Eric (hamburger1024)](https://hosted.weblate.org/user/hamburger1024/): updates to Simplified Chinese translation
  - [Shopimisrel](https://github.com/Shopimisrel): Hebrew translation
- - Артём: Russian translation
+ - [Артём (Artem13327)](https://hosted.weblate.org/user/Artem13327/): Russian translation
+ - [pjammo](https://github.com/pjammo): Italian translation
+ - [jacek (TX5400)](https://hosted.weblate.org/user/TX5400/): Polish translation
 
 ## Privacy
 

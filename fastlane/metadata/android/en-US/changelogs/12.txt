@@ -1,0 +1,6 @@
+ - Fix for a bug (#63) that prevented call import under certain circumstances
+
+ - Italian translation
+
+ - Polish translation
+
