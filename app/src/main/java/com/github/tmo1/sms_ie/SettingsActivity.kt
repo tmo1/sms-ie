@@ -98,6 +98,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
             super.onActivityResult(requestCode, resultCode, intent)
             // from: https://stackoverflow.com/questions/34331956/trying-to-takepersistableuripermission-fails-for-custom-documentsprovider-via

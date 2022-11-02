@@ -64,9 +64,11 @@ dependencies {
     //implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    // implementation 'androidx.appcompat:appcompat:1.4.2'
+    // https://stackoverflow.com/a/74259107
+    implementation 'androidx.appcompat:appcompat:1.7.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
