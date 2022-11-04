@@ -46,7 +46,6 @@ suspend fun exportContacts(
     progressBar: ProgressBar?,
     statusReportText: TextView?
 ): Int {
-    //val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         var total: Int
         appContext.contentResolver.openOutputStream(file).use { outputStream ->
@@ -57,7 +56,6 @@ suspend fun exportContacts(
                 total = contactsToJSON(
                     appContext,
                     jsonWriter,
-                    //displayNames,
                     progressBar,
                     statusReportText
                 )
@@ -71,7 +69,6 @@ suspend fun exportContacts(
 private suspend fun contactsToJSON(
     appContext: Context,
     jsonWriter: JsonWriter,
-    //displayNames: MutableMap<String, String?>,
     progressBar: ProgressBar?,
     statusReportText: TextView?
 ): Int {
@@ -194,9 +191,10 @@ suspend fun importContacts(
                     contactDataFields.add("mimetype")
                     try {
                         jsonReader.beginArray()
-                        // Loop through Contact fields until we find the array of Raw Contacts
+                        // Loop through Contacts
                         while (jsonReader.hasNext()) {
                             jsonReader.beginObject()
+                            // Loop through Contact fields until we find the array of Raw Contacts
                             while (jsonReader.hasNext()) {
                                 var name = jsonReader.nextName()
                                 if (name == "raw_contacts") {
