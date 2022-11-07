@@ -1,6 +1,10 @@
  - Fix for a bug (#63) that prevented call import under certain circumstances
 
+ - Add startup check / request for permission to write Contacts (see issue #69)
+ 
  - Italian translation
 
  - Polish translation
+
+ - Spanish translation
 
