@@ -31,7 +31,7 @@ android {
         applicationId "com.github.tmo1.sms_ie"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 11
+        versionCode 12
         versionName "1.5.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -76,7 +76,7 @@ dependencies {
     //implementation "androidx.activity:activity-ktx:$activity_version"
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
 }
