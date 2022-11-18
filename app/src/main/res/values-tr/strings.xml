@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
+  ~ Copyright (c) 2021-2022 Thomas More
+  ~
+  ~ This file is part of SMS Import / Export.
+  ~
+  ~ SMS Import / Export is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ SMS Import / Export is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+    <string name="app_name">SMS Import / Export</string>
+    <string name="export_messages_button_label">mesajlaeı çıkar</string>
+    <string name="import_messages_button_label">mesajlari ekle</string>
+    <string name="export_call_log_button_label">arama geçmisini cikar</string>
+    <string name="import_call_log_button_label">arama gecmisini ekle</string>
+    <string name="ready">hazir</string>
+    <!--<string name="begin_exporting_messages">Exporting messages …</string>
+    <string name="begin_exporting_sms">Exporting SMS messages …</string>
+    <string name="begin_exporting_mms">Exporting MMS messages …</string>
+    <string name="begin_importing_messages">Importing messages …</string>
+    <string name="begin_importing_sms">Importing SMS messages …</string>
+    <string name="begin_importing_mms">Exporting MMS messages …</string>
+    <string name="begin_exporting_call_log">Exporting call log …</string>
+    <string name="begin_importing_call_log">Importing call log</string>-->
+    <string name="call_log_export_progress">%2$ 'nin %1$d 'i cikarildk</string>
+    <string name="call_log_import_progress">%1$d arama eklendi</string>
+    <string name="sms_export_progress">%2$d' nin %1$d 'i SMS cikarildi</string>
+    <string name="mms_export_progress">%2$d' nin %1$d 'i MMS cikarildi</string>
+    <string name="message_import_progress">%1$d SMS ve %2$d MMS eklendi</string>
+    <string name="contacts_export_progress">%2$d' nin %1$d 'i kisi cikarildi</string>
+    <string name="contacts_import_progress">%2$d' nin %1$d 'i kisi eklendi </string>
+    <string name="export_messages_results">%1$d SMS ve %2$d MMS cikarildi\nGecem zaman: %3$s</string>
+    <string name="import_messages_results">%1$d SMS ve %2$d MMS eklendi \nGecen zaman: %3$s</string>
+    <string name="export_call_log_results">%1$d arama cikarildi\ngecen zaman: %2$s</string>
+    <string name="import_call_log_results">%1$d arama eklendj\nGecen zaman: %2$s</string>
+    <string name="export_contacts_results">%1$d kisi cikarildi\ngecem zaman: %2$s.</string>
+    <string name="import_contacts_results">%1$d kisi eklendi\ngecen zaman: %2$s.</string>
+    <string name="sms_permissions_required">mesaj cikarmak SMS ve MMS okuka iznine ihtiyac duyar.</string>
+    <string name="default_sms_app_requirement">Bu uygulama SMS temizlemek ve cikarmak icin varsayilan olmasi lazim.</string>
+    <string name="call_logs_permissions_required">arama verilerini cikarmak arama gecmisi ve kisileri okuma iznine ihtiyac duyar.</string>
+    <string name="call_logs_read_write_permissions_required">arama gecmisini eklemek gecmisi okuma iznine ihtiyac duyar.</string>
+    <string name="contacts_read_permission_required">kidileri eklemek rehberi okuma iznine ihtiyac duyar.</string>
+    <string name="contacts_write_permissions_required">kisileri eklemek kisiler iznine ihtiyac duyar.</string>
+    <string name="not_jsonarray_message"> bu dosyada gecerli bir JSONArray gozukmuyor.</string>
+    <string name="title_activity_settings">ayarlaraktivitesk</string>
+    <string name="settings">ayarlar</string>
+    <string name="include_binary_data">(Kodlanmış) ikili MMS verilerini dahil et</string>
+    <string name="channel_name">bildirim_kanali</string>
+    <string name="channel_description">bildirim kanali</string>
+    <string name="scheduled_export_executed">planlanmis disa aktarma gerçekleştirildi</string>
+    <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d arama, ve %4$d kisi cikarildi.</string>
+    <string name="scheduled_export_failure">cikarma basarili — daha fazla detay icin logcat'a bak.</string>
+    <string name="wipe_messages">mesajlari temizle</string>
+    <string name="dialog_confirm_wipe">uyari: mesajlari kalici olarak bu cihazdan sil, geri alamayacaksin\?</string>
+    <string name="wipe">temizle</string>
+    <string name="cancel">iptal</string>
+    <string name="wipe_cancelled">temizleme iptal edildi</string>
+    <string name="messages_wiped">mesajlar temizlendi</string>
+    <string name="wiping_sms_messages">SMS'ler temizleniyor …</string>
+    <string name="wiping_mms_messages">MMS'ler temizleniyor …</string>
+    <string name="app_about_text">SMS ekleme / cikarma\n\ntarafindan Thomas More ve dogee gelistiriciler\n\nVersion %1$s\n\nCopyright © 2021–22\n\GNU GPLv3 altında yayımlandı</string>
+    <string name="homepage">ana sayga:</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="documentation">dokümantasyon:</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="issue_tracker">soeun izleyici:</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="about">hakkinda</string>
+    <string name="export_contacts">rehberi cikar</string>
+    <string name="import_contacts">rehberi ekle</string>
+</resources>
