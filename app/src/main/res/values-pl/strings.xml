@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="about">O aplikacji</string>
-    <string name="import_contacts">Importuj kontakty</string>
-    <string name="export_contacts">Eksportuj kontakty</string>
+    <string name="import_contacts">Import kontaktów</string>
+    <string name="export_contacts">Eksport kontaktów</string>
     <string name="homepage">Strona internetowa:</string>
     <string name="documentation">Dokumentacja:</string>
     <string name="issue_tracker">Zgłoś problem:</string>
-    <string name="export_messages_button_label">Eksportuj wiadomości</string>
-    <string name="import_messages_button_label">Importuj wiadomości</string>
-    <string name="export_call_log_button_label">Eksportuj listę połączeń</string>
-    <string name="import_call_log_button_label">Importuj listę połączeń</string>
+    <string name="export_messages_button_label">Eksport wiadomości</string>
+    <string name="import_messages_button_label">Import wiadomości</string>
+    <string name="export_call_log_button_label">Eksport listy połączeń</string>
+    <string name="import_call_log_button_label">Import listy połączeń</string>
     <string name="ready">Gotowe</string>
     <string name="app_name">Import / Eksport SMS</string>
     <string name="call_logs_permissions_required">Eksportowanie listy połączeń wymaga uprawnień do odczytu listy połączeń i kontaktów.</string>
@@ -40,7 +40,7 @@
     <string name="contacts_read_permission_required">Eksportowanie kontaktów wymaga uprawnień do odczytu kontaktów.</string>
     <string name="not_jsonarray_message">Wydaje się, że plik nie zawiera poprawnej tablicy JSONArray.</string>
     <string name="settings">Ustawienia</string>
-    <string name="include_binary_data">Dołącz (zakodowane) binarne dane MMS</string>
+    <string name="include_binary_data">Dołącz (zakod.) binarne dane MMS</string>
     <string name="channel_description">Kanał powiadomień</string>
     <string name="scheduled_export_executed">Zaplanowany eksport wykonany</string>
     <string name="scheduled_export_success">Wyeksportowano %1$d SMSów, %2$d MMSów, %3$d połączeń i %4$d kontaktów.</string>
