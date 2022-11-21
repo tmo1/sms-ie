@@ -1,0 +1,6 @@
+ - Turkish translation
+
+ - Update to Polish translation
+
+ - Improvement to UI aesthetics
+

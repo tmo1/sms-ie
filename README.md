@@ -173,6 +173,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [pjammo](https://github.com/pjammo): Italian translation
  - [jacek (TX5400)](https://hosted.weblate.org/user/TX5400/): Polish translation
  - [gallegonovato](https://github.com/gallegonovato): Spanish translation
+ - [Bai (Baturax)](https://github.com/Baturax): Turkish translation
 
 ## Privacy
 
