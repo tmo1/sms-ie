@@ -2,5 +2,7 @@
 
  - Update to Polish translation
 
+ - Update to French translation
+ 
  - Improvement to UI aesthetics
 
