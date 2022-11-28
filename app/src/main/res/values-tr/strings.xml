@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
   ~ Copyright (c) 2021-2022 Thomas More
   ~
@@ -16,8 +17,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="app_name">SMS Import / Export</string>
     <string name="export_messages_button_label">mesajlaeı çıkar</string>
     <string name="import_messages_button_label">mesajlari ekle</string>
@@ -32,13 +32,13 @@
     <string name="begin_importing_mms">Exporting MMS messages …</string>
     <string name="begin_exporting_call_log">Exporting call log …</string>
     <string name="begin_importing_call_log">Importing call log</string>-->
-    <string name="call_log_export_progress">%2$ \'nin %1$d \'i cikarildk</string>
+    <string name="call_log_export_progress">%1$d / %2$d arama dışa aktarıldı</string>
     <string name="call_log_import_progress">%1$d arama eklendi</string>
     <string name="sms_export_progress">%2$d\' nin %1$d \'i SMS cikarildi</string>
     <string name="mms_export_progress">%2$d\' nin %1$d \'i MMS cikarildi</string>
     <string name="message_import_progress">%1$d SMS ve %2$d MMS eklendi</string>
     <string name="contacts_export_progress">%2$d\' nin %1$d \'i kisi cikarildi</string>
-    <string name="contacts_import_progress">%2$d\' nin %1$d \'i kisi eklendi </string>
+    <string name="contacts_import_progress">%1$d kişi içe aktarıldı</string>
     <string name="export_messages_results">%1$d SMS ve %2$d MMS cikarildi\nGecem zaman: %3$s</string>
     <string name="import_messages_results">%1$d SMS ve %2$d MMS eklendi \nGecen zaman: %3$s</string>
     <string name="export_call_log_results">%1$d arama cikarildi\ngecen zaman: %2$s</string>
@@ -79,4 +79,3 @@
     <string name="export_contacts">rehberi cikar</string>
     <string name="import_contacts">rehberi ekle</string>
 </resources>
-
