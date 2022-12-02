@@ -41,10 +41,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 suspend fun exportMessages(
-    appContext: Context,
-    file: Uri,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    appContext: Context, file: Uri, progressBar: ProgressBar?, statusReportText: TextView?
 ): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
@@ -57,20 +54,12 @@ suspend fun exportMessages(
                 jsonWriter.beginArray()
                 if (prefs.getBoolean("sms", true)) {
                     totals.sms = smsToJSON(
-                        appContext,
-                        jsonWriter,
-                        displayNames,
-                        progressBar,
-                        statusReportText
+                        appContext, jsonWriter, displayNames, progressBar, statusReportText
                     )
                 }
                 if (prefs.getBoolean("mms", true)) {
                     totals.mms = mmsToJSON(
-                        appContext,
-                        jsonWriter,
-                        displayNames,
-                        progressBar,
-                        statusReportText
+                        appContext, jsonWriter, displayNames, progressBar, statusReportText
                     )
                 }
                 jsonWriter.endArray()
@@ -104,8 +93,7 @@ private suspend fun smsToJSON(
                 }
                 val address = it.getString(addressIndex)
                 if (address != null) {
-                    val displayName =
-                        lookupDisplayName(appContext, displayNames, address)
+                    val displayName = lookupDisplayName(appContext, displayNames, address)
                     if (displayName != null) jsonWriter.name("display_name").value(displayName)
                 }
                 jsonWriter.endObject()
@@ -150,11 +138,7 @@ private suspend fun mmsToJSON(
                 val msgId = it.getString(msgIdIndex)
                 val addressCursor = appContext.contentResolver.query(
 //                                Uri.parse("content://mms/addr"),
-                    Uri.parse("content://mms/$msgId/addr"),
-                    null,
-                    null,
-                    null,
-                    null
+                    Uri.parse("content://mms/$msgId/addr"), null, null, null, null
                 )
                 addressCursor?.use { it1 ->
                     val addressTypeIndex =
@@ -171,12 +155,9 @@ private suspend fun mmsToJSON(
                                     val value = it1.getString(i)
                                     if (value != null) jsonWriter.name(columnName).value(value)
                                 }
-                                val displayName =
-                                    lookupDisplayName(
-                                        appContext,
-                                        displayNames,
-                                        it1.getString(addressIndex)
-                                    )
+                                val displayName = lookupDisplayName(
+                                    appContext, displayNames, it1.getString(addressIndex)
+                                )
                                 if (displayName != null) jsonWriter.name("display_name")
                                     .value(displayName)
                                 jsonWriter.endObject()
@@ -195,12 +176,9 @@ private suspend fun mmsToJSON(
                                     val value = it1.getString(i)
                                     if (value != null) jsonWriter.name(columnName).value(value)
                                 }
-                                val displayName =
-                                    lookupDisplayName(
-                                        appContext,
-                                        displayNames,
-                                        it1.getString(addressIndex)
-                                    )
+                                val displayName = lookupDisplayName(
+                                    appContext, displayNames, it1.getString(addressIndex)
+                                )
                                 if (displayName != null) jsonWriter.name("display_name")
                                     .value(displayName)
                                 jsonWriter.endObject()
@@ -212,10 +190,7 @@ private suspend fun mmsToJSON(
                 val partCursor = appContext.contentResolver.query(
                     Uri.parse("content://mms/part"),
 //                      Uri.parse("content://mms/$msgId/part"),
-                    null,
-                    "mid=?",
-                    arrayOf(msgId),
-                    "seq ASC"
+                    null, "mid=?", arrayOf(msgId), "seq ASC"
                 )
                 // write array of MMS parts
                 partCursor?.use { it1 ->
@@ -279,10 +254,7 @@ private suspend fun mmsToJSON(
 }
 
 suspend fun importMessages(
-    appContext: Context,
-    uri: Uri,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    appContext: Context, uri: Uri, progressBar: ProgressBar?, statusReportText: TextView?
 ): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
@@ -296,6 +268,7 @@ suspend fun importMessages(
         val mmsCursor =
             appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
         mmsCursor?.use { mmsColumns.addAll(it.columnNames) }
+        val threadIdMap = HashMap<String, String>()
         uri.let {
             initIndeterminateProgressBar(progressBar)
             appContext.contentResolver.openInputStream(it).use { inputStream ->
@@ -315,6 +288,7 @@ suspend fun importMessages(
                             binaryData.clear()
                             var name: String?
                             var value: String?
+                            var oldThreadId: String? = null
                             while (jsonReader.hasNext()) {
                                 name = jsonReader.nextName()
                                 when (name) {
@@ -376,8 +350,7 @@ suspend fun importMessages(
                                                 if (name1 == "binary_data") {
                                                     binaryData.add(
                                                         Base64.decode(
-                                                            value1,
-                                                            Base64.NO_WRAP
+                                                            value1, Base64.NO_WRAP
                                                         )
                                                     )
                                                     hasBinaryData = true
@@ -389,11 +362,19 @@ suspend fun importMessages(
                                         }
                                         jsonReader.endArray()
                                     }
+                                    "thread_id" -> {
+                                        oldThreadId = jsonReader.nextString()
+                                        if (oldThreadId in threadIdMap) {
+                                            messageMetadata.put(
+                                                "thread_id", threadIdMap[oldThreadId]
+                                            )
+                                        }
+                                    }
                                     else -> {
                                         value = jsonReader.nextString()
                                         if (name !in setOf(
                                                 "_id",
-                                                "thread_id",
+                                                // "thread_id",
                                                 "display_name"
                                             )
                                         ) messageMetadata.put(name, value)
@@ -401,13 +382,48 @@ suspend fun importMessages(
                                 }
                             }
                             jsonReader.endObject()
-                            if (!messageMetadata.containsKey("m_type")) { // it's SMS
+                            val isMMS = messageMetadata.containsKey("m_type")
+                            /*
+                             // This is code for removing a specified address from a message recipient list
+                             // It was an attempt to fix this issue:
+                             // https://github.com/tmo1/sms-ie/issues/16
+                             // but did not work, and is currently unused, although it may be useful
+                             // in the future, possibly for the outstanding part of that issue
+                             if (isMMS && addresses.size == 2) {
+                                Log.v(LOG_TAG, "Recipients - before: $addresses")
+                                addresses.removeAll { address ->
+                                    if (Build.VERSION.SDK_INT < 31) PhoneNumberUtils.compare(
+                                        address.getAsString("address"), "123-555-1234"
+                                    ) else PhoneNumberUtils.areSamePhoneNumber(
+                                        address.getAsString("address"), "123-555-1234", "us"
+                                    )
+                                }
+                                Log.v(LOG_TAG, "Recipients - after: $addresses")
+                            }*/
+                            /* If we don't yet have a thread_id (i.e., the message has a new
+                            thread_id that we haven't yet encountered and so isn't yet in
+                            threadIdMap), then we need to get a new thread_id and record the mapping
+                            between the old and new ones in threadIdMap
+                             */
+                            if (!messageMetadata.containsKey("thread_id")) {
+                                val newThreadId = if (!isMMS) Telephony.Threads.getOrCreateThreadId(
+                                    appContext,
+                                    messageMetadata.getAsString(Telephony.TextBasedSmsColumns.ADDRESS)
+                                )
+                                else Telephony.Threads.getOrCreateThreadId(appContext,
+                                    addresses.map { it1 -> it1.getAsString(Telephony.Mms.Addr.ADDRESS) }
+                                        .toSet())
+                                messageMetadata.put("thread_id", newThreadId)
+                                if (oldThreadId != null) {
+                                    threadIdMap[oldThreadId] = newThreadId.toString()
+                                }
+                            }
+                            // Log.v(LOG_TAG, "Original thread_id: $oldThreadId\t New thread_id: ${messageMetadata.getAsString("thread_id")}")
+                            if (!isMMS) { //insert SMS
                                 if (!prefs.getBoolean(
-                                        "sms",
-                                        true
+                                        "sms", true
                                     ) || totals.sms == (prefs.getString(
-                                        "max_records",
-                                        ""
+                                        "max_records", ""
                                     )?.toIntOrNull() ?: -1)
                                 ) continue
                                 val fieldNames = mutableSetOf<String>()
@@ -417,31 +433,24 @@ suspend fun importMessages(
                                         messageMetadata.remove(key)
                                     }
                                 }
-                                val insertUri =
-                                    appContext.contentResolver.insert(
-                                        Telephony.Sms.CONTENT_URI,
-                                        messageMetadata
-                                    )
+                                val insertUri = appContext.contentResolver.insert(
+                                    Telephony.Sms.CONTENT_URI, messageMetadata
+                                )
                                 if (insertUri == null) {
                                     Log.v(LOG_TAG, "SMS insert failed!")
                                 } else {
                                     totals.sms++
                                     setStatusText(
-                                        statusReportText,
-                                        appContext.getString(
-                                            R.string.message_import_progress,
-                                            totals.sms,
-                                            totals.mms
+                                        statusReportText, appContext.getString(
+                                            R.string.message_import_progress, totals.sms, totals.mms
                                         )
                                     )
                                 }
-                            } else { // it's MMS
+                            } else { // insert MMS
                                 if (!prefs.getBoolean(
-                                        "mms",
-                                        true
+                                        "mms", true
                                     ) || totals.mms == (prefs.getString(
-                                        "max_records",
-                                        ""
+                                        "max_records", ""
                                     )?.toIntOrNull() ?: -1)
                                 ) continue
                                 val fieldNames = mutableSetOf<String>()
@@ -451,26 +460,16 @@ suspend fun importMessages(
                                         messageMetadata.remove(key)
                                     }
                                 }
-                                val threadId = Telephony.Threads.getOrCreateThreadId(
-                                    appContext,
-                                    addresses.map { it1 -> it1.getAsString("address") }.toSet()
+                                val insertUri = appContext.contentResolver.insert(
+                                    Telephony.Mms.CONTENT_URI, messageMetadata
                                 )
-                                messageMetadata.put("thread_id", threadId)
-                                val insertUri =
-                                    appContext.contentResolver.insert(
-                                        Telephony.Mms.CONTENT_URI,
-                                        messageMetadata
-                                    )
                                 if (insertUri == null) {
                                     Log.v(LOG_TAG, "MMS insert failed!")
                                 } else {
                                     totals.mms++
                                     setStatusText(
-                                        statusReportText,
-                                        appContext.getString(
-                                            R.string.message_import_progress,
-                                            totals.sms,
-                                            totals.mms
+                                        statusReportText, appContext.getString(
+                                            R.string.message_import_progress, totals.sms, totals.mms
                                         )
                                     )
 //                                Log.v(LOG_TAG, "MMS insert succeeded!")
@@ -513,10 +512,7 @@ suspend fun importMessages(
                         jsonReader.endArray()
                     } catch (e: Exception) {
                         displayError(
-                            appContext,
-                            e,
-                            "Error importing messages",
-                            "Error parsing JSON"
+                            appContext, e, "Error importing messages", "Error parsing JSON"
                         )
                     }
                 }
