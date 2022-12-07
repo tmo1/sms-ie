@@ -118,7 +118,29 @@ This was a misinterpretation of observed call import failures, which were actual
 
 ## Bugs, Feature Requests, and Other Issues
 
-Bugs, feature requests, and other issues can be filed at [the SMS Import / Export issue tracker](https://github.com/tmo1/sms-ie/issues). When reporting any problem with the app, please specify the version of the app used for export and / or import, as applicable. When reporting a crash, particularly a reproducible one, please attach a logcat. Instructions for doing so (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
+Bugs, feature requests, and other issues can be filed at [the SMS Import / Export issue tracker](https://github.com/tmo1/sms-ie/issues). When reporting any problem with the app, please try to reproduce the problem with [the latest release of the app](https://github.com/tmo1/sms-ie/releases), and please specify the versions of the app used for export and / or import, as applicable.
+
+### Posting JSON
+
+When reporting a problem with import or export functionality, please try to include the JSON involved, in accordance with the following guidelines:
+
+#### Minimal Reproducible Example
+
+Please try to reproduce the problem with as small a JSON file as possible. The simplest way to reduce the size of the JSON is to use the app's `Settings / Debugging options / Maximum records ...` option to export only a small number of messages.
+
+#### Redaction
+
+It is strongly recommended to redact any posted JSON and remove any sensitive information. To help automate this process (currently, for message collections only), a Python script [`redact-messages.py`](/tools/redact-messages.py) is available. It has no external dependencies beyond a standard Python environment. It expects a collection of messages in the JSON format used by SMS Import / Export on standard input, and writes a redacted version of the same to standard output:
+
+```
+~$ ./redact-messages.py < messages-nnnn-nn-nn.json > messages-redacted-nnnn-nn-nn.json
+```
+
+**:warning:There is no guarantee that this script will correctly and completely redact all sensitive information. It as provided as is, with no warranty. If the JSON in question contains any particularly sensitive information, do not rely on this script to redact it. Note that the script does not consider sensitive certain metadata, such as message timestamps, that might be considered sensitive in some contexts.**
+
+### Crashes
+
+When reporting a crash, particularly a reproducible one, please attach a logcat (a collection of log messages produced by Android - see [here](https://developer.android.com/studio/command-line/logcat) and [here](https://developer.android.com/studio/debug/am-logcat)). Instructions for doing so (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
 
 ## Translations
 
