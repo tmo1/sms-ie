@@ -181,7 +181,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [sxwxs](https://github.com/sxwxs): call log export support
  - [Bindu (vbh)](https://github.com/vbh): call log import support
  - [nautilusx](https://github.com/nautilusx): German translation
- - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
+ - [AntoninDelFabbro](https://github.com/AntoninDelFabbro): French translation (and assistance with the German one)
  - [baitmooth](https://github.com/baitmooth): additions to German translation
  - [Jan Hustak (codingjourney)](https://github.com/codingjourney): [bug fix](https://github.com/tmo1/sms-ie/pull/30)
  - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
