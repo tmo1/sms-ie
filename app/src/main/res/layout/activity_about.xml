@@ -40,8 +40,9 @@
         android:id="@+id/appWebpages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="32dp"
+        android:shrinkColumns="1"
         android:stretchColumns="*"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,9 +54,8 @@
 
             <TextView
                 android:autoLink="web"
-                android:text="@string/app_homepage"
-
-                />
+                android:minHeight="48dp"
+                android:text="@string/app_homepage" />
         </TableRow>
 
         <TableRow>
@@ -64,9 +64,8 @@
 
             <TextView
                 android:autoLink="web"
-                android:text="@string/app_documentation"
-
-                />
+                android:minHeight="48dp"
+                android:text="@string/app_documentation" />
         </TableRow>
 
         <TableRow>
@@ -75,9 +74,8 @@
 
             <TextView
                 android:autoLink="web"
-                android:text="@string/app_issue_tracker"
-
-                />
+                android:minHeight="48dp"
+                android:text="@string/app_issue_tracker" />
         </TableRow>
 
     </TableLayout>

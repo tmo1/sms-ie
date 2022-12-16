@@ -42,13 +42,14 @@
             android:defaultValue="false"
             android:key="delete_old_exports"
             android:title="Delete old exports"
-            app:dependency="schedule_export"/>
+            app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="remove_datestamps_from_filenames"
             android:title="Remove datestamps from filenames"
-            app:dependency="delete_old_exports" />
+            app:dependency="delete_old_exports"
+            app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
@@ -75,7 +76,8 @@
         <SwitchPreferenceCompat
             android:key="include_binary_data"
             android:title="@string/include_binary_data"
-            app:defaultValue="true" />
+            app:defaultValue="true"
+            app:singleLineTitle="false" />
 
     </PreferenceCategory>
 
