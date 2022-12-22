@@ -60,4 +60,10 @@
     <string name="issue_tracker">Segnalazione problemi:</string>
     <string name="about">Informazioni</string>
     <string name="export_contacts">Esporta contatti</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="channel_name">notification_channel</string>
+    <string name="channel_description">Canale notifiche</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
 </resources>
