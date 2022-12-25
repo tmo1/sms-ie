@@ -1,2 +1,4 @@
+ - Fix for a bug that prevented the import of MMS message parts in certain cases (see issue #79)
+
  - Improved layout of Preferences and About screens
 

@@ -25,6 +25,7 @@ package com.github.tmo1.sms_ie
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.provider.Telephony
 import android.util.Base64
 import android.util.JsonReader
@@ -259,7 +260,7 @@ suspend fun importMessages(
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
-        // get column names of local SMS and MMS tables
+        // get column names of local SMS, MMS, and MMS part tables
         val smsColumns = mutableSetOf<String>()
         val smsCursor =
             appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
@@ -268,6 +269,14 @@ suspend fun importMessages(
         val mmsCursor =
             appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
         mmsCursor?.use { mmsColumns.addAll(it.columnNames) }
+        val partColumns = mutableSetOf<String>()
+        // I can't find an officially documented way of getting the Part table URI for API < 29
+        // the idea to use "content://mms/part" comes from here:
+        // https://stackoverflow.com/a/6446831
+        val partTableUri = if (SDK_INT >= 29) Telephony.Mms.Part.CONTENT_URI else Uri.parse("content://mms/part")
+        val partCursor =
+            appContext.contentResolver.query(partTableUri, null, null, null, null)
+        partCursor?.use { partColumns.addAll(it.columnNames) }
         val threadIdMap = HashMap<String, String>()
         uri.let {
             initIndeterminateProgressBar(progressBar)
@@ -487,6 +496,13 @@ suspend fun importMessages(
                                     }
                                     val partUri = Uri.parse("content://mms/$messageId/part")
                                     parts.forEachIndexed { j, part1 ->
+                                        val partFieldNames = mutableSetOf<String>()
+                                        partFieldNames.addAll(part1.keySet())
+                                        partFieldNames.forEach { key ->
+                                            if (!partColumns.contains(key)) {
+                                                part1.remove(key)
+                                            }
+                                        }
                                         part1.put(Telephony.Mms.Part.MSG_ID, messageId)
                                         val insertPartUri =
                                             appContext.contentResolver.insert(partUri, part1)
