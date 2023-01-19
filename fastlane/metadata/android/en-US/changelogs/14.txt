@@ -1,5 +1,5 @@
  - Fix for a bug that prevented the import of MMS message parts in certain cases (see issue #79)
 
- - Improved layout of Preferences and About screens
+ - Improved layout of Main, Preferences and About screens
  
  - Update to Italian translation
