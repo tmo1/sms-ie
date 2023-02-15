@@ -1,2 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">എസ്എംഎസ് ഇറക്കുമതി / കയറ്റുമതി</string>
+    <string name="export_messages_button_label">സന്ദേശങ്ങൾ കയറ്റുമതി ചെയ്യുക</string>
+    <string name="ready">തയ്യാറാണ്</string>
+    <string name="call_log_import_progress">%1$d വിളി(കൾ) ഇറക്കുമതി ചെയ്തു</string>
+    <string name="export_call_log_button_label">വിളി ലോഗ് കയറ്റുമതി ചെയ്യുക</string>
+    <string name="mms_export_progress">%1$d / %2$d എംഎംഎസ്(കൾ) കയറ്റുമതി ചെയ്തു</string>
+    <string name="sms_export_progress">%1$d / %2$d എസ്എംഎസ്(കൾ) കയറ്റുമതി ചെയ്തു</string>
+    <string name="message_import_progress">%1$d എസ്എംഎസ്(കളും) %2$d എംഎംഎസ്(കളും) ഇറക്കുമതി ചെയ്തു</string>
+    <string name="export_messages_results">%1$d എസ്എംഎസ്(കളും) %2$d എംഎംഎസ്(കളും) കയറ്റുമതി ചെയ്തു
+\nകഴിഞ്ഞ സമയം: %3$s</string>
+    <string name="import_messages_button_label">സന്ദേശങ്ങൾ ഇറക്കുമതി ചെയ്യുക</string>
+    <string name="settings">ക്രമീകരണങ്ങൾ</string>
+    <string name="wipe_messages">സന്ദേശങ്ങൾ മായ്‌ക്കുക</string>
+    <string name="wipe">തുടയ്ക്കുക</string>
+    <string name="cancel">റദ്ദാക്കുക</string>
+    <string name="messages_wiped">സന്ദേശങ്ങൾ തുടച്ചു</string>
+    <string name="wiping_sms_messages">എസ്എംഎസ് സന്ദേശങ്ങൾ മായ്‌ക്കുന്നു…</string>
+    <string name="wiping_mms_messages">എംഎംഎസ് സന്ദേശങ്ങൾ മായ്‌ക്കുന്നു…</string>
+    <string name="documentation">പ്രമാണീകരണം:</string>
+    <string name="title_activity_settings">ക്രമീകരണങ്ങൾ പ്രവർത്തനം</string>
+    <string name="about">കുറിച്ച്</string>
+    <string name="export_call_log_results">%1$d വിളി(കൾ) കയറ്റുമതി ചെയ്തു
+\nകഴിഞ്ഞ സമയം: %2$s</string>
+    <string name="import_call_log_results">%1$d വിളി(കൾ) ഇറക്കുമതി ചെയ്തു
+\nകഴിഞ്ഞ സമയം: %2$s</string>
+    <string name="dialog_confirm_wipe">മുന്നറിയിപ്പ്: പഴയപടിയാക്കാൻ കഴിയാതെ, ഈ ഉപകരണത്തിൽ നിന്നുള്ള എല്ലാ സന്ദേശങ്ങളും ശാശ്വതമായി മായ്‌ക്കണോ\?</string>
+    <string name="call_log_export_progress">%1$d / %2$d വിളി(കൾ) കയറ്റുമതി ചെയ്തു</string>
+    <string name="import_messages_results">%1$d എസ്എംഎസ്(കളും) %2$d എംഎംഎസ്(കളും) ഇറക്കുമതി ചെയ്തു
+\nകഴിഞ്ഞ സമയം: %3$s</string>
+    <string name="default_sms_app_requirement">സന്ദേശങ്ങൾ ഇറക്കുമതി ചെയ്യാനോ മായ്‌ക്കാനോ ഉള്ള സ്ഥിരസ്ഥിതി എസ്എംഎസ് പ്രയോഗം ഈ പ്രയോഗം ആയിരിക്കണം.</string>
+</resources>
