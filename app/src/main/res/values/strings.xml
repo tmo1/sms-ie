@@ -75,7 +75,7 @@
     <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="issue_tracker">Issue tracker:</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
-    <string name="about">About</string>
+    <string name="about">About app</string>
     <string name="export_contacts">Export Contacts</string>
     <string name="import_contacts">Import Contacts</string>
 </resources>
