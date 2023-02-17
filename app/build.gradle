@@ -34,7 +34,6 @@ android {
         versionCode 14
         versionName "1.5.4"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -74,9 +73,5 @@ dependencies {
 
     //def activity_version = "1.2.1"
     //implementation "androidx.activity:activity-ktx:$activity_version"
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
 }
