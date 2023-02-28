@@ -1,0 +1,19 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone
+      uses: actions/checkout@v3
+    - name: Build
+      run: ./gradlew assembleDebug
+    - name: Upload
+      uses: actions/upload-artifact@v3
+      with:
+        name: com.github.tmo1.sms_ie
+        path: ./app/build/outputs/apk/debug/app-debug.apk
