@@ -8,7 +8,7 @@ SMS Import / Export is a simple Android app that imports and exports SMS and MMS
 
 ## Installation
 
-SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, from the command line (e.g., by issuing `gradlew assembleDebug` in the root directory of the project) or within Android Studio. Prebuilt APK packages can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/).
+SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, from the command line (e.g., by issuing `gradlew assembleDebug` in the root directory of the project) or within Android Studio. Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built packages of the latest code pushed to the repository are available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
 
 ## Usage
 
@@ -150,7 +150,7 @@ SMS Import / Export has been translated (from the original English) into the fol
 	<img src="https://hosted.weblate.org/widgets/sms-import-export/-/ui-strings/multi-auto.svg" alt="Translation status" />
 </a>
   
-To add a translation into a new language, or to correct, update, or improve an existing translation, see the [Contributions](#contributions) section below.
+To add a translation into a new language, or to correct, update, or improve an existing translation, see [here](CONTRIBUTING.md).
  
 ## TODO
 
@@ -167,35 +167,9 @@ The following are various features and improvements to the app that have been su
      
    The costs are a more complicated file structure and the use of the less common ndjson rather than the ubiquitous JSON, but my view is that these costs are not high, and the tradeoffs are well worth it.
 
-## Contributions
+## Contributing
 
-Code can be contributed via [pull request](https://github.com/tmo1/sms-ie/pulls), but for any substantial changes or additions to the existing codebase, please first [open an issue](https://github.com/tmo1/sms-ie/issues) to discuss the proposed changes or additions. All contributed code should be licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) or later.
-
-SMS Import / Export is integrated with [Weblate](https://weblate.org). Translations into new languages, as well as corrections, updates, and improvements to existing translations, can be submitted via [SMS Import / Export @ Hosted Weblate](https://hosted.weblate.org/engage/sms-import-export/), or by ordinary [pull requests against the SMS Import / Export repository](https://github.com/tmo1/sms-ie/pulls).
-
-The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app:
-
- - [sxwxs](https://github.com/sxwxs): call log export support
- - [Bindu (vbh)](https://github.com/vbh): call log import support
- - [nautilusx](https://github.com/nautilusx): German translation
- - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
- - [baitmooth](https://github.com/baitmooth): additions to German translation
- - [Jan Hustak (codingjourney)](https://github.com/codingjourney): [bug fix](https://github.com/tmo1/sms-ie/pull/30)
- - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
- - poi: Simplified Chinese translation
- - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): [bug fix](https://github.com/tmo1/sms-ie/pull/39)
- - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon
- - [Merlignux](https://github.com/Merlignux): Portuguese translation
- - [Eric (hamburger1024)](https://hosted.weblate.org/user/hamburger1024/): updates to Simplified Chinese translation
- - [Shopimisrel](https://github.com/Shopimisrel): Hebrew translation
- - [Артём (Artem13327)](https://hosted.weblate.org/user/Artem13327/): Russian translation
- - [pjammo](https://github.com/pjammo): Italian translation
- - [jacek (TX5400)](https://hosted.weblate.org/user/TX5400/): Polish translation
- - [gallegonovato](https://github.com/gallegonovato): Spanish translation
- - [Bai (Baturax)](https://github.com/Baturax): Turkish translation
- - [Philippe (Philippe213)](https://hosted.weblate.org/user/philippe213/): Update to French translation
- - [Oğuz Ersen (ersen0)](https://github.com/ersen0): Update to Turkish translation
- - [Translator-3000](https://hosted.weblate.org/user/Translator-3000/): Update to Italian translation
+For information about contributing to SMS Import / Export, and a list of contributors, see [here](CONTRIBUTING.md).
 
 ## Privacy
 
