@@ -10,8 +10,8 @@
     <string name="documentation">Документация:</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
-    <string name="about">О</string>
-    <string name="issue_tracker">Issue трекер:</string>
+    <string name="about">О приложении</string>
+    <string name="issue_tracker">Отслеживание вопросов:</string>
     <string name="import_contacts_results">%1$d контакт(ов) импортирован(о)
 \nЗатрачено времени: %2$s.</string>
     <string name="default_sms_app_requirement">Это приложение должно быть SMS-приложением по умолчанию для импорта или очистки сообщений.</string>
@@ -50,4 +50,17 @@
     <string name="wipe_cancelled">Очистка отменена</string>
     <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
     <string name="include_binary_data">Включать (зашифрованные) двоичные данные MMS</string>
+    <string name="not_jsonarray_message">Похоже, что файл не содержит корректный JSONArray.</string>
+    <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
+    <string name="scheduled_export_failure">Экспорт не удался — смотрите logcat для более подробной информации.</string>
+    <string name="app_about_text">SMS Import / Export
+\n
+\nавтор Thomas More и другие участники
+\n
+\nВерсия %1$s
+\n
+\nАвторские права © 2021–22
+\n
+\nВыпущено под лицензией GNU GPLv3</string>
+    <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
 </resources>
