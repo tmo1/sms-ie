@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
   ~ Copyright (c) 2021-2022 Thomas More
   ~
@@ -16,8 +17,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="app_name">SMS Import / Export</string>
     <string name="export_messages_button_label">Export Messages</string>
     <string name="import_messages_button_label">Import Messages</string>
@@ -68,7 +68,16 @@
     <string name="messages_wiped">Messages wiped</string>
     <string name="wiping_sms_messages">Wiping SMS messages …</string>
     <string name="wiping_mms_messages">Wiping MMS messages …</string>
-    <string name="app_about_text">SMS Import / Export\n\nby Thomas More and other contributors\n\nVersion %1$s\n\nCopyright © 2021–22\n\nReleased under the GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export
+\n
+\nby Thomas More and other contributors
+\n
+\nVersion %1$s
+\n
+\nCopyright © 2021–2022
+\n
+\nCopylefted libre software, licensed GPLv3+
+\nUse, study, change, and share — with all.</string>
     <string name="homepage">Homepage:</string>
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">Documentation:</string>
