@@ -74,10 +74,9 @@
 \n
 \nVersion %1$s
 \n
-\nCopyright © 2021–2022
+\nCopyright © 2021–22
 \n
-\nCopylefted libre software, licensed GPLv3+
-\nUse, study, change, and share — with all.</string>
+\nReleased under the GNU GPLv3</string>
     <string name="homepage">Homepage:</string>
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">Documentation:</string>
