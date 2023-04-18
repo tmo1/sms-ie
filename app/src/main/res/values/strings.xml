@@ -52,7 +52,7 @@
     <string name="contacts_read_permission_required">Exporting contacts requires permission to read Contacts.</string>
     <string name="contacts_write_permissions_required">Importing contacts requires permission to write Contacts.</string>
     <string name="not_jsonarray_message">The file does not seem to contain a valid JSONArray.</string>
-    <string name="title_activity_settings">Settings activity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
     <string name="settings">Settings</string>
     <string name="include_binary_data">Include (encoded) binary MMS data</string>
     <string name="channel_name">notification_channel</string>
@@ -76,8 +76,7 @@
 \n
 \nCopyright © 2021–2022
 \n
-\nCopylefted libre software, licensed GPLv3+
-\nUse, study, change, and share — with all.</string>
+\nReleased under the GNU GPLv3</string>
     <string name="homepage">Homepage:</string>
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">Documentation:</string>
