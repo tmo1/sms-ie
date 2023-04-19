@@ -1,6 +1,8 @@
 /*
- * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021-2022 Thomas More
+ * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+ * call logs, and contacts from and to JSON files.
+ *
+ * Copyright (c) 2021-2023 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -528,7 +530,7 @@ suspend fun importMessages(
                         jsonReader.endArray()
                     } catch (e: Exception) {
                         displayError(
-                            appContext, e, "Error importing messages", "Error parsing JSON"
+                            appContext, e, "Error importing messages", "An error was encountered while importing messages"
                         )
                     }
                 }
