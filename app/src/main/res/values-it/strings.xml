@@ -53,10 +53,9 @@
 \n
 \nVersione %1$s
 \n
-\nCopyright © 2021-22
+\nCopyright © 2021-2022
 \n
-\nSoftware libero con copyleft, licenza GPLv3+
-\nUtilizzate, studiate, modificate e condividete con tutti.</string>
+\nSoftware libero con copyleft, licenza GPLv3+</string>
     <string name="documentation">Documentazione:</string>
     <string name="issue_tracker">Segnalazione problemi:</string>
     <string name="about">Informazioni</string>
