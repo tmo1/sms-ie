@@ -53,14 +53,14 @@
 \n
 \nVersione %1$s
 \n
-\nCopyright © 2021-22
+\nCopyright © 2021-2022
 \n
-\nRilasciato sotto GNU GPLv3</string>
+\nSoftware libero con copyleft, licenza GPLv3+</string>
     <string name="documentation">Documentazione:</string>
     <string name="issue_tracker">Segnalazione problemi:</string>
     <string name="about">Informazioni</string>
     <string name="export_contacts">Esporta contatti</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Attività impostazioni</string>
     <string name="channel_name">notification_channel</string>
     <string name="channel_description">Canale notifiche</string>
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
