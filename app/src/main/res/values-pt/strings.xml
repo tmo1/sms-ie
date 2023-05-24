@@ -23,7 +23,7 @@
     <string name="not_jsonarray_message">O ficheiro não parece conter um JSONArray válido.</string>
     <string name="settings">Definições</string>
     <string name="include_binary_data">Incluir dados binários (codificados) das MMS</string>
-    <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), e %3$d chamadas exportadas.</string>
+    <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d chamadas e %4$d contactos exportados.</string>
     <string name="wipe_messages">Apagar Mensagens</string>
     <string name="dialog_confirm_wipe">Aviso: Apagar permanentemente todas as mensagens deste equipamento, sem possibilidade de as recuperar\?</string>
     <string name="wipe">Apagar</string>
@@ -34,11 +34,11 @@
     <string name="wiping_mms_messages">A apagar mensagens MMS …</string>
     <string name="documentation">Documentação:</string>
     <string name="homepage">Homepage:</string>
-    <string name="channel_name">notification_channel</string>
+    <string name="channel_name">canal_de_notificação</string>
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="call_log_import_progress">%1$d chamada(s) importadas</string>
     <string name="issue_tracker">Reportar de erros:</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Actividade das Definições</string>
     <string name="app_name">Importar / Exportar SMS</string>
     <string name="about">Sobre</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
@@ -52,8 +52,18 @@
 \n
 \nVersão %1$s
 \n
-\nCopyright © 2021–22
+\nCopyright © 2021–2022
 \n
 \nDisponibilizado sob a GNU GPLv3</string>
     <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="contacts_import_progress">%1$d contacto(s) importado(s)</string>
+    <string name="export_contacts_results">%1$d contacto(s) exportado(s)
+\nTempo decorrido: %2$s.</string>
+    <string name="import_contacts_results">%1$d contacto(s) importado(s)
+\nTempo decorrido: %2$s.</string>
+    <string name="contacts_read_permission_required">A exportação de contactos requer permissão para ler os Contactos.</string>
+    <string name="contacts_write_permissions_required">A importação de contactos requer permissão para escrever em Contactos.</string>
+    <string name="export_contacts">Exportar Contactos</string>
+    <string name="import_contacts">Importar Contactos</string>
+    <string name="contacts_export_progress">%1$d de %2$d contacto(s) exportado(s)</string>
 </resources>
