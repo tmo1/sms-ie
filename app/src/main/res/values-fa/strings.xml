@@ -1,2 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="call_logs_permissions_required">برون‌برد گزارش‌های تماس برای خواندن گزارش‌های تماس و مخاطبین به مجوز نیاز دارد.</string>
+    <string name="export_call_log_button_label">برون‌برد گزارش تماس</string>
+    <string name="call_log_import_progress">%1$d تماس درون‌برد شد</string>
+    <string name="sms_export_progress">%1$d از %2$d پیامک برون‌برد شد</string>
+    <string name="mms_export_progress">%1$d از %2$d پیام چندرسانه‌ای برون‌برد شد</string>
+    <string name="message_import_progress">%1$d پیامک و %2$d پیام چندرسانه‌ای درون‌برد شد</string>
+    <string name="contacts_export_progress">%1$d از %2$d مخاطب برون‌برد شد</string>
+    <string name="contacts_import_progress">%1$d مخاطب درون‌برد شد</string>
+    <string name="export_messages_results">%1$d پیامک و %2$d پیام چندرسانه‌ای برون‌برد شد
+\nزمان سپری شده: %3$s</string>
+    <string name="import_messages_results">%1$d پیامک و %2$d پیام چندرسانه‌ای درون‌برد شد
+\nزمان سپری شده: %3$s</string>
+    <string name="export_call_log_results">%1$d تماس برون‌برد شد
+\nزمان سپری شده: %2$s</string>
+    <string name="import_call_log_results">%1$d تماس درون‌برد شد
+\nزمان سپری شده: %2$s</string>
+    <string name="export_contacts_results">%1$d مخاطب برون‌برد شد
+\nزمان سپری شده: %2$s.</string>
+    <string name="import_contacts_results">%1$d مخاطب درون‌برد شد
+\nزمان سپری شده: %2$s.</string>
+    <string name="sms_permissions_required">برون‌برد پیام‌ها برای خواندن پیامک‌ها و مخاطبین به مجوز نیاز دارد.</string>
+    <string name="call_logs_read_write_permissions_required">درون‌برد گزارش‌های تماس برای خواندن و نوشتن گزارش‌های تماس به مجوز نیاز دارد.</string>
+    <string name="contacts_read_permission_required">برون‌برد مخاطبین برای خواندن مخاطبین به مجوز نیاز دارد.</string>
+    <string name="settings">تنظیمات</string>
+    <string name="channel_name">اطلاع‌رسانی_کانال</string>
+    <string name="channel_description">کانال اطلاع‌رسانی</string>
+    <string name="scheduled_export_executed">برون‌برد برنامه ریزی شده اجرا شد</string>
+    <string name="scheduled_export_success">%1$d پیامک ، %2$d پیام چندرسانه‌ای، %3$d تماس و %4$d مخاطب برون‌برد شد.</string>
+    <string name="scheduled_export_failure">برون‌برد ناموفق بود — برای جزئیات بیشتر به گزارش مراجعه کنید.</string>
+    <string name="wipe_messages">پاک‌سازی پیام‌ها</string>
+    <string name="wipe">پاک‌سازی</string>
+    <string name="cancel">لغو</string>
+    <string name="include_binary_data">شامل داده‌های پیام چندرسانه‌ای باینری (کد شده)</string>
+    <string name="export_messages_button_label">برون‌برد پیام‌ها</string>
+    <string name="homepage">صفحه اصلی:</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="documentation">مستندات:</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="issue_tracker">ردیاب مشکل:</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="about">درباره</string>
+    <string name="export_contacts">برون‌برد مخاطبین</string>
+    <string name="import_contacts">درون‌برد مخاطبین</string>
+    <string name="app_name">درون‌برد/برون‌برد پیامک</string>
+    <string name="import_messages_button_label">درون‌برد پیام‌ها</string>
+    <string name="ready">آماده</string>
+    <string name="import_call_log_button_label">درون‌برد گزارش تماس</string>
+    <string name="call_log_export_progress">%1$d از %2$d تماس برون‌برد شد</string>
+    <string name="contacts_write_permissions_required">درون‌برد مخاطبین برای نوشتن مخاطبین به مجوز نیاز دارد.</string>
+    <string name="not_jsonarray_message">به‌نظر می‌رسد این فایل حاوی JSONArray معتبر نیست.</string>
+    <string name="title_activity_settings">تنظیمات فعالیت</string>
+    <string name="default_sms_app_requirement">این برنامه باید برنامه پیش‌فرض پیامک برای درون‌برد یا پاک‌سازی پیام‌ها باشد.</string>
+    <string name="messages_wiped">پیام‌ها پاک‌سازی شدند</string>
+    <string name="wipe_cancelled">پاک‌سازی لغو شد</string>
+    <string name="wiping_sms_messages">در حال پاک‌سازی پیامک‌ها …</string>
+    <string name="wiping_mms_messages">در حال پاک‌سازی پیام‌های چندرسانه‌ای …</string>
+    <string name="app_about_text">درون‌برد / برون‌برد پیامک
+\n
+\nتوسط توماس مور و دیگر مشارکت‌کنندگان
+\n
+\nنسخه %1$s
+\n
+\nحق تالیف © 2021–2022
+\n
+\nمنتشر شده تحت GNU GPLv3</string>
+    <string name="dialog_confirm_wipe">هشدار: همه پیام‌های این وسیله به‌طور دائمی و بدون قابلیت بازگردانی آن پاک‌سازی شوند؟</string>
+</resources>
