@@ -34,6 +34,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Oğuz Ersen (ersen0)](https://github.com/ersen0): Update to Turkish translation
  - [Translator-3000](https://hosted.weblate.org/user/Translator-3000/): Update to Italian translation
  - [Deleted User (deleted-56119)](https://hosted.weblate.org/user/deleted-56119/): Malayalam translation
+ - Surena: Persian translation
 
 ### Other
 
