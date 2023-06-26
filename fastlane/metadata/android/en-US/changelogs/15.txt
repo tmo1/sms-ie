@@ -1,2 +1,4 @@
  - Malayalam translation
 
+ - Persian translation
+
