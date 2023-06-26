@@ -77,6 +77,9 @@ suspend fun exportMessages(
                 }
                 zipOutputStream.closeEntry()
                 if (prefs.getBoolean("mms", true)) {
+                    setStatusText(
+                        statusReportText, appContext.getString(R.string.copying_mms_binary_data)
+                    )
                     val buffer = ByteArray(1048576)
                     mmsPartList.forEach {
                         val partZipEntry = ZipEntry(it.filename)
@@ -333,6 +336,8 @@ suspend fun importMessages(
         val threadIdMap = HashMap<String, String>()
         uri.let { zipUri ->
             initIndeterminateProgressBar(progressBar)
+            val mmsPartMap =
+                mutableMapOf<String, Uri>() // This assumes that no binary data file is ever referenced by more than one message part
             appContext.contentResolver.openInputStream(zipUri).use { inputStream ->
                 ZipInputStream(inputStream).use { zipInputStream ->
                     var zipEntry = zipInputStream.nextEntry
@@ -346,7 +351,7 @@ suspend fun importMessages(
                         displayError(
                             appContext,
                             null,
-                            "Can't find 'messages.ndjson'`'",
+                            "Can't find 'messages.ndjson'",
                             "Please make sure that the provided file is a ZIP file in the correct format"
                         )
                         return@let
@@ -502,12 +507,10 @@ suspend fun importMessages(
                                             }*/
                                         }
                                         val messageParts = messageJSON.optJSONArray("__parts")
-                                        //Log.v(LOG_TAG, "Message ${messageJSON.getString(Telephony.Mms._ID)} has ${messageParts.length()} parts")
                                         messageParts?.let {
                                             val partUri = Uri.parse("content://mms/$messageId/part")
                                             for (i in 0 until messageParts.length()) {
                                                 val messagePart = messageParts.getJSONObject(i)
-                                                // Log.v(LOG_TAG, "Processing part ID ${messagePart.getString(Telephony.Mms.Part._ID)}")
                                                 val part = ContentValues()
                                                 part.put(Telephony.Mms.Part.MSG_ID, messageId)
                                                 for (partKey in messagePart.keys()) {
@@ -530,80 +533,11 @@ suspend fun importMessages(
                                                             "include_binary_data", true
                                                         )
                                                     ) {
-                                                        try {
-                                                            var filename =
-                                                                messagePart.optString(Telephony.Mms.Part._DATA)
-                                                            if (filename != "") {
-                                                                /*Log.v(
-                                                                    LOG_TAG,
-                                                                    "Trying to insert part: ID = ${
-                                                                        messagePart.optString(
-                                                                            Telephony.Mms.Part._ID
-                                                                        )
-                                                                    }, filename = $filename"
-                                                                )*/
-                                                                filename =
-                                                                    Uri.parse(filename).lastPathSegment.toString()
-                                                                val buffer = ByteArray(1048576)
-                                                                val partOutputStream =
-                                                                    appContext.contentResolver.openOutputStream(
-                                                                        insertPartUri
-                                                                    )
-                                                                partOutputStream?.use {
-                                                                    appContext.contentResolver.openInputStream(
-                                                                        zipUri
-                                                                    ).use { partInputStream ->
-                                                                        ZipInputStream(
-                                                                            partInputStream
-                                                                        ).use { partZipInputStream ->
-                                                                            var partZipEntry =
-                                                                                partZipInputStream.nextEntry
-                                                                            while (partZipEntry != null) {
-                                                                                if (partZipEntry.name == "data/$filename") {
-                                                                                    break
-                                                                                }
-                                                                                partZipEntry =
-                                                                                    partZipInputStream.nextEntry
-                                                                            }
-                                                                            if (partZipEntry == null) {
-                                                                                Log.e(
-                                                                                    LOG_TAG,
-                                                                                    "Can't find part '$filename' - skipping."
-                                                                                )
-                                                                            } else {
-                                                                                /*Log.v(
-                                                                                    LOG_TAG,
-                                                                                    "Found part '$partZipEntry'"
-                                                                                )*/
-                                                                                var n =
-                                                                                    partZipInputStream.read(
-                                                                                        buffer
-                                                                                    )
-                                                                                while (n > -1) {
-                                                                                    //Log.v(LOG_TAG, "Read $n bytes")
-                                                                                    it.write(
-                                                                                        buffer, 0, n
-                                                                                    )
-                                                                                    n =
-                                                                                        partZipInputStream.read(
-                                                                                            buffer
-                                                                                        )
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                } ?: Log.e(
-                                                                    LOG_TAG,
-                                                                    "Error opening OutputStream to write MMS binary data"
-                                                                )
-                                                            }
-                                                        } catch (e: Exception) {
-                                                            displayError(
-                                                                appContext,
-                                                                e,
-                                                                "Error inserting MMS data",
-                                                                "An error was encountered while inserting binary MMS data"
-                                                            )
+                                                        val filename =
+                                                            messagePart.optString(Telephony.Mms.Part._DATA)
+                                                        if (filename != "") {
+                                                            mmsPartMap[Uri.parse(filename).lastPathSegment.toString()] =
+                                                                insertPartUri
                                                         }
                                                     }
                                                 }
@@ -621,6 +555,41 @@ suspend fun importMessages(
                                 // throw e
                             }
                         }
+                    }
+                }
+            }
+            setStatusText(statusReportText, appContext.getString(R.string.copying_mms_binary_data))
+            val buffer = ByteArray(1048576)
+            appContext.contentResolver.openInputStream(zipUri).use { inputStream ->
+                ZipInputStream(inputStream).use { zipInputStream ->
+                    var zipEntry = zipInputStream.nextEntry
+                    while (zipEntry != null) {
+                        if (zipEntry.name.startsWith("data/")) {
+                            Log.v(LOG_TAG, "Processing part: $zipEntry")
+                            val partUri = mmsPartMap[zipEntry.name.substring(5)]
+                            Log.v(LOG_TAG, "Writing to: $partUri")
+                            partUri?.let {
+                                val partOutputStream = appContext.contentResolver.openOutputStream(
+                                    partUri
+                                )
+                                partOutputStream?.use {
+                                    var n = zipInputStream.read(
+                                        buffer
+                                    )
+                                    while (n > -1) {
+                                        partOutputStream.write(
+                                            buffer, 0, n
+                                        )
+                                        n = zipInputStream.read(
+                                            buffer
+                                        )
+                                    }
+                                } ?: Log.e(
+                                    LOG_TAG, "Error opening OutputStream to write MMS binary data"
+                                )
+                            }
+                        }
+                        zipEntry = zipInputStream.nextEntry
                     }
                 }
             }
