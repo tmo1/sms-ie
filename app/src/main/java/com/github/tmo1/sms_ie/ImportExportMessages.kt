@@ -38,8 +38,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.zip.ZipEntry
@@ -56,7 +54,7 @@ suspend fun exportMessages(
         val totals = MessageTotal()
         val displayNames = mutableMapOf<String, String?>()
         appContext.contentResolver.openOutputStream(file).use { outputStream ->
-            ZipOutputStream(BufferedOutputStream(outputStream)).use { zipOutputStream ->
+            ZipOutputStream(outputStream).use { zipOutputStream ->
                 val jsonZipEntry = ZipEntry("messages.ndjson")
                 zipOutputStream.putNextEntry(jsonZipEntry)
                 if (prefs.getBoolean("sms", true)) {
@@ -85,13 +83,11 @@ suspend fun exportMessages(
                         val partZipEntry = ZipEntry(it.filename)
                         zipOutputStream.putNextEntry(partZipEntry)
                         try {
-                            appContext.contentResolver.openInputStream(it.uri).use { inputStream ->
-                                BufferedInputStream(inputStream).use { bufferedInputStream ->
-                                    var n = bufferedInputStream.read(buffer)
-                                    while (n > -1) {
-                                        zipOutputStream.write(buffer, 0, n)
-                                        n = bufferedInputStream.read(buffer)
-                                    }
+                            appContext.contentResolver.openInputStream(it.uri)?.use { inputStream ->
+                                var n = inputStream.read(buffer)
+                                while (n > -1) {
+                                    zipOutputStream.write(buffer, 0, n)
+                                    n = inputStream.read(buffer)
                                 }
                             }
                         } catch (e: Exception) {
@@ -178,7 +174,6 @@ private suspend fun mmsToJSON(
                 // the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
                 val msgId = it.getString(msgIdIndex)
                 val addressCursor = appContext.contentResolver.query(
-                    // Uri.parse("content://mms/addr"),
                     Uri.parse("content://mms/$msgId/addr"), null, null, null, null
                 )
                 addressCursor?.use { address ->
@@ -525,10 +520,10 @@ suspend fun importMessages(
                                                 if (insertPartUri == null) {
                                                     Log.e(
                                                         LOG_TAG,
-                                                        "MMS part insert failed! Part metadata:$part"
+                                                        "MMS part insert failed! Part metadata: $part"
                                                     )
                                                 } else {
-                                                    // Log.v(LOG_TAG, "MMS part insert succeeded - ID: ${messagePart.getString(Telephony.Mms.Part._ID)}, MSG ID: ${messagePart.getString(Telephony.Mms.Part.MSG_ID)}")
+                                                    // Log.v(LOG_TAG, "MMS part insert succeeded - old part ID: ${messagePart.getString(Telephony.Mms.Part._ID)}, old message ID: ${messagePart.getString(Telephony.Mms.Part.MSG_ID)}")
                                                     if (prefs.getBoolean(
                                                             "include_binary_data", true
                                                         )
@@ -565,19 +560,19 @@ suspend fun importMessages(
                     var zipEntry = zipInputStream.nextEntry
                     while (zipEntry != null) {
                         if (zipEntry.name.startsWith("data/")) {
-                            Log.v(LOG_TAG, "Processing part: $zipEntry")
                             val partUri = mmsPartMap[zipEntry.name.substring(5)]
-                            Log.v(LOG_TAG, "Writing to: $partUri")
                             partUri?.let {
-                                val partOutputStream = appContext.contentResolver.openOutputStream(
+                                //Log.v(LOG_TAG, "Processing part: $zipEntry")
+                                //Log.v(LOG_TAG, "Writing to: $partUri")
+                                appContext.contentResolver.openOutputStream(
                                     partUri
-                                )
-                                partOutputStream?.use {
+                                )?.use { outputStream ->
                                     var n = zipInputStream.read(
                                         buffer
                                     )
                                     while (n > -1) {
-                                        partOutputStream.write(
+                                        //Log.v(LOG_TAG, "Read $n bytes")
+                                        outputStream.write(
                                             buffer, 0, n
                                         )
                                         n = zipInputStream.read(
