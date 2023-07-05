@@ -142,6 +142,16 @@ It is strongly recommended to redact any posted JSON and remove any sensitive in
 
 When reporting a crash, particularly a reproducible one, please attach a logcat (a collection of log messages produced by Android - see [here](https://developer.android.com/studio/command-line/logcat) and [here](https://developer.android.com/studio/debug/am-logcat)). Instructions for doing so (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
 
+### Known Issues
+
+#### MIUI
+
+When importing messages that have been exported from a MIUI system into a MIUI system, [the following error may be encountered](https://github.com/tmo1/sms-ie/issues/103):
+```
+java.lang.IllegalArgumentException: The non-sync-callers AND non-blocked-url should not specify DELETED for inserting.
+```
+For a possible solution, see [here](https://github.com/tmo1/sms-ie/issues/103#issuecomment-1620890135).
+
 ## Translations
 
 SMS Import / Export has been translated (from the original English) into the following languages (note that some of these translations may contain inaccuracies, due to changes to the app's original text since they were made):
