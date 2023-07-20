@@ -1,10 +1,38 @@
 # SMS Import / Export
 
-SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages, call logs, and contacts from and to JSON files. (Contacts import and export are currently functional but considered experimental.) Root is not required.
+SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages, call logs, and contacts from and to (ND)JSON files. (Contacts import and export are currently functional but considered experimental.) Root is not required.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/com.github.tmo1.sms_ie/)
+
+## Changes In Version 2.0.0 ##
+
+Version 2.0.0 introduced a major rewrite of the SMS and MMS messages import / export code, implementing a new message storage format (`v2`):
+
+ - The messages are now stored in a [Newline-delimited JSON](https://en.wikipedia.org/wiki/JSON_streaming#Newline-Delimited_JSON) file (always named `messages.ndjson`), as opposed to the standard JSON previously used.
+ 
+ - Binary MMS data is now stored separately from message text data and metadata; the `messages.ndjson` file, along with a `data/` directory containing the MMS binary data files copied directly from the Android filesystem (with their original filenames), are both encapsulated in a ZIP file.
+ 
+ - All (ND)JSON tags added by SMS Import / Export are now prefixed with a double underscore (e.g., `__display_name`, `__parts`), to clearly indicate that they have been added by the app.
+ 
+For a discussion of the advantages and disadvantages of the new format over the old one (`v1`), see [here](https://github.com/tmo1/sms-ie/commit/a505f66cdfae19cd2a21edae2774bc3f37fb5af9).
+
+The NDJSON file is not as human-readable as the previous pretty-printed JSON file, due to the necessary absence of newlines within each JSON message record, but this is easily rectified by feeding the NDJSON to the [jq](https://jqlang.github.io/jq/) tool, which will pretty-print it:
+
+```
+~$ jq < messages.ndjson
+```
+
+**These format changes unfortunately render versions of the app from 2.0.0 and on incompatible with JSON message files produced by earlier versions of the app.** Several solutions to this incompatibility are possible:
+
+ - An earlier version of the app (with a 1.x.x version number) can be used to import messages in `v1` format.
+ 
+ - Where feasible, a current version of the app can be used to re-export the messages to `v2` format.
+ 
+ - A conversion tool to convert message files from `v1` to `v2` format is available [here](https://github.com/tmo1/sms-ie/blob/master/tools/v1-v2-convert.py) (documented [here](https://github.com/tmo1/sms-ie/blob/master/tools/Tools.md)). This tool is experimental, and has not been extensively tested.
+
+The above applies only to SMS and MMS messages; the format for call logs and contacts is currently unchanged, although they may be switched to the new format in the future.
 
 ## Installation
 
@@ -13,11 +41,14 @@ SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). 
 ## Usage
 
  - Import or export messages, call log, or contacts: Click the respective button, then select an import or export source or destination.
+ 
  - Wipe messages: Click the `Wipe Messages` button, then confirm by pressing the `Wipe` button in the pop-up dialog box.
 
 These operations may take some time for large numbers of messages, calls, or contacts. The app will report the total number of SMS and MMS messages, calls, or contacts imported or exported, and the elapsed time, upon successful conclusion.
 
-By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a file that is much smaller and more easily browsable by humans. (The setting is currently ignored on import.)
+By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a much smaller ZIP file.
+
+Note that upon import or wipe, message apps present on the system may not immediately correctly reflect the new state of the message database due to app caching and / or local storage. This can be resolved by clearing such cache and storage, e.g. `Settings / Apps / Messaging / Storage & cache / Clear storage | Clear cache`.
 
 ### Scheduled Export
 
@@ -27,8 +58,9 @@ To enable the scheduled export of messages, call logs and / or contacts, enable 
 
 When scheduled exports are enabled, the following options can be used to control retention:
 
- - `Delete old exports` - If this option is not enabled (the default), then any old exports will be left untouched (i.e., all exports are retained indefinitely). If it is enabled, then for each data type (contacts, call log, and messages), upon successful export, the app will try to delete any old exports (i.e., all files with names of the form `<data-type>-<yyyy-MM-dd>.json`, where `<data-type>` is the data type successfully exported, and `<yyyy-MM-dd>` is a datestamp). Selective retention of a subset of old exports can be accomplished by enabling this option in conjunction with the use of external software with snapshotting and selective retention functionality, such as [rsnapshot](https://rsnapshot.org/) or [borg](https://borgbackup.readthedocs.io/en/stable/usage/prune.html), running either on the local device, or on a system to which the exports are synced via software such as [Syncthing](https://syncthing.net/). This software should be scheduled to run between exports, and configured to preserve copies of the previous exports before the app deletes them following its next scheduled exports.
- - `Remove datestamps from filenames` - Scheduled exports are always initially created with filenames of the form `<data-type>-<yyyy-MM-dd>.json`. If this option is enabled (in addition to the previous one), then after attempting to delete all old exports (of the relevant data type), the app will then attempt to remove the datestamp from the current export's filename by renaming it to `<data-type>.json`. This is intended to make successive exports appear to be different versions of the same file, which may be useful in conjunction with external software that implements some form of file versioning, such as [Syncthing](https://docs.syncthing.net/users/versioning.html) or [Nextcloud](https://docs.nextcloud.com/server/latest/user_manual/en/files/version_control.html).
+ - `Delete old exports` - If this option is not enabled (the default), then any old exports will be left untouched (i.e., all exports are retained indefinitely). If it is enabled, then for each data type (contacts, call log, and messages), upon successful export, the app will try to delete any old exports (i.e., all files with names of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`, where `<data-type>` is the data type successfully exported, and `<yyyy-MM-dd>` is a datestamp). Selective retention of a subset of old exports can be accomplished by enabling this option in conjunction with the use of external software with snapshotting and selective retention functionality, such as [rsnapshot](https://rsnapshot.org/) or [borg](https://borgbackup.readthedocs.io/en/stable/usage/prune.html), running either on the local device, or on a system to which the exports are synced via software such as [Syncthing](https://syncthing.net/). This software should be scheduled to run between exports, and configured to preserve copies of the previous exports before the app deletes them following its next scheduled exports.
+ 
+ - `Remove datestamps from filenames` - Scheduled exports are always initially created with filenames of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`. If this option is enabled (in addition to the previous one), then after attempting to delete all old exports (of the relevant data type), the app will then attempt to remove the datestamp from the current export's filename by renaming it to `<data-type>.[zip|json]`. This is intended to make successive exports appear to be different versions of the same file, which may be useful in conjunction with external software that implements some form of file versioning, such as [Syncthing](https://docs.syncthing.net/users/versioning.html) or [Nextcloud](https://docs.nextcloud.com/server/latest/user_manual/en/files/version_control.html).
 
 ### Permissions
 
@@ -36,7 +68,7 @@ To export messages, permission to read SMSs and Contacts is required (the need f
 
 To import or wipe messages, SMS Import / Export must be the default messaging app. This is due to [an Android design decision](https://android-developers.googleblog.com/2013/10/getting-your-sms-apps-ready-for-kitkat.html).
 
-**Warning:** While an app is the default messaging app, it takes full responsibility for handling incoming SMS and MMS messages, and if does not store them, they will be lost. SMS Import / Export ignores incoming messages, so in order to avoid losing such messages, the device it is running on should be disconnected from the network (by putting it into airplane mode, or similar means) before the app is made the default messaging app, and only reconnected to the network after a proper messaging app is made the default.
+**:warning:While an app is the default messaging app, it takes full responsibility for handling incoming SMS and MMS messages, and if does not store them, they will be lost. SMS Import / Export ignores incoming messages, so in order to avoid losing such messages, the device it is running on should be disconnected from the network (by putting it into airplane mode, or similar means) before the app is made the default messaging app, and only reconnected to the network after a proper messaging app is made the default.**
 
 To export call logs, permission to read Call Logs and Contacts is required (the need for the latter is explained below). Currently, the app does not ask permission to read Call Logs, and it must be granted by the user on his own initiative.
 
@@ -50,29 +82,31 @@ To import contacts, permission to write Contacts is required. (Granting the app 
 
 SMS and MMS messages include phone numbers ("addresses") but not the names of the communicating parties. The contact information displayed by Android is generated by cross-referencing phone numbers with the device's Contacts database. When exporting messages, SMS Import / Export does this cross-referencing in order to include the contact names in its output; this is why permission to read Contacts in necessary. When importing, included contact names are ignored, since the app (at least currently) does not add entries to or modify the Android Contacts database during message import. The best way to maintain the association of messages with contacts is to separately transfer contacts to the device into which SMS Import / Export is importing messages, via either SMS Import / Export's contacts export / import functionality or Android's built in contacts export / import functionality. Contacts cross-referencing is performed for call log export as well, despite the fact that call log metadata will often already include the contact name; see below for a discussion of this point.
 
-## JSON Structure
+## (ND)JSON Structure
 
-Following is the structure of the JSON currently exported by SMS Import / Export; this is subject to change in future versions of the app.
+Following is the structure of the (ND)JSON currently exported by SMS Import / Export; this is subject to change in future versions of the app.
 
 ### Messages
 
-The exported JSON is an array of JSON objects representing messages, SMSs followed by MMSs. Each JSON message object contains a series of tag-value pairs taken directly from Android's internal message data / metadata structures, documented in the Android API Reference: [SMS](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns), [MMS](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns). In addition, SMS Import / Export adds some other tag-value pairs and child JSON objects, as described below.
+The exported NDJSON is a series of lines, each consisting of a JSON object representing a message, SMSs followed by MMSs. Each JSON message object contains a series of tag-value pairs taken directly from Android's internal message data / metadata structures, documented in the Android API Reference: [SMS](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns), [MMS](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns). In addition, SMS Import / Export adds some other tag-value pairs and child JSON objects, as described below. (All tags added by the app to message JSON objects and their children are prefixed with a double underscore ("__") to clearly indicate that they have been added by the app and are not present in Android's message structures.)
 
 #### SMS Messages
 
 In SMS messages, the value of `type` specifies (among other things) the direction of the message: the two most common values are `1`, denoting "inbox" (i.e., received), and `2`, denoting "sent".
 
-SMS messages contain a single `address` tag; depending on the message direction, this is either the sender or receiver address. SMS Import / Export attempts to look up the address in the Android Contacts database. If this is successful, a tag-value pair of the form `"display_name": "Alice"` is added to the SMS message object.
+SMS messages contain a single `address` tag; depending on the message direction, this is either the sender or receiver address. SMS Import / Export attempts to look up the address in the Android Contacts database. If this is successful, a tag-value pair of the form `"__display_name": "Alice"` is added to the SMS message object.
 
 #### MMS Messages
 
 MMS message objects have the following additions to the tag-value pairs of their internal Android MMS representation:
 
- - A tag-value pair of the form `"sender_address": { ... }`
+ - A tag-value pair of the form `"__sender_address": { ... }`
  
- - A tag-value pair of the form `"recipient_addresses": [ { ... }, { ... } ]`. The child JSON objects associated with `sender_address` and `recipient_addresses` contain a series of tag-value pairs taken directly from Android's internal MMS address structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Addr), plus possibly a single added tag-value pair of the form `"display_name": "Alice"`, as with SMS messages.
+ - A tag-value pair of the form `"__recipient_addresses": [ { ... }, { ... } ]`. The child JSON objects associated with `__sender_address` and `__recipient_addresses` contain a series of tag-value pairs taken directly from Android's internal MMS address structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Addr), plus possibly a single added tag-value pair of the form `"__display_name": "Alice"`, as with SMS messages.
  
- - A tag-value pair of the form `"parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part), plus, for parts containing binary data (assuming binary data inclusion is checked), a tag-value pair of the form `"binary_data": "<Base64 encoded binary data>"`. (If there is [a problem accessing the binary data](https://github.com/tmo1/sms-ie/issues/42), then this tag-value pair may not be present.)
+ - A tag-value pair of the form `"__parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part).
+ 
+Android stores binary data of MMS parts as individual files in its filesystem. SMS Import / Export copies these files directly into a `data/` directory in the ZIP file, retaining their original filenames (without the full path). The association of these files with MMS parts is based on the values of the [`_DATA`](https://developer.android.com/reference/android/provider/Telephony.Mms.Part#_DATA) tags of the MMS parts. (SMS Import / Export utilizes only the actual filename (the last segment of the path) for this association. If there is [a problem accessing the binary data](https://github.com/tmo1/sms-ie/issues/42), then the data may not be present.)
 
 ### Call Logs
 
@@ -87,7 +121,9 @@ The exported JSON is an array of JSON objects representing calls. Each JSON call
 As explained in [the official documentation](https://developer.android.com/guide/topics/providers/contacts-provider), Android stores contacts in a complex system of three related database tables:
 
  - [`ContactsContract.Contacts`](https://developer.android.com/reference/android/provider/ContactsContract.Contacts): Rows representing different people, based on aggregations of raw contact rows.
+ 
  - [`ContactsContract.RawContact`](https://developer.android.com/reference/android/provider/ContactsContract.RawContacts): Rows containing a summary of a person's data, specific to a user account and type. 
+ 
  - [`ContactsContract.Data`](https://developer.android.com/reference/android/provider/ContactsContract.Data): Rows containing the details for raw contact, such as email addresses or phone numbers.
  
 SMS Import / Export simply dumps these tables in structured JSON format, resulting in a rather cluttered representation of the data with a great deal of repetition and redundancy. This is in accordance with the design principles of the app, which prioritize making sure that no useful information is excluded from the export, and avoiding the code complexity and coding time that would be necessary to filter and / or reorganize the raw data.
@@ -120,20 +156,20 @@ This was a misinterpretation of observed call import failures, which were actual
 
 Bugs, feature requests, and other issues can be filed at [the SMS Import / Export issue tracker](https://github.com/tmo1/sms-ie/issues). When reporting any problem with the app, please try to reproduce the problem with [the latest release of the app](https://github.com/tmo1/sms-ie/releases), and please specify the versions of the app used for export and / or import, as applicable.
 
-### Posting JSON
+### Posting JSON / ZIP Files
 
-When reporting a problem with import or export functionality, please try to include the JSON involved, in accordance with the following guidelines:
+When reporting a problem with import or export functionality, please try to include the (ND)JSON file involved, in accordance with the following guidelines:
 
 #### Minimal Reproducible Example
 
-Please try to reproduce the problem with as small a JSON file as possible. The simplest way to reduce the size of the JSON is to use the app's `Settings / Debugging options / Maximum records ...` option to export only a small number of messages.
+Please try to reproduce the problem with as small a (ND)JSON file as possible. The simplest way to reduce the size of the file is to use the app's `Settings / Debugging options / Maximum records ...` option to export only a small number of messages.
 
 #### Redaction
 
-It is strongly recommended to redact any posted JSON and remove any sensitive information. To help automate this process (currently, for message collections only), a Python script [`redact-messages.py`](/tools/redact-messages.py) is available. It has no external dependencies beyond a standard Python environment. It expects a collection of messages in the JSON format used by SMS Import / Export on standard input, and writes a redacted version of the same to standard output:
+It is strongly recommended to redact any posted (ND)JSON and remove any sensitive information. To help automate this process (currently, for message collections only), a Python script [`redact-messages.py`](/tools/redact-messages.py) is available. It has no external dependencies beyond a standard Python environment. It expects a collection of messages in the NDJSON format used by SMS Import / Export on standard input, and writes a redacted version of the same to standard output:
 
 ```
-~$ ./redact-messages.py < messages-nnnn-nn-nn.json > messages-redacted-nnnn-nn-nn.json
+~$ ./redact-messages.py < messages.ndjson > messages-redacted.ndjson
 ```
 
 **:warning:There is no guarantee that this script will correctly and completely redact all sensitive information. It as provided as is, with no warranty. If the JSON in question contains any particularly sensitive information, do not rely on this script to redact it. Note that the script does not consider sensitive certain metadata, such as message timestamps, that might be considered sensitive in some contexts.**
@@ -157,15 +193,6 @@ To add a translation into a new language, or to correct, update, or improve an e
 The following are various features and improvements to the app that have been suggested and may be implemented in the future:
 
  - Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
- 
- - Work is currently ongoing on a transition from the current single file, pure JSON format to a new format of a zipfile containing metadata in [newline delimited JSON (ndjson)](https://en.wikipedia.org/wiki/JSON_streaming#Newline-Delimited_JSON) format, and binary data (such as binary MMS parts) in separate files. This will yield a number of advantages:
-     - Simpler and more efficient code (the app will revert from JSON streaming to a JSON object model)
-     - Smaller files (since binary data will not need to be base64 encoded, and zip compression will be utilized)
-     - Separation of text data and metadata from binary data
-     - The ability to include additional information alongside the actual data and metadata (e.g., app version, date and time of export, and so on)
-     - The ability to handle large binary MMS parts [without triggering an `OutOfMemoryError`](https://github.com/tmo1/sms-ie/issues/84)
-     
-   The costs are a more complicated file structure and the use of the less common ndjson rather than the ubiquitous JSON, but my view is that these costs are not high, and the tradeoffs are well worth it.
 
 ## Contributing
 
@@ -177,7 +204,7 @@ SMS Import / Export does no tracking, advertising, or phoning home. No user data
 
 ## sms-db
 
-SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms-db), a Linux tool to build an SQLite database out of collections of SMS and MMS messages in various formats. sms-db can import JSON files created by SMS Import / Export, and it can export its database to JSON files that can be imported by SMS Import / Export.
+SMS Import / Export is a sibling project to [sms-db](https://github.com/tmo1/sms-db), a Linux tool to build an SQLite database out of collections of SMS and MMS messages in various formats. sms-db will hopefully eventually be able to import ZIP files created by SMS Import / Export, and to export its database to ZIP files that can be imported by SMS Import / Export.
 
 ## Background
 

@@ -1,0 +1,15 @@
+Version 2.0.0 introduces a major rewrite of the SMS and MMS messages import / export code, implementing a new message storage format ('v2'):
+
+<ul>
+ 
+ <li>The messages are now stored in a Newline-delimited JSON file (always named 'messages.ndjson'), as opposed to the standard JSON previously used.</li>
+ 
+ <li>Binary MMS data is now stored separately from message text data and metadata; the 'messages.ndjson' file, along with a 'data/' directory containing the MMS binary data files copied directly from the Android filesystem (with their original filenames), are both encapsulated in a ZIP file.</li>
+ 
+ <li>All (ND)JSON tags added by SMS Import / Export are now prefixed with a double underscore (e.g., '__display_name', '__parts'), to clearly indicate that they have been added by the app.</li>
+ 
+</ul>
+ 
+<strong>These format changes unfortunately render versions of the app from 2.0.0 and on incompatible with JSON message files produced by earlier versions of the app.</strong>
+ 
+For more information about the new format, including various solutions to the abovementioned incompatibility, see the README at https://github.com/tmo1/sms-ie#readme
