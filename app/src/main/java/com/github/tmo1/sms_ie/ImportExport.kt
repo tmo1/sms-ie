@@ -43,12 +43,9 @@ import kotlinx.coroutines.withContext
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     if (ContextCompat.checkSelfPermission(
-            appContext,
-            Manifest.permission.READ_SMS
-        ) == PackageManager.PERMISSION_GRANTED
-        && ContextCompat.checkSelfPermission(
-            appContext,
-            Manifest.permission.READ_CONTACTS
+            appContext, Manifest.permission.READ_SMS
+        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+            appContext, Manifest.permission.READ_CONTACTS
         ) == PackageManager.PERMISSION_GRANTED
     ) return true
     /*else {
@@ -63,12 +60,9 @@ fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
 
 fun checkReadCallLogsContactsPermissions(appContext: Context): Boolean {
     if (ContextCompat.checkSelfPermission(
-            appContext,
-            Manifest.permission.READ_CALL_LOG
-        ) == PackageManager.PERMISSION_GRANTED
-        && ContextCompat.checkSelfPermission(
-            appContext,
-            Manifest.permission.READ_CONTACTS
+            appContext, Manifest.permission.READ_CALL_LOG
+        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+            appContext, Manifest.permission.READ_CONTACTS
         ) == PackageManager.PERMISSION_GRANTED
     ) return true
     /*else {
@@ -83,56 +77,43 @@ fun checkReadCallLogsContactsPermissions(appContext: Context): Boolean {
 
 fun checkReadWriteCallLogPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
-        appContext,
-        Manifest.permission.WRITE_CALL_LOG
-    ) == PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(
-        appContext,
-        Manifest.permission.READ_CALL_LOG
+        appContext, Manifest.permission.WRITE_CALL_LOG
+    ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+        appContext, Manifest.permission.READ_CALL_LOG
     ) == PackageManager.PERMISSION_GRANTED
 }
 
 fun checkReadContactsPermission(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
-        appContext,
-        Manifest.permission.READ_CONTACTS
+        appContext, Manifest.permission.READ_CONTACTS
     ) == PackageManager.PERMISSION_GRANTED
 }
 
 fun checkWriteContactsPermission(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
-        appContext,
-        Manifest.permission.WRITE_CONTACTS
+        appContext, Manifest.permission.WRITE_CONTACTS
     ) == PackageManager.PERMISSION_GRANTED
 }
 
 fun lookupDisplayName(
-    appContext: Context,
-    displayNames: MutableMap<String, String?>,
-    address: String
+    appContext: Context, displayNames: MutableMap<String, String?>, address: String
 ): String? {
 //        look up display name by phone number
     if (address == "") return null
     if (displayNames[address] != null) return displayNames[address]
     val displayName: String?
     val uri = Uri.withAppendedPath(
-        ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-        Uri.encode(address)
+        ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address)
     )
     val nameCursor = appContext.contentResolver.query(
-        uri,
-        arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME),
-        null,
-        null,
-        null
+        uri, arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME), null, null, null
     )
     nameCursor.use {
-        displayName = if (it != null && it.moveToFirst())
-            it.getString(
-                it.getColumnIndexOrThrow(
-                    ContactsContract.PhoneLookup.DISPLAY_NAME
-                )
+        displayName = if (it != null && it.moveToFirst()) it.getString(
+            it.getColumnIndexOrThrow(
+                ContactsContract.PhoneLookup.DISPLAY_NAME
             )
+        )
         else null
     }
     displayNames[address] = displayName
@@ -140,9 +121,7 @@ fun lookupDisplayName(
 }
 
 suspend fun wipeSmsAndMmsMessages(
-    appContext: Context,
-    statusReportText: TextView,
-    progressBar: ProgressBar
+    appContext: Context, statusReportText: TextView, progressBar: ProgressBar
 ) {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     withContext(Dispatchers.IO) {
@@ -194,13 +173,17 @@ suspend fun incrementProgress(progressBar: ProgressBar?) {
 }
 
 // From: https://stackoverflow.com/a/18143773
-suspend fun displayError(appContext: Context, e: Exception, title: String, message: String) {
-    e.printStackTrace()
+suspend fun displayError(appContext: Context, e: Exception?, title: String, message: String) {
+    val messageExpanded = if (e != null) {
+        e.printStackTrace()
+        "$message:\n\n\"$e\"\n\nSee logcat for more information."
+    } else {
+        message
+    }
     val errorBox = AlertDialog.Builder(appContext)
-    errorBox.setTitle(title)
-        .setMessage("$message:\n\n\"$e\"\n\nSee logcat for more information.")
-        .setCancelable(false)
-        .setNeutralButton("Okay", null)
+    errorBox.setTitle(title).setMessage(messageExpanded)
+    //errorBox.setTitle(title).setMessage("$message:\n\n\"$e\"\n\nSee logcat for more information.")
+        .setCancelable(false).setNeutralButton("Okay", null)
     withContext(Dispatchers.Main) {
         errorBox.show()
     }

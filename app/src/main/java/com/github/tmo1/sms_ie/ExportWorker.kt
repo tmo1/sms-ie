@@ -1,6 +1,8 @@
 /*
- * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021-2022 Thomas More
+ * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+ * call logs, and contacts, from and to JSON / NDJSON files.
+ *
+ * Copyright (c) 2021-2023 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -15,7 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
+ * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>
+ *
  */
 
 package com.github.tmo1.sms_ie
@@ -53,7 +56,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         CoroutineScope(Dispatchers.IO).launch {
             if (prefs.getBoolean("export_messages", true)) {
                 val file =
-                    documentTree?.createFile("application/json", "messages$dateInString.json")
+                    documentTree?.createFile("application/zip", "messages$dateInString.zip")
                 val fileUri = file?.uri
                 if (fileUri != null) {
                     Log.v(LOG_TAG, "Beginning messages export ...")
@@ -174,10 +177,11 @@ fun deleteOldExports(
         val newFilename = newExport?.name.toString()
         val files = documentTree.listFiles()
         var total = 0
+        val extension = if (prefix == "messages") "zip" else "json"
         files.forEach {
             val name = it.name
             if (name != null && name != newFilename && name.startsWith(prefix) && name.endsWith(
-                    ".json"
+                    ".$extension"
                 )
             ) {
                 it.delete()
@@ -186,7 +190,7 @@ fun deleteOldExports(
         }
         if (prefs.getBoolean("remove_datestamps_from_filenames", false)
         ) {
-            newExport?.renameTo("$prefix.json")
+            newExport?.renameTo("$prefix.$extension")
         }
         Log.v(LOG_TAG, "$total exports deleted")
     }

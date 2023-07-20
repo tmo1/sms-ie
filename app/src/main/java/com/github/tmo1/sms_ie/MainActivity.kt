@@ -1,6 +1,8 @@
 /*
- * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021-2022 Thomas More
+ * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+ * call logs, and contacts, from and to JSON / NDJSON files.
+ *
+ * Copyright (c) 2021-2023 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -15,7 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
+ * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>
+ *
  */
 
 package com.github.tmo1.sms_ie
@@ -175,8 +178,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             val dateInString = date.toString("yyyy-MM-dd")
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
-                type = "application/json"
-                putExtra(Intent.EXTRA_TITLE, "messages-$dateInString.json")
+                type = "application/zip"
+                putExtra(Intent.EXTRA_TITLE, "messages-$dateInString.zip")
             }
             startActivityForResult(intent, EXPORT_MESSAGES)
         } else {
@@ -193,7 +196,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type =
-                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+                    if (SDK_INT < 29) "*/*" else "application/zip" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
             }
             startActivityForResult(intent, IMPORT_MESSAGES)
         } else {

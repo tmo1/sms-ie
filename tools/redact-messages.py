@@ -24,10 +24,8 @@ from itertools import count
 
 address_iterator = count(start=12345)
 address_map = {}
-redacted_fields = {'body', 'display_name', 'text', 'sub'}
+redacted_fields = {'body', '__display_name', 'text', 'sub'}
 REDACTED = 'REDACTED '
-# BASE64_REDACTED = b64encode('REDACTED'.encode()).decode()
-BASE64_REDACTED = 'UkVEQUNURUQ='
 
 
 def redact(obj):
@@ -43,8 +41,6 @@ def redact(obj):
                 old_address = obj[x]
                 obj[x] = str(next(address_iterator))
                 address_map[old_address] = obj[x]
-        elif x == 'binary_data':
-            obj[x] = BASE64_REDACTED
         elif x == 'body':
             obj[x] = REDACTED + '(Message ID: ' + obj['_id'] + ')'
         elif x == 'text':
@@ -53,6 +49,7 @@ def redact(obj):
             obj[x] = REDACTED
 
 
-doc = json.load(sys.stdin)
-redact(doc)
-json.dump(doc, sys.stdout, indent=2)
+for message in sys.stdin:
+    message = json.loads(message)
+    redact(message)
+    print(json.dumps(message))
