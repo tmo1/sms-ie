@@ -22,7 +22,7 @@ This script converts SMS messages in [Silence](https://silence.im/) XML format t
 
 This will read messages from <silence-xxx.xml> and write them to <silence-xxx.zip>.
 
-**:worning:** This script uses the Python ElementTree XML API, [which "is not secure against maliciously constructed data"](https://docs.python.org/3/library/xml.etree.elementtree.html). It should only be used on trusted XML.
+**:warning:** This script uses the Python ElementTree XML API, [which "is not secure against maliciously constructed data"](https://docs.python.org/3/library/xml.etree.elementtree.html). It should only be used on trusted XML.
 
 (See [issue #121](https://github.com/tmo1/sms-ie/issues/121).)
 
