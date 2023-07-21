@@ -8,15 +8,25 @@ See [here](../README.md#redaction) for documentation of this script.
 
 ### `v1-v2-convert.py`
 
-This script converts message files in `v1` format to `v2` format. Usage:
+This script converts message files in SMS I/E `v1` format to `v2` format. Usage:
 
 `v1-v2-convert.py <messages-xxx.json>`
 
 This will read messages from <messages-xxx.json> and write them to <messages-xxx.zip>.
 
-## v1 Tools
+### `silence-convert.py`
 
-The following tools were written to work with messages in `v1` format, and have not yet been updated to work with `v2` format. It should be possible, however, to convert their output to `v2` format via `v1-v2-convert.py`.
+This script converts SMS messages in [Silence](https://silence.im/) XML format to SMS I/E `v2` format. Usage:
+
+`silence-convert.py <silence-xxx.xml>`
+
+This will read messages from <silence-xxx.xml> and write them to <silence-xxx.zip>.
+
+(See [issue #121](https://github.com/tmo1/sms-ie/issues/121).)
+
+## v1 Conversion Tools
+
+The following tools convert messages in other formats to SMS I/E `v1` format, and have not yet been updated to convert to `v2` format. It should be possible, however, to convert their output to `v2` format via `v1-v2-convert.py`.
 
 ### `vmg-convert.py`
 
