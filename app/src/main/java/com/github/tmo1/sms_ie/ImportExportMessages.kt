@@ -352,7 +352,9 @@ suspend fun importMessages(
                         )
                         return@let
                     }
-                    setStatusText(statusReportText, appContext.getString(R.string.importing_messages))
+                    setStatusText(
+                        statusReportText, appContext.getString(R.string.importing_messages)
+                    )
                     BufferedReader(InputStreamReader(zipInputStream)).useLines { lines ->
                         lines.forEach JSONLine@{ line ->
                             try {
@@ -607,38 +609,43 @@ suspend fun importMessages(
                     }
                 }
             }
-            setStatusText(statusReportText, appContext.getString(R.string.copying_mms_binary_data))
-            val buffer = ByteArray(1048576)
-            appContext.contentResolver.openInputStream(zipUri).use { inputStream ->
-                ZipInputStream(inputStream).use { zipInputStream ->
-                    var zipEntry = zipInputStream.nextEntry
-                    while (zipEntry != null) {
-                        if (zipEntry.name.startsWith("data/")) {
-                            val partUri = mmsPartMap[zipEntry.name.substring(5)]
-                            partUri?.let {
-                                //Log.v(LOG_TAG, "Processing part: $zipEntry")
-                                //Log.v(LOG_TAG, "Writing to: $partUri")
-                                appContext.contentResolver.openOutputStream(
-                                    partUri
-                                )?.use { outputStream ->
-                                    var n = zipInputStream.read(
-                                        buffer
-                                    )
-                                    while (n > -1) {
-                                        //Log.v(LOG_TAG, "Read $n bytes")
-                                        outputStream.write(
-                                            buffer, 0, n
-                                        )
-                                        n = zipInputStream.read(
+            if (prefs.getBoolean("include_binary_data", true)) {
+                setStatusText(
+                    statusReportText, appContext.getString(R.string.copying_mms_binary_data)
+                )
+                val buffer = ByteArray(1048576)
+                appContext.contentResolver.openInputStream(zipUri).use { inputStream ->
+                    ZipInputStream(inputStream).use { zipInputStream ->
+                        var zipEntry = zipInputStream.nextEntry
+                        while (zipEntry != null) {
+                            if (zipEntry.name.startsWith("data/")) {
+                                val partUri = mmsPartMap[zipEntry.name.substring(5)]
+                                partUri?.let {
+                                    //Log.v(LOG_TAG, "Processing part: $zipEntry")
+                                    //Log.v(LOG_TAG, "Writing to: $partUri")
+                                    appContext.contentResolver.openOutputStream(
+                                        partUri
+                                    )?.use { outputStream ->
+                                        var n = zipInputStream.read(
                                             buffer
                                         )
-                                    }
-                                } ?: Log.e(
-                                    LOG_TAG, "Error opening OutputStream to write MMS binary data"
-                                )
+                                        while (n > -1) {
+                                            //Log.v(LOG_TAG, "Read $n bytes")
+                                            outputStream.write(
+                                                buffer, 0, n
+                                            )
+                                            n = zipInputStream.read(
+                                                buffer
+                                            )
+                                        }
+                                    } ?: Log.e(
+                                        LOG_TAG,
+                                        "Error opening OutputStream to write MMS binary data"
+                                    )
+                                }
                             }
+                            zipEntry = zipInputStream.nextEntry
                         }
-                        zipEntry = zipInputStream.nextEntry
                     }
                 }
             }
