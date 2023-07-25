@@ -50,6 +50,20 @@ By default, binary MMS data (such as images and videos) are exported. The user c
 
 Note that upon import or wipe, message apps present on the system may not immediately correctly reflect the new state of the message database due to app caching and / or local storage. This can be resolved by clearing such cache and storage, e.g. `Settings / Apps / Messaging / Storage & cache / Clear storage | Clear cache`.
 
+### Deduplication
+
+SMS Import / Export can attempt to deduplicate messages upon import. If this feature is enabled in the app's settings, the app will check all new messages against the existing message database (including those messages already inserted earlier in the import process) and ignore those it considers to be duplicates of ones already present. This feature is currently considered experimental.
+
+If this feature is not enabled, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message. To avoid this, the device can be wiped of all messages before importing by using the `Wipe Messages` button.
+
+SMS Import / Export cannot directly deduplicate messages already present in the Android database, but it should be possible to use the app to perform such deduplication by first exporting messages, then wiping messages, and finally re-importing the exported messages.
+
+#### Implementation
+
+Message deduplication is tricky, since on the one hand, unlike email messages, SMS and MMS messages do not generally have a unique `[Message-ID](https://en.wikipedia.org/wiki/Message-ID)`, while on the other hand, some message metadata (e.g., `[THREAD_ID](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#THREAD_ID)`) does not remain constant when messages are moved around, and some metadata is not present for all messages. SMS Import / Export therefore tries to identify duplicate messages by comparing carefully chosen message data and metadata fields and concludes that two messages are identical if the compared fields are. Currently, SMS messages are assumed to be identical if they have identical `[ADDRESS](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#ADDRESS)`, `[TYPE](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#TYPE)`, `[DATE](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#DATE)`, and `[BODY](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#BODY)` fields, and MMS messages are assumed to be identical if they have identical `[DATE](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#DATE)` and `[MESSAGE_BOX](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#MESSAGE_BOX)` fields, plus identical `[MESSAGE_ID](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#MESSAGE_ID)` fields if that field is present in the new message, or identical `[CONTENT_LOCATION](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#CONTENT_LOCATION)` fields if that field is present in the new message and `MESSAGE_ID` is not.
+
+This functionality has not been extensively tested, and may yield both false positives and false negatives.
+
 ### Scheduled Export
 
 To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
@@ -137,8 +151,6 @@ Contacts import and export is currently considered experimental, and the JSON fo
 **Note:** Currently, when contacts are exported and then imported, the app may report a larger total of contacts imported than exported. This is due to the fact that when exporting, the total number of **`Contacts`** exported is reported (since this is a logical and straightforward thinng to do), whereas when importing, the total number of **`Raw Contacts`** imported is reported (since [as per the documentation](https://developer.android.com/guide/topics/providers/contacts-provider#ContactBasics), applications are not allowed to add `Contacts`, only `Raw Contacts`, and as noted above, a `Contact` may consist of an aggregation of multiple `Raw Contacts`).
 
 ## Limitations
-
-Currently, no deduplication is done. For example, if messages are exported and then immediately reimported, the device will then contain two copies of every message. To avoid this, the device can be wiped of all messages before importing by using the `Wipe Messages` button.
 
 Contacts import only imports basic contact data (name, phone numbers, email and postal addresses, etc.), but not the contacts metadata that Android stores. Additionally, imported contacts are not associated with [the accounts with which they had been associated](https://developer.android.com/guide/topics/providers/contacts-provider#InformationTypes) on the system from which they were exported, and the user has no control over which account they will be associated with on the target system; all contacts are inserted into the target system's default account.
 

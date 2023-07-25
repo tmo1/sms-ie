@@ -287,6 +287,7 @@ suspend fun importMessages(
     appContext: Context, uri: Uri, progressBar: ProgressBar?, statusReportText: TextView?
 ): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    val deduplication = prefs.getBoolean("message_deduplication", false)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
         // get column names of local SMS, MMS, and MMS part tables
@@ -371,6 +372,25 @@ suspend fun importMessages(
                                             "max_records", ""
                                         )?.toIntOrNull() ?: -1)
                                     ) return@JSONLine
+                                    if (deduplication) {
+                                        val smsDuplicatesCursor = appContext.contentResolver.query(
+                                            Telephony.Sms.CONTENT_URI,
+                                            arrayOf(Telephony.Sms._ID),
+                                            "${Telephony.Sms.ADDRESS}=? AND ${Telephony.Sms.TYPE}=? AND ${Telephony.Sms.DATE}=? AND ${Telephony.Sms.BODY}=?",
+                                            arrayOf(
+                                                messageJSON.optString(Telephony.Sms.ADDRESS),
+                                                messageJSON.optString(Telephony.Sms.TYPE),
+                                                messageJSON.optString(Telephony.Sms.DATE),
+                                                messageJSON.optString(Telephony.Sms.BODY)
+                                            ),
+                                            null
+                                        )
+                                        smsDuplicatesCursor?.use {
+                                            if (it.moveToFirst()) {
+                                                return@JSONLine
+                                            }
+                                        }
+                                    }
                                     messageJSON.keys().forEach { key ->
                                         if (key in smsColumns) messageMetadata.put(
                                             key, messageJSON.getString(key)
@@ -414,6 +434,39 @@ suspend fun importMessages(
                                             "max_records", ""
                                         )?.toIntOrNull() ?: -1)
                                     ) return@JSONLine
+                                    if (deduplication) {
+                                        val messageID =
+                                            messageJSON.optString(Telephony.Mms.MESSAGE_ID)
+                                        val contentLocation =
+                                            messageJSON.optString(Telephony.Mms.CONTENT_LOCATION)
+                                        var selection =
+                                            "${Telephony.Mms.DATE}=? AND ${Telephony.Mms.MESSAGE_BOX}=?"
+                                        var selectionArgs = arrayOf(
+                                            messageJSON.optString(Telephony.Mms.DATE),
+                                            messageJSON.optString(Telephony.Mms.MESSAGE_BOX)
+                                        )
+                                        if (messageID != "") {
+                                            selection =
+                                                "$selection AND ${Telephony.Mms.MESSAGE_ID}=?"
+                                            selectionArgs += messageJSON.optString(Telephony.Mms.MESSAGE_ID)
+                                        } else if (contentLocation != "") {
+                                            selection =
+                                                "$selection AND ${Telephony.Mms.CONTENT_LOCATION}=?"
+                                            selectionArgs += messageJSON.optString(Telephony.Mms.CONTENT_LOCATION)
+                                        }
+                                        val mmsDuplicatesCursor = appContext.contentResolver.query(
+                                            Telephony.Mms.CONTENT_URI,
+                                            arrayOf(Telephony.Mms._ID),
+                                            selection,
+                                            selectionArgs,
+                                            null
+                                        )
+                                        mmsDuplicatesCursor?.use {
+                                            if (it.moveToFirst()) {
+                                                return@JSONLine
+                                            }
+                                        }
+                                    }
                                     messageJSON.keys().forEach { key ->
                                         if (key in mmsColumns) messageMetadata.put(
                                             key, messageJSON.getString(key)
