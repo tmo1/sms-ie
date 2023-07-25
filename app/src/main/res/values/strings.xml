@@ -87,4 +87,5 @@
     <string name="export_contacts">Export Contacts</string>
     <string name="import_contacts">Import Contacts</string>
     <string name="copying_mms_binary_data">Copying MMS binary data ...</string>
+    <string name="importing_messages">Importing messages ...</string>
 </resources>

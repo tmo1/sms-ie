@@ -352,6 +352,7 @@ suspend fun importMessages(
                         )
                         return@let
                     }
+                    setStatusText(statusReportText, appContext.getString(R.string.importing_messages))
                     BufferedReader(InputStreamReader(zipInputStream)).useLines { lines ->
                         lines.forEach JSONLine@{ line ->
                             try {
