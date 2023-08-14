@@ -40,10 +40,10 @@ import android.text.format.DateUtils.formatElapsedTime
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -183,11 +183,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, EXPORT_MESSAGES)
         } else {
-            Toast.makeText(
-                this,
-                getString(R.string.sms_permissions_required),
-                Toast.LENGTH_LONG
-            ).show()
+            val statusReportText: TextView = findViewById(R.id.status_report)
+            statusReportText.text = getString(R.string.sms_permissions_required)
+            statusReportText.visibility = View.VISIBLE
         }
     }
 
@@ -200,11 +198,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, IMPORT_MESSAGES)
         } else {
-            Toast.makeText(
-                this@MainActivity,
-                getString(R.string.default_sms_app_requirement),
-                Toast.LENGTH_LONG
-            ).show()
+            val statusReportText: TextView = findViewById(R.id.status_report)
+            statusReportText.text = getString(R.string.default_sms_app_requirement)
+            statusReportText.visibility = View.VISIBLE
         }
     }
 
@@ -219,11 +215,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, EXPORT_CALL_LOG)
         } else {
-            Toast.makeText(
-                this,
-                getString(R.string.call_logs_permissions_required),
-                Toast.LENGTH_LONG
-            ).show()
+            val statusReportText: TextView = findViewById(R.id.status_report)
+            statusReportText.text = getString(R.string.call_logs_permissions_required)
+            statusReportText.visibility = View.VISIBLE
         }
     }
 
@@ -236,11 +230,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, IMPORT_CALL_LOG)
         } else {
-            Toast.makeText(
-                this,
-                getString(R.string.call_logs_read_write_permissions_required),
-                Toast.LENGTH_LONG
-            ).show()
+            val statusReportText: TextView = findViewById(R.id.status_report)
+            statusReportText.text = getString(R.string.call_logs_read_write_permissions_required)
+            statusReportText.visibility = View.VISIBLE
         }
     }
 
@@ -255,11 +247,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, EXPORT_CONTACTS)
         } else {
-            Toast.makeText(
-                this,
-                getString(R.string.contacts_read_permission_required),
-                Toast.LENGTH_LONG
-            ).show()
+            val statusReportText: TextView = findViewById(R.id.status_report)
+            statusReportText.text = getString(R.string.contacts_read_permission_required)
+            statusReportText.visibility = View.VISIBLE
         }
     }
 
@@ -272,11 +262,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, IMPORT_CONTACTS)
         } else {
-            Toast.makeText(
-                this,
-                getString(R.string.contacts_write_permissions_required),
-                Toast.LENGTH_LONG
-            ).show()
+            val statusReportText: TextView = findViewById(R.id.status_report)
+            statusReportText.text = getString(R.string.contacts_write_permissions_required)
+            statusReportText.visibility = View.VISIBLE
         }
     }
 
@@ -284,11 +272,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
             ConfirmWipeFragment().show(supportFragmentManager, "wipe")
         } else {
-            Toast.makeText(
-                this@MainActivity,
-                getString(R.string.default_sms_app_requirement),
-                Toast.LENGTH_LONG
-            ).show()
+            val statusReportText: TextView = findViewById(R.id.status_report)
+            statusReportText.text = getString(R.string.default_sms_app_requirement)
+            statusReportText.visibility = View.VISIBLE
         }
     }
 
