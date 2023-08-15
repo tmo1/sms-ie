@@ -183,9 +183,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, EXPORT_MESSAGES)
         } else {
-            val statusReportText: TextView = findViewById(R.id.status_report)
-            statusReportText.text = getString(R.string.sms_permissions_required)
-            statusReportText.visibility = View.VISIBLE
+            setStatusReport(getString(R.string.sms_permissions_required))
         }
     }
 
@@ -198,9 +196,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, IMPORT_MESSAGES)
         } else {
-            val statusReportText: TextView = findViewById(R.id.status_report)
-            statusReportText.text = getString(R.string.default_sms_app_requirement)
-            statusReportText.visibility = View.VISIBLE
+            setStatusReport(getString(R.string.default_sms_app_requirement))
         }
     }
 
@@ -215,9 +211,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, EXPORT_CALL_LOG)
         } else {
-            val statusReportText: TextView = findViewById(R.id.status_report)
-            statusReportText.text = getString(R.string.call_logs_permissions_required)
-            statusReportText.visibility = View.VISIBLE
+            setStatusReport(getString(R.string.call_logs_permissions_required))
         }
     }
 
@@ -230,9 +224,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, IMPORT_CALL_LOG)
         } else {
-            val statusReportText: TextView = findViewById(R.id.status_report)
-            statusReportText.text = getString(R.string.call_logs_read_write_permissions_required)
-            statusReportText.visibility = View.VISIBLE
+            setStatusReport(getString(R.string.call_logs_read_write_permissions_required))
         }
     }
 
@@ -247,9 +239,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, EXPORT_CONTACTS)
         } else {
-            val statusReportText: TextView = findViewById(R.id.status_report)
-            statusReportText.text = getString(R.string.contacts_read_permission_required)
-            statusReportText.visibility = View.VISIBLE
+            setStatusReport(getString(R.string.contacts_read_permission_required))
         }
     }
 
@@ -262,9 +252,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
             startActivityForResult(intent, IMPORT_CONTACTS)
         } else {
-            val statusReportText: TextView = findViewById(R.id.status_report)
-            statusReportText.text = getString(R.string.contacts_write_permissions_required)
-            statusReportText.visibility = View.VISIBLE
+            setStatusReport(getString(R.string.contacts_write_permissions_required))
         }
     }
 
@@ -272,9 +260,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
             ConfirmWipeFragment().show(supportFragmentManager, "wipe")
         } else {
-            val statusReportText: TextView = findViewById(R.id.status_report)
-            statusReportText.text = getString(R.string.default_sms_app_requirement)
-            statusReportText.visibility = View.VISIBLE
+            setStatusReport(getString(R.string.default_sms_app_requirement))
         }
     }
 
@@ -301,7 +287,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         ) {
             resultData?.data?.let {
                 //statusReportText.text = getString(R.string.begin_exporting_messages)
-                //statusReportText.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Main).launch {
                     total = exportMessages(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
@@ -422,7 +407,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     // defined by the NoticeDialogFragment.NoticeDialogListener interface
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        // User touched the dialog's positive button
         val statusReportText: TextView = findViewById(R.id.status_report)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         CoroutineScope(Dispatchers.Main).launch {
@@ -432,9 +416,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
-        // User touched the dialog's negative button
         val statusReportText: TextView = findViewById(R.id.status_report)
         statusReportText.text = getString(R.string.wipe_cancelled)
+    }
+
+    fun setStatusReport(statusReport: String) {
+        val statusReportText: TextView = findViewById(R.id.status_report)
+        statusReportText.text = statusReport
     }
 }
 
