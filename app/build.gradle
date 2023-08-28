@@ -24,8 +24,8 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion "30.0.3"
+    compileSdk 33
+//    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.github.tmo1.sms_ie"
