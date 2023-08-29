@@ -1,3 +1,9 @@
+# I think this file was created by Android Studio
+# See also:
+# https://stackoverflow.com/questions/16736856/what-should-be-in-my-gitignore-for-an-android-studio-project
+# https://intellij-support.jetbrains.com/hc/en-us/articles/206544839-How-to-manage-projects-under-Version-Control-Systems
+# https://stackoverflow.com/questions/44009135/can-should-i-add-kotlinc-xml-to-my-version-control-ignore-file
+
 *.iml
 .gradle
 /local.properties
