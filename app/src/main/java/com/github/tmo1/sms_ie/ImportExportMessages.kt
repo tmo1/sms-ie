@@ -116,7 +116,7 @@ private suspend fun smsToJSON(
     var total = 0
     val smsCursor =
         appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
-    smsCursor?.use { it ->
+    smsCursor?.use {
         if (it.moveToFirst()) {
             initProgressBar(progressBar, it)
             val totalSms = it.count
@@ -159,7 +159,7 @@ private suspend fun mmsToJSON(
     var total = 0
     val mmsCursor =
         appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
-    mmsCursor?.use { it ->
+    mmsCursor?.use {
         if (it.moveToFirst()) {
             val totalMms = it.count
             initProgressBar(progressBar, it)

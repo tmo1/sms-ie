@@ -40,7 +40,6 @@ import android.text.format.DateUtils.formatElapsedTime
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -420,7 +419,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         statusReportText.text = getString(R.string.wipe_cancelled)
     }
 
-    fun setStatusReport(statusReport: String) {
+    private fun setStatusReport(statusReport: String) {
         val statusReportText: TextView = findViewById(R.id.status_report)
         statusReportText.text = statusReport
     }
