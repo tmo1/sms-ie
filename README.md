@@ -152,7 +152,13 @@ Contacts import and export is currently considered experimental, and the JSON fo
 
 ## Limitations
 
+### Contacts
+
 Contacts import only imports basic contact data (name, phone numbers, email and postal addresses, etc.), but not the contacts metadata that Android stores. Additionally, imported contacts are not associated with [the accounts with which they had been associated](https://developer.android.com/guide/topics/providers/contacts-provider#InformationTypes) on the system from which they were exported, and the user has no control over which account they will be associated with on the target system; all contacts are inserted into the target system's default account.
+
+### Call logs
+
+Voicemail entries are skipped on call log import (see [issue #110](https://github.com/tmo1/sms-ie/issues/110)).
 
 ### Call Log Maximum Capacity
 

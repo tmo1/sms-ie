@@ -159,7 +159,7 @@ suspend fun importCallLog(
                                 }
                             }
                             var insertUri: Uri? = null
-                            if (callLogMetadata.keySet().contains(CallLog.Calls.NUMBER)) {
+                            if (callLogMetadata.keySet().contains(CallLog.Calls.NUMBER) && callLogMetadata.getAsString(CallLog.Calls.TYPE) != "4") {
                                 insertUri = appContext.contentResolver.insert(
                                     CallLog.Calls.CONTENT_URI,
                                     callLogMetadata
