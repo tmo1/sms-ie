@@ -2,3 +2,5 @@
 
  - Skip voicemail entries on call log import (see https://github.com/tmo1/sms-ie/issues/110)
 
+ - Replace Toasts with TextView notifications (see https://github.com/tmo1/sms-ie/issues/122)
+
