@@ -93,7 +93,8 @@ suspend fun exportMessages(
                         } catch (e: Exception) {
                             Log.e(
                                 LOG_TAG,
-                                "Error accessing binary data for MMS message part " + it.filename + ": $e"
+                                "Error accessing binary data for MMS message part " + it.filename,
+                                e
                             )
                         }
                         zipOutputStream.closeEntry()
@@ -356,9 +357,10 @@ suspend fun importMessages(
                         statusReportText, appContext.getString(R.string.importing_messages)
                     )
                     BufferedReader(InputStreamReader(zipInputStream)).useLines { lines ->
-                        lines.forEach JSONLine@{ line ->
+                        lines.forEachIndexed JSONLine@{ lineNumber, line ->
                             try {
-                                //Log.v(LOG_TAG, "Processing: $line")
+                                Log.d(LOG_TAG, "Processing line #$lineNumber")
+                                // Log.d(LOG_TAG, "Processing: $line")
                                 val messageMetadata = ContentValues()
                                 val messageJSON = JSONObject(line)
                                 val oldThreadId = messageJSON.optString("thread_id")
@@ -368,13 +370,17 @@ suspend fun importMessages(
                                     )
                                 }
                                 if (!messageJSON.has("m_type")) { // it's SMS
+                                    Log.d(LOG_TAG, "Message is SMS")
                                     // It would obviously be more efficient to break rather then continue when hitting 'max_records', but this option is primarily for debugging and the inefficiency doesn't matter very much
                                     if (!prefs.getBoolean(
                                             "sms", true
                                         ) || totals.sms == (prefs.getString(
                                             "max_records", ""
                                         )?.toIntOrNull() ?: -1)
-                                    ) return@JSONLine
+                                    ) {
+                                        Log.d(LOG_TAG, "Skipping due to debug settings")
+                                        return@JSONLine
+                                    }
                                     if (deduplication) {
                                         val smsDuplicatesCursor = appContext.contentResolver.query(
                                             Telephony.Sms.CONTENT_URI,
@@ -390,6 +396,7 @@ suspend fun importMessages(
                                         )
                                         smsDuplicatesCursor?.use {
                                             if (it.moveToFirst()) {
+                                                Log.d(LOG_TAG, "Duplicate message - skipping")
                                                 return@JSONLine
                                             }
                                         }
@@ -419,8 +426,9 @@ suspend fun importMessages(
                                         Telephony.Sms.CONTENT_URI, messageMetadata
                                     )
                                     if (insertUri == null) {
-                                        Log.v(LOG_TAG, "SMS insert failed!")
+                                        Log.e(LOG_TAG, "SMS insert failed!")
                                     } else {
+                                        Log.d(LOG_TAG, "SMS insert succeeded")
                                         totals.sms++
                                         setStatusText(
                                             statusReportText, appContext.getString(
@@ -431,12 +439,16 @@ suspend fun importMessages(
                                         )
                                     }
                                 } else { // it's MMS
+                                    Log.d(LOG_TAG, "Message is MMS")
                                     if (!prefs.getBoolean(
                                             "mms", true
                                         ) || totals.mms == (prefs.getString(
                                             "max_records", ""
                                         )?.toIntOrNull() ?: -1)
-                                    ) return@JSONLine
+                                    ) {
+                                        Log.d(LOG_TAG, "Skipping due to debug settings")
+                                        return@JSONLine
+                                    }
                                     if (deduplication) {
                                         val messageID =
                                             messageJSON.optString(Telephony.Mms.MESSAGE_ID)
@@ -466,6 +478,7 @@ suspend fun importMessages(
                                         )
                                         mmsDuplicatesCursor?.use {
                                             if (it.moveToFirst()) {
+                                                Log.d(LOG_TAG, "Duplicate message - skipping")
                                                 return@JSONLine
                                             }
                                         }
@@ -528,6 +541,7 @@ suspend fun importMessages(
                                     if (insertUri == null) {
                                         Log.e(LOG_TAG, "MMS insert failed!")
                                     } else {
+                                        Log.d(LOG_TAG, "MMS insert succeeded")
                                         totals.mms++
                                         setStatusText(
                                             statusReportText, appContext.getString(
@@ -536,7 +550,6 @@ suspend fun importMessages(
                                                 totals.mms
                                             )
                                         )
-                                        // Log.v(LOG_TAG, "MMS insert succeeded!")
                                         val messageId = insertUri.lastPathSegment
                                         val addressUri = Uri.parse("content://mms/$messageId/addr")
                                         addresses.forEach { address ->
@@ -551,11 +564,11 @@ suspend fun importMessages(
                                                 appContext.contentResolver.insert(
                                                     addressUri, address
                                                 )
-                                            if (insertAddressUri == null) {
-                                                Log.e(LOG_TAG, "MMS address insert failed!")
-                                            } /*else {
-                                                Log.v(LOG_TAG, "MMS address insert succeeded.")
-                                            }*/
+                                            if (insertAddressUri == null) Log.e(
+                                                LOG_TAG,
+                                                "MMS address insert failed!"
+                                            )
+                                            else Log.d(LOG_TAG, "MMS address insert succeeded")
                                         }
                                         val messageParts = messageJSON.optJSONArray("__parts")
                                         messageParts?.let {
@@ -573,13 +586,15 @@ suspend fun importMessages(
                                                     appContext.contentResolver.insert(
                                                         partUri, part
                                                     )
-                                                if (insertPartUri == null) {
-                                                    Log.e(
-                                                        LOG_TAG,
-                                                        "MMS part insert failed! Part metadata: $part"
-                                                    )
-                                                } else {
-                                                    // Log.v(LOG_TAG, "MMS part insert succeeded - old part ID: ${messagePart.getString(Telephony.Mms.Part._ID)}, old message ID: ${messagePart.getString(Telephony.Mms.Part.MSG_ID)}")
+                                                if (insertPartUri == null)
+//                                                    Log.e(
+//                                                        LOG_TAG,
+//                                                        "MMS part insert failed! Part metadata: $part"
+//                                                    )
+                                                    Log.e(LOG_TAG, "MMS part insert failed!")
+                                                else {
+                                                    Log.d(LOG_TAG, "MMS part insert succeeded")
+                                                    // Log.d(LOG_TAG, "MMS part insert succeeded - old part ID: ${messagePart.getString(Telephony.Mms.Part._ID)}, old message ID: ${messagePart.getString(Telephony.Mms.Part.MSG_ID)}")
                                                     if (prefs.getBoolean(
                                                             "include_binary_data", true
                                                         )
@@ -621,7 +636,7 @@ suspend fun importMessages(
                             if (zipEntry.name.startsWith("data/")) {
                                 val partUri = mmsPartMap[zipEntry.name.substring(5)]
                                 partUri?.let {
-                                    //Log.v(LOG_TAG, "Processing part: $zipEntry")
+                                    Log.d(LOG_TAG, "Writing part: $zipEntry")
                                     //Log.v(LOG_TAG, "Writing to: $partUri")
                                     appContext.contentResolver.openOutputStream(
                                         partUri

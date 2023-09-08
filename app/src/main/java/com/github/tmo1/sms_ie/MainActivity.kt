@@ -62,7 +62,7 @@ const val IMPORT_CALL_LOG = 4
 const val EXPORT_CONTACTS = 5
 const val IMPORT_CONTACTS = 6
 const val PERMISSIONS_REQUEST = 1
-const val LOG_TAG = "MYLOG"
+const val LOG_TAG = "SMSIE"
 const val CHANNEL_ID = "MYCHANNEL"
 
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE

@@ -59,9 +59,9 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     documentTree?.createFile("application/zip", "messages$dateInString.zip")
                 val fileUri = file?.uri
                 if (fileUri != null) {
-                    Log.v(LOG_TAG, "Beginning messages export ...")
+                    Log.i(LOG_TAG, "Beginning messages export ...")
                     messageTotal = exportMessages(context, fileUri, null, null)
-                    Log.v(
+                    Log.i(
                         LOG_TAG,
                         "Messages export successful: ${messageTotal.sms} SMSs and ${messageTotal.mms} MMSs exported"
                     )
@@ -76,10 +76,10 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     documentTree?.createFile("application/json", "calls$dateInString.json")
                 val fileUri = file?.uri
                 if (fileUri != null) {
-                    Log.v(LOG_TAG, "Beginning call log export ...")
+                    Log.i(LOG_TAG, "Beginning call log export ...")
                     val total = exportCallLog(context, fileUri, null, null)
                     callsTotal = total.sms
-                    Log.v(
+                    Log.i(
                         LOG_TAG,
                         "Call log export successful: $callsTotal calls exported"
                     )
@@ -94,9 +94,9 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     documentTree?.createFile("application/json", "contacts$dateInString.json")
                 val fileUri = file?.uri
                 if (fileUri != null) {
-                    Log.v(LOG_TAG, "Beginning contacts export ...")
+                    Log.i(LOG_TAG, "Beginning contacts export ...")
                     contacts = exportContacts(context, fileUri, null, null)
-                    Log.v(
+                    Log.i(
                         LOG_TAG,
                         "Contacts export successful: $contacts contacts exported"
                     )
@@ -151,7 +151,7 @@ fun updateExportWork(context: Context) {
             exportTime.add(Calendar.DAY_OF_MONTH, 1)
         }
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
-        Log.v(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
+        Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
         val exportRequest: WorkRequest =
             OneTimeWorkRequestBuilder<ExportWorker>()
                 .addTag(EXPORT_WORK_TAG)
@@ -170,7 +170,7 @@ fun deleteOldExports(
     prefix: String
 ) {
     if (prefs.getBoolean("delete_old_exports", false)) {
-        Log.v(LOG_TAG, "Deleting old exports ...")
+        Log.i(LOG_TAG, "Deleting old exports ...")
         // The following line is necessary in case there already existed a file with the
         // provided filename, in which case Android will add a numeric suffix to the new
         // file's filename ("messages-yyyy-MM-dd (1).json")
@@ -192,6 +192,6 @@ fun deleteOldExports(
         ) {
             newExport?.renameTo("$prefix.$extension")
         }
-        Log.v(LOG_TAG, "$total exports deleted")
+        Log.i(LOG_TAG, "$total exports deleted")
     }
 }
