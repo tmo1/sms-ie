@@ -1,0 +1,4 @@
+ - Improved logging (particularly in debug builds)
+
+ - Smaller APK (due to R8 shrinking)
+
