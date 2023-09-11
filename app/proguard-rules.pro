@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# This allows proguard to strip isLoggable() blocks containing only <=INFO log
+# code from release builds.
+
+# From https://source.android.com/docs/core/tests/debug/understanding-logging#log-standards
+-assumenosideeffects class android.util.Log {
+  static *** d(...);
+  static *** v(...);
+  static *** isLoggable(...);
+}
+

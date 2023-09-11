@@ -36,7 +36,7 @@ The above applies only to SMS and MMS messages; the format for call logs and con
 
 ## Installation
 
-SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, from the command line (e.g., by issuing `gradlew assembleDebug` in the root directory of the project) or within Android Studio. Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built packages of the latest code pushed to the repository are available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
+SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, from the command line (e.g., by issuing `gradlew assembleDebug` in the root directory of the project) or within Android Studio. Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built (debug) packages of the latest code pushed to the repository are generally available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
 
 ## Usage
 
@@ -192,9 +192,9 @@ It is strongly recommended to redact any posted (ND)JSON and remove any sensitiv
 
 **:warning:There is no guarantee that this script will correctly and completely redact all sensitive information. It as provided as is, with no warranty. If the JSON in question contains any particularly sensitive information, do not rely on this script to redact it. Note that the script does not consider sensitive certain metadata, such as message timestamps, that might be considered sensitive in some contexts.**
 
-### Crashes
+### Logcat
 
-When reporting a crash, particularly a reproducible one, please attach a logcat (a collection of log messages produced by Android - see [here](https://developer.android.com/studio/command-line/logcat) and [here](https://developer.android.com/studio/debug/am-logcat)). Instructions for doing so (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
+When reporting a problem, particularly a reproducible one, please attach a logcat (a collection of log messages produced by Android - see [here](https://developer.android.com/studio/command-line/logcat) and [here](https://developer.android.com/studio/debug/am-logcat)). If feasible, please reproduce the problem in a debug build of the latest code (see the [Installation](#intallation) section of this README for an easy way to obtain such a build) and include the logcat from that, since the debug builds have more detailed logging. Instructions for obtaining a logcat (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
 
 ### Known Issues
 
