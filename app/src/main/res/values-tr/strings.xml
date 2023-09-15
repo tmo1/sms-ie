@@ -60,7 +60,7 @@
     <string name="not_jsonarray_message">Dosya geçerli bir JSONArray içermiyor gibi görünüyor.</string>
     <string name="title_activity_settings">Etkinlik Ayarları</string>
     <string name="settings">Ayarlar</string>
-    <string name="include_binary_data">(Kodlanmış) ikili MMS verilerini dahil et</string>
+    <string name="include_binary_data">İkili MMS verilerini dahil et</string>
     <string name="channel_name">bildirim_kanali</string>
     <string name="channel_description">Bildirim Kanalı</string>
     <string name="scheduled_export_executed">Planlanan dışa aktarma gerçekleştirildi</string>
@@ -92,4 +92,6 @@
     <string name="about">Hakkında</string>
     <string name="export_contacts">Kişileri Dışa Aktar</string>
     <string name="import_contacts">Kişileri İçe Aktar</string>
+    <string name="copying_mms_binary_data">İkili MMS verileri kopyalanıyor...</string>
+    <string name="importing_messages">Mesajlar içe aktarılıyor...</string>
 </resources>
