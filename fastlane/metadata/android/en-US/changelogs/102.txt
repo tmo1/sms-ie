@@ -1,4 +1,6 @@
+ - Ask to become default SMS app when importing or wiping messages 
+
  - Improved logging (particularly in debug builds)
 
- - Smaller APK (due to R8 shrinking)
+ - Smaller APK size (due to R8 shrinking)
 

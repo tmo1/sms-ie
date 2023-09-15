@@ -18,7 +18,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>
- *
  */
 
 package com.github.tmo1.sms_ie
@@ -28,6 +27,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.role.RoleManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -61,6 +61,7 @@ const val EXPORT_CALL_LOG = 3
 const val IMPORT_CALL_LOG = 4
 const val EXPORT_CONTACTS = 5
 const val IMPORT_CONTACTS = 6
+const val BECOME_DEFAULT_SMS_APP = 100
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "SMSIE"
 const val CHANNEL_ID = "MYCHANNEL"
@@ -72,9 +73,16 @@ const val PDU_HEADERS_FROM = "137"
 
 data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
-class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,
+    BecomeDefaultSMSAppFragment.NoticeDialogListener {
 
     private lateinit var prefs: SharedPreferences
+    // We use 'operation' to tell onActivityResult() which operation to run after the user has made
+    // the app into the default SMS app. This feels hackish, but it's simple and effective, and
+    // while it would be easy enough to pass the operation as a parameter to checkDefaultSMSApp(),
+    // I couldn't figure out a simple and effective way to pass the operation through to
+    // to onDefaultSMSAppDialogPositiveClick()
+    private lateinit var operation: () -> Unit
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -90,12 +98,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 //finish()
                 true
             }
+
             R.id.about -> {
                 val launchAboutActivity = Intent(this, AboutActivity::class.java)
                 startActivity(launchAboutActivity)
                 //finish()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -113,9 +123,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         )
         val necessaryPermissions = mutableListOf<String>()
         allPermissions.forEach {
-            if (ContextCompat.checkSelfPermission(this, it)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
                 necessaryPermissions.add(it)
             }
         }
@@ -134,13 +142,20 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
         val exportContactsButton: Button = findViewById(R.id.export_contacts_button)
         val importContactsButton: Button = findViewById(R.id.import_contacts_button)
+
         exportMessagesButton.setOnClickListener { exportMessagesManual() }
-        importMessagesButton.setOnClickListener { importMessagesManual() }
+        importMessagesButton.setOnClickListener {
+            operation = ::importMessagesManual
+            checkDefaultSMSApp()
+        }
         exportCallLogButton.setOnClickListener { exportCallLogManual() }
         importCallLogButton.setOnClickListener { importCallLogManual() }
         exportContactsButton.setOnClickListener { exportContactsManual() }
         importContactsButton.setOnClickListener { importContactsManual() }
-        wipeAllMessagesButton.setOnClickListener { wipeMessagesManual() }
+        wipeAllMessagesButton.setOnClickListener {
+            operation = ::wipeMessagesManual
+            checkDefaultSMSApp()
+        }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -162,8 +177,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    private fun exportMessagesManual() {
-        /*if (ContextCompat.checkSelfPermission(
+    private fun exportMessagesManual() {/*if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_SMS
             ) == PackageManager.PERMISSION_GRANTED
@@ -187,16 +201,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     private fun importMessagesManual() {
-        if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type =
-                    if (SDK_INT < 29) "*/*" else "application/zip" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-            }
-            startActivityForResult(intent, IMPORT_MESSAGES)
-        } else {
-            setStatusReport(getString(R.string.default_sms_app_requirement))
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type =
+                if (SDK_INT < 29) "*/*" else "application/zip" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
         }
+        startActivityForResult(intent, IMPORT_MESSAGES)
     }
 
     private fun exportCallLogManual() {
@@ -256,11 +266,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     private fun wipeMessagesManual() {
-        if (Telephony.Sms.getDefaultSmsPackage(this) == this.packageName) {
-            ConfirmWipeFragment().show(supportFragmentManager, "wipe")
-        } else {
-            setStatusReport(getString(R.string.default_sms_app_requirement))
-        }
+        ConfirmWipeFragment().show(supportFragmentManager, "wipe")
     }
 
     @Deprecated("Deprecated in Java")
@@ -281,21 +287,15 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         // But we pass 'applicationContext' to the export functions, since they don't currently
         // create AlertDialogs. Perhaps we should just pass Activity context to them as well, to be
         // consistent.
-        if (requestCode == EXPORT_MESSAGES
-            && resultCode == Activity.RESULT_OK
-        ) {
+        if (requestCode == EXPORT_MESSAGES && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
                 //statusReportText.text = getString(R.string.begin_exporting_messages)
                 CoroutineScope(Dispatchers.Main).launch {
                     total = exportMessages(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
-                        R.string.export_messages_results,
-                        total.sms,
-                        total.mms,
-                        formatElapsedTime(
+                        R.string.export_messages_results, total.sms, total.mms, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime,
-                                TimeUnit.NANOSECONDS
+                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
                             )
                         )
                     )
@@ -303,20 +303,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == IMPORT_MESSAGES
-            && resultCode == Activity.RESULT_OK
-        ) {
+        if (requestCode == IMPORT_MESSAGES && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     total = importMessages(this@MainActivity, it, progressBar, statusReportText)
                     statusReportText.text = getString(
-                        R.string.import_messages_results,
-                        total.sms,
-                        total.mms,
-                        formatElapsedTime(
+                        R.string.import_messages_results, total.sms, total.mms, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime,
-                                TimeUnit.NANOSECONDS
+                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
                             )
                         )
                     )
@@ -324,19 +318,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == EXPORT_CALL_LOG
-            && resultCode == Activity.RESULT_OK
-        ) {
+        if (requestCode == EXPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     total = exportCallLog(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
-                        R.string.export_call_log_results,
-                        total.sms,
-                        formatElapsedTime(
+                        R.string.export_call_log_results, total.sms, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime,
-                                TimeUnit.NANOSECONDS
+                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
                             )
                         )
                     )
@@ -349,12 +338,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     val callsImported =
                         importCallLog(this@MainActivity, it, progressBar, statusReportText)
                     statusReportText.text = getString(
-                        R.string.import_call_log_results,
-                        callsImported,
-                        formatElapsedTime(
+                        R.string.import_call_log_results, callsImported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime,
-                                TimeUnit.NANOSECONDS
+                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
                             )
                         )
                     )
@@ -367,12 +353,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     val contactsExported =
                         exportContacts(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
-                        R.string.export_contacts_results,
-                        contactsExported,
-                        formatElapsedTime(
+                        R.string.export_contacts_results, contactsExported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime,
-                                TimeUnit.NANOSECONDS
+                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
                             )
                         )
                     )
@@ -386,26 +369,28 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     val contactsImported =
                         importContacts(this@MainActivity, it, progressBar, statusReportText)
                     statusReportText.text = getString(
-                        R.string.import_contacts_results,
-                        contactsImported,
-                        formatElapsedTime(
+                        R.string.import_contacts_results, contactsImported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime,
-                                TimeUnit.NANOSECONDS
+                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
                             )
                         )
                     )
                 }
             }
         }
+        if (requestCode == BECOME_DEFAULT_SMS_APP && resultCode == Activity.RESULT_OK) {
+            operation()
+        }
     }
+
+    // Dialog ('wipe confirmation' and 'become default SMS app') button callbacks
 
     // From: https://developer.android.com/guide/topics/ui/dialogs#PassingEvents
     // The dialog fragment receives a reference to this Activity through the
     // Fragment.onAttach() callback, which it uses to call the following methods
     // defined by the NoticeDialogFragment.NoticeDialogListener interface
 
-    override fun onDialogPositiveClick(dialog: DialogFragment) {
+    override fun onWipeDialogPositiveClick(dialog: DialogFragment) {
         val statusReportText: TextView = findViewById(R.id.status_report)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         CoroutineScope(Dispatchers.Main).launch {
@@ -414,14 +399,49 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    override fun onDialogNegativeClick(dialog: DialogFragment) {
+    override fun onWipeDialogNegativeClick(dialog: DialogFragment) {
         val statusReportText: TextView = findViewById(R.id.status_report)
         statusReportText.text = getString(R.string.wipe_cancelled)
+    }
+
+    override fun onDefaultSMSAppDialogPositiveClick(dialog: DialogFragment) {
+        if (SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(RoleManager::class.java)
+            startActivityForResult(
+                roleManager.createRequestRoleIntent(RoleManager.ROLE_SMS),
+                BECOME_DEFAULT_SMS_APP
+            )
+        } else {
+            val becomeDefaultSMSAppIntent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
+            becomeDefaultSMSAppIntent.putExtra(
+                Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName
+            )
+            startActivityForResult(becomeDefaultSMSAppIntent, BECOME_DEFAULT_SMS_APP)
+        }
     }
 
     private fun setStatusReport(statusReport: String) {
         val statusReportText: TextView = findViewById(R.id.status_report)
         statusReportText.text = statusReport
+    }
+
+    private fun checkDefaultSMSApp() {
+        // https://stackoverflow.com/questions/32885948/how-to-set-an-sms-app-as-default-app-in-android-programmatically
+        // https://stackoverflow.com/questions/64135681/change-default-sms-app-intent-not-working-on-android-10
+        // https://stackoverflow.com/questions/59554835/android-10-default-sms-app-dialog-not-showing-up/60372137#60372137
+        if (SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(RoleManager::class.java)
+            if (roleManager.isRoleAvailable(RoleManager.ROLE_SMS) && !roleManager.isRoleHeld(
+                    RoleManager.ROLE_SMS
+                )
+            ) {
+                BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
+            } else operation()
+        } else {
+            if (Telephony.Sms.getDefaultSmsPackage(this) != packageName) {
+                BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
+            } else operation()
+        }
     }
 }
 
@@ -430,23 +450,16 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 class ConfirmWipeFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(it)
-            builder.setMessage(R.string.dialog_confirm_wipe)
-                .setPositiveButton(
-                    R.string.wipe
-                ) { dialog, id ->
-                    // Send the positive button event back to the host activity
-                    listener.onDialogPositiveClick(this)
-                }
-                .setNegativeButton(
-                    R.string.cancel
-                ) { dialog, id ->
-                    // User cancelled the dialog
-                    // Send the negative button event back to the host activity
-                    listener.onDialogNegativeClick(this)
-                }
-                .setTitle(R.string.wipe_messages)
+            builder.setMessage(R.string.dialog_confirm_wipe).setPositiveButton(
+                R.string.wipe
+            ) { dialog, id ->
+                listener.onWipeDialogPositiveClick(this)
+            }.setNegativeButton(
+                R.string.cancel
+            ) { dialog, id ->
+                listener.onWipeDialogNegativeClick(this)
+            }.setTitle(R.string.wipe_messages)
                 // https://stackoverflow.com/a/45386778
                 .setIcon(android.R.drawable.ic_dialog_alert)
             // Create the AlertDialog object and return it
@@ -462,8 +475,8 @@ class ConfirmWipeFragment : DialogFragment() {
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     interface NoticeDialogListener {
-        fun onDialogPositiveClick(dialog: DialogFragment)
-        fun onDialogNegativeClick(dialog: DialogFragment)
+        fun onWipeDialogPositiveClick(dialog: DialogFragment)
+        fun onWipeDialogNegativeClick(dialog: DialogFragment)
     }
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
@@ -476,8 +489,39 @@ class ConfirmWipeFragment : DialogFragment() {
         } catch (e: ClassCastException) {
             // The activity doesn't implement the interface, throw exception
             throw ClassCastException(
-                (context.toString() +
-                        " must implement NoticeDialogListener")
+                ("$context must implement NoticeDialogListener")
+            )
+        }
+    }
+}
+
+class BecomeDefaultSMSAppFragment : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.setMessage(R.string.become_default_sms_app_warning).setPositiveButton(
+                R.string.okay
+            ) { dialog, id ->
+                listener.onDefaultSMSAppDialogPositiveClick(this)
+            }.setTitle(R.string.default_sms_app_dialog_title)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+            builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    private lateinit var listener: NoticeDialogListener
+
+    interface NoticeDialogListener {
+        fun onDefaultSMSAppDialogPositiveClick(dialog: DialogFragment)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = context as NoticeDialogListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException(
+                ("$context must implement NoticeDialogListener")
             )
         }
     }

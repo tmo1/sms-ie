@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021-2022 Thomas More
+  ~ SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+  ~ call logs, and contacs, from and to JSON / NDJSON files.
+
+  ~ Copyright (c) 2021-2023 Thomas More
   ~
   ~ This file is part of SMS Import / Export.
   ~
@@ -17,7 +19,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  -->
+<resources>
     <string name="app_name">SMS Import / Export</string>
     <string name="export_messages_button_label">Export Messages</string>
     <string name="import_messages_button_label">Import Messages</string>
@@ -74,7 +77,7 @@
 \n
 \nVersion %1$s
 \n
-\nCopyright © 2021–2022
+\nCopyright © 2021–2023
 \n
 \nReleased under the GNU GPLv3</string>
     <string name="homepage">Homepage:</string>
@@ -88,4 +91,7 @@
     <string name="import_contacts">Import Contacts</string>
     <string name="copying_mms_binary_data">Copying MMS binary data ...</string>
     <string name="importing_messages">Importing messages ...</string>
+    <string name="become_default_sms_app_warning">SMS Import / Export must be the default SMS app in order to import or wipe messages. Please read the README and make sure you understand the implications of doing this before proceeding.</string>
+    <string name="okay">OK</string>
+    <string name="default_sms_app_dialog_title">Default SMS App</string>
 </resources>
