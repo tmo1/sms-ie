@@ -52,7 +52,7 @@
     <string name="default_sms_app_requirement">Esta aplicación debe ser la aplicación de predeterminada de SMS para poder importar o borrar los mensajes.</string>
     <string name="call_logs_read_write_permissions_required">Para importar los registros de llamadas se requiere permisos para leer y escribir en los registros de llamadas.</string>
     <string name="settings">Ajustes</string>
-    <string name="include_binary_data">Incluir los datos binarios de los MMS (codificados)</string>
+    <string name="include_binary_data">Incluir los datos binarios de los MMS</string>
     <string name="channel_name">canal_de_notificaciones</string>
     <string name="scheduled_export_failure">Exportación incorrecta — consulte el logcat para obtener más detalles.</string>
     <string name="dialog_confirm_wipe">Advertencia: ¿Borrar todos los mensajes de este dispositivo de forma permanente, sin que se pueda deshacerlo\?</string>
@@ -66,4 +66,6 @@
 \nDerechos de autor © 2021-2022
 \n
 \nPublicado bajo la GNU GPLv3</string>
+    <string name="copying_mms_binary_data">Copiaando los datos binarios de los MMS ...</string>
+    <string name="importing_messages">Importando los mensajes ...</string>
 </resources>
