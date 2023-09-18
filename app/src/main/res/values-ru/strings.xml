@@ -11,7 +11,7 @@
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="about">О приложении</string>
-    <string name="issue_tracker">Отслеживание вопросов:</string>
+    <string name="issue_tracker">Отслеживание задач:</string>
     <string name="import_contacts_results">%1$d контакт(ов) импортирован(о)
 \nЗатрачено времени: %2$s.</string>
     <string name="default_sms_app_requirement">Это приложение должно быть SMS-приложением по умолчанию для импорта или очистки сообщений.</string>
@@ -59,7 +59,7 @@
 \n
 \nВерсия %1$s
 \n
-\nАвторские права © 2021–22
+\nАвторские права © 2021–2022
 \n
 \nВыпущено под лицензией GNU GPLv3</string>
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
