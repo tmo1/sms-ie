@@ -28,11 +28,13 @@ package com.github.tmo1.sms_ie
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.provider.Telephony
 import android.util.Log
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -284,6 +286,7 @@ private suspend fun mmsToJSON(
     return total
 }
 
+@RequiresApi(Build.VERSION_CODES.M)
 suspend fun importMessages(
     appContext: Context, uri: Uri, progressBar: ProgressBar?, statusReportText: TextView?
 ): MessageTotal {

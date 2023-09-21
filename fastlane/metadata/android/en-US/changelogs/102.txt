@@ -4,3 +4,5 @@
 
  - Smaller APK size (due to R8 shrinking)
 
+ - The app now runs, with most functionality available, on API level 19 (KitKat / 4.4) or later, although message import still requires API level 23 (Marshmallow / 6.0) or later
+

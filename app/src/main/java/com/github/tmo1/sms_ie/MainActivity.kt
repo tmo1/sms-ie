@@ -45,6 +45,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
@@ -129,7 +130,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
 
         if (necessaryPermissions.any()) {
-            requestPermissions(necessaryPermissions.toTypedArray(), PERMISSIONS_REQUEST)
+            ActivityCompat.requestPermissions(this, necessaryPermissions.toTypedArray(), PERMISSIONS_REQUEST)
         }
 
         // set up UI
@@ -201,6 +202,10 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     private fun importMessagesManual() {
+        if (SDK_INT < 23) {
+            setStatusReport(getString(R.string.message_import_api_23_requirement))
+            return
+        }
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type =
@@ -306,6 +311,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (requestCode == IMPORT_MESSAGES && resultCode == Activity.RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
+                    // importMessages() requires API level 23, but we check for that back in importMessagesManual()
                     total = importMessages(this@MainActivity, it, progressBar, statusReportText)
                     statusReportText.text = getString(
                         R.string.import_messages_results, total.sms, total.mms, formatElapsedTime(

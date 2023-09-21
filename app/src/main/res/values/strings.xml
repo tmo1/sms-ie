@@ -94,4 +94,5 @@
     <string name="become_default_sms_app_warning">SMS Import / Export must be the default SMS app in order to import or wipe messages. Please read the README and make sure you understand the implications of doing this before proceeding.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Default SMS App</string>
+    <string name="message_import_api_23_requirement">Importing messages is only possible on Android Marshmallow / 6.0 (API level 23) or later.</string>
 </resources>
