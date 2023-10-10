@@ -1,8 +1,10 @@
- - Ask to become default SMS app when importing or wiping messages 
+ - The app now asks to become the default SMS app when importing or wiping messages
+ 
+ - The app now runs, with most functionality available, on API level 19 (KitKat / 4.4) or later, although message import and scheduled message export still require API level 23 (Marshmallow / 6.0) or later
 
  - Improved logging (particularly in debug builds)
 
- - Smaller APK size (due to R8 shrinking)
+ - Smaller APK size (of release builds, due to R8 shrinking)
 
- - The app now runs, with most functionality available, on API level 19 (KitKat / 4.4) or later, although message import still requires API level 23 (Marshmallow / 6.0) or later
+ - Updated Gradle configuration and dependencies
 
