@@ -1,6 +1,8 @@
 /*
- * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021-2022 Thomas More
+ * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+ * call logs, and contacts, from and to JSON / NDJSON files.
+ *
+ * Copyright (c) 2021-2023 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -23,12 +25,14 @@ package com.github.tmo1.sms_ie
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceScreen
 
 const val REQUEST_EXPORT_FOLDER = 4
 const val EXPORT_DIR = "export_dir"
@@ -62,6 +66,21 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            /* The time picker is somehow calling 'android.widget.TimePicker.setHour', which was added in API level 23,
+             and 'Intent.ACTION_OPEN_DOCUMENT_TREE' was added in API level 21, so we remove scheduled export functionality for API < 23
+             https://stackoverflow.com/questions/32297765/android-timepicker-methods-being-stubs
+             https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE
+             */
+            if (SDK_INT < 23) {
+                // https://stackoverflow.com/a/45274037
+                val preferenceScreen =
+                    findPreference<PreferenceScreen>("main_preference_screen")
+                val preferenceCategory =
+                    findPreference<Preference>("scheduled_export_preference_category")
+                if (preferenceCategory != null && preferenceScreen != null) {
+                        preferenceScreen.removePreference(preferenceCategory)
+                }
+            }
             targetDirPreference.setOnPreferenceClickListener {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
                     //addCategory(Intent.CATEGORY_OPENABLE)
@@ -88,10 +107,13 @@ class SettingsActivity : AppCompatActivity() {
         override fun onDisplayPreferenceDialog(preference: Preference) {
             when (preference) {
                 is TimePickerPreference -> {
-                    val timePickerDialog = TimePreferenceDialog.newInstance(preference.key)
-                    timePickerDialog.setTargetFragment(this, 0)
-                    timePickerDialog.show(parentFragmentManager, "TimePickerDialog")
+                    if (SDK_INT >= 23) {
+                        val timePickerDialog = TimePreferenceDialog.newInstance(preference.key)
+                        timePickerDialog.setTargetFragment(this, 0)
+                        timePickerDialog.show(parentFragmentManager, "TimePickerDialog")
+                    }
                 }
+
                 else -> {
                     super.onDisplayPreferenceDialog(preference)
                 }

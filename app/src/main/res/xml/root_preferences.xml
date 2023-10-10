@@ -22,9 +22,11 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:key="main_preference_screen">
 
-    <PreferenceCategory android:title="Scheduled export">
+    <PreferenceCategory android:title="Scheduled export"
+        android:key="scheduled_export_preference_category">
 
         <SwitchPreferenceCompat
             android:defaultValue="false"

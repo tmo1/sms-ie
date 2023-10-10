@@ -40,7 +40,7 @@ SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). 
 
 ## Compatibility
 
-Current versions of SMS Import / Export should run on any Android (phone-like) device running KitKat / 4.4 (API level 19) or later, although importing messages is only possible on devices running Marshmallow / 6.0 (API level 23) or later.
+Current versions of SMS Import / Export should run on any Android (phone-like) device running KitKat / 4.4 (API level 19) or later, although importing messages and scheduled message export are only possible on devices running Marshmallow / 6.0 (API level 23) or later.
 
 The app is tested primarily on stock Android and [LineageOS](https://lineageos.org/), but should generally run on other versions of Android as well.
 
