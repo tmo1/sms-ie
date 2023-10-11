@@ -38,6 +38,10 @@ The above applies only to SMS and MMS messages; the format for call logs and con
 
 SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). The repository can be cloned and built locally, from the command line (e.g., by issuing `gradlew assembleDebug` in the root directory of the project) or within Android Studio. Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built (debug) packages of the latest code pushed to the repository are generally available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
 
+### Building
+
+**Note:** When using Android Studio to build debug builds and deploy them to systems with API level >= 21, it may be desirable to turn off minification; see the comments in `[build.gradle](https://github.com/tmo1/sms-ie/app/build.gradle)` for details.
+
 ## Compatibility
 
 Current versions of SMS Import / Export should run on any Android (phone-like) device running KitKat / 4.4 (API level 19) or later, although message import and scheduled message export are only possible on devices running Marshmallow / 6.0 (API level 23) or later.
