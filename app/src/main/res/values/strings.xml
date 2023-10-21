@@ -60,6 +60,7 @@
     <string name="include_binary_data">Include binary MMS data</string>
     <string name="channel_name">notification_channel</string>
     <string name="channel_description">Notification Channel</string>
+    <string name="scheduled_export_executing">Scheduled export executing</string>
     <string name="scheduled_export_executed">Scheduled export executed</string>
     <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d calls, and %4$d contacts exported.</string>
     <string name="scheduled_export_failure">Export unsuccessful — see logcat for more details.</string>
