@@ -38,7 +38,7 @@ The above applies only to SMS and MMS messages; the format for call logs and con
 
 SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built (debug) packages of the latest code pushed to the repository are generally available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
 
-For instructions on building the app from its source code, see [`BUILDING.md`](https://github.com/tmo1/sms-ie/BUILDING.md).
+For instructions on building the app from its source code, see [`BUILDING.md`](BUILDING.md).
 
 ## Compatibility
 
