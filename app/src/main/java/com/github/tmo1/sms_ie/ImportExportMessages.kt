@@ -367,6 +367,10 @@ suspend fun importMessages(
                                 val messageMetadata = ContentValues()
                                 val messageJSON = JSONObject(line)
                                 val oldThreadId = messageJSON.optString("thread_id")
+                                // See https://github.com/tmo1/sms-ie/issues/128
+                                if (!prefs.getBoolean("import_sub_ids", false)) {
+                                    messageJSON.put("sub_id", "-1")
+                                }
                                 if (oldThreadId in threadIdMap) {
                                     messageMetadata.put(
                                         "thread_id", threadIdMap[oldThreadId]

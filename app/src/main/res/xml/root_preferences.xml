@@ -94,6 +94,12 @@
             app:defaultValue="false"
             app:singleLineTitle="false" />
 
+        <SwitchPreferenceCompat
+            android:key="import_sub_ids"
+            android:title="Include Subscription IDs in import"
+            app:defaultValue="false"
+            app:singleLineTitle="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Debugging options">
