@@ -97,16 +97,17 @@ class SettingsActivity : AppCompatActivity() {
                 if (preferenceCategory != null && preferenceScreen != null) {
                         preferenceScreen.removePreference(preferenceCategory)
                 }
-            }
-            targetDirPreference.setOnPreferenceClickListener {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-                    //addCategory(Intent.CATEGORY_OPENABLE)
-                    //putExtra(DocumentsContract.EXTRA_INITIAL_URI, "")
+            } else {
+                targetDirPreference.setOnPreferenceClickListener {
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+                        //addCategory(Intent.CATEGORY_OPENABLE)
+                        //putExtra(DocumentsContract.EXTRA_INITIAL_URI, "")
+                    }
+                    startActivityForResult(intent, REQUEST_EXPORT_FOLDER)
+                    true
                 }
-                startActivityForResult(intent, REQUEST_EXPORT_FOLDER)
-                true
+                updateExportDirPreferenceSummary()
             }
-            updateExportDirPreferenceSummary()
 
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 disableBattOptPreference.setOnPreferenceChangeListener { _, newValue ->
