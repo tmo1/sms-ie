@@ -1,6 +1,6 @@
 # Contributing
 
-Code can be contributed via [pull request](https://github.com/tmo1/sms-ie/pulls), but for any substantial changes or additions to the existing codebase, please first [open an issue](https://github.com/tmo1/sms-ie/issues) to discuss the proposed changes or additions. All contributed code should be licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) or later.
+Code, documentation, or resources such as icons can be contributed via [pull request](https://github.com/tmo1/sms-ie/pulls), but for any substantial changes or additions to the existing codebase, please first [open an issue](https://github.com/tmo1/sms-ie/issues) to discuss the proposed changes or additions. All contributed code should be licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) or later.
 
 SMS Import / Export is integrated with [Weblate](https://weblate.org). Translations into new languages, as well as corrections, updates, and improvements to existing translations, can be submitted via [SMS Import / Export @ Hosted Weblate](https://hosted.weblate.org/engage/sms-import-export/), or by ordinary [pull requests against the SMS Import / Export repository](https://github.com/tmo1/sms-ie/pulls).
 
@@ -10,10 +10,10 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
 
 ### Code
 
- - [sxwxs](https://github.com/sxwxs): call log export support
- - [Bindu (vbh)](https://github.com/vbh): call log import support
- - [Jan Hustak (codingjourney)](https://github.com/codingjourney): [bug fix](https://github.com/tmo1/sms-ie/pull/30)
- - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): [bug fix](https://github.com/tmo1/sms-ie/pull/39)
+ - [sxwxs](https://github.com/sxwxs): call log export support ([PR #10](https://github.com/tmo1/sms-ie/pull/10))
+ - [Bindu (vbh)](https://github.com/vbh): call log import support ([PR #21](https://github.com/tmo1/sms-ie/pull/21))
+ - [Jan Hustak (codingjourney)](https://github.com/codingjourney): bug fix ([PR #30](https://github.com/tmo1/sms-ie/pull/30))
+ - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): bug fix ([PR #39](https://github.com/tmo1/sms-ie/pull/39))
 
 ### Translations
 
@@ -38,5 +38,6 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
 
 ### Other
 
- - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon
- - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): [GitHub workflow to automatically build and upload APKs containing the latest committed code](.github/workflows/build.yml)
+ - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon ([Issue #20](https://github.com/tmo1/sms-ie/issues/20) / [PR #22](https://github.com/tmo1/sms-ie/pull/22))
+ - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): Monochrome icon ([issue #114](https://github.com/tmo1/sms-ie/issues/114) / [PR #132](https://github.com/tmo1/sms-ie/pull/132))
+ - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): [GitHub workflow to automatically build and upload APKs containing the latest committed code](.github/workflows/build.yml) ([PR #99](https://github.com/tmo1/sms-ie/pull/99))

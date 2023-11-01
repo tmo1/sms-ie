@@ -1,0 +1,2 @@
+ - Monochrome icon (for icon theming) - by Biswapriyo Nath (issue #114 / PR #132)
+
