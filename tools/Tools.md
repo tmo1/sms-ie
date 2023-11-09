@@ -24,6 +24,18 @@ This will read messages from <silence-xxx.xml> and write them to <silence-xxx.zi
 
 **:warning:** This script uses the Python ElementTree XML API, [which "is not secure against maliciously constructed data"](https://docs.python.org/3/library/xml.etree.elementtree.html). It should only be used on trusted XML.
 
+**:note:** [Silence produces invalid XML](https://git.silence.dev/Silence/Silence-Android/-/issues/317) when encoding certain characters (such as emojis). This will cause the converter to fail with an error message ending in a line like this:
+
+`xml.etree.ElementTree.ParseError: reference to invalid character number: line nnn, column mmm`
+
+To fix the XML, first use the XML fixer tool to produce valid XML:
+
+`silence-xml-fixer.py < silence-xxx.xml > silence-xxx-fixed.xml`
+
+then run the converter on the fixed XML:
+
+`silence-convert.py <silence-xxx-fixed.xml>`
+
 (See [issue #121](https://github.com/tmo1/sms-ie/issues/121).)
 
 ## v1 Conversion Tools
