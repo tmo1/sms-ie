@@ -1,10 +1,34 @@
 #! /usr/bin/python3
 
+# Copyright (c) 2018, 2023 Calvin Loncaric
+# Copyright (c) 2023 Thomas More
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 # From: https://gist.github.com/Calvin-L/5232f876b8acf48a216941b8904632bb
 # See:  https://git.silence.dev/Silence/Silence-Android/-/issues/317
 
-# This is basically just Calvin-L's fix_codepoints() function, with logic at the end to call it on each line of STDIN
-# and print the fixed XML to STDOUT (based on some of the comments in the Gist).
+# This utility fixes invalid XML produced by the Silence app. It is basically just Calvin Loncaric's fix_codepoints()
+# function, with code at the end (based on some of the comments in the Gist) to call it on each line of STDIN and
+# print the fixed XML to STDOUT.
+
+# Usage: 'silence-xml-fixer.py < silence-xxx.xml > silence-xxx-fixed.xml'
 
 import io
 import re
@@ -23,7 +47,11 @@ def shorts_as_utf16(short_sequence):
     # UTF-16 decoder is supposed to understand it and use that interpretation
     # for the endianness of the remaining bytes.  We probably don't need it
     # here, but it can't hurt!
-    bits = struct.pack(format, 0xFEFF, *short_sequence)
+    try:
+        bits = struct.pack(format, 0xFEFF, *short_sequence)
+    except:
+        print("failed sequence: {!r}".format(short_sequence))
+        raise
     return bits.decode("UTF-16")
 
 
@@ -67,7 +95,12 @@ def fix_codepoints(s, raw=False):
         for m in matches:
             out.write(s[i:m.start()])
             i = m.end()
-            repl = shorts_as_utf16(int(i) for i in rgx2.findall(m.group(0)))
+            shorts = [int(i) for i in rgx2.findall(m.group(0))]
+            assert len(shorts) > 0
+            if all(s < 32767 * 2 + 1 for s in shorts):
+                repl = shorts_as_utf16(shorts)
+            else:
+                repl = "".join(chr(s) for s in shorts)
             if raw:
                 out.write(repl)
             else:
@@ -77,7 +110,7 @@ def fix_codepoints(s, raw=False):
         return out.getvalue()
 
 
-# Additions to Calvin-L's code below:
+# Added by Thomas More:
 sys.stdin.reconfigure(encoding='utf-8')
 for line in sys.stdin:
     print(fix_codepoints(line.rstrip()))
