@@ -23,9 +23,12 @@
 
 package com.github.tmo1.sms_ie
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.ServiceInfo
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -35,14 +38,15 @@ import androidx.work.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
 class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
-    Worker(appContext, workerParams) {
-    override fun doWork(): Result {
+    CoroutineWorker(appContext, workerParams) {
+    override suspend fun doWork(): Result {
         val context = applicationContext
         var result = Result.success()
         var messageTotal = MessageTotal()
@@ -53,7 +57,36 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
         val date = getCurrentDateTime()
         val dateInString = "-${date.toString("yyyy-MM-dd")}"
-        CoroutineScope(Dispatchers.IO).launch {
+
+        // Android 14 introduced a new battery optimization that will kill apps that perform too
+        // many binder transactions in the background, which can happen when exporting many
+        // messages. Running the service in the foreground prevents the app from being killed.
+        // https://android.googlesource.com/platform/frameworks/base.git/+/71d75c09b9a06732a6edb4d1488d2aa3eb779e14%5E%21/
+        val foregroundNotification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.scheduled_export_executing))
+            .setOngoing(true)
+            .build()
+        val foregroundFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+        } else {
+            0
+        }
+        try {
+            setForeground(ForegroundInfo(0, foregroundNotification, foregroundFlags))
+        } catch (e: Exception) {
+            // If the user didn't allow the disabling of battery optimizations, then Android 12+'s
+            // restrictions for starting a foreground service from the background will prevent this
+            // from working. Try to run the job in the background anyway because it might work if
+            // there aren't too many items to export.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is ForegroundServiceStartNotAllowedException) {
+                Log.w(LOG_TAG, "Foreground service not allowed - trying to run in background", e)
+            } else {
+                throw e
+            }
+        }
+
+        withContext(Dispatchers.IO) {
             if (prefs.getBoolean("export_messages", true)) {
                 val file =
                     documentTree?.createFile("application/zip", "messages$dateInString.zip")

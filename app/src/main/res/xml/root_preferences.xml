@@ -44,6 +44,13 @@
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
+            android:key="disable_battery_optimizations"
+            android:title="Disable battery optimizations"
+            android:summary="Required on Android 14+ when exporting many items."
+            android:persistent="false"
+            app:dependency="schedule_export" />
+
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="delete_old_exports"
             android:title="Delete old exports"

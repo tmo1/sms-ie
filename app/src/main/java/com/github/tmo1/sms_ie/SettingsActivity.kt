@@ -22,20 +22,28 @@
 
 package com.github.tmo1.sms_ie
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import androidx.preference.SwitchPreferenceCompat
 
 const val REQUEST_EXPORT_FOLDER = 4
 const val EXPORT_DIR = "export_dir"
+const val DISABLE_BATTERY_OPTIMIZATIONS = "disable_battery_optimizations"
 const val EXPORT_WORK_TAG = "export"
 
 class SettingsActivity : AppCompatActivity() {
@@ -63,7 +71,16 @@ class SettingsActivity : AppCompatActivity() {
             findPreference<Preference>(EXPORT_DIR)
                 ?: error("Missing export directory preference!")
         }
+        private val disableBattOptPreference: SwitchPreferenceCompat by lazy {
+            findPreference<SwitchPreferenceCompat>(DISABLE_BATTERY_OPTIMIZATIONS)
+                ?: error("Missing disable battery optimizations preference!")
+        }
+        private val requestDisableBattOpt =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                updateBatteryOptimizationState()
+            }
 
+        @SuppressLint("BatteryLife")
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
             /* The time picker is somehow calling 'android.widget.TimePicker.setHour', which was added in API level 23,
@@ -80,16 +97,34 @@ class SettingsActivity : AppCompatActivity() {
                 if (preferenceCategory != null && preferenceScreen != null) {
                         preferenceScreen.removePreference(preferenceCategory)
                 }
-            }
-            targetDirPreference.setOnPreferenceClickListener {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-                    //addCategory(Intent.CATEGORY_OPENABLE)
-                    //putExtra(DocumentsContract.EXTRA_INITIAL_URI, "")
+            } else {
+                targetDirPreference.setOnPreferenceClickListener {
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+                        //addCategory(Intent.CATEGORY_OPENABLE)
+                        //putExtra(DocumentsContract.EXTRA_INITIAL_URI, "")
+                    }
+                    startActivityForResult(intent, REQUEST_EXPORT_FOLDER)
+                    true
                 }
-                startActivityForResult(intent, REQUEST_EXPORT_FOLDER)
-                true
+                updateExportDirPreferenceSummary()
             }
-            updateExportDirPreferenceSummary()
+
+            if (SDK_INT >= Build.VERSION_CODES.M) {
+                disableBattOptPreference.setOnPreferenceChangeListener { _, newValue ->
+                    if (newValue == true) {
+                        requestDisableBattOpt.launch(Intent(
+                            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                            Uri.fromParts("package", requireContext().packageName, null),
+                        ))
+                    } else {
+                        // There is no API to request battery optimizations to be re-enabled, so
+                        // send the user to Android's Settings page for them to do it manually.
+                        startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+                    }
+
+                    false
+                }
+            }
 
             // see: https://stackoverflow.com/questions/26242581/call-method-after-changing-preferences-in-android
             // https://stackoverflow.com/questions/7020446/android-registeronsharedpreferencechangelistener-causes-crash-in-a-custom-view#7021068
@@ -101,6 +136,15 @@ class SettingsActivity : AppCompatActivity() {
                     }
                 }
             prefs?.registerOnSharedPreferenceChangeListener(prefListener)
+        }
+
+        override fun onStart() {
+            super.onStart()
+
+            // Changing the option does not reload the activity.
+            if (SDK_INT >= Build.VERSION_CODES.M) {
+                updateBatteryOptimizationState()
+            }
         }
 
         // from: https://old.black/2020/09/18/building-custom-timepicker-dialog-preference-in-android-kotlin/
@@ -168,8 +212,17 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun updateExportDirPreferenceSummary() {
-            findPreference<Preference>(EXPORT_DIR)?.summary =
-                Uri.decode(prefs?.getString(EXPORT_DIR, ""))
+            targetDirPreference.summary = Uri.decode(prefs?.getString(EXPORT_DIR, ""))
+        }
+
+        private fun updateBatteryOptimizationState() {
+            if (SDK_INT >= Build.VERSION_CODES.M) {
+                val context = requireContext()
+                val pm: PowerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                disableBattOptPreference.isChecked = pm.isIgnoringBatteryOptimizations(context.packageName)
+            } else {
+                disableBattOptPreference.isVisible = false
+            }
         }
     }
 }
