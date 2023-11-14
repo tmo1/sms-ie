@@ -26,6 +26,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -35,11 +36,13 @@ import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreferenceCompat
+import android.Manifest
 
 const val REQUEST_EXPORT_FOLDER = 4
 const val EXPORT_DIR = "export_dir"
@@ -53,9 +56,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
         if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.settings, SettingsFragment())
+            supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
                 .commit()
         }
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -68,8 +69,7 @@ class SettingsActivity : AppCompatActivity() {
         // https://stackoverflow.com/questions/70803830/updating-a-preference-summary-in-android-when-the-user-sets-it
         private val prefs by lazy { preferenceManager.sharedPreferences }
         private val targetDirPreference: Preference by lazy {
-            findPreference<Preference>(EXPORT_DIR)
-                ?: error("Missing export directory preference!")
+            findPreference<Preference>(EXPORT_DIR) ?: error("Missing export directory preference!")
         }
         private val disableBattOptPreference: SwitchPreferenceCompat by lazy {
             findPreference<SwitchPreferenceCompat>(DISABLE_BATTERY_OPTIMIZATIONS)
@@ -79,23 +79,30 @@ class SettingsActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 updateBatteryOptimizationState()
             }
+        private val requestPostNotification = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d("Permission: ", "Granted")
+            } else {
+                Log.d("Permission: ", "Denied")
+            }
+        }
 
         @SuppressLint("BatteryLife")
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
-            /* The time picker is somehow calling 'android.widget.TimePicker.setHour', which was added in API level 23,
+            setPreferencesFromResource(R.xml.root_preferences, rootKey)/* The time picker is somehow calling 'android.widget.TimePicker.setHour', which was added in API level 23,
              and 'Intent.ACTION_OPEN_DOCUMENT_TREE' was added in API level 21, so we remove scheduled export functionality for API < 23
              https://stackoverflow.com/questions/32297765/android-timepicker-methods-being-stubs
              https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE
              */
             if (SDK_INT < 23) {
                 // https://stackoverflow.com/a/45274037
-                val preferenceScreen =
-                    findPreference<PreferenceScreen>("main_preference_screen")
+                val preferenceScreen = findPreference<PreferenceScreen>("main_preference_screen")
                 val preferenceCategory =
                     findPreference<Preference>("scheduled_export_preference_category")
                 if (preferenceCategory != null && preferenceScreen != null) {
-                        preferenceScreen.removePreference(preferenceCategory)
+                    preferenceScreen.removePreference(preferenceCategory)
                 }
             } else {
                 targetDirPreference.setOnPreferenceClickListener {
@@ -112,16 +119,17 @@ class SettingsActivity : AppCompatActivity() {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 disableBattOptPreference.setOnPreferenceChangeListener { _, newValue ->
                     if (newValue == true) {
-                        requestDisableBattOpt.launch(Intent(
-                            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                            Uri.fromParts("package", requireContext().packageName, null),
-                        ))
+                        requestDisableBattOpt.launch(
+                            Intent(
+                                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                                Uri.fromParts("package", requireContext().packageName, null),
+                            )
+                        )
                     } else {
                         // There is no API to request battery optimizations to be re-enabled, so
                         // send the user to Android's Settings page for them to do it manually.
                         startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
                     }
-
                     false
                 }
             }
@@ -129,12 +137,21 @@ class SettingsActivity : AppCompatActivity() {
             // see: https://stackoverflow.com/questions/26242581/call-method-after-changing-preferences-in-android
             // https://stackoverflow.com/questions/7020446/android-registeronsharedpreferencechangelistener-causes-crash-in-a-custom-view#7021068
             // https://stackoverflow.com/questions/66449883/kotlin-onsharedpreferencechangelistener
-            val prefListener =
-                SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                    if (key == "schedule_export") {
-                        context?.let { updateExportWork(it) }
+            val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
+                if (key == "schedule_export") {
+                    context?.let { updateExportWork(it) }
+                    if (SDK_INT >= 33 && sharedPrefs.getBoolean(key, false)) {
+                        context?.let {
+                            if (ContextCompat.checkSelfPermission(
+                                    it, Manifest.permission.POST_NOTIFICATIONS
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
+                                requestPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        }
                     }
                 }
+            }
             prefs?.registerOnSharedPreferenceChangeListener(prefListener)
         }
 
@@ -176,8 +193,7 @@ class SettingsActivity : AppCompatActivity() {
                     context?.contentResolver?.takePersistableUriPermission(
                         treeUri,
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                    /*val documentTree = activity?.let { DocumentFile.fromTreeUri(it, treeUri) }
+                    )/*val documentTree = activity?.let { DocumentFile.fromTreeUri(it, treeUri) }
                     val file = documentTree?.createFile("text/plain", "sms-ie.test")
                     val fileUri = file?.uri
                     if (fileUri != null) {
@@ -218,8 +234,10 @@ class SettingsActivity : AppCompatActivity() {
         private fun updateBatteryOptimizationState() {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 val context = requireContext()
-                val pm: PowerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-                disableBattOptPreference.isChecked = pm.isIgnoringBatteryOptimizations(context.packageName)
+                val pm: PowerManager =
+                    context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                disableBattOptPreference.isChecked =
+                    pm.isIgnoringBatteryOptimizations(context.packageName)
             } else {
                 disableBattOptPreference.isVisible = false
             }
