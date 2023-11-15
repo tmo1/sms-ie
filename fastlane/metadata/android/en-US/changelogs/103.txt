@@ -1,2 +1,10 @@
+ - MMS and SMS Subscription IDs ('sub_id' values) are now by default set to '-1' ("the sub id cannot be determined") upon import, since preserving the original values can cause messages to disappear on Android 14 (issue #128).
+ 
+ - Scheduled exports can now be run as a foreground service if battery optimizations are disabled. This prevents long-running exports or those involving many MMS messages from being terminated on recent versions of Android. - by Andrew Gunnerson (issue #129 / PR #131)
+ 
+ - The app now requests permission to post notifications when scheduled exports are enabled, thus allowing notifications to be posted upon scheduled export completion on recent versions of Android (issue #129).
+ 
  - Monochrome icon (for icon theming) - by Biswapriyo Nath (issue #114 / PR #132)
-
+ 
+ - ScrollView for "About" screen - by Biswapriyo Nath (PR #133)
+ 

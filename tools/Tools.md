@@ -22,13 +22,15 @@ This script converts SMS messages in [Silence](https://silence.im/) XML format t
 
 This will read messages from <silence-xxx.xml> and write them to <silence-xxx.zip>.
 
-**:warning:** This script uses the Python ElementTree XML API, [which "is not secure against maliciously constructed data"](https://docs.python.org/3/library/xml.etree.elementtree.html). It should only be used on trusted XML.
+> [!WARNING]
+> This script uses the Python ElementTree XML API, [which "is not secure against maliciously constructed data"](https://docs.python.org/3/library/xml.etree.elementtree.html). It should only be used on trusted XML.
 
-**:note:** [Silence produces invalid XML](https://git.silence.dev/Silence/Silence-Android/-/issues/317) when encoding certain characters (such as emojis). This will cause the converter to fail with an error message ending in a line like this:
+> [!NOTE]
+> [Silence produces invalid XML](https://git.silence.dev/Silence/Silence-Android/-/issues/317) when encoding certain characters (such as emojis). This will cause the converter to fail with an error message ending in a line like this:
 
 `xml.etree.ElementTree.ParseError: reference to invalid character number: line nnn, column mmm`
 
-To fix the XML, first use the XML fixer tool to produce valid XML:
+If this error is encountered, first use the XML fixer tool to produce valid XML:
 
 `silence-xml-fixer.py < silence-xxx.xml > silence-xxx-fixed.xml`
 

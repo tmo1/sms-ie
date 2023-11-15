@@ -14,6 +14,8 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Bindu (vbh)](https://github.com/vbh): call log import support ([PR #21](https://github.com/tmo1/sms-ie/pull/21))
  - [Jan Hustak (codingjourney)](https://github.com/codingjourney): bug fix ([PR #30](https://github.com/tmo1/sms-ie/pull/30))
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): bug fix ([PR #39](https://github.com/tmo1/sms-ie/pull/39))
+ - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131))
+ - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): addition of [`ScrollView`](https://developer.android.com/reference/android/widget/ScrollView) to "About" screen ([PR #133](https://github.com/tmo1/sms-ie/pull/133))
 
 ### Translations
 
@@ -38,6 +40,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
 
 ### Other
 
- - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): Application icon ([Issue #20](https://github.com/tmo1/sms-ie/issues/20) / [PR #22](https://github.com/tmo1/sms-ie/pull/22))
- - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): Monochrome icon ([issue #114](https://github.com/tmo1/sms-ie/issues/114) / [PR #132](https://github.com/tmo1/sms-ie/pull/132))
+ - [Onno van den Dungen (Donnno)](https://github.com/Donnnno): application icon ([Issue #20](https://github.com/tmo1/sms-ie/issues/20) / [PR #22](https://github.com/tmo1/sms-ie/pull/22))
+ - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): monochrome icon ([issue #114](https://github.com/tmo1/sms-ie/issues/114) / [PR #132](https://github.com/tmo1/sms-ie/pull/132))
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): [GitHub workflow to automatically build and upload APKs containing the latest committed code](.github/workflows/build.yml) ([PR #99](https://github.com/tmo1/sms-ie/pull/99))
+ - [wittmane](https://github.com/wittmane), [dshepsis](https://github.com/dshepsis), and [sshaikh](https://github.com/sshaikh): figuring out broken `Subscription ID` handling on Android 14 ([Issue #128](https://github.com/tmo1/sms-ie/issues/128))

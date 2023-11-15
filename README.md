@@ -58,6 +58,12 @@ By default, binary MMS data (such as images and videos) are exported. The user c
 
 Note that upon import or wipe, message apps present on the system may not immediately correctly reflect the new state of the message database due to app caching and / or local storage. This can be resolved by clearing such cache and storage, e.g. `Settings / Apps / Messaging / Storage & cache / Clear storage | Clear cache`.
 
+## Importing Messages
+
+### Subscription IDs
+
+SMS Import / Export tries to preserve as much data and metadata as possible upon import. Android includes a `sub_id` ([Subscription ID](https://developer.android.com/training/articles/user-data-ids#accounts)) field in both [SMS](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns) and [MMS](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#SUBSCRIPTION_ID) message metadata. Earlier versions of the app included these `sub_id`s when importing, but this can cause messages to disappear on Android 14 ([issue #128](https://github.com/tmo1/sms-ie/issues/128), [Reddit](https://old.reddit.com/r/android_beta/comments/15mzaij/sms_backup_and_restore_issues/)), so the current default is to set all `sub_id`s to `-1` upon import ([negative values indicate that "the sub id cannot be determined"](https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#SUBSCRIPTION_ID)). The old behavior is still available via a settings toggle.
+
 ### Deduplication
 
 SMS Import / Export can attempt to deduplicate messages upon import. If this feature is enabled in the app's settings, the app will check all new messages against the existing message database (including those messages already inserted earlier in the import process) and ignore those it considers to be duplicates of ones already present. This feature is currently considered experimental.
@@ -76,6 +82,10 @@ This functionality has not been extensively tested, and may yield both false pos
 
 To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
 
+#### Running As A Foreground Service
+
+On recent versions of Android, scheduled exports that export many MMS messages or that run for more than ten minutes may be killed by the system. To avoid this, scheduled exports can be run as a foreground service, which requires disabling battery optimizations for the app. (See [issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131).)
+
 #### Retention
 
 When scheduled exports are enabled, the following options can be used to control retention:
@@ -90,7 +100,8 @@ To export messages, permission to read SMSs and Contacts is required (the need f
 
 To import or wipe messages, SMS Import / Export must be the default messaging app. This is due to [an Android design decision](https://android-developers.googleblog.com/2013/10/getting-your-sms-apps-ready-for-kitkat.html).
 
-**:warning:While an app is the default messaging app, it takes full responsibility for handling incoming SMS and MMS messages, and if does not store them, they will be lost. SMS Import / Export ignores incoming messages, so in order to avoid losing such messages, the device it is running on should be disconnected from the network (by putting it into airplane mode, or similar means) before the app is made the default messaging app, and only reconnected to the network after a proper messaging app is made the default.**
+> [!WARNING] 
+> **While an app is the default messaging app, it takes full responsibility for handling incoming SMS and MMS messages, and if does not store them, they will be lost. SMS Import / Export ignores incoming messages, so in order to avoid losing such messages, the device it is running on should be disconnected from the network (by putting it into airplane mode, or similar means) before the app is made the default messaging app, and only reconnected to the network after a proper messaging app is made the default.**
 
 To export call logs, permission to read Call Logs and Contacts is required (the need for the latter is explained below). Currently, the app does not ask permission to read Call Logs, and it must be granted by the user on his own initiative.
 
@@ -101,6 +112,8 @@ To export contacts, permission to read Contacts is required.
 To import contacts, permission to write Contacts is required. (Granting the app permission to access Contacts grants both read and write permission, although if the app is upgraded from an earlier version which did not declare that it uses permission to write Contacts, then it may be necessary to deny and re-grant Contacts permission in order to enable permission to write Contacts.)
 
 To post notifications regarding the result(s) of a scheduled export run, permission to post notifications is required on Android 13 (API level 33) and later.
+
+To run scheduled exports as a foreground service, permission to disable battery optimizations for the app is required (see [Running As A Foreground Service](#running-as-a-foreground-service)).
 
 ### Contacts
 
