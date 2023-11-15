@@ -49,6 +49,5 @@ messages_ndjson = []
 output_file = input_file[:-3] + 'zip' if input_file[-3:] == 'xml' else input_file + 'zip'
 with (zipfile.ZipFile(output_file, mode='w') as messages_zip):
     for sms in smses:
-        print(sms)
         messages_ndjson.append(json.dumps(dict(sms.items())) + '\n')
     messages_zip.writestr('messages.ndjson', ''.join(messages_ndjson))
