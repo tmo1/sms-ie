@@ -71,5 +71,6 @@
     <string name="default_sms_app_dialog_title">Aplicación de SMS por defecto</string>
     <string name="become_default_sms_app_warning">SMS Import / Export debe ser la aplicación SMS por defecto para poder importar o borrar los mensajes. Por favor, lee el archivo LÉEME y asegurate de que entiendes las implicaciones de hacer esto antes de seguir.</string>
     <string name="okay">DE ACUERDO</string>
+    <string name="scheduled_export_executing">Exportación programada ejecutándose</string>
+    <string name="message_import_api_23_requirement">La importación de mensajes solo es posible en Android Marshmallow / 6.0 (nivel de API 23) o posterior.</string>
 </resources>
-
