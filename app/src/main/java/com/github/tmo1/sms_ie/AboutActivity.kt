@@ -30,5 +30,13 @@ class AboutActivity : AppCompatActivity() {
         setContentView(R.layout.activity_about)
         val aboutText: TextView = findViewById(R.id.aboutText)
         aboutText.text = getString(R.string.app_about_text, BuildConfig.VERSION_NAME)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setTitle(R.string.about)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }
