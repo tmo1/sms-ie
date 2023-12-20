@@ -412,8 +412,7 @@ suspend fun importMessages(
                                         if (key in smsColumns) messageMetadata.put(
                                             key, messageJSON.getString(key)
                                         )
-                                    }
-                                    /* If we don't yet have a 'thread_id' (i.e., the message has a new
+                                    }/* If we don't yet have a 'thread_id' (i.e., the message has a new
                                        'thread_id' that we haven't yet encountered and so isn't yet in
                                        'threadIdMap'), then we need to get a new 'thread_id' and record the mapping
                                        between the old and new ones in 'threadIdMap'
@@ -526,8 +525,7 @@ suspend fun importMessages(
                                                 addresses.add(address)
                                             }
                                         }
-                                    }
-                                    /* If we don't yet have a thread_id (i.e., the message has a new
+                                    }/* If we don't yet have a thread_id (i.e., the message has a new
                                        thread_id that we haven't yet encountered and so isn't yet in
                                        threadIdMap), then we need to get a new thread_id and record the mapping
                                        between the old and new ones in threadIdMap
@@ -562,8 +560,7 @@ suspend fun importMessages(
                                         addresses.forEach { address ->
                                             address.put(
                                                 Telephony.Mms.Addr.MSG_ID, messageId
-                                            )
-                                            /*Log.v(
+                                            )/*Log.v(
                                                 LOG_TAG,
                                                 "Trying to insert MMS address - metadata:" + address.toString()
                                             )*/
@@ -572,8 +569,7 @@ suspend fun importMessages(
                                                     addressUri, address
                                                 )
                                             if (insertAddressUri == null) Log.e(
-                                                LOG_TAG,
-                                                "MMS address insert failed!"
+                                                LOG_TAG, "MMS address insert failed!"
                                             )
                                             else Log.d(LOG_TAG, "MMS address insert succeeded")
                                         }
@@ -588,6 +584,15 @@ suspend fun importMessages(
                                                     if (partKey in partColumns) part.put(
                                                         partKey, messagePart.getString(partKey)
                                                     )
+                                                }
+                                                // Some MMS part metadata contain sub_ids, and attempting to import them can cause a FileNotFoundException: No entry for content
+                                                // when subsequently trying to write the part's binary data.
+                                                // See: https://github.com/tmo1/sms-ie/issues/142
+                                                if (!prefs.getBoolean(
+                                                        "import_sub_ids", false
+                                                    ) && part.containsKey("sub_id")
+                                                ) {
+                                                    part.put("sub_id", "-1")
                                                 }
                                                 val insertPartUri =
                                                     appContext.contentResolver.insert(
