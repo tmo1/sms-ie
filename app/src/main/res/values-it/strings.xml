@@ -26,7 +26,7 @@
     <string name="contacts_write_permissions_required">L\'importazione dei contatti richiede l\'autorizzazione per scrivere i contatti.</string>
     <string name="not_jsonarray_message">Il file non sembra contenere un JSONArray valido.</string>
     <string name="settings">Impostazioni</string>
-    <string name="include_binary_data">Includi dati MMS binari (codificati)</string>
+    <string name="include_binary_data">Includi dati binari MMS</string>
     <string name="scheduled_export_executed">Esportazione pianificata eseguita</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d chiamate e %4$d contatti esportati.</string>
     <string name="dialog_confirm_wipe">Attenzione: cancellare permanentemente tutti i messaggi da questo dispositivo\?</string>
@@ -53,7 +53,7 @@
 \n
 \nVersione %1$s
 \n
-\nCopyright © 2021-2022
+\nCopyright © 2021-2023
 \n
 \nSoftware libero con copyleft, licenza GPLv3+</string>
     <string name="documentation">Documentazione:</string>
@@ -66,4 +66,11 @@
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="scheduled_export_executing">Esecuzione esportazione pianificata</string>
+    <string name="copying_mms_binary_data">Copia dati binari MMS ...</string>
+    <string name="importing_messages">Importazione messaggi...</string>
+    <string name="message_import_api_23_requirement">L\'importazione dei messaggi è possibile solo su Android Marshmallow / 6.0 (API livello 23) o successivo.</string>
+    <string name="default_sms_app_dialog_title">Applicazione predefinita SMS</string>
+    <string name="become_default_sms_app_warning">Per poter importare o cancellare i messaggi, Importa/Esporta SMS deve essere l\'applicazione SMS predefinita. Leggere il README prima di procedere e assicurarsi di comprendere le implicazioni di questa operazione.</string>
+    <string name="okay">OK</string>
 </resources>
