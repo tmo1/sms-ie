@@ -18,7 +18,7 @@
 \n用时 %3$s</string>
     <string name="default_sms_app_requirement">需将本应用程序作为默认的短信应用，以便导入及擦除消息。</string>
     <string name="settings">设置</string>
-    <string name="include_binary_data">不排除掉（经编码的）二进制彩信数据</string>
+    <string name="include_binary_data">不排除掉二进制彩信数据</string>
     <string name="wipe_cancelled">取消了擦除命令</string>
     <string name="messages_wiped">消息已经擦除了</string>
     <string name="wiping_sms_messages">正在擦除短信消息……</string>
@@ -29,7 +29,7 @@
 \n
 \n%1$s 版
 \n
-\nCopyright © 2021–2022
+\nCopyright © 2021–2023
 \n
 \n复制自由软件，许可GPLv3</string>
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
@@ -66,4 +66,11 @@
     <string name="import_contacts_results">导入了 %1$d 名联系人
 \n耗时: %2$s。</string>
     <string name="contacts_write_permissions_required">导入联系人需要写入联系人的权限。</string>
+    <string name="scheduled_export_executing">执行预定输出</string>
+    <string name="importing_messages">正在导入消息 ...</string>
+    <string name="copying_mms_binary_data">正在复制彩信二进制数据 ...</string>
+    <string name="okay">确定</string>
+    <string name="default_sms_app_dialog_title">默认短信应用</string>
+    <string name="message_import_api_23_requirement">仅可在 Android Marshmallow / 6.0（API 级别 23）或更高版本上导入消息。</string>
+    <string name="become_default_sms_app_warning">短信导入/导出必须是默认短信应用程序才能导入或擦除消息。 请阅读自述文件并确保您了解这样做的含义，然后再继续。</string>
 </resources>
