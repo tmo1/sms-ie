@@ -20,22 +20,25 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
 ### Translations
 
  - [nautilusx](https://github.com/nautilusx): German translation
- - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
  - [baitmooth](https://github.com/baitmooth): additions to German translation
+ - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
+ - [Philippe (Philippe213)](https://hosted.weblate.org/user/philippe213/): update to French translation
  - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
- - poi: Simplified Chinese translation
- - [Merlignux](https://github.com/Merlignux): Portuguese translation
+ - [poipoipoipoipoipoipoipoipoi](https://github.com/poipoipoipoipoipoipoipoipoi): Simplified Chinese translation
  - [Eric (hamburger1024)](https://hosted.weblate.org/user/hamburger1024/): updates to Simplified Chinese translation
- - [Shopimisrel](https://github.com/Shopimisrel): Hebrew translation
+ - [yangyangdaji](https://github.com/yangyangdaji): updates to Simplified Chinese translation
+ - [Merlignux](https://github.com/Merlignux): Portuguese translation
+ - [python israel (nhman-python)](https://github.com/nhman-python): Hebrew translation
  - [Артём (Artem13327)](https://hosted.weblate.org/user/Artem13327/): Russian translation
+ - Axus Wizix: updates to Russian translation
  - [pjammo](https://github.com/pjammo): Italian translation
+ - [Translator-3000](https://hosted.weblate.org/user/Translator-3000/): update to Italian translation
  - [jacek (TX5400)](https://hosted.weblate.org/user/TX5400/): Polish translation
+ - [Eryk Michalak (gnu-ewm)](https://github.com/gnu-ewm): updates to Polish translation
  - [gallegonovato](https://github.com/gallegonovato): Spanish translation
  - [Bai (Baturax)](https://github.com/Baturax): Turkish translation
- - [Philippe (Philippe213)](https://hosted.weblate.org/user/philippe213/): Update to French translation
- - [Oğuz Ersen (ersen0 / oerson)](https://github.com/oersen): Updates to Turkish translation
- - [Translator-3000](https://hosted.weblate.org/user/Translator-3000/): Update to Italian translation
- - [Deleted User (deleted-56119)](https://hosted.weblate.org/user/deleted-56119/): Malayalam translation
+ - [Oğuz Ersen (ersen0 / oerson)](https://github.com/oersen): updates to Turkish translation
+ - [Raman](https://hosted.weblate.org/user/deleted-56119/): Malayalam translation
  - Surena: Persian translation
 
 ### Other
