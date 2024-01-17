@@ -530,7 +530,17 @@ suspend fun importMessages(
                                        threadIdMap), then we need to get a new thread_id and record the mapping
                                        between the old and new ones in threadIdMap
                                     */
-                                    if (!messageMetadata.containsKey("thread_id")) {
+                                    if (!messageMetadata.containsKey("thread_id")) {/* Calling getOrCreateThreadId with an empty set of addresses
+                                        will cause it to complain:
+                                        "getThreadId: NO receipients specified -- NOT creating thread" (sic)
+                                        and then throw an exception:
+                                        "java.lang.IllegalArgumentException: Unable to find or allocate a thread ID."
+                                        So if an MMS message has no associated recipient addresses, we add a dummy one here.
+                                        See: https://github.com/tmo1/sms-ie/issues/150
+                                       */
+                                        if (addresses.isEmpty()) {
+                                            addresses.add(ContentValues())
+                                        }
                                         val newThreadId = Telephony.Threads.getOrCreateThreadId(
                                             appContext,
                                             addresses.map { x -> x.getAsString(Telephony.Mms.Addr.ADDRESS) }
