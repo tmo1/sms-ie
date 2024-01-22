@@ -49,7 +49,7 @@
     <string name="contacts_read_permission_required">Для экспорта контактов требуется разрешение на чтение контактов.</string>
     <string name="wipe_cancelled">Очистка отменена</string>
     <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
-    <string name="include_binary_data">Включать (зашифрованные) двоичные данные MMS</string>
+    <string name="include_binary_data">Включать двоичные данные MMS</string>
     <string name="not_jsonarray_message">Похоже, что файл не содержит корректный JSONArray.</string>
     <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
     <string name="scheduled_export_failure">Экспорт не удался — смотрите logcat для более подробной информации.</string>
@@ -64,4 +64,3 @@
 \nВыпущено под лицензией GNU GPLv3</string>
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
 </resources>
-
