@@ -32,7 +32,7 @@
     <string name="default_sms_app_requirement">Cette application doit être définie comme application SMS par défaut afin d\'importer les messages.</string>
     <string name="call_logs_permissions_required">L\'exportation de l\'historique des appels nécessite l\'autorisation de lire l\'historique des appels et les Contacts.</string>
     <string name="not_jsonarray_message">Le fichier ne semble pas contenir de JSONArray valide.</string>
-    <string name="include_binary_data">Inclure les données binaires MMS (encodées)</string>
+    <string name="include_binary_data">Inclure les données binaires MMS</string>
     <string name="title_activity_settings">Activité de configuration</string>
     <string name="settings">Paramètres</string>
     <string name="contacts_import_progress">%1$d contact(s) importé(s)</string>
