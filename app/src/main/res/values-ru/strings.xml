@@ -63,4 +63,5 @@
 \n
 \nВыпущено под лицензией GNU GPLv3</string>
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
+    <string name="importing_messages">Импортированние сообщений ...</string>
 </resources>
