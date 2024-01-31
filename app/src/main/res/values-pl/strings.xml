@@ -58,11 +58,10 @@
 \n
 \nWersja %1$s
 \n
-\nPrawa autorskie © 2021–23
+\nPrawa autorskie © 2021–24
 \n
 \nWydane na licencji GNU GPLv3</string>
     <string name="channel_name">kanał_powiadomień</string>
-    <string name="title_activity_settings">UstawieniaAktywności</string>
     <string name="call_log_export_progress">Wyeksportowano %1$d z %2$d połączeń</string>
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>

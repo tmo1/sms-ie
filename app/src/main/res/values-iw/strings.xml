@@ -50,7 +50,6 @@
 \nזמן שחלף: %2$s</string>
     <string name="default_sms_app_requirement">אפליקציה זו חייבת להיות אפליקציית ה-סמס המוגדרת כברירת מחדל כדי לייבא או למחוק הודעות (תוכל לשנות בסיום הפעולה).</string>
     <string name="contacts_read_permission_required">ייצוא אנשי קשר דורש הרשאה לקריאת אנשי קשר.</string>
-    <string name="title_activity_settings">הגדרות פעילות</string>
     <string name="issue_tracker">מאתר בעיות:</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="app_about_text">ייבוא/ייצוא של SMS
@@ -59,7 +58,7 @@
 \n
 \nגרסה %1$s
 \n
-\nזכויות יוצרים © 2021–22
+\nזכויות יוצרים © 2021–24
 \n
 \nשוחרר תחת GNU GPLv3</string>
     <string name="contacts_import_progress">%1$d אנשי קשר יובאו</string>

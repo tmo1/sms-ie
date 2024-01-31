@@ -38,7 +38,6 @@
     <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="call_log_import_progress">%1$d chamada(s) importadas</string>
     <string name="issue_tracker">Reportar de erros:</string>
-    <string name="title_activity_settings">Actividade das Definições</string>
     <string name="app_name">Importar / Exportar SMS</string>
     <string name="about">Sobre</string>
     <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
@@ -52,7 +51,7 @@
 \n
 \nVersão %1$s
 \n
-\nCopyright © 2021–2022
+\nCopyright © 2021–2024
 \n
 \nDisponibilizado sob a GNU GPLv3</string>
     <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>

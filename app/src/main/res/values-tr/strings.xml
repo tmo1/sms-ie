@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021-2022 Thomas More
+  ~ Copyright (c) 2021-2022,2023 Thomas More
   ~
   ~ This file is part of SMS Import / Export.
   ~
@@ -58,7 +58,6 @@
     <string name="contacts_read_permission_required">Kişileri dışa aktarmak için Kişileri okuma izni gerekir.</string>
     <string name="contacts_write_permissions_required">Kişileri içe aktarmak için Kişileri yazma izni gerekir.</string>
     <string name="not_jsonarray_message">Dosya geçerli bir JSONArray içermiyor gibi görünüyor.</string>
-    <string name="title_activity_settings">Etkinlik Ayarları</string>
     <string name="settings">Ayarlar</string>
     <string name="include_binary_data">İkili MMS verilerini dahil et</string>
     <string name="channel_name">bildirim_kanali</string>
@@ -80,7 +79,7 @@
 \n
 \nSürüm %1$s
 \n
-\nTelif Hakkı © 2021-2023
+\nTelif Hakkı © 2021-2024
 \n
 \nGNU GPLv3 altında yayınlandı</string>
     <string name="homepage">Ana sayfa:</string>

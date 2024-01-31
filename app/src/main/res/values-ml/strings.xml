@@ -19,7 +19,6 @@
     <string name="wiping_sms_messages">എസ്എംഎസ് സന്ദേശങ്ങൾ മായ്‌ക്കുന്നു…</string>
     <string name="wiping_mms_messages">എംഎംഎസ് സന്ദേശങ്ങൾ മായ്‌ക്കുന്നു…</string>
     <string name="documentation">പ്രമാണീകരണം:</string>
-    <string name="title_activity_settings">ക്രമീകരണങ്ങൾ പ്രവർത്തനം</string>
     <string name="about">കുറിച്ച്</string>
     <string name="export_call_log_results">%1$d വിളി(കൾ) കയറ്റുമതി ചെയ്തു
 \nകഴിഞ്ഞ സമയം: %2$s</string>

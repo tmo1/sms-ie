@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021-2022 Thomas More
+  ~ Copyright (c) 2021-2022,2024 Thomas More
   ~
   ~ This file is part of SMS Import / Export.
   ~
@@ -33,7 +33,6 @@
     <string name="call_logs_permissions_required">L\'exportation de l\'historique des appels nécessite l\'autorisation de lire l\'historique des appels et les Contacts.</string>
     <string name="not_jsonarray_message">Le fichier ne semble pas contenir de JSONArray valide.</string>
     <string name="include_binary_data">Inclure les données binaires MMS</string>
-    <string name="title_activity_settings">Activité de configuration</string>
     <string name="settings">Paramètres</string>
     <string name="contacts_import_progress">%1$d contact(s) importé(s)</string>
     <string name="export_contacts_results">%1$d contact(s) exporté(s)
@@ -62,7 +61,7 @@
 \n
 \nVersion %1$s
 \n
-\nCopyright © 2021–22
+\nCopyright © 2021–24
 \n
 \nDélivré sous GNU GPLv3</string>
     <string name="homepage">Page d\'accueil :</string>
