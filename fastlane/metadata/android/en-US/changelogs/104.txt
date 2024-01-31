@@ -1,0 +1,10 @@
+ - Updates to Chinese (Simplified), French, Italian, Polish, Russian, Spanish, and Turkish translations
+
+ - Lock Main Activity screen orientation to prevent screen rotation from causing the termination of app operations (issue #85)
+
+ - When importing messages, add dummy recipients to MMS messages with no recipients, in order to allow such messages to be correctly imported (issue #150)
+
+ - When importing messages, default to not include MMS part 'sub_ids', since including them can cause the app to crash (issue #142)
+
+ - Update Gradle and its dependencies
+
