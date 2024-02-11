@@ -1,2 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Nhập / xuất SMS</string>
+    <string name="export_messages_button_label">Xuất tin nhắn</string>
+    <string name="import_messages_button_label">Nhập tin nhắn</string>
+    <string name="export_call_log_button_label">Xuất nhật ký cuộc gọi</string>
+    <string name="import_call_log_button_label">Nhập nhật ký cuộc gọi</string>
+    <string name="ready">Sẵn sàng</string>
+    <string name="call_log_export_progress">%1$d trong số %2$d cuộc gọi đã được xuất</string>
+    <string name="call_log_import_progress">%1$d cuộc gọi đã được nhập</string>
+    <string name="sms_export_progress">%1$d trong số %2$d SMS đã được xuất</string>
+    <string name="mms_export_progress">%1$d trong số %2$d MMS đã được xuất</string>
+    <string name="message_import_progress">%1$d SMS và %2$d MMS đã được nhập</string>
+    <string name="contacts_export_progress">%1$d trong số %2$d liên hệ đã được xuất</string>
+    <string name="contacts_import_progress">%1$d liên hệ đã được nhập</string>
+    <string name="import_messages_results">%1$d SMS và %2$d MMS đã được nhập
+\nThời gian đã trôi qua: %3$s</string>
+    <string name="export_messages_results">%1$d SMS và %2$d MMS đã được xuất
+\nThời gian đã trôi qua: %3$s</string>
+    <string name="export_call_log_results">%1$d cuộc gọi đã được xuất
+\nThời gian đã trôi qua: %2$s</string>
+    <string name="import_call_log_results">%1$d cuộc gọi đã được nhập
+\nThời gian đã trôi qua: %2$s</string>
+    <string name="export_contacts_results">%1$d liên hệ đã được xuất
+\nThời gian đã trôi qua: %2$s.</string>
+    <string name="import_contacts_results">%1$d liên hệ đã được nhập
+\nThời gian đã trôi qua: %2$s.</string>
+    <string name="sms_permissions_required">Việc xuất tin nhắn cần có quyền đọc SMS và danh bạ.</string>
+    <string name="default_sms_app_requirement">Ứng dụng này phải là ứng dụng SMS mặc định để nhập hoặc xóa tin nhắn.</string>
+    <string name="not_jsonarray_message">Tệp dường như không chứa JSONArray hợp lệ.</string>
+    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
+    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="okay">ĐƯỢC</string>
+    <string name="wiping_sms_messages">Đang xóa tin nhắn SMS …</string>
+    <string name="messages_wiped">Đã xóa tin nhắn</string>
+    <string name="wiping_mms_messages">Đang xóa tin nhắn MMS …</string>
+    <string name="app_about_text">Nhập / xuất SMS
+\n
+\ncủa Thomas More và những người đóng góp khác
+\n
+\nPhiên bản %1$s
+\n
+\nBản quyền © 2021–2024
+\n
+\nĐược phát hành theo GNU GPLv3</string>
+    <string name="homepage">Trang chủ:</string>
+    <string name="documentation">Tài liệu:</string>
+    <string name="issue_tracker">Theo dõi vấn đề:</string>
+    <string name="about">Về</string>
+    <string name="export_contacts">Xuất danh bạ</string>
+    <string name="import_contacts">Nhập danh bạ</string>
+    <string name="copying_mms_binary_data">Đang sao chép dữ liệu nhị phân MMS ...</string>
+    <string name="importing_messages">Đang nhập tin nhắn ...</string>
+    <string name="become_default_sms_app_warning">Nhập / Xuất SMS phải là ứng dụng SMS mặc định để nhập hoặc xóa tin nhắn. Vui lòng đọc README và đảm bảo bạn hiểu ý nghĩa của việc này trước khi tiếp tục.</string>
+    <string name="default_sms_app_dialog_title">Ứng dụng SMS mặc định</string>
+    <string name="message_import_api_23_requirement">Chỉ có thể nhập tin nhắn trên Android Marshmallow / 6.0 (API cấp 23) trở lên.</string>
+    <string name="include_binary_data">Bao gồm dữ liệu MMS nhị phân</string>
+    <string name="channel_description">Kênh thông báo</string>
+    <string name="dialog_confirm_wipe">Cảnh báo: Xóa vĩnh viễn tất cả tin nhắn khỏi thiết bị này mà không thể hoàn tác?</string>
+    <string name="wipe">Xóa</string>
+    <string name="cancel">Hủy</string>
+    <string name="wipe_cancelled">Đã hủy xóa</string>
+    <string name="channel_name">kênh_thông báo</string>
+    <string name="call_logs_permissions_required">Việc xuất nhật ký cuộc gọi cần có quyền đọc Nhật ký cuộc gọi và Danh bạ.</string>
+    <string name="scheduled_export_executing">Thực hiện xuất khẩu theo lịch trình</string>
+    <string name="scheduled_export_executed">Đã thực hiện xuất theo lịch trình</string>
+    <string name="call_logs_read_write_permissions_required">Nhập nhật ký cuộc gọi cần có quyền đọc và ghi nhật ký cuộc gọi.</string>
+    <string name="contacts_read_permission_required">Xuất danh bạ cần có quyền đọc Danh bạ.</string>
+    <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d cuộc gọi và %4$d liên hệ đã được xuất.</string>
+    <string name="scheduled_export_failure">Xuất không thành công — xem logcat để biết thêm chi tiết.</string>
+    <string name="wipe_messages">Xóa tin nhắn</string>
+    <string name="contacts_write_permissions_required">Nhập danh bạ cần có quyền ghi Danh bạ.</string>
+    <string name="settings">Thiết đặt</string>
+</resources>
