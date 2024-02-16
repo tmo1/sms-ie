@@ -83,11 +83,8 @@
 \n
 \nGNU GPLv3 altında yayınlandı</string>
     <string name="homepage">Ana sayfa:</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">Belgelendirme:</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="issue_tracker">Sorun izleyici:</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="about">Hakkında</string>
     <string name="export_contacts">Kişileri Dışa Aktar</string>
     <string name="import_contacts">Kişileri İçe Aktar</string>

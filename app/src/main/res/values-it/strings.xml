@@ -62,9 +62,6 @@
     <string name="export_contacts">Esporta contatti</string>
     <string name="channel_name">notification_channel</string>
     <string name="channel_description">Canale notifiche</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="scheduled_export_executing">Esecuzione esportazione pianificata</string>
     <string name="copying_mms_binary_data">Copia dati binari MMS ...</string>
     <string name="importing_messages">Importazione messaggi...</string>

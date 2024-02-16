@@ -28,9 +28,6 @@
     <string name="sms_permissions_required">Việc xuất tin nhắn cần có quyền đọc SMS và danh bạ.</string>
     <string name="default_sms_app_requirement">Ứng dụng này phải là ứng dụng SMS mặc định để nhập hoặc xóa tin nhắn.</string>
     <string name="not_jsonarray_message">Tệp dường như không chứa JSONArray hợp lệ.</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="okay">ĐƯỢC</string>
     <string name="wiping_sms_messages">Đang xóa tin nhắn SMS …</string>
     <string name="messages_wiped">Đã xóa tin nhắn</string>

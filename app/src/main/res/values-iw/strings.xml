@@ -22,14 +22,12 @@
     <string name="scheduled_export_success">%1$d הודעות סמס, %2$d mms, %3$d שיחות ו-%4$d אנשי קשר יוצאו.</string>
     <string name="scheduled_export_failure">הייצוא לא הצליח - ראה logcat לפרטים נוספים.</string>
     <string name="dialog_confirm_wipe">אזהרה: למחוק את כל ההודעות מהמכשיר הזה לצמיתות, מבלי שתוכל לבטל זאת\?</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="cancel">בטל</string>
     <string name="wipe_cancelled">המחיקה בוטלה</string>
     <string name="messages_wiped">הודעות נמחקו</string>
     <string name="wiping_sms_messages">מוחק הודעות סמס…</string>
     <string name="wiping_mms_messages">מוחק הודעות MMS…</string>
     <string name="homepage">דף הבית:</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">תיעוד:</string>
     <string name="import_contacts">ייבוא אנשי קשר</string>
     <string name="app_name">ייבוא/ייצוא של SMS</string>
@@ -51,7 +49,6 @@
     <string name="default_sms_app_requirement">אפליקציה זו חייבת להיות אפליקציית ה-סמס המוגדרת כברירת מחדל כדי לייבא או למחוק הודעות (תוכל לשנות בסיום הפעולה).</string>
     <string name="contacts_read_permission_required">ייצוא אנשי קשר דורש הרשאה לקריאת אנשי קשר.</string>
     <string name="issue_tracker">מאתר בעיות:</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="app_about_text">ייבוא/ייצוא של SMS
 \n
 \nמאת Thomas More ותורמים אחרים

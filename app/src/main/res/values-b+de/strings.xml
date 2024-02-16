@@ -71,11 +71,8 @@
 \n
 \nVeröffentlicht unter der GNU GPLv3</string>
     <string name="homepage">Homepage:</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">Dokumentation:</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="issue_tracker">Fehlermeldung:</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="about">Über</string>
     <string name="contacts_export_progress">%1$d von %2$d Kontakt(e) exportiert</string>
     <string name="export_contacts_results">%1$d Kontakt(e) exportiert

@@ -28,12 +28,9 @@
 \nOpphavsrett © 2021–24
 \n
 \nLisensiert GPLv3+</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="scheduled_export_failure">Eksport mislyktes. Sjekk logcat for detaljer.</string>
     <string name="dialog_confirm_wipe">Advarsel: Vil du slette alle meldinger fra enheten for godt, uten å kunne angre\?</string>
     <string name="about">Om</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="export_messages_button_label">Eksporter meldinger</string>
     <string name="import_messages_button_label">Importer meldinger</string>
     <string name="export_call_log_button_label">Eksporter anropslogg</string>

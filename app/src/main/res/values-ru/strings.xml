@@ -8,8 +8,6 @@
     <string name="export_contacts">Экспорт контактов</string>
     <string name="import_contacts">Импорт контактов</string>
     <string name="documentation">Документация:</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="about">О приложении</string>
     <string name="issue_tracker">Отслеживание задач:</string>
     <string name="import_contacts_results">%1$d контакт(ов) импортирован(о)
@@ -23,7 +21,6 @@
     <string name="import_messages_button_label">Импорт сообщений</string>
     <string name="export_call_log_button_label">Экспорт журнала вызовов</string>
     <string name="settings">Настройки</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="sms_permissions_required">Для экспорта сообщений требуется разрешение на чтение SMS и контактов.</string>
     <string name="call_logs_permissions_required">Для экспорта журнала вызовов требуется разрешение на чтение журнала вызовов и контактов.</string>
     <string name="wipe">Очистка</string>

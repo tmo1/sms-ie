@@ -35,12 +35,10 @@
     <string name="documentation">Documentação:</string>
     <string name="homepage">Homepage:</string>
     <string name="channel_name">canal_de_notificação</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="call_log_import_progress">%1$d chamada(s) importadas</string>
     <string name="issue_tracker">Reportar de erros:</string>
     <string name="app_name">Importar / Exportar SMS</string>
     <string name="about">Sobre</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="call_log_export_progress">%1$d de %2$d chamada(s) exportadas</string>
     <string name="channel_description">Canal de Notificação</string>
     <string name="scheduled_export_failure">Exportação sem sucesso — ver logcat para mais detalhes.</string>
@@ -54,7 +52,6 @@
 \nCopyright © 2021–2024
 \n
 \nDisponibilizado sob a GNU GPLv3</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="contacts_import_progress">%1$d contacto(s) importado(s)</string>
     <string name="export_contacts_results">%1$d contacto(s) exportado(s)
 \nTempo decorrido: %2$s.</string>

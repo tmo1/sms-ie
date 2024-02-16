@@ -51,7 +51,6 @@
     <string name="messages_wiped">Usunięto wiadomości</string>
     <string name="wiping_sms_messages">Usuwanie wiadomości SMS …</string>
     <string name="wiping_mms_messages">Usuwanie wiadomości MMS …</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="app_about_text">Import / Eksport SMS
 \n
 \nStworzone przez Thomasa More\'a oraz innych współtwórców
@@ -63,8 +62,6 @@
 \nWydane na licencji GNU GPLv3</string>
     <string name="channel_name">kanał_powiadomień</string>
     <string name="call_log_export_progress">Wyeksportowano %1$d z %2$d połączeń</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="copying_mms_binary_data">Kopiowanie binarnych danych MMS...</string>
     <string name="importing_messages">Importowanie wiadomości...</string>
     <string name="default_sms_app_dialog_title">Domyślna aplikacja dla SMSów</string>

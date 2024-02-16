@@ -35,11 +35,8 @@
     <string name="include_binary_data">شامل داده‌های پیام چندرسانه‌ای باینری (کد شده)</string>
     <string name="export_messages_button_label">برون‌برد پیام‌ها</string>
     <string name="homepage">صفحه اصلی:</string>
-    <string name="app_homepage">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">مستندات:</string>
-    <string name="app_documentation">https://github.com/tmo1/sms-ie#readme</string>
     <string name="issue_tracker">ردیاب مشکل:</string>
-    <string name="app_issue_tracker">https://github.com/tmo1/sms-ie/issues</string>
     <string name="about">درباره</string>
     <string name="export_contacts">برون‌برد مخاطبین</string>
     <string name="import_contacts">درون‌برد مخاطبین</string>
