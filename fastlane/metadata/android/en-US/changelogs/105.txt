@@ -1,0 +1,2 @@
+ - Vietnamese translation - by ngocanhtve (PR #160)
+

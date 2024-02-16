@@ -1,5 +1,13 @@
 # SMS Import / Export
 
+![GitHub Release](https://img.shields.io/github/v/release/tmo1/sms-ie)
+![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/tmo1/sms-ie)
+![F-Droid Version](https://img.shields.io/f-droid/v/com.github.tmo1.sms_ie)
+
+![GitHub issues](https://img.shields.io/github/issues/tmo1/sms-ie)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/tmo1/sms-ie)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tmo1/sms-ie)
+
 SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages, call logs, and contacts from and to (ND)JSON files. (Contacts import and export are currently functional but considered experimental.) Root is not required.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
@@ -57,6 +65,14 @@ These operations may take some time for large numbers of messages, calls, or con
 By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a much smaller ZIP file.
 
 Note that upon import or wipe, message apps present on the system may not immediately correctly reflect the new state of the message database due to app caching and / or local storage. This can be resolved by clearing such cache and storage, e.g. `Settings / Apps / Messaging / Storage & cache / Clear storage | Clear cache`.
+
+## Import / Export Locations
+
+SMS Import / Export does all input and output via the Android [Storage Access Framework (SAF)](https://developer.android.com/guide/topics/providers/document-provider). The app should thus be able to import from and export to any location available via the SAF, including both local storage (internal, SD card, or USB attached) as well as cloud storage accessible through the SAF, via either a dedicated app (e.g., the [Nextcloud Android App](https://github.com/nextcloud/android)) or [Rclone](https://rclone.org/) through [RSAF](https://github.com/chenxiaolong/RSAF).
+
+### Encryption
+
+[SMS Import / Export does not have any internal encryption / decryption functionality](https://github.com/tmo1/sms-ie/issues/82), and [there are currently no plans to add such functionality](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908098763). Instead, the currently recommended method for automatic encryption / decryption is to use an [Rclone crypt remote](https://rclone.org/crypt/) via [RSAF](https://github.com/chenxiaolong/RSAF) to transparently encrypt data as it is exported and decrypt it as it is imported. (The RSAF developer explains how to do this [here](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1907097444), but cautions that he would only suggest this method for those already familiar with Rclone.) [Note](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908772982) that this method will only work for internal storage or cloud storage accessible via Rclone, but not for SD card or USB attached storage.
 
 ## Importing Messages
 

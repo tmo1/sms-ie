@@ -40,6 +40,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Oğuz Ersen (ersen0 / oerson)](https://github.com/oersen): updates to Turkish translation
  - [Raman](https://hosted.weblate.org/user/deleted-56119/): Malayalam translation
  - Surena: Persian translation
+ - [ngocanhtve](https://github.com/ngocanhtve): Vietnamese translation
 
 ### Other
 
@@ -47,3 +48,4 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): monochrome icon ([issue #114](https://github.com/tmo1/sms-ie/issues/114) / [PR #132](https://github.com/tmo1/sms-ie/pull/132))
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): [GitHub workflow to automatically build and upload APKs containing the latest committed code](.github/workflows/build.yml) ([PR #99](https://github.com/tmo1/sms-ie/pull/99))
  - [wittmane](https://github.com/wittmane), [dshepsis](https://github.com/dshepsis), and [sshaikh](https://github.com/sshaikh): figuring out broken `Subscription ID` handling on Android 14 ([Issue #128](https://github.com/tmo1/sms-ie/issues/128))
+ - [Artem13327](https://github.com/Artem13327): [Update to automatic build and upload Github workflow](https://github.com/tmo1/sms-ie/pull/158)
