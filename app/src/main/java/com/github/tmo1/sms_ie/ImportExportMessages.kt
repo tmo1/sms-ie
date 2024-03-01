@@ -388,6 +388,12 @@ suspend fun importMessages(
                                         Log.d(LOG_TAG, "Skipping due to debug settings")
                                         return@JSONLine
                                     }
+                                    // I haven't been able to figure out how to properly insert SMS messages with multiple recipients
+                                    // https://github.com/tmo1/sms-ie/issues/159
+                                    if (messageJSON.optString(Telephony.Sms.ADDRESS).split(" ").size > 1) {
+                                        Log.d(LOG_TAG, "SMS has multiple recipients - skipping")
+                                        return@JSONLine
+                                    }
                                     if (deduplication) {
                                         val smsDuplicatesCursor = appContext.contentResolver.query(
                                             Telephony.Sms.CONTENT_URI,

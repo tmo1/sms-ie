@@ -247,6 +247,10 @@ java.lang.IllegalArgumentException: The non-sync-callers AND non-blocked-url sho
 ```
 For a possible solution, see [here](https://github.com/tmo1/sms-ie/issues/103#issuecomment-1620890135).
 
+#### SMS Messages With Multiple Recipients
+
+SMS messages with multiple recipients are currently not handled entirely correctly; see [issue #159](https://github.com/tmo1/sms-ie/issues/159) for details and the current status of support for such messages.
+
 ## Translations
 
 SMS Import / Export has been translated (from the original English) into the following languages (note that some of these translations may contain inaccuracies, due to changes to the app's original text since they were made):
