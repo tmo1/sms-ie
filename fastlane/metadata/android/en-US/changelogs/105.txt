@@ -1,2 +1,7 @@
- - Vietnamese translation - by ngocanhtve (PR #160)
+ - Vietnamese translation - by ngocanhtve
 
+ - Updates to Russian translation - by Axus Wizix and Artem
+
+ - Modification to the handling of SMS messages with multiple recipients upon import (see issue #159)
+
+ - Fix for a bug that prevented the app from becoming the default SMS app - by Andrew (andr5w) (issue # 167 / PR #168)
