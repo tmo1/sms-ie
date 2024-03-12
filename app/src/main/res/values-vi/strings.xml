@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Nhập / xuất SMS</string>
+    <string name="app_name">Nhập / Xuất SMS</string>
     <string name="export_messages_button_label">Xuất tin nhắn</string>
     <string name="import_messages_button_label">Nhập tin nhắn</string>
     <string name="export_call_log_button_label">Xuất nhật ký cuộc gọi</string>
