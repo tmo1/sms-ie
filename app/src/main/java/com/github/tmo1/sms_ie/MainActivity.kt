@@ -35,11 +35,13 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
 import android.provider.Telephony
 import android.text.format.DateUtils.formatElapsedTime
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -78,6 +80,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     BecomeDefaultSMSAppFragment.NoticeDialogListener {
 
     private lateinit var prefs: SharedPreferences
+
     // We use 'operation' to tell onActivityResult() which operation to run after the user has made
     // the app into the default SMS app. This feels hackish, but it's simple and effective, and
     // while it would be easy enough to pass the operation as a parameter to checkDefaultSMSApp(),
@@ -130,7 +133,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
 
         if (necessaryPermissions.any()) {
-            ActivityCompat.requestPermissions(this, necessaryPermissions.toTypedArray(), PERMISSIONS_REQUEST)
+            ActivityCompat.requestPermissions(
+                this, necessaryPermissions.toTypedArray(), PERMISSIONS_REQUEST
+            )
         }
 
         // set up UI
@@ -143,6 +148,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
         val exportContactsButton: Button = findViewById(R.id.export_contacts_button)
         val importContactsButton: Button = findViewById(R.id.import_contacts_button)
+        val setDefaultSMSAppButton: Button = findViewById(R.id.set_default_sms_app_button)
 
         exportMessagesButton.setOnClickListener { exportMessagesManual() }
         importMessagesButton.setOnClickListener {
@@ -157,6 +163,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             operation = ::wipeMessagesManual
             checkDefaultSMSApp()
         }
+        setDefaultSMSAppButton.setOnClickListener { startActivity(Intent(ACTION_MANAGE_DEFAULT_APPS_SETTINGS))}
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -175,6 +182,26 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             // or other notification behaviors after this
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(mChannel)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val defaultSMSAppWarning: TextView = findViewById(R.id.default_sms_app_warning)
+        val setDefaultSMSAppButton: Button =
+            findViewById(R.id.set_default_sms_app_button)
+        val areWeDefaultSMSApp = if (SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(RoleManager::class.java)
+            roleManager.isRoleHeld(RoleManager.ROLE_SMS)
+        } else {
+            Telephony.Sms.getDefaultSmsPackage(this) == packageName
+        }
+        if (areWeDefaultSMSApp) {
+            defaultSMSAppWarning.visibility = View.VISIBLE
+            setDefaultSMSAppButton.visibility = if (SDK_INT >= 24) View.VISIBLE else View.GONE
+        } else {
+            defaultSMSAppWarning.visibility = View.GONE
+            setDefaultSMSAppButton.visibility = View.GONE
         }
     }
 
@@ -414,8 +441,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(RoleManager::class.java)
             startActivityForResult(
-                roleManager.createRequestRoleIntent(RoleManager.ROLE_SMS),
-                BECOME_DEFAULT_SMS_APP
+                roleManager.createRequestRoleIntent(RoleManager.ROLE_SMS), BECOME_DEFAULT_SMS_APP
             )
         } else {
             val becomeDefaultSMSAppIntent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)

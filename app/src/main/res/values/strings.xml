@@ -95,4 +95,6 @@
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Default SMS App</string>
     <string name="message_import_api_23_requirement">Importing messages is only possible on Android Marshmallow / 6.0 (API level 23) or later.</string>
+    <string name="default_sms_app_warning"><b>Warning</b>: This app is currently the default SMS app, which means that any incoming SMS or MMS messages will be lost! To avoid this, set a proper default SMS app.</string>
+    <string name="set_default_sms_app">Set default SMS app</string>
 </resources>

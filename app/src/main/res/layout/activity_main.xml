@@ -128,7 +128,7 @@
         android:text="@string/ready"
         android:textSize="20sp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/default_sms_app_warning"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/guideline" />
@@ -144,5 +144,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <TextView
+        android:id="@+id/default_sms_app_warning"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="30dp"
+        android:paddingEnd="20dp"
+        android:text="@string/default_sms_app_warning"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/set_default_sms_app_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/status_report" />
+
+    <Button
+        android:id="@+id/set_default_sms_app_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set_default_sms_app"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/default_sms_app_warning" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
