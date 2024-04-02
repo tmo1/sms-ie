@@ -1,6 +1,8 @@
 /*
- * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021-2022 Thomas More
+ * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+ * call logs, and contacts, from and to JSON / NDJSON files.
+ *
+ * Copyright (c) 2021-2022,2024 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -42,12 +44,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
-    if (ContextCompat.checkSelfPermission(
-            appContext, Manifest.permission.READ_SMS
-        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-            appContext, Manifest.permission.READ_CONTACTS
-        ) == PackageManager.PERMISSION_GRANTED
-    ) return true
+    return ContextCompat.checkSelfPermission(
+        appContext, Manifest.permission.READ_SMS
+    ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+        appContext, Manifest.permission.READ_CONTACTS
+    ) == PackageManager.PERMISSION_GRANTED
     /*else {
         Toast.makeText(
             appContext,
@@ -55,24 +56,14 @@ fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
             Toast.LENGTH_LONG
         ).show()
     }*/
-    return false
 }
 
 fun checkReadCallLogsContactsPermissions(appContext: Context): Boolean {
-    if (ContextCompat.checkSelfPermission(
-            appContext, Manifest.permission.READ_CALL_LOG
-        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-            appContext, Manifest.permission.READ_CONTACTS
-        ) == PackageManager.PERMISSION_GRANTED
-    ) return true
-    /*else {
-        Toast.makeText(
-            appContext,
-            appContext.getString(R.string.call_logs_permissions_required),
-            Toast.LENGTH_LONG
-        ).show()
-    }*/
-    return false
+    return ContextCompat.checkSelfPermission(
+        appContext, Manifest.permission.READ_CALL_LOG
+    ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+        appContext, Manifest.permission.READ_CONTACTS
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
 fun checkReadWriteCallLogPermissions(appContext: Context): Boolean {
@@ -145,7 +136,7 @@ suspend fun initProgressBar(progressBar: ProgressBar?, cursor: Cursor) {
         progressBar?.isIndeterminate = false
         progressBar?.progress = 0
         progressBar?.visibility = View.VISIBLE
-        progressBar?.setMax(cursor.count)
+        progressBar?.max = cursor.count
     }
 }
 
