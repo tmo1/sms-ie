@@ -131,6 +131,9 @@ suspend fun importCallLog(
                     val callLogMetadata = ContentValues()
                     try {
                         jsonReader.beginArray()
+                        setStatusText(
+                            statusReportText, appContext.getString(R.string.importing_calls)
+                        )
                         JSONReader@ while (jsonReader.hasNext()) {
                             jsonReader.beginObject()
                             callLogMetadata.clear()
@@ -145,50 +148,49 @@ suspend fun importCallLog(
                                 }
                             }
                             jsonReader.endObject()
-                            if (deduplication) {
-                                val callDuplicatesCursor = appContext.contentResolver.query(
-                                    CallLog.Calls.CONTENT_URI,
-                                    arrayOf(CallLog.Calls._ID),
-                                    "${CallLog.Calls.NUMBER}=? AND ${CallLog.Calls.TYPE}=? AND ${CallLog.Calls.DATE}=?",
-                                    arrayOf(
-                                        callLogMetadata.getAsString(CallLog.Calls.NUMBER),
-                                        callLogMetadata.getAsString(CallLog.Calls.TYPE),
-                                        callLogMetadata.getAsString(CallLog.Calls.DATE)
-
-                                    ),
-                                    null
-                                )
-                                val isDuplicate = callDuplicatesCursor?.use { _ ->
-                                    if (callDuplicatesCursor.moveToFirst()) {
-                                        Log.d(LOG_TAG, "Duplicate call - skipping")
-                                        true
-                                    } else {
-                                        false
-                                    }
-                                }
-                                if (isDuplicate == true) {
-                                    continue@JSONReader
-                                }
-                            }
-                            var insertUri: Uri? = null
                             if (callLogMetadata.keySet()
                                     .contains(CallLog.Calls.NUMBER) && callLogMetadata.getAsString(
                                     CallLog.Calls.TYPE
                                 ) != "4"
                             ) {
-                                insertUri = appContext.contentResolver.insert(
+                                if (deduplication) {
+                                    val callDuplicatesCursor = appContext.contentResolver.query(
+                                        CallLog.Calls.CONTENT_URI,
+                                        arrayOf(CallLog.Calls._ID),
+                                        "${CallLog.Calls.NUMBER}=? AND ${CallLog.Calls.TYPE}=? AND ${CallLog.Calls.DATE}=?",
+                                        arrayOf(
+                                            callLogMetadata.getAsString(CallLog.Calls.NUMBER),
+                                            callLogMetadata.getAsString(CallLog.Calls.TYPE),
+                                            callLogMetadata.getAsString(CallLog.Calls.DATE)
+
+                                        ),
+                                        null
+                                    )
+                                    val isDuplicate = callDuplicatesCursor?.use { _ ->
+                                        if (callDuplicatesCursor.moveToFirst()) {
+                                            Log.d(LOG_TAG, "Duplicate call - skipping")
+                                            true
+                                        } else {
+                                            false
+                                        }
+                                    }
+                                    if (isDuplicate == true) {
+                                        continue@JSONReader
+                                    }
+                                }
+                                val insertUri = appContext.contentResolver.insert(
                                     CallLog.Calls.CONTENT_URI, callLogMetadata
                                 )
-                            }
-                            if (insertUri == null) {
-                                Log.v(LOG_TAG, "Call log insert failed!")
-                            } else {
-                                callLogCount++
-                                setStatusText(
-                                    statusReportText, appContext.getString(
-                                        R.string.call_log_import_progress, callLogCount
+                                if (insertUri == null) {
+                                    Log.v(LOG_TAG, "Call insert failed!")
+                                } else {
+                                    callLogCount++
+                                    setStatusText(
+                                        statusReportText, appContext.getString(
+                                            R.string.call_log_import_progress, callLogCount
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                         jsonReader.endArray()

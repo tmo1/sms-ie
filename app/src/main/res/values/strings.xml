@@ -89,12 +89,13 @@
     <string name="about">About</string>
     <string name="export_contacts">Export Contacts</string>
     <string name="import_contacts">Import Contacts</string>
-    <string name="copying_mms_binary_data">Copying MMS binary data ...</string>
-    <string name="importing_messages">Importing messages ...</string>
+    <string name="copying_mms_binary_data">Copying MMS binary data …</string>
+    <string name="importing_messages">Importing messages …</string>
     <string name="become_default_sms_app_warning">SMS Import / Export must be the default SMS app in order to import or wipe messages. Please read the README and make sure you understand the implications of doing this before proceeding.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Default SMS App</string>
     <string name="message_import_api_23_requirement">Importing messages is only possible on Android Marshmallow / 6.0 (API level 23) or later.</string>
     <string name="default_sms_app_warning"><b>Warning</b>: This app is currently the default SMS app, which means that any incoming SMS or MMS messages will be lost! To avoid this, set a proper default SMS app.</string>
     <string name="set_default_sms_app">Set default SMS app</string>
+    <string name="importing_calls">Importing calls …</string>
 </resources>
