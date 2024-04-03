@@ -291,7 +291,7 @@ suspend fun importMessages(
     appContext: Context, uri: Uri, progressBar: ProgressBar?, statusReportText: TextView?
 ): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
-    val deduplication = prefs.getBoolean("message_deduplication", false)
+    val deduplication = prefs.getBoolean("deduplication", false)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
         // get column names of local SMS, MMS, and MMS part tables

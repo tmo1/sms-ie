@@ -1,0 +1,2 @@
+ - Implement deduplication of call log entries (issue #176).
+

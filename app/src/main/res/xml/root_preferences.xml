@@ -96,8 +96,8 @@
     <PreferenceCategory app:title="Import options">
 
         <SwitchPreferenceCompat
-            android:key="message_deduplication"
-            android:title="Message deduplication (experimental)"
+            android:key="deduplication"
+            android:title="Message and call log entry deduplication (experimental)"
             app:defaultValue="false"
             app:singleLineTitle="false" />
 

@@ -41,10 +41,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 suspend fun exportCallLog(
-    appContext: Context,
-    file: Uri,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    appContext: Context, file: Uri, progressBar: ProgressBar?, statusReportText: TextView?
 ): MessageTotal {
     //val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
@@ -56,11 +53,7 @@ suspend fun exportCallLog(
                 jsonWriter.setIndent("  ")
                 jsonWriter.beginArray()
                 totals.sms = callLogToJSON(
-                    appContext,
-                    jsonWriter,
-                    displayNames,
-                    progressBar,
-                    statusReportText
+                    appContext, jsonWriter, displayNames, progressBar, statusReportText
                 )
                 jsonWriter.endArray()
             }
@@ -78,14 +71,9 @@ private suspend fun callLogToJSON(
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var total = 0
-    val callCursor =
-        appContext.contentResolver.query(
-            Uri.parse("content://call_log/calls"),
-            null,
-            null,
-            null,
-            null
-        )
+    val callCursor = appContext.contentResolver.query(
+        Uri.parse("content://call_log/calls"), null, null, null, null
+    )
     callCursor?.use {
         if (it.moveToFirst()) {
             val totalCalls = it.count
@@ -103,8 +91,7 @@ private suspend fun callLogToJSON(
                 // This value is typically filled in by the dialer app for the caching purpose, so it's not guaranteed to be present, and may not be current if the contact information associated with this number has changed."
                 val address = it.getString(addressIndex)
                 if (address != null) {
-                    val displayName =
-                        lookupDisplayName(appContext, displayNames, address)
+                    val displayName = lookupDisplayName(appContext, displayNames, address)
                     if (displayName != null) jsonWriter.name("display_name").value(displayName)
                 }
                 jsonWriter.endObject()
@@ -123,16 +110,14 @@ private suspend fun callLogToJSON(
 }
 
 suspend fun importCallLog(
-    appContext: Context,
-    uri: Uri,
-    progressBar: ProgressBar,
-    statusReportText: TextView
+    appContext: Context, uri: Uri, progressBar: ProgressBar, statusReportText: TextView
 ): Int {
+    val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    val deduplication = prefs.getBoolean("deduplication", false)
     return withContext(Dispatchers.IO) {
         val callLogColumns = mutableSetOf<String>()
         val callLogCursor = appContext.contentResolver.query(
-            CallLog.Calls.CONTENT_URI,
-            null, null, null, null
+            CallLog.Calls.CONTENT_URI, null, null, null, null
         )
         callLogCursor?.use { callLogColumns.addAll(it.columnNames) }
         var callLogCount = 0
@@ -144,25 +129,53 @@ suspend fun importCallLog(
                     val callLogMetadata = ContentValues()
                     try {
                         jsonReader.beginArray()
-                        while (jsonReader.hasNext()) {
+                        JSONReader@ while (jsonReader.hasNext()) {
                             jsonReader.beginObject()
                             callLogMetadata.clear()
                             while (jsonReader.hasNext()) {
                                 val name = jsonReader.nextName()
                                 val value = jsonReader.nextString()
                                 if ((callLogColumns.contains(name)) and (name !in setOf(
-                                        BaseColumns._ID,
-                                        BaseColumns._COUNT
+                                        BaseColumns._ID, BaseColumns._COUNT
                                     ))
                                 ) {
                                     callLogMetadata.put(name, value)
                                 }
                             }
-                            var insertUri: Uri? = null
-                            if (callLogMetadata.keySet().contains(CallLog.Calls.NUMBER) && callLogMetadata.getAsString(CallLog.Calls.TYPE) != "4") {
-                                insertUri = appContext.contentResolver.insert(
+                            jsonReader.endObject()
+                            if (deduplication) {
+                                val callDuplicatesCursor = appContext.contentResolver.query(
                                     CallLog.Calls.CONTENT_URI,
-                                    callLogMetadata
+                                    arrayOf(CallLog.Calls._ID),
+                                    "${CallLog.Calls.NUMBER}=? AND ${CallLog.Calls.TYPE}=? AND ${CallLog.Calls.DATE}=?",
+                                    arrayOf(
+                                        callLogMetadata.getAsString(CallLog.Calls.NUMBER),
+                                        callLogMetadata.getAsString(CallLog.Calls.TYPE),
+                                        callLogMetadata.getAsString(CallLog.Calls.DATE)
+
+                                    ),
+                                    null
+                                )
+                                val isDuplicate = callDuplicatesCursor?.use { _ ->
+                                    if (callDuplicatesCursor.moveToFirst()) {
+                                        Log.d(LOG_TAG, "Duplicate call - skipping")
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                }
+                                if (isDuplicate == true) {
+                                    continue@JSONReader
+                                }
+                            }
+                            var insertUri: Uri? = null
+                            if (callLogMetadata.keySet()
+                                    .contains(CallLog.Calls.NUMBER) && callLogMetadata.getAsString(
+                                    CallLog.Calls.TYPE
+                                ) != "4"
+                            ) {
+                                insertUri = appContext.contentResolver.insert(
+                                    CallLog.Calls.CONTENT_URI, callLogMetadata
                                 )
                             }
                             if (insertUri == null) {
@@ -170,22 +183,16 @@ suspend fun importCallLog(
                             } else {
                                 callLogCount++
                                 setStatusText(
-                                    statusReportText,
-                                    appContext.getString(
-                                        R.string.call_log_import_progress,
-                                        callLogCount
+                                    statusReportText, appContext.getString(
+                                        R.string.call_log_import_progress, callLogCount
                                     )
                                 )
                             }
-                            jsonReader.endObject()
                         }
                         jsonReader.endArray()
                     } catch (e: Exception) {
                         displayError(
-                            appContext,
-                            e,
-                            "Error importing call log",
-                            "Error parsing JSON"
+                            appContext, e, "Error importing call log", "Error parsing JSON"
                         )
                     }
                 }
