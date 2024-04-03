@@ -1,2 +1,4 @@
  - Implement deduplication of call log entries (issue #176).
 
+ - When this app is the default SMS app, add a warning to the app's main screen, as well as a button to bring up the default app settings (when API level >= 24) (issue #139).
+
