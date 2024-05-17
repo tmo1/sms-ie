@@ -80,4 +80,11 @@
     <string name="sms_export_progress">%1$d sur %2$d SMS(s) exporté(s)</string>
     <string name="mms_export_progress">%1$d sur %2$d MMS(s) exporté(s)</string>
     <string name="message_import_progress">%1$d SMS(s) et %2$d MMS(s) importé(s)</string>
+    <string name="scheduled_export_executing">Exportation planifiée en cours d\'exécution</string>
+    <string name="importing_messages">Importation des messages…</string>
+    <string name="copying_mms_binary_data">Copie des données binaires des MMS…</string>
+    <string name="become_default_sms_app_warning">SMS Import / Export doit être l\'application de SMS par défaut afin d\'importer ou d\'effacer des messages. Veuillez lire le README et vous assurer que vous en comprenez les implications avant de poursuivre.</string>
+    <string name="message_import_api_23_requirement">L\'importation de messages est seulement possible sur Android Marshmallow / 6.0 (API niveau 23) ou ultérieur.</string>
+    <string name="okay">OK</string>
+    <string name="default_sms_app_dialog_title">Application SMS par défaut</string>
 </resources>
