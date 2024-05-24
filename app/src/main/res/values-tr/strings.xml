@@ -88,11 +88,14 @@
     <string name="about">Hakkında</string>
     <string name="export_contacts">Kişileri Dışa Aktar</string>
     <string name="import_contacts">Kişileri İçe Aktar</string>
-    <string name="copying_mms_binary_data">İkili MMS verileri kopyalanıyor...</string>
-    <string name="importing_messages">Mesajlar içe aktarılıyor...</string>
+    <string name="copying_mms_binary_data">İkili MMS verileri kopyalanıyor…</string>
+    <string name="importing_messages">Mesajlar içe aktarılıyor…</string>
     <string name="default_sms_app_dialog_title">Öntanımlı SMS Uygulaması</string>
     <string name="become_default_sms_app_warning">Mesajları içe aktarmak veya silmek için SMS İçe / Dışa Aktar öntanımlı SMS uygulaması olmalıdır. Lütfen README\'yi okuyun ve devam etmeden önce bunu yapmanın sonuçlarını anladığınızdan emin olun.</string>
     <string name="scheduled_export_executing">Planlanan dışa aktarma gerçekleştiriliyor</string>
     <string name="okay">Tamam</string>
     <string name="message_import_api_23_requirement">Mesajları içe aktarmak yalnızca Android Marshmallow / 6.0 (API seviyesi 23) veya sonraki sürümlerde mümkündür.</string>
+    <string name="set_default_sms_app">Öntanımlı SMS uygulaması ayarla</string>
+    <string name="importing_calls">Aramalar içe aktarılıyor…</string>
+    <string name="default_sms_app_warning"><b>Uyarı</b>: Bu uygulama şu anda öntanımlı SMS uygulamasıdır, bu da gelen tüm SMS veya MMS mesajlarının kaybolacağı anlamına gelir! Bunu önlemek için, uygun bir öntanımlı SMS uygulaması ayarlayın.</string>
 </resources>
