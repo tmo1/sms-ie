@@ -164,7 +164,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 // https://developer.android.com/training/notify-user/build-notification#notify
                 with(NotificationManagerCompat.from(applicationContext)) {
                     // notificationId is a unique int for each notification that you must define
-                    { notify(NOTIFICATION_ID_ALERT, builder.build()) }
+                    notify(NOTIFICATION_ID_ALERT, builder.build())
                 }
             }
         }
