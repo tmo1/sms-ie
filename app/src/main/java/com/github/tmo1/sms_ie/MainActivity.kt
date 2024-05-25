@@ -67,7 +67,10 @@ const val IMPORT_CONTACTS = 6
 const val BECOME_DEFAULT_SMS_APP = 100
 const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "SMSIE"
-const val CHANNEL_ID = "MYCHANNEL"
+const val CHANNEL_ID_PERSISTENT = "PERSISTENT"
+const val CHANNEL_ID_ALERTS = "ALERTS"
+const val NOTIFICATION_ID_PERSISTENT = 0
+const val NOTIFICATION_ID_ALERT = 1
 
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
 // and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
@@ -172,16 +175,33 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         // https://developer.android.com/training/notify-user/channels
         // https://developer.android.com/training/notify-user/build-notification#Priority
         if (SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
-            mChannel.description = descriptionText
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
+
+            notificationManager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_ID_PERSISTENT,
+                    getString(R.string.persistent_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    description = getString(R.string.persistent_channel_description)
+                }
+            )
+
+            notificationManager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_ID_ALERTS,
+                    getString(R.string.alerts_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    description = getString(R.string.alerts_channel_description)
+                }
+            )
+
+            // Remove legacy notification channels to accommodate upgrades
+            notificationManager.deleteNotificationChannel("MYCHANNEL")
         }
     }
 
