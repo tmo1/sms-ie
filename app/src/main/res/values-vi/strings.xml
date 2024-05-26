@@ -53,12 +53,10 @@
     <string name="default_sms_app_dialog_title">Ứng dụng SMS mặc định</string>
     <string name="message_import_api_23_requirement">Chỉ có thể nhập tin nhắn trên Android Marshmallow / 6.0 (API cấp 23) trở lên.</string>
     <string name="include_binary_data">Bao gồm dữ liệu MMS nhị phân</string>
-    <string name="channel_description">Kênh thông báo</string>
     <string name="dialog_confirm_wipe">Cảnh báo: Xóa vĩnh viễn tất cả tin nhắn khỏi thiết bị này mà không thể hoàn tác?</string>
     <string name="wipe">Xóa</string>
     <string name="cancel">Hủy</string>
     <string name="wipe_cancelled">Đã hủy xóa</string>
-    <string name="channel_name">kênh_thông báo</string>
     <string name="call_logs_permissions_required">Việc xuất nhật ký cuộc gọi cần có quyền đọc Nhật ký cuộc gọi và Danh bạ.</string>
     <string name="scheduled_export_executing">Thực hiện xuất khẩu theo lịch trình</string>
     <string name="scheduled_export_executed">Đã thực hiện xuất theo lịch trình</string>

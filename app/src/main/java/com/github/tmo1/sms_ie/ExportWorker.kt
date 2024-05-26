@@ -68,7 +68,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         // many binder transactions in the background, which can happen when exporting many
         // messages. Running the service in the foreground prevents the app from being killed.
         // https://android.googlesource.com/platform/frameworks/base.git/+/71d75c09b9a06732a6edb4d1488d2aa3eb779e14%5E%21/
-        val foregroundNotification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+        val foregroundNotification = NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
             .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.scheduled_export_executing))
             .setOngoing(true).build()
@@ -78,7 +78,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
             0
         }
         try {
-            setForeground(ForegroundInfo(0, foregroundNotification, foregroundFlags))
+            setForeground(ForegroundInfo(NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags))
         } catch (e: Exception) {
             // If the user didn't allow the disabling of battery optimizations, then Android 12+'s
             // restrictions for starting a foreground service from the background will prevent this
@@ -156,7 +156,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     contacts
                 ) else context.getString(R.string.scheduled_export_failure)
                 // https://developer.android.com/training/notify-user/build-notification#builder
-                val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+                val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID_ALERTS)
                     //.setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setSmallIcon(R.drawable.ic_scheduled_export_done)
                     .setContentTitle(context.getString(R.string.scheduled_export_executed))
@@ -164,18 +164,20 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 // https://developer.android.com/training/notify-user/build-notification#notify
                 with(NotificationManagerCompat.from(applicationContext)) {
                     // notificationId is a unique int for each notification that you must define
-                    { notify(0, builder.build()) }
+                    notify(NOTIFICATION_ID_ALERT, builder.build())
                 }
             }
         }
-        updateExportWork(context)
+        updateExportWork(context, false)
         //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
         return result
     }
 }
 
-fun updateExportWork(context: Context) {
-    WorkManager.getInstance(context).cancelAllWorkByTag(EXPORT_WORK_TAG)
+fun updateExportWork(context: Context, cancel: Boolean) {
+    if (cancel) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(EXPORT_WORK_TAG)
+    }
     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
     if (prefs.getBoolean("schedule_export", false)) {
         // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java

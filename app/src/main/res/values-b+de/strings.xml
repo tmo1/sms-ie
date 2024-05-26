@@ -48,8 +48,6 @@
     <string name="not_jsonarray_message">Die Datei scheint kein gültiges JSON-Array zu enthalten.</string>
     <string name="settings">Einstellungen</string>
     <string name="include_binary_data">Einschließlich binärer MMS-Daten</string>
-    <string name="channel_name">Benachrichtigungskanal</string>
-    <string name="channel_description">Benachrichtigungskanal</string>
     <string name="scheduled_export_executed">Geplanter Export ausgeführt</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS , %3$d Anruf(e) und %4$d Kontakt(e) exportiert.</string>
     <string name="scheduled_export_failure">Export fehlgeschlagen — siehe Logcat für weitere Details.</string>

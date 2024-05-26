@@ -24,8 +24,6 @@
     <string name="call_logs_read_write_permissions_required">درون‌برد گزارش‌های تماس برای خواندن و نوشتن گزارش‌های تماس به مجوز نیاز دارد.</string>
     <string name="contacts_read_permission_required">برون‌برد مخاطبین برای خواندن مخاطبین به مجوز نیاز دارد.</string>
     <string name="settings">تنظیمات</string>
-    <string name="channel_name">اطلاع‌رسانی_کانال</string>
-    <string name="channel_description">کانال اطلاع‌رسانی</string>
     <string name="scheduled_export_executed">برون‌برد برنامه ریزی شده اجرا شد</string>
     <string name="scheduled_export_success">%1$d پیامک ، %2$d پیام چندرسانه‌ای، %3$d تماس و %4$d مخاطب برون‌برد شد.</string>
     <string name="scheduled_export_failure">برون‌برد ناموفق بود — برای جزئیات بیشتر به گزارش مراجعه کنید.</string>

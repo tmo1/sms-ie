@@ -44,8 +44,6 @@
     <string name="call_logs_read_write_permissions_required">L\'importation de l\'historique des appels nécessite l\'autorisation de lire et écrire l\'historique des appels.</string>
     <string name="contacts_read_permission_required">L\'exportation des contacts nécessite l\'autorisation de lire les contacts.</string>
     <string name="contacts_write_permissions_required">L\'importation des contacts nécessite l\'autorisation d\'écrire les contacts.</string>
-    <string name="channel_name">canal_de_notification</string>
-    <string name="channel_description">Canal de Notification</string>
     <string name="scheduled_export_executed">Exportation planifiée exécutée</string>
     <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d appel(s), et %4$d contact(s) exporté(s).</string>
     <string name="wipe_messages">Effacer les messages</string>

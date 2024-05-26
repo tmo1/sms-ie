@@ -15,7 +15,6 @@
     <string name="call_logs_permissions_required">Eksportering av anropslogger krever tilgang til å lese anropslogg og kontaktliste.</string>
     <string name="sms_permissions_required">Eksportering av meldinger krever tilgang til å lese SMS-er og kontaktliste.</string>
     <string name="default_sms_app_requirement">Programmet må være forvalgt meldingsprogram for å importere eller slette meldinger.</string>
-    <string name="channel_name">Merknadskanal</string>
     <string name="scheduled_export_success">%1$d SMS(-er), %2$d MMS(-er), og %3$d anrop eksportert.</string>
     <string name="wipe_messages">Tøm meldinger</string>
     <string name="homepage">Hjemmeside:</string>
@@ -43,7 +42,6 @@
     <string name="settings">Innstillinger</string>
     <string name="scheduled_export_executed">Planlagt eksport kjørt</string>
     <string name="include_binary_data">Inkluder (kodet) binær MMS-data</string>
-    <string name="channel_description">Merknadskanal</string>
     <string name="cancel">Avbryt</string>
     <string name="not_jsonarray_message">Filen ser ikke ut til å være et gyldig JSON-array.</string>
     <string name="wipe">Tøm</string>

@@ -21,7 +21,6 @@
     <string name="contacts_read_permission_required">Para exportar los contactos se requiere el permiso de lectura de los contactos.</string>
     <string name="contacts_write_permissions_required">Para importar los contactos se requiere permiso para escribir en los contactos.</string>
     <string name="not_jsonarray_message">El archivo no parece contener un JSONArray válido.</string>
-    <string name="channel_description">Canal de notificaciones</string>
     <string name="scheduled_export_executed">Exportación programada ejecutada</string>
     <string name="scheduled_export_success">%1$d SMS(es), %2$d MMS(es), %3$d llamadas y %4$d contactos exportados.</string>
     <string name="wipe_messages">Borrar mensajes</string>
@@ -49,7 +48,6 @@
     <string name="call_logs_read_write_permissions_required">Para importar los registros de llamadas se requiere permisos para leer y escribir en los registros de llamadas.</string>
     <string name="settings">Ajustes</string>
     <string name="include_binary_data">Incluir los datos binarios de los MMS</string>
-    <string name="channel_name">canal_de_notificaciones</string>
     <string name="scheduled_export_failure">Exportación incorrecta — consulte el logcat para obtener más detalles.</string>
     <string name="dialog_confirm_wipe">Advertencia: ¿Borrar todos los mensajes de este dispositivo de forma permanente, sin que se pueda deshacerlo\?</string>
     <string name="wiping_mms_messages">Borrando los mensajes MMS …</string>

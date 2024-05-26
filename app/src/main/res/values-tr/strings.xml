@@ -60,8 +60,6 @@
     <string name="not_jsonarray_message">Dosya geçerli bir JSONArray içermiyor gibi görünüyor.</string>
     <string name="settings">Ayarlar</string>
     <string name="include_binary_data">İkili MMS verilerini dahil et</string>
-    <string name="channel_name">bildirim_kanali</string>
-    <string name="channel_description">Bildirim Kanalı</string>
     <string name="scheduled_export_executed">Planlanan dışa aktarma gerçekleştirildi</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d arama ve %4$d kisi dışa aktarıldı.</string>
     <string name="scheduled_export_failure">Dışa aktarma başarısız — daha fazla ayrıntı için logcat\'e bakın.</string>
