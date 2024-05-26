@@ -168,14 +168,16 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 }
             }
         }
-        updateExportWork(context)
+        updateExportWork(context, false)
         //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
         return result
     }
 }
 
-fun updateExportWork(context: Context) {
-    WorkManager.getInstance(context).cancelAllWorkByTag(EXPORT_WORK_TAG)
+fun updateExportWork(context: Context, cancel: Boolean) {
+    if (cancel) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(EXPORT_WORK_TAG)
+    }
     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
     if (prefs.getBoolean("schedule_export", false)) {
         // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java
