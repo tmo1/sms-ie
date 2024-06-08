@@ -70,4 +70,8 @@
     <string name="default_sms_app_warning"><b>Advertencia</b>: ¡Esta aplicación es actualmente la aplicación de SMS predeterminada, lo que significa que se perderán todos los mensajes SMS o MMS entrantes!. Para evitar esto, configure una aplicación de SMS predeterminada adecuada.</string>
     <string name="set_default_sms_app">Establecer la aplicación SMS por defecto</string>
     <string name="importing_calls">Importando llamadas …</string>
+    <string name="persistent_channel_name">Servicios en segundo plano</string>
+    <string name="persistent_channel_description">Notificación persistente para exportaciones programadas en segundo plano</string>
+    <string name="alerts_channel_name">Alertas programadas para la exportación</string>
+    <string name="alerts_channel_description">Alertas de éxito/fracaso cuando finalizan las exportaciones programadas</string>
 </resources>
