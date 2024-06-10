@@ -96,4 +96,8 @@
     <string name="set_default_sms_app">Öntanımlı SMS uygulaması ayarla</string>
     <string name="importing_calls">Aramalar içe aktarılıyor…</string>
     <string name="default_sms_app_warning"><b>Uyarı</b>: Bu uygulama şu anda öntanımlı SMS uygulamasıdır, bu da gelen tüm SMS veya MMS mesajlarının kaybolacağı anlamına gelir! Bunu önlemek için, uygun bir öntanımlı SMS uygulaması ayarlayın.</string>
+    <string name="persistent_channel_name">Arka plan hizmetleri</string>
+    <string name="persistent_channel_description">Arka planda zamanlanan dışa aktarmalar için kalıcı bildirim</string>
+    <string name="alerts_channel_name">Zamanlanan dışa aktarma uyarıları</string>
+    <string name="alerts_channel_description">Zamanlanan dışa aktarmalar tamamlandığında başarı/başarısızlık uyarıları</string>
 </resources>
