@@ -2,3 +2,13 @@
 
  - When this app is the default SMS app, add a warning to the app's main screen, as well as a button to bring up the default app settings (when API level >= 24) (issue #139).
 
+ - Support dark theme (issue #181).
+
+ - Overhaul notification framework - by Andrew Gunnerson (chenxiaolong) (issues #34, #179, #183 / PR #187).
+
+ - Update French, Spanish, Turkish, and Vietnamese translations.
+
+ - Update Android Gradle Plugin (AGP) version and various Gradle dependencies.
+
+ - Refactor.
+
