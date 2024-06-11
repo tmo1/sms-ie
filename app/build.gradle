@@ -33,8 +33,8 @@ android {
         applicationId "com.github.tmo1.sms_ie"
         minSdkVersion 19
         targetSdkVersion 34
-        versionCode 105
-        versionName "2.3.2"
+        versionCode 106
+        versionName "2.4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
