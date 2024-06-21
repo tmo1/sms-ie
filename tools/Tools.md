@@ -59,3 +59,9 @@ This script converts SMS messages in CSV format to SMS I/E compatible JSON. The 
 `csv-convert.py < messages.csv > messages.json`
 
 (See [issue #100](https://github.com/tmo1/sms-ie/issues/100).)
+
+## External Tools
+
+This section lists tools that are not developed or supported by the developers of SMS I/E, but may be of interest to users of the app. Descriptions of the tools are taken from their documentation:
+
+ - [Call Log Analyzer](https://github.com/guruor/analyze-call-logs): "This simple and intuitive web app lets you visualize your call logs in a beautiful chart format." (Processes call logs exported by SMS I/E.)
