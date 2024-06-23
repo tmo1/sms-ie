@@ -47,7 +47,7 @@
     <string name="wipe_cancelled">Очистка отменена</string>
     <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
     <string name="include_binary_data">Включать двоичные данные MMS</string>
-    <string name="not_jsonarray_message">Похоже, что файл не содержит корректный JSONArray.</string>
+    <string name="not_jsonarray_message">Похоже файл не содержит корректный JSONArray.</string>
     <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
     <string name="scheduled_export_failure">Экспорт не удался — смотрите logcat для более подробной информации.</string>
     <string name="app_about_text">SMS Import / Export
@@ -62,5 +62,6 @@
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
     <string name="importing_messages">Импорт сообщений ...</string>
     <string name="copying_mms_binary_data">Копирование двоичных данных MMS ...</string>
-    <string name="message_import_api_23_requirement">Импортирование сообщений возможно только на Android Marshmallow / 6.0 (Уровень API 23) и выше</string>
+    <string name="message_import_api_23_requirement">Импорт сообщений возможен только на Android Marshmallow / 6.0 (Уровень API 23) и выше.</string>
+    <string name="persistent_channel_name">Фоновые сервисы</string>
 </resources>
