@@ -47,8 +47,8 @@
     <string name="cancel">Anuluj</string>
     <string name="wipe_cancelled">Anulowano usuwanie</string>
     <string name="messages_wiped">Usunięto wiadomości</string>
-    <string name="wiping_sms_messages">Usuwanie wiadomości SMS …</string>
-    <string name="wiping_mms_messages">Usuwanie wiadomości MMS …</string>
+    <string name="wiping_sms_messages">Usuwanie wiadomości SMS…</string>
+    <string name="wiping_mms_messages">Usuwanie wiadomości MMS…</string>
     <string name="app_about_text">Import / Eksport SMS
 \n
 \nStworzone przez Thomasa More\'a oraz innych współtwórców
@@ -59,8 +59,8 @@
 \n
 \nWydane na licencji GNU GPLv3</string>
     <string name="call_log_export_progress">Wyeksportowano %1$d z %2$d połączeń</string>
-    <string name="copying_mms_binary_data">Kopiowanie binarnych danych MMS...</string>
-    <string name="importing_messages">Importowanie wiadomości...</string>
+    <string name="copying_mms_binary_data">Kopiowanie binarnych danych MMS…</string>
+    <string name="importing_messages">Importowanie wiadomości…</string>
     <string name="default_sms_app_dialog_title">Domyślna aplikacja dla SMSów</string>
     <string name="become_default_sms_app_warning">Import/Eksport SMS-ów musi być domyślną aplikacją do wiadomości SMS, aby można było importować lub usuwać wiadomości. Przed kontynuowaniem przeczytaj plik README i upewnij się, że rozumiesz konsekwencje takiego działania.</string>
     <string name="scheduled_export_executing">Wykonywanie zaplanowanego eksportu</string>
