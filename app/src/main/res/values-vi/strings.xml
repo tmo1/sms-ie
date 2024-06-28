@@ -28,9 +28,9 @@
     <string name="sms_permissions_required">Việc xuất tin nhắn cần có quyền đọc SMS và danh bạ.</string>
     <string name="default_sms_app_requirement">Ứng dụng này phải là ứng dụng SMS mặc định để nhập hoặc xóa tin nhắn.</string>
     <string name="okay">ĐƯỢC</string>
-    <string name="wiping_sms_messages">Đang xóa tin nhắn SMS …</string>
+    <string name="wiping_sms_messages">Đang xóa tin nhắn SMS…</string>
     <string name="messages_wiped">Đã xóa tin nhắn</string>
-    <string name="wiping_mms_messages">Đang xóa tin nhắn MMS …</string>
+    <string name="wiping_mms_messages">Đang xóa tin nhắn MMS…</string>
     <string name="app_about_text">Nhập / xuất SMS
 \n
 \ncủa Thomas More và những người đóng góp khác
@@ -47,7 +47,7 @@
     <string name="export_contacts">Xuất danh bạ</string>
     <string name="import_contacts">Nhập danh bạ</string>
     <string name="copying_mms_binary_data">Đang sao chép dữ liệu nhị phân MMS…</string>
-    <string name="importing_messages">Đang nhập tin nhắn …</string>
+    <string name="importing_messages">Đang nhập tin nhắn…</string>
     <string name="become_default_sms_app_warning">Nhập / Xuất SMS phải là ứng dụng SMS mặc định để nhập hoặc xóa tin nhắn. Vui lòng đọc README và đảm bảo bạn hiểu ý nghĩa của việc này trước khi tiếp tục.</string>
     <string name="default_sms_app_dialog_title">Ứng dụng SMS mặc định</string>
     <string name="message_import_api_23_requirement">Chỉ có thể nhập tin nhắn trên Android Marshmallow / 6.0 (API cấp 23) trở lên.</string>
@@ -67,6 +67,6 @@
     <string name="contacts_write_permissions_required">Nhập danh bạ cần có quyền ghi Danh bạ.</string>
     <string name="settings">Thiết đặt</string>
     <string name="set_default_sms_app">Đặt ứng dụng SMS mặc định</string>
-    <string name="importing_calls">Đang nhập cuộc gọi …</string>
+    <string name="importing_calls">Đang nhập cuộc gọi…</string>
     <string name="default_sms_app_warning"><b>Cảnh báo</b>: Ứng dụng này hiện là ứng dụng SMS mặc định, có nghĩa là mọi tin nhắn SMS hoặc MMS đến sẽ bị mất! Để tránh điều này, hãy đặt ứng dụng SMS mặc định thích hợp.</string>
 </resources>
