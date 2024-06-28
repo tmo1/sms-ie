@@ -19,8 +19,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="app_name">SMS Import / Export</string>
     <string name="export_messages_button_label">Export Messages</string>
     <string name="import_messages_button_label">Import Messages</string>
@@ -70,8 +69,8 @@
     <string name="cancel">Cancel</string>
     <string name="wipe_cancelled">Wipe cancelled</string>
     <string name="messages_wiped">Messages wiped</string>
-    <string name="wiping_sms_messages">Wiping SMS messages …</string>
-    <string name="wiping_mms_messages">Wiping MMS messages …</string>
+    <string name="wiping_sms_messages">Wiping SMS messages…</string>
+    <string name="wiping_mms_messages">Wiping MMS messages…</string>
     <string name="app_about_text">SMS Import / Export
 \n
 \nby Thomas More and other contributors
@@ -90,13 +89,13 @@
     <string name="about">About</string>
     <string name="export_contacts">Export Contacts</string>
     <string name="import_contacts">Import Contacts</string>
-    <string name="copying_mms_binary_data">Copying MMS binary data …</string>
-    <string name="importing_messages">Importing messages …</string>
+    <string name="copying_mms_binary_data">Copying MMS binary data…</string>
+    <string name="importing_messages">Importing messages…</string>
     <string name="become_default_sms_app_warning">SMS Import / Export must be the default SMS app in order to import or wipe messages. Please read the README and make sure you understand the implications of doing this before proceeding.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Default SMS App</string>
     <string name="message_import_api_23_requirement">Importing messages is only possible on Android Marshmallow / 6.0 (API level 23) or later.</string>
     <string name="default_sms_app_warning"><b>Warning</b>: This app is currently the default SMS app, which means that any incoming SMS or MMS messages will be lost! To avoid this, set a proper default SMS app.</string>
     <string name="set_default_sms_app">Set default SMS app</string>
-    <string name="importing_calls">Importing calls …</string>
+    <string name="importing_calls">Importing calls…</string>
 </resources>
