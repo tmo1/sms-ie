@@ -29,8 +29,8 @@
     <string name="cancel">Cancelar</string>
     <string name="wipe_cancelled">Eliminação cancelada</string>
     <string name="messages_wiped">Mensagens apagadas</string>
-    <string name="wiping_sms_messages">A apagar mensagens SMS …</string>
-    <string name="wiping_mms_messages">A apagar mensagens MMS …</string>
+    <string name="wiping_sms_messages">A apagar mensagens SMS…</string>
+    <string name="wiping_mms_messages">A apagar mensagens MMS…</string>
     <string name="documentation">Documentação:</string>
     <string name="homepage">Homepage:</string>
     <string name="call_log_import_progress">%1$d chamada(s) importadas</string>
