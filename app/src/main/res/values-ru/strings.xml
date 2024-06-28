@@ -63,6 +63,6 @@
     <string name="copying_mms_binary_data">Копирование двоичных данных MMS ...</string>
     <string name="message_import_api_23_requirement">Импорт сообщений возможен только на Android Marshmallow / 6.0 (Уровень API 23) и выше.</string>
     <string name="persistent_channel_name">Фоновые сервисы</string>
-    <string name="default_sms_app_dialog_title">Приложение SMS по умолчанию</string>
+    <string name="default_sms_app_dialog_title">SMS приложение по умолчанию</string>
     <string name="become_default_sms_app_warning">SMS Import / Export для импорта или очистки сообщений должно быть SMS приложением по умолчанию. Пожалуйста прочитайте README и убедитесь, что Вы понимаете последствия этого.</string>
 </resources>
