@@ -60,7 +60,7 @@
 \n
 \nPublicado bajo la GNU GPLv3</string>
     <string name="copying_mms_binary_data">Copiando los datos binarios del MMS …</string>
-    <string name="importing_messages">Importando mensajes …</string>
+    <string name="importing_messages">Importando mensajes…</string>
     <string name="default_sms_app_dialog_title">Aplicación de SMS por defecto</string>
     <string name="become_default_sms_app_warning">SMS Import / Export debe ser la aplicación SMS por defecto para poder importar o borrar los mensajes. Por favor, lee el archivo LÉEME y asegurate de que entiendes las implicaciones de hacer esto antes de seguir.</string>
     <string name="okay">DE ACUERDO</string>
@@ -68,7 +68,7 @@
     <string name="message_import_api_23_requirement">La importación de mensajes solo es posible en Android Marshmallow / 6.0 (nivel de API 23) o posterior.</string>
     <string name="default_sms_app_warning"><b>Advertencia</b>: ¡Esta aplicación es actualmente la aplicación de SMS predeterminada, lo que significa que se perderán todos los mensajes SMS o MMS entrantes!. Para evitar esto, configure una aplicación de SMS predeterminada adecuada.</string>
     <string name="set_default_sms_app">Establecer la aplicación SMS por defecto</string>
-    <string name="importing_calls">Importando llamadas …</string>
+    <string name="importing_calls">Importando llamadas…</string>
     <string name="persistent_channel_name">Servicios en segundo plano</string>
     <string name="persistent_channel_description">Notificación persistente para exportaciones programadas en segundo plano</string>
     <string name="alerts_channel_name">Alertas programadas para la exportación</string>
