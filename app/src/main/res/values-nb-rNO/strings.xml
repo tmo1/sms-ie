@@ -46,7 +46,7 @@
     <string name="wipe">Tøm</string>
     <string name="wipe_cancelled">Tømming avbrutt</string>
     <string name="messages_wiped">Meldinger tømt</string>
-    <string name="wiping_sms_messages">Tømmer SMS-meldinger …</string>
-    <string name="wiping_mms_messages">Tømmer MMS-meldinger …</string>
+    <string name="wiping_sms_messages">Tømmer SMS-meldinger…</string>
+    <string name="wiping_mms_messages">Tømmer MMS-meldinger…</string>
     <string name="call_logs_read_write_permissions_required">Importering av anropslogger krever tilgang til å lese og skrive anropslogg.</string>
 </resources>
