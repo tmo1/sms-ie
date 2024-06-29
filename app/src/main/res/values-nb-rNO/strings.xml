@@ -43,7 +43,6 @@
     <string name="scheduled_export_executed">Planlagt eksport kjørt</string>
     <string name="include_binary_data">Inkluder (kodet) binær MMS-data</string>
     <string name="cancel">Avbryt</string>
-    <string name="not_jsonarray_message">Filen ser ikke ut til å være et gyldig JSON-array.</string>
     <string name="wipe">Tøm</string>
     <string name="wipe_cancelled">Tømming avbrutt</string>
     <string name="messages_wiped">Meldinger tømt</string>

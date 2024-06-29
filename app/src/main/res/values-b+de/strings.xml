@@ -45,7 +45,6 @@
     <string name="default_sms_app_requirement">Diese App muss die Standard-SMS-App sein, damit Nachrichten importiert oder gelöscht werden können.</string>
     <string name="call_logs_permissions_required">Das Exportieren der Anrufliste erfordert die Berichtigungen zum Lesen der Anrufliste und Kontakte.</string>
     <string name="call_logs_read_write_permissions_required">Der Import von Anruflisten erfordert die Berechtigung zum Lesen und Schreiben von Anruflisten.</string>
-    <string name="not_jsonarray_message">Die Datei scheint kein gültiges JSON-Array zu enthalten.</string>
     <string name="settings">Einstellungen</string>
     <string name="include_binary_data">Einschließlich binärer MMS-Daten</string>
     <string name="scheduled_export_executed">Geplanter Export ausgeführt</string>

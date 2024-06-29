@@ -38,7 +38,6 @@
     <string name="wipe">מחק</string>
     <string name="export_call_log_results">%1$d שיחות יוצאו
 \nזמן שחלף: %2$s</string>
-    <string name="not_jsonarray_message">נראה שהקובץ אינו מכיל JSONArray חוקי.</string>
     <string name="settings">הגדרות</string>
     <string name="about">אודות</string>
     <string name="wipe_messages">מחק הודעות</string>

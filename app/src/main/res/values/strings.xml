@@ -54,7 +54,6 @@
     <string name="call_logs_read_write_permissions_required">Importing call logs requires permission to read and write call logs.</string>
     <string name="contacts_read_permission_required">Exporting contacts requires permission to read Contacts.</string>
     <string name="contacts_write_permissions_required">Importing contacts requires permission to write Contacts.</string>
-    <string name="not_jsonarray_message">The file does not seem to contain a valid JSONArray.</string>
     <string name="settings">Settings</string>
     <string name="include_binary_data">Include binary MMS data</string>
     <string name="persistent_channel_name">Background services</string>

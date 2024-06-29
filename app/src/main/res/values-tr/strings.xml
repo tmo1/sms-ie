@@ -57,7 +57,6 @@
     <string name="call_logs_read_write_permissions_required">Arama geçmişini içe aktarmak için arama geçmişini okuma ve yazma izni gerekir.</string>
     <string name="contacts_read_permission_required">Kişileri dışa aktarmak için Kişileri okuma izni gerekir.</string>
     <string name="contacts_write_permissions_required">Kişileri içe aktarmak için Kişileri yazma izni gerekir.</string>
-    <string name="not_jsonarray_message">Dosya geçerli bir JSONArray içermiyor gibi görünüyor.</string>
     <string name="settings">Ayarlar</string>
     <string name="include_binary_data">İkili MMS verilerini dahil et</string>
     <string name="scheduled_export_executed">Planlanan dışa aktarma gerçekleştirildi</string>
