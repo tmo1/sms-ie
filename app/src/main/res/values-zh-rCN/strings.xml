@@ -60,8 +60,8 @@
 \n耗时: %2$s。</string>
     <string name="contacts_write_permissions_required">导入联系人需要写入联系人的权限。</string>
     <string name="scheduled_export_executing">执行预定输出</string>
-    <string name="importing_messages">正在导入消息 ...</string>
-    <string name="copying_mms_binary_data">正在复制彩信二进制数据 ...</string>
+    <string name="importing_messages">正在导入消息…</string>
+    <string name="copying_mms_binary_data">正在复制彩信二进制数据…</string>
     <string name="okay">确定</string>
     <string name="default_sms_app_dialog_title">默认短信应用</string>
     <string name="message_import_api_23_requirement">仅可在 Android Marshmallow / 6.0（API 级别 23）或更高版本上导入消息。</string>
