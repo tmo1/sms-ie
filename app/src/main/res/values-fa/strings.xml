@@ -44,7 +44,6 @@
     <string name="import_call_log_button_label">درون‌برد گزارش تماس</string>
     <string name="call_log_export_progress">%1$d از %2$d تماس برون‌برد شد</string>
     <string name="contacts_write_permissions_required">درون‌برد مخاطبین برای نوشتن مخاطبین به مجوز نیاز دارد.</string>
-    <string name="not_jsonarray_message">به‌نظر می‌رسد این فایل حاوی JSONArray معتبر نیست.</string>
     <string name="default_sms_app_requirement">این برنامه باید برنامه پیش‌فرض پیامک برای درون‌برد یا پاک‌سازی پیام‌ها باشد.</string>
     <string name="messages_wiped">پیام‌ها پاک‌سازی شدند</string>
     <string name="wipe_cancelled">پاک‌سازی لغو شد</string>

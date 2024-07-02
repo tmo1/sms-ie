@@ -38,7 +38,6 @@
     <string name="default_sms_app_requirement">Ta aplikacja musi być domyślną aplikacją do obsługi SMSów, aby można było importować lub usuwać wiadomości.</string>
     <string name="call_logs_read_write_permissions_required">Importowanie listy połączeń wymaga uprawnień do odczytu i zapisu listy połączeń.</string>
     <string name="contacts_read_permission_required">Eksportowanie kontaktów wymaga uprawnień do odczytu kontaktów.</string>
-    <string name="not_jsonarray_message">Wydaje się, że plik nie zawiera poprawnej tablicy JSONArray.</string>
     <string name="settings">Ustawienia</string>
     <string name="include_binary_data">Dołącz binarne dane MMS</string>
     <string name="scheduled_export_executed">Zaplanowany eksport wykonany</string>

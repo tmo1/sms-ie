@@ -47,7 +47,6 @@
     <string name="wipe_cancelled">Очистка отменена</string>
     <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
     <string name="include_binary_data">Включать двоичные данные MMS</string>
-    <string name="not_jsonarray_message">Похоже файл не содержит корректный JSONArray.</string>
     <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
     <string name="scheduled_export_failure">Экспорт не удался — смотрите logcat для более подробной информации.</string>
     <string name="app_about_text">SMS Import / Export

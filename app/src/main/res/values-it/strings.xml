@@ -24,7 +24,6 @@
     <string name="call_logs_read_write_permissions_required">L\'importazione del registro delle chiamate richiede l\'autorizzazione per leggere e scrivere il registro delle chiamate.</string>
     <string name="contacts_read_permission_required">L\'esportazione dei contatti richiede l\'autorizzazione per leggere i contatti.</string>
     <string name="contacts_write_permissions_required">L\'importazione dei contatti richiede l\'autorizzazione per scrivere i contatti.</string>
-    <string name="not_jsonarray_message">Il file non sembra contenere un JSONArray valido.</string>
     <string name="settings">Impostazioni</string>
     <string name="include_binary_data">Includi dati binari MMS</string>
     <string name="scheduled_export_executed">Esportazione pianificata eseguita</string>

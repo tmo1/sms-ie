@@ -20,7 +20,6 @@
     <string name="call_logs_permissions_required">Para exportar los registros de llamadas es necesario tener permiso para leer los registros de llamadas y los contactos.</string>
     <string name="contacts_read_permission_required">Para exportar los contactos se requiere el permiso de lectura de los contactos.</string>
     <string name="contacts_write_permissions_required">Para importar los contactos se requiere permiso para escribir en los contactos.</string>
-    <string name="not_jsonarray_message">El archivo no parece contener un JSONArray válido.</string>
     <string name="scheduled_export_executed">Exportación programada ejecutada</string>
     <string name="scheduled_export_success">%1$d SMS(es), %2$d MMS(es), %3$d llamadas y %4$d contactos exportados.</string>
     <string name="wipe_messages">Borrar mensajes</string>

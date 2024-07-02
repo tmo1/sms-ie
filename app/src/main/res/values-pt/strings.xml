@@ -20,7 +20,6 @@
     <string name="default_sms_app_requirement">Esta aplicação tem de ser a aplicação de SMS padrão para importar ou apagar mensagens.</string>
     <string name="call_logs_permissions_required">A exportação de registo de chamadas requer permissão para ler os Registos das Chamadas e os Contactos.</string>
     <string name="call_logs_read_write_permissions_required">A importação de Registos de Chamadas requer permissão para ler e escrever registos de chamadas.</string>
-    <string name="not_jsonarray_message">O ficheiro não parece conter um JSONArray válido.</string>
     <string name="settings">Definições</string>
     <string name="include_binary_data">Incluir dados binários (codificados) das MMS</string>
     <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d chamadas e %4$d contactos exportados.</string>
