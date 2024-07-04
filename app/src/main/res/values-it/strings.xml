@@ -66,4 +66,11 @@
     <string name="default_sms_app_dialog_title">Applicazione predefinita SMS</string>
     <string name="become_default_sms_app_warning">Per poter importare o cancellare i messaggi, Importa/Esporta SMS deve essere l\'applicazione SMS predefinita. Leggere il README prima di procedere e assicurarsi di comprendere le implicazioni di questa operazione.</string>
     <string name="okay">OK</string>
+    <string name="persistent_channel_name">Servizi in background</string>
+    <string name="persistent_channel_description">Notifica persistente per le esportazioni programmate in background</string>
+    <string name="alerts_channel_name">Avvisi esportazione programmate</string>
+    <string name="alerts_channel_description">Avvisi di successo/fallimento al completamento delle esportazioni programmate</string>
+    <string name="default_sms_app_warning"><b>Attenzione</b>: questa applicazione quella predefinita per gli SMS, il che significa che ogni messaggio SMS o MMS in arrivo andrà perso! Per evitare questo problema, impostare un\'app predefinita adatta agli SMS.</string>
+    <string name="set_default_sms_app">Imposta app SMS predefinita</string>
+    <string name="importing_calls">Importazione chiamate…</string>
 </resources>
