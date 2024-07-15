@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="import_messages_button_label">Importar Mensagens</string>
+    <string name="app_name">Importar / Exportar SMS</string>
+    <string name="export_messages_button_label">Exportar Mensagens</string>
+    <string name="export_call_log_button_label">Exportar Registro de Chamadas</string>
+    <string name="import_call_log_button_label">Importar Registro de Chamadas</string>
+    <string name="ready">Pronto</string>
+    <string name="call_log_export_progress">%1$d de %2$d chamada(s) exportadas</string>
+    <string name="call_log_import_progress">%1$d chamada(s) importadas</string>
+    <string name="sms_export_progress">%1$d de %2$d SMS(s) exportadas</string>
+    <string name="mms_export_progress">%1$d de %2$d MMS(s) exportadas</string>
+    <string name="message_import_progress">%1$d SMS(s) e %2$d MMS(s) importadas</string>
+    <string name="contacts_export_progress">%1$d de %2$d contato(s) exportado(s)</string>
+    <string name="contacts_import_progress">%1$d contato(s) importado(s)</string>
+    <string name="export_messages_results">%1$d SMS(s) e %2$d MMS(s) exportadas
+\nTempo utilizado: %3$s</string>
+    <string name="import_messages_results">%1$d SMS(s) e %2$d MMS(s) importadas
+\nTempo utilizado: %3$s</string>
+    <string name="export_call_log_results">%1$d chamada(s) exportada(s)
+\nTempo utilizado: %2$s</string>
+    <string name="import_call_log_results">%1$d chamada(s) importada(s)
+\nTempo utilizado: %2$s</string>
+    <string name="export_contacts_results">%1$d contato(s) exportado(s)
+\nTempo decorrido: %2$s.</string>
+    <string name="import_contacts_results">%1$d contato(s) importado(s)
+\nTempo decorrido: %2$s.</string>
+    <string name="default_sms_app_requirement">Este aplicativo tem de ser o aplicativo de SMS padrão para importar ou apagar mensagens.</string>
+    <string name="call_logs_permissions_required">A exportação de registro de chamadas requer permissão para ler os Registros das Chamadas e os Contatos.</string>
+    <string name="call_logs_read_write_permissions_required">A importação de Registros de Chamadas requer permissão para ler e escrever registros de chamadas.</string>
+    <string name="contacts_read_permission_required">A exportação de contatos requer permissão para ler os Contatos.</string>
+    <string name="contacts_write_permissions_required">A importação de contatos requer permissão para escrever em Contatos.</string>
+    <string name="sms_permissions_required">A exportação de mensagens requer permissão para ler SMSs e contatos.</string>
+</resources>
