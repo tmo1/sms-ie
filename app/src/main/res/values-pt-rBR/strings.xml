@@ -31,4 +31,8 @@
     <string name="contacts_read_permission_required">A exportação de contatos requer permissão para ler os Contatos.</string>
     <string name="contacts_write_permissions_required">A importação de contatos requer permissão para escrever em Contatos.</string>
     <string name="sms_permissions_required">A exportação de mensagens requer permissão para ler SMSs e contatos.</string>
+    <string name="settings">Configurações</string>
+    <string name="include_binary_data">Incluir dados binários MMS</string>
+    <string name="persistent_channel_description">Notificação persistente para exportações agendadas em segundo plano</string>
+    <string name="alerts_channel_name">Alertas de exportação agendados</string>
 </resources>
