@@ -41,5 +41,6 @@ allprojects {
 }
 
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+    // https://stackoverflow.com/questions/77564583/getting-rid-of-builddir-deprecation
+    delete rootProject.layout.buildDirectory
 }
