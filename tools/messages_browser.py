@@ -11,7 +11,7 @@ import re
 from sys import argv
 from zipfile import is_zipfile, ZipFile
 
-URL_REGEX = re.compile("(https?://*\S+)")
+URL_REGEX = re.compile(r"(https?://*\S+)")
 
 base_html = '''
 <!DOCTYPE html><html lang=””><head><meta charset="utf-8">
