@@ -60,6 +60,18 @@ This script converts SMS messages in CSV format to SMS I/E compatible JSON. The 
 
 (See [issue #100](https://github.com/tmo1/sms-ie/issues/100).)
 
+## Contributed Tools
+
+This section lists tools for SMS I/E provided by other developers.
+
+### [`messages_browser.py`](contrib/messages_browser.py)
+
+Platform independent utility to browse SMS and MMS messages zip archive files exported by SMS I/E.  (In a similar style to how they appear in Android.)
+
+`messages_browser.py messages-xxx.zip`
+
+(Runs a local HTTP server that can also serve other devices on the LAN if your firewall permits it.)
+
 ## External Tools
 
 This section lists tools that are not developed or supported by the developers of SMS I/E, but may be of interest to users of the app. Descriptions of the tools are taken from their documentation:
