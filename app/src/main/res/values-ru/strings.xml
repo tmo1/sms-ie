@@ -68,4 +68,9 @@
     <string name="default_sms_app_warning"><b>Внимание:</b>: это приложение является SMS приложением по умолчанию, это значит что входящие SMS или MMS сообщения будут потеряны! Чтоб избежать это, выберете правильное SMS приложение.</string>
     <string name="set_default_sms_app">Выбрать SMS приложение по умолчанию</string>
     <string name="importing_calls">Импорт звонков…</string>
+    <string name="persistent_channel_description">Постоянное уведомление для фоновых запланированных экспортов</string>
+    <string name="alerts_channel_name">Запланированные оповещения об экспорте</string>
+    <string name="scheduled_export_executing">Выполнение запланированного экспорта</string>
+    <string name="alerts_channel_description">Оповещения об успехе/неудаче при завершении запланированного экспорта</string>
+    <string name="okay">ХОРОШО</string>
 </resources>
