@@ -261,6 +261,10 @@ SMS Import / Export has been translated (from the original English) into the fol
   
 To add a translation into a new language, or to correct, update, or improve an existing translation, see [here](CONTRIBUTING.md).
  
+## Tools
+
+The [`tools`](/tools/) directory contains various tools that may be useful in conjunction with SMS Import / Export; see [`Tools.md`](/tools/Tools.md) for details and documentation.
+
 ## TODO
 
 The following are various features and improvements to the app that have been suggested and may be implemented in the future:

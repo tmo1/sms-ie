@@ -62,18 +62,20 @@ This script converts SMS messages in CSV format to SMS I/E compatible JSON. The 
 
 ## Contributed Tools
 
-This section lists tools for SMS I/E provided by other developers.
+The `tools/contrib` directory contains tools for use with SMS I/E that have been contributed by outside developers to the SMS I/E project.
 
 ### [`messages_browser.py`](contrib/messages_browser.py)
 
-Platform independent utility to browse SMS and MMS messages zip archive files exported by SMS I/E.  (In a similar style to how they appear in Android.)
+This is a platform independent utility to browse collections of SMS and MMS messages (included binary MMS attachments) exported by SMS I/E (in the `v2` ZIP file format). The messages are displayed similarly to how they are displayed by the standard Android "Messaging" app.
+
+To use, run:
 
 `messages_browser.py messages-xxx.zip`
 
-(Runs a local HTTP server that can also serve other devices on the LAN if your firewall permits it.)
+and then visit `http://127.0.0.1:8222` in a web browser.
 
 ## External Tools
 
-This section lists tools that are not developed or supported by the developers of SMS I/E, but may be of interest to users of the app. Descriptions of the tools are taken from their documentation:
+This section lists tools for use with SMS I/E that have been developed, and are distributed, by outside developers. Descriptions of the tools are taken from their documentation:
 
  - [Call Log Analyzer](https://github.com/guruor/analyze-call-logs): "This simple and intuitive web app lets you visualize your call logs in a beautiful chart format." (Processes call logs exported by SMS I/E.)

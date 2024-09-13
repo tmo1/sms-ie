@@ -1,2 +1,6 @@
- - Update German translation
+ - Fix a regression that caused outgoing SMS messages with addresses (phone numbers) containing spaces to be skipped when importing (see issues #159, #205, and #128).
+
+ - Update German and Russian translations.
+
+ - Update Gradle build configuration.
 

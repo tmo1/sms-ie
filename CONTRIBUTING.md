@@ -51,3 +51,4 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): [GitHub workflow to automatically build and upload APKs containing the latest committed code](.github/workflows/build.yml) ([PR #99](https://github.com/tmo1/sms-ie/pull/99))
  - [wittmane](https://github.com/wittmane), [dshepsis](https://github.com/dshepsis), and [sshaikh](https://github.com/sshaikh): figuring out broken `Subscription ID` handling on Android 14 ([Issue #128](https://github.com/tmo1/sms-ie/issues/128))
  - [Artem13327](https://github.com/Artem13327): [Update to automatic build and upload Github workflow](https://github.com/tmo1/sms-ie/pull/158)
+ - [sta-c0000](https://github.com/sta-c0000): [Message browser tool](https://github.com/tmo1/sms-ie/pull/208)
