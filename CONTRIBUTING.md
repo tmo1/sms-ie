@@ -22,7 +22,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
 
  - [nautilusx](https://github.com/nautilusx): German translation
  - [baitmooth](https://github.com/baitmooth): additions to German translation
- - [AntoninCurtit](https://github.com/AntoninCurtit): French translation (and assistance with the German one)
+ - [AntoninDelFabbro](https://github.com/AntoninDelFabbro): French translation (and assistance with the German one)
  - [Philippe (Philippe213)](https://hosted.weblate.org/user/philippe213/): update to French translation
  - [mavosaure](https://github.com/mavosaure): update to French translation
  - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
