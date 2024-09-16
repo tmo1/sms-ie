@@ -1,87 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021-2022,2024 Thomas More
+  ~ SMS Import / Export : une application Android simplissime pour importer et exporter les messages SMS et MMS,
+  ~ historique d\`appels et contacts, depuis et vers des fichiers JSON / NDJSON.
   ~
-  ~ This file is part of SMS Import / Export.
+  ~ Copyright (c) 2021–2024 Thomas More
   ~
-  ~ SMS Import / Export is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
+  ~ Ce fichier fait partie de SMS Import / Export.
   ~
-  ~ SMS Import / Export is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  ~ GNU General Public License for more details.
+  ~ SMS Import / Export est un logiciel libre : vous pouvez le redistribuer et/ou le
+  ~ modifier suivant les termes de la GNU General Public License telle que
+  ~ publiée par la Free Software Foundation, soit la version 3 de cette
+  ~ licence, soit (à votre gré) toute version ultérieure.
   ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  ~ SMS Import / Export est distribué dans l\`espoir qu\`elle sera utile,
+  ~ mais SANS AUCUNE GARANTIE ; sans même la garantie implicite de la
+  ~ COMMERCIALISABILITÉ ni d\`ADÉQUATION À UN OBJECTIF PARTICULIER. Consultez
+  ~ la Licence publique générale GNU pour plus de détails.
+  ~
+  ~ Vous devriez avoir reçu une copie de la Licence publique générale GNU
+  ~ avec SMS Import / Export. Autrement, consultez <https://www.gnu.org/licenses/>.
+  -->
+<resources>
     <string name="app_name">SMS Import / Export</string>
-    <string name="export_messages_results">%1$d SMS(s) et %2$d MMS(s) exportés.
-\nTemps écoulé : %3$s</string>
-    <string name="import_messages_results">%1$d SMS(s) et %2$d MMS(s) importés.
-\nTemps écoulé : %3$s</string>
-    <string name="export_call_log_results">%1$d appel(s) exportés
-\nTemps écoulé : %2$s</string>
     <string name="export_messages_button_label">Exporter les messages</string>
     <string name="import_messages_button_label">Importer les messages</string>
-    <string name="export_call_log_button_label">Exporter l\'historique des appels</string>
-    <string name="sms_permissions_required">L\'exportation des messages nécessite l\'autorisation de lire les SMSs et les contacts.</string>
-    <string name="default_sms_app_requirement">Cette application doit être définie comme application SMS par défaut afin d\'importer les messages.</string>
-    <string name="call_logs_permissions_required">L\'exportation de l\'historique des appels nécessite l\'autorisation de lire l\'historique des appels et les Contacts.</string>
-    <string name="include_binary_data">Inclure les données binaires MMS</string>
-    <string name="settings">Paramètres</string>
-    <string name="contacts_import_progress">%1$d contact(s) importé(s)</string>
-    <string name="export_contacts_results">%1$d contact(s) exporté(s)
-\nTemps écoulés : %2$s.</string>
-    <string name="import_contacts_results">%1$d contact(s) importé(s)
-\nTemps écoulé : %2$s.</string>
-    <string name="import_call_log_results">%1$d appel(s) importé(s)
-\nTemps écoulé : %2$s</string>
-    <string name="call_logs_read_write_permissions_required">L\'importation de l\'historique des appels nécessite l\'autorisation de lire et écrire l\'historique des appels.</string>
-    <string name="contacts_read_permission_required">L\'exportation des contacts nécessite l\'autorisation de lire les contacts.</string>
-    <string name="contacts_write_permissions_required">L\'importation des contacts nécessite l\'autorisation d\'écrire les contacts.</string>
-    <string name="scheduled_export_executed">Exportation planifiée exécutée</string>
-    <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d appel(s), et %4$d contact(s) exporté(s).</string>
-    <string name="wipe_messages">Effacer les messages</string>
-    <string name="scheduled_export_failure">Échec de l\'export - voir le fichier de logs pour plus d\'information.</string>
-    <string name="wipe">Nettoyer</string>
-    <string name="cancel">Annuler</string>
-    <string name="dialog_confirm_wipe">Attention : Nettoyer définitivement tous les messages de cet équipement, sans possibilité d\'annulation \?</string>
-    <string name="wiping_sms_messages">Nettoyage des messages SMS en cours…</string>
-    <string name="wiping_mms_messages">Nettoyage des messages MMS en cours…</string>
-    <string name="app_about_text">SMS Import / Export
-\n
-\npar Thomas More et d\'autres contributeurs
-\n
-\nVersion %1$s
-\n
-\nCopyright © 2021–24
-\n
-\nDélivré sous GNU GPLv3</string>
-    <string name="homepage">Page d\'accueil :</string>
-    <string name="documentation">Documentation :</string>
-    <string name="issue_tracker">Suivi des problèmes :</string>
-    <string name="about">À propos</string>
-    <string name="export_contacts">Exporter les Contacts</string>
-    <string name="import_contacts">Importer les Contacts</string>
-    <string name="contacts_export_progress">%1$d sur %2$d contact(s) exporté(s)</string>
-    <string name="wipe_cancelled">Nettoyage annulé</string>
-    <string name="messages_wiped">Messages nettoyés</string>
-    <string name="import_call_log_button_label">Importer l\'historique des appels</string>
+    <string name="export_call_log_button_label">Exporter l\`historique des appels</string>
+    <string name="import_call_log_button_label">Importer l\`historique des appels</string>
     <string name="ready">Prêt</string>
+    <!--<string name="begin_exporting_messages">Exportation des messages…</string>
+    <string name="begin_exporting_sms">Exportation des messages SMS…</string>
+    <string name="begin_exporting_mms">Exportation des messages MMS…</string>
+    <string name="begin_importing_messages">Importation des messages…</string>
+    <string name="begin_importing_sms">Importation des messages SMS…</string>
+    <string name="begin_importing_mms">Exportation des messages MMS…</string>
+    <string name="begin_exporting_call_log">Exportation de l\`historique des appels…</string>
+    <string name="begin_importing_call_log">Importation de l\`historique des appels…</string>-->
     <string name="call_log_export_progress">%1$d sur %2$d appel(s) exporté(s)</string>
     <string name="call_log_import_progress">%1$d appel(s) importé(s)</string>
     <string name="sms_export_progress">%1$d sur %2$d SMS(s) exporté(s)</string>
     <string name="mms_export_progress">%1$d sur %2$d MMS(s) exporté(s)</string>
     <string name="message_import_progress">%1$d SMS(s) et %2$d MMS(s) importé(s)</string>
-    <string name="scheduled_export_executing">Exportation planifiée en cours d\'exécution</string>
-    <string name="importing_messages">Importation des messages…</string>
+    <string name="contacts_export_progress">%1$d sur %2$d contact(s) exporté(s)</string>
+    <string name="contacts_import_progress">%1$d contact(s) importé(s)</string>
+    <string name="export_messages_results">%1$d SMS(s) et %2$d MMS(s) exportés.\nTemps écoulé : %3$s</string>
+    <string name="import_messages_results">%1$d SMS(s) et %2$d MMS(s) importés.\nTemps écoulé : %3$s</string>
+    <string name="export_call_log_results">%1$d appel(s) exportés\nTemps écoulé : %2$s</string>
+    <string name="import_call_log_results">%1$d appel(s) importé(s)\nTemps écoulé : %2$s</string>
+    <string name="export_contacts_results">%1$d contact(s) exporté(s)\nTemps écoulés : %2$s.</string>
+    <string name="import_contacts_results">%1$d contact(s) importé(s)\nTemps écoulé : %2$s.</string>
+    <string name="sms_permissions_required">L\`exportation des messages nécessite l\`autorisation de lire les SMSs et les contacts.</string>
+    <string name="default_sms_app_requirement">Cette application doit être définie comme application SMS par défaut afin d\`importer les messages.</string>
+    <string name="call_logs_permissions_required">L\`exportation de l\`historique des appels nécessite l\`autorisation de lire l\`historique des appels et les Contacts.</string>
+    <string name="call_logs_read_write_permissions_required">L\`importation de l\`historique des appels nécessite l\`autorisation de lire et écrire l\`historique des appels.</string>
+    <string name="contacts_read_permission_required">L\`exportation des contacts nécessite l\`autorisation de lire les contacts.</string>
+    <string name="contacts_write_permissions_required">L\`importation des contacts nécessite l\`autorisation d\`écrire les contacts.</string>
+    <string name="settings">Paramètres</string>
+    <string name="include_binary_data">Inclure les données binaires MMS</string>
+    <string name="persistent_channel_name">Services en arrière-plan</string>
+    <string name="persistent_channel_description">Notification persistante pour les exportations planifiées en arrière-plan</string>
+    <string name="alerts_channel_name">Alertes pour les exportations planifiées</string>
+    <string name="alerts_channel_description">Alertes de réussite/échec une fois les exports planifiés terminés</string>
+    <string name="scheduled_export_executing">Exportation planifiée en cours d\`exécution</string>
+    <string name="scheduled_export_executed">Exportation planifiée exécutée</string>
+    <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d appel(s), et %4$d contact(s) exporté(s).</string>
+    <string name="scheduled_export_failure">Échec de l\`export — voir le fichier de logs pour plus d\`information.</string>
+    <string name="wipe_messages">Effacer les messages</string>
+    <string name="dialog_confirm_wipe">Attention : Nettoyer définitivement tous les messages de cet équipement, sans possibilité d\`annulation \?</string>
+    <string name="wipe">Nettoyer</string>
+    <string name="cancel">Annuler</string>
+    <string name="wipe_cancelled">Nettoyage annulé</string>
+    <string name="messages_wiped">Messages nettoyés</string>
+    <string name="wiping_sms_messages">Nettoyage des messages SMS en cours…</string>
+    <string name="wiping_mms_messages">Nettoyage des messages MMS en cours…</string>
+    <string name="app_about_text">SMS Import / Export
+\n
+\npar Thomas More et d\`autres contributeurs
+\n
+\nVersion %1$s
+\n
+\nCopyright © 2021–2024
+\n
+\nDélivré sous GNU GPLv3</string>
+    <string name="homepage">Page d\`accueil :</string>
+    <string name="app_homepage" translatable="false">https://github.com/tmo1/sms-ie</string>
+    <string name="documentation">Documentation :</string>
+    <string name="app_documentation" translatable="false">https://github.com/tmo1/sms-ie#readme</string>
+    <string name="issue_tracker">Suivi des problèmes :</string>
+    <string name="app_issue_tracker" translatable="false">https://github.com/tmo1/sms-ie/issues</string>
+    <string name="about">À propos</string>
+    <string name="export_contacts">Exporter les Contacts</string>
+    <string name="import_contacts">Importer les Contacts</string>
     <string name="copying_mms_binary_data">Copie des données binaires des MMS…</string>
-    <string name="become_default_sms_app_warning">SMS Import / Export doit être l\'application de SMS par défaut afin d\'importer ou d\'effacer des messages. Veuillez lire le README et vous assurer que vous en comprenez les implications avant de poursuivre.</string>
-    <string name="message_import_api_23_requirement">L\'importation de messages est seulement possible sur Android Marshmallow / 6.0 (API niveau 23) ou ultérieur.</string>
+    <string name="importing_messages">Importation des messages…</string>
+    <string name="become_default_sms_app_warning">SMS Import / Export doit être l\`application de SMS par défaut afin d\`importer ou d\`effacer des messages. Veuillez lire le README et vous assurer que vous en comprenez les implications avant de poursuivre.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Application SMS par défaut</string>
+    <string name="message_import_api_23_requirement">L\`importation de messages est seulement possible sur Android Marshmallow / 6.0 (API niveau 23) ou ultérieur.</string>
+    <string name="default_sms_app_warning"><b>Attention</b> : cette application est actuellement l\`application SMS par défaut, ce qui signifie que les SMS ou MMS entrants seront perdus ! Pour éviter cela, définissez par défaut une application SMS dédiée.</string>
+    <string name="set_default_sms_app">Définir l\`application SMS par défaut</string>
+    <string name="importing_calls">Importation des appels…</string>
 </resources>
