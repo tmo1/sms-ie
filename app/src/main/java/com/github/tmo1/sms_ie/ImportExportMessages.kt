@@ -522,8 +522,8 @@ suspend fun importMessages(
                                                         )
                                                     )
                                                 }
-                                                addresses.add(address)
                                             }
+                                            addresses.add(address)
                                         }
                                     }/* If we don't yet have a thread_id (i.e., the message has a new
                                        thread_id that we haven't yet encountered and so isn't yet in
@@ -568,9 +568,18 @@ suspend fun importMessages(
                                         val messageId = insertUri.lastPathSegment
                                         val addressUri = Uri.parse("content://mms/$messageId/addr")
                                         addresses.forEach { address ->
+                                            // Some MMS address metadata contain sub_ids, and attempting to import them can cause the address import to fail:
+                                            // See: https://github.com/tmo1/sms-ie/issues/213
+                                            if (!prefs.getBoolean(
+                                                    "import_sub_ids", false
+                                                ) && address.containsKey("sub_id")
+                                            ) {
+                                                address.put("sub_id", "-1")
+                                            }
                                             address.put(
                                                 Telephony.Mms.Addr.MSG_ID, messageId
-                                            )/*Log.v(
+                                            )
+                                            /*Log.v(
                                                 LOG_TAG,
                                                 "Trying to insert MMS address - metadata:" + address.toString()
                                             )*/
