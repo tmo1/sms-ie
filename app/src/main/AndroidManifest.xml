@@ -5,7 +5,7 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
-    
+
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
@@ -91,8 +91,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="locked">
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
