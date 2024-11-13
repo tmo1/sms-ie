@@ -66,4 +66,11 @@
     <string name="scheduled_export_executing">Wykonywanie zaplanowanego eksportu</string>
     <string name="okay">OK</string>
     <string name="message_import_api_23_requirement">Importowanie wiadomości jest możliwe tylko na Androidzie Marshmallow / 6.0 (poziom API 23) lub nowszym.</string>
+    <string name="persistent_channel_name">Usługi w tle</string>
+    <string name="persistent_channel_description">Stałe powiadomienia dla zaplanowanych eksportów w tle</string>
+    <string name="alerts_channel_name">Alerty zaplanowanych eksportów</string>
+    <string name="importing_calls">Importowanie połączeń…</string>
+    <string name="default_sms_app_warning"><b>Uwaga</b>: Ta aplikacja jest obecnie domyślną aplikacją SMS, co oznacza, że wszelkie przychodzące wiadomości SMS lub MMS zostaną utracone! Aby tego uniknąć, należy ustawić odpowiednią domyślną aplikację SMS.</string>
+    <string name="alerts_channel_description">Alerty o powodzeniu/niepowodzeniu po zakończeniu zaplanowanego eksportu</string>
+    <string name="set_default_sms_app">Ustaw domyślną aplikację SMS</string>
 </resources>
