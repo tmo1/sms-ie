@@ -35,4 +35,8 @@
     <string name="include_binary_data">Incluir dados binários MMS</string>
     <string name="persistent_channel_description">Notificação persistente para exportações agendadas em segundo plano</string>
     <string name="alerts_channel_name">Alertas de exportação agendados</string>
+    <string name="scheduled_export_executing">Executando exportação agendada</string>
+    <string name="persistent_channel_name">Serviços em segundo plano</string>
+    <string name="alerts_channel_description">Alertas de sucesso/falha quando as exportações agendadas forem concluídas</string>
+    <string name="scheduled_export_executed">Exportação agendada executada</string>
 </resources>
