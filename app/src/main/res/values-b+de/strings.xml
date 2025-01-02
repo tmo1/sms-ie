@@ -19,10 +19,10 @@
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
   --><resources>
     <string name="app_name">SMS Import / Export</string>
-    <string name="export_messages_button_label">Exportiere Nachrichten</string>
-    <string name="import_messages_button_label">Importiere Nachrichten</string>
-    <string name="export_call_log_button_label">Exportiere Anrufliste</string>
-    <string name="import_call_log_button_label">Importiere Anrufliste</string>
+    <string name="export_messages_button_label">Nachrichten exportieren</string>
+    <string name="import_messages_button_label">Nachrichten importieren</string>
+    <string name="export_call_log_button_label">Anrufliste exportieren</string>
+    <string name="import_call_log_button_label">Anrufliste importieren</string>
     <string name="ready">Bereit</string>
     <!--<string name="begin_exporting_messages">Exportiere Nachrichten …</string>
     <string name="begin_exporting_sms">Exportiere SMS-Nachrichten …</string>
@@ -37,27 +37,27 @@
     <string name="sms_export_progress">%1$d von %2$d SMS exportiert</string>
     <string name="mms_export_progress">%1$d von %2$d MMS exportiert</string>
     <string name="message_import_progress">%1$d SMS und %2$d MMS importiert</string>
-    <string name="export_messages_results">%1$d SMS und %2$d MMS exportiert.\nZeitaufwand: %3$s</string>
-    <string name="import_messages_results">%1$d SMS und %2$d MMS importiert.\nZeitaufwand: %3$s</string>
-    <string name="export_call_log_results">%1$d Anruf(e) exportiert.\nZeitaufwand: %2$s</string>
-    <string name="import_call_log_results">%1$d Anruf(e) importiert.\nZeitaufwand: %2$s</string>
+    <string name="export_messages_results">%1$d SMS und %2$d MMS exportiert.\nVerstrichene Zeit: %3$s</string>
+    <string name="import_messages_results">%1$d SMS und %2$d MMS importiert.\nVerstrichene Zeit: %3$s</string>
+    <string name="export_call_log_results">%1$d Anruf(e) exportiert.\nVerstrichene Zeit: %2$s</string>
+    <string name="import_call_log_results">%1$d Anruf(e) importiert.\nVerstrichene Zeit: %2$s</string>
     <string name="sms_permissions_required">Das Exportieren von Nachrichten erfordert die Berechtigung zum Lesen von SMS und Kontakten.</string>
     <string name="default_sms_app_requirement">Diese App muss die Standard-SMS-App sein, damit Nachrichten importiert oder gelöscht werden können.</string>
     <string name="call_logs_permissions_required">Das Exportieren der Anrufliste erfordert die Berichtigungen zum Lesen der Anrufliste und Kontakte.</string>
-    <string name="call_logs_read_write_permissions_required">Der Import von Anruflisten erfordert die Berechtigung zum Lesen und Schreiben von Anruflisten.</string>
+    <string name="call_logs_read_write_permissions_required">Das Importieren von Anruflisten erfordert die Berechtigung zum Lesen und Schreiben von Anruflisten.</string>
     <string name="settings">Einstellungen</string>
     <string name="include_binary_data">Einschließlich binärer MMS-Daten</string>
     <string name="scheduled_export_executed">Geplanter Export ausgeführt</string>
-    <string name="scheduled_export_success">%1$d SMS, %2$d MMS , %3$d Anruf(e) und %4$d Kontakt(e) exportiert.</string>
+    <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d Anruf(e) und %4$d Kontakt(e) exportiert.</string>
     <string name="scheduled_export_failure">Export fehlgeschlagen — siehe Logcat für weitere Details.</string>
-    <string name="wipe_messages">Lösche Nachrichten</string>
+    <string name="wipe_messages">Nachrichten löschen</string>
     <string name="dialog_confirm_wipe">Warnung: Alle Nachrichten von diesem Gerät dauerhaft löschen, ohne es rückgängig machen zu können\?</string>
     <string name="wipe">Löschen</string>
     <string name="cancel">Abbrechen</string>
     <string name="wipe_cancelled">Löschen abgebrochen</string>
     <string name="messages_wiped">Nachrichten gelöscht</string>
-    <string name="wiping_sms_messages">Lösche SMS-Nachrichten…</string>
-    <string name="wiping_mms_messages">Lösche MMS-Nachrichten…</string>
+    <string name="wiping_sms_messages">SMS-Nachrichten werden gelöscht …</string>
+    <string name="wiping_mms_messages">MMS-Nachrichten werden gelöscht …</string>
     <string name="app_about_text">SMS Import / Export
 \n
 \nvon Thomas More und anderen Mitwirkenden
@@ -71,28 +71,26 @@
     <string name="documentation">Dokumentation:</string>
     <string name="issue_tracker">Fehlermeldung:</string>
     <string name="about">Über</string>
-    <string name="contacts_export_progress">%1$d von %2$d Kontakt(e) exportiert</string>
-    <string name="export_contacts_results">%1$d Kontakt(e) exportiert
-\nZeitaufwand: %2$s.</string>
+    <string name="contacts_export_progress">%1$d von %2$d Kontakt(en) exportiert</string>
+    <string name="export_contacts_results">%1$d Kontakt(e) exportiert\nVerstrichene Zeit: %2$s.</string>
     <string name="contacts_read_permission_required">Das Exportieren von Kontakten erfordert die Berechtigung zum Lesen von Kontakten.</string>
-    <string name="export_contacts">Exportiere Kontakte</string>
-    <string name="import_contacts">Importiere Kontakte</string>
-    <string name="import_contacts_results">%1$d Kontakt(e) importiert
-\nZeitaufwand: %2$s.</string>
+    <string name="export_contacts">Kontakte exportieren</string>
+    <string name="import_contacts">Kontakte importieren</string>
+    <string name="import_contacts_results">%1$d Kontakt(e) importiert\nVerstrichene Zeit: %2$s.</string>
     <string name="contacts_import_progress">%1$d Kontakt(e) importiert</string>
-    <string name="contacts_write_permissions_required">Der Import von Kontakten erfordert die Berechtigung zum Schreiben von Kontakten.</string>
-    <string name="copying_mms_binary_data">Kopiere MMS-Binärdaten…</string>
-    <string name="importing_messages">Importiere Nachrichten…</string>
+    <string name="contacts_write_permissions_required">Das Importieren von Kontakten erfordert die Berechtigung zum Schreiben von Kontakten.</string>
+    <string name="copying_mms_binary_data">MMS-Binärdaten werden kopiert …</string>
+    <string name="importing_messages">Nachrichten werden importiert …</string>
     <string name="default_sms_app_dialog_title">Standard-SMS-App</string>
     <string name="become_default_sms_app_warning">SMS Import / Export muss die Standard-SMS-App sein, um Nachrichten zu importieren oder zu löschen. Bitte lies die README und vergewissere dich, dass du die Auswirkungen dieses Vorgangs verstehst, bevor du fortfährst.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_warning"><b>Warnung</b>: Diese App ist derzeit die Standard-SMS-App, was bedeutet, dass alle eingehenden SMS- oder MMS-Nachrichten verloren gehen! Um dies zu vermeiden, stelle eine passende Standard-SMS-App ein.</string>
     <string name="scheduled_export_executing">Geplanter Export wird ausgeführt</string>
     <string name="message_import_api_23_requirement">Das Importieren von Nachrichten ist nur unter Android Marshmallow / 6.0 (API Level 23) oder höher möglich.</string>
-    <string name="set_default_sms_app">Standard-SMS- App festlegen</string>
+    <string name="set_default_sms_app">Standard-SMS-App festlegen</string>
     <string name="persistent_channel_name">Hintergrunddienste</string>
     <string name="persistent_channel_description">Dauerhafte Benachrichtigung für geplanten Export im Hintergrund</string>
     <string name="alerts_channel_name">Geplante Exportmeldungen</string>
     <string name="alerts_channel_description">Erfolgs-/Fehlermeldungen nach Abschluss geplanter Exporte</string>
-    <string name="importing_calls">Importiere Anrufe…</string>
+    <string name="importing_calls">Anrufe werden importiert …</string>
 </resources>
