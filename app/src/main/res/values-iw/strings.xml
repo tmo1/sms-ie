@@ -59,4 +59,18 @@
     <string name="import_contacts_results">%1$d אנשי קשר יובאו
 \nזמן שחלף: %2$s.</string>
     <string name="contacts_write_permissions_required">ייבוא אנשי קשר דורש הרשאה לכתוב אנשי קשר.</string>
+    <string name="default_sms_app_dialog_title">אפליקציית SMS ברירת מחדל</string>
+    <string name="set_default_sms_app">הגדר אפליקציית SMS כברירת מחדל</string>
+    <string name="scheduled_export_executing">ביצוע ייצוא מתוזמן</string>
+    <string name="alerts_channel_description">התראות על הצלחה/כישלון כאשר ייצוא מתוכנן הושלם</string>
+    <string name="alerts_channel_name">התראות ייצוא מתוזמנות</string>
+    <string name="message_import_api_23_requirement">ייבוא הודעות אפשרי רק ב-אנדרואיד Marshmallow / 6.0 (רמה API 23) ומעלה.</string>
+    <string name="persistent_channel_name">שירותי רקע</string>
+    <string name="persistent_channel_description">הודעה קבועה על ייצוא מתוכנן ברקע</string>
+    <string name="copying_mms_binary_data">מעתיק נתונים בינאריים של MMS…</string>
+    <string name="importing_messages">מייבא הודעות…</string>
+    <string name="okay">בסדר</string>
+    <string name="importing_calls">מייבא שיחות…</string>
+    <string name="become_default_sms_app_warning">האפליקציה חייבת להיות ברירת המחדל של SMS כדי לייבא או למחוק הודעות (תוכלו לשנות זאת לאחר סיום הפעולה) . אנא קרא את README וודא שאתה מבין את ההשלכות של ביצוע פעולה זו לפני שתמשיך.</string>
+    <string name="default_sms_app_warning"><b>אזהרה</b>: אפליקציה זו היא כעת אפליקציית ברירת המחדל ל-SMS, מה שאומר שכל הודעות SMS או MMS נכנסות יאבדו! כדי להימנע מכך, הגדר חזרה את אפליקציית ברירת מחדל המתאימה ל-SMS.</string>
 </resources>
