@@ -6,13 +6,6 @@
     <string name="export_call_log_button_label">Eksport listy połączeń</string>
     <string name="import_call_log_button_label">Import listy połączeń</string>
     <string name="ready">Gotowe</string>
-    <string name="begin_exporting_sms">Eksportowanie wiadomości SMS …</string>
-    <string name="begin_exporting_mms">Eksportowanie wiadomości MMS …</string>
-    <string name="begin_importing_messages">Importowanie wiadomości …</string>
-    <string name="begin_importing_sms">Importowanie wiadomości SMS …</string>
-    <string name="begin_importing_mms">Eksportowanie wiadomości MMS …</string>
-    <string name="begin_exporting_call_log">Eksportowanie historii połączeń …</string>
-    <string name="begin_importing_call_log">Importowanie historii połączeń …</string>-->
     <string name="call_log_export_progress">Wyeksportowano %1$d z %2$d połączeń</string>
     <string name="call_log_import_progress">Zaimportowano %1$d połączeń</string>
     <string name="sms_export_progress">Wyeksportowano %1$d z %2$d SMSów</string>
