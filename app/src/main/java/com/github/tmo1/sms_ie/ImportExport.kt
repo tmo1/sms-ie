@@ -87,10 +87,10 @@ fun checkWriteContactsPermission(appContext: Context): Boolean {
 }
 
 fun lookupDisplayName(
-    appContext: Context, displayNames: MutableMap<String, String?>, address: String
+    appContext: Context, displayNames: MutableMap<String, String?>, address: String?
 ): String? {
 //        look up display name by phone number
-    if (address == "") return null
+    if (address == null || address == "") return null
     if (displayNames[address] != null) return displayNames[address]
     val displayName: String?
     val uri = Uri.withAppendedPath(
