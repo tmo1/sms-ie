@@ -17,6 +17,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131)); overhaul of the notification framework ([PR #187](https://github.com/tmo1/sms-ie/pull/187))
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): addition of [`ScrollView`](https://developer.android.com/reference/android/widget/ScrollView) to "About" screen ([PR #133](https://github.com/tmo1/sms-ie/pull/133))
  - [Andrew (andr5w)](https://github.com/andr5w): bug fix ([PR #168](https://github.com/tmo1/sms-ie/pull/168))
+ - [farfromrefuge](https://github.com/farfromrefug): bug fix ([PR #231](https://github.com/tmo1/sms-ie/pull/231))
 
 ### Translations
 

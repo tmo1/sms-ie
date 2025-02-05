@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, and contacts, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2024 Thomas More
+ * Copyright (c) 2021-2025 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -91,11 +91,8 @@ private suspend fun callLogToJSON(
                 // From the documentation at https://developer.android.com/reference/android/provider/CallLog.Calls#CACHED_NAME
                 // "The cached name associated with the phone number, if it exists.
                 // This value is typically filled in by the dialer app for the caching purpose, so it's not guaranteed to be present, and may not be current if the contact information associated with this number has changed."
-                val address = it.getString(addressIndex)
-                if (address != null) {
-                    val displayName = lookupDisplayName(appContext, displayNames, address)
-                    if (displayName != null) jsonWriter.name("display_name").value(displayName)
-                }
+                val displayName = lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
+                if (displayName != null) jsonWriter.name("display_name").value(displayName)
                 jsonWriter.endObject()
                 total++
                 incrementProgress(progressBar)

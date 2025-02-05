@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, and contacts, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2024 Thomas More
+ * Copyright (c) 2021-2025 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -130,11 +130,8 @@ private suspend fun smsToJSON(
                     val value = it.getString(i)
                     if (value != null) smsMessage.put(columnName, value)
                 }
-                val address = it.getString(addressIndex)
-                if (address != null) {
-                    val displayName = lookupDisplayName(appContext, displayNames, address)
-                    if (displayName != null) smsMessage.put("__display_name", displayName)
-                }
+                val displayName = lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
+                if (displayName != null) smsMessage.put("__display_name", displayName)
                 zipOutputStream.write((smsMessage.toString() + "\n").toByteArray())
                 total++
                 incrementProgress(progressBar)
