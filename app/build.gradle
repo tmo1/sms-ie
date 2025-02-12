@@ -35,7 +35,7 @@ android {
         targetSdkVersion 35
         versionCode 107
         versionName "2.4.1"
-
+        base.archivesName = applicationId + '-v' + versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
