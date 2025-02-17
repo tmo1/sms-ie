@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, and contacts, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2024 Thomas More
+ * Copyright (c) 2021-2025 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -63,8 +63,24 @@ android {
             }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
         }
-
     }
+
+    // Based on https://developer.android.com/build/build-variants#flavor-dimensions
+    flavorDimensions = ["api"]
+    productFlavors {
+        standard {
+            dimension "api"
+            minSdkVersion 21
+            versionCode 10000 + android.defaultConfig.versionCode
+            versionNameSuffix "-standard"
+        }
+        legacy {
+            dimension "api"
+            minSdkVersion 19
+            versionNameSuffix "-legacy"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -89,13 +105,19 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
-//  The following dependencies cannot be upgraded as long as minSdkVersion remains at 19
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.work:work-runtime-ktx:2.9.1'
+
+    standardImplementation 'androidx.core:core-ktx:1.15.0'
+    standardImplementation 'androidx.appcompat:appcompat:1.7.0'
+    standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    standardImplementation 'androidx.work:work-runtime-ktx:2.10.0'
+
+    legacyImplementation 'androidx.core:core-ktx:1.13.1'
+    legacyImplementation 'androidx.appcompat:appcompat:1.6.1'
+    legacyImplementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    legacyImplementation 'androidx.work:work-runtime-ktx:2.9.1'
 
     testImplementation 'junit:junit:4.13.2'
+
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
