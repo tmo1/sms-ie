@@ -289,6 +289,7 @@ suspend fun importMessages(
 ): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     val deduplication = prefs.getBoolean("deduplication", false)
+    val isMiui = isMiui()
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
         // get column names of local SMS, MMS, and MMS part tables
@@ -404,6 +405,11 @@ suspend fun importMessages(
                                                 return@JSONLine
                                             }
                                         }
+                                    }
+                                    // https://github.com/tmo1/sms-ie/issues/103
+                                    if (isMiui) {
+                                        messageJSON.remove("deleted")
+                                        messageJSON.remove("sync_state")
                                     }
                                     messageJSON.keys().forEach { key ->
                                         if (key in smsColumns) messageMetadata.put(

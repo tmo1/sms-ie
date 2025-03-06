@@ -42,6 +42,9 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
@@ -177,5 +180,17 @@ suspend fun displayError(appContext: Context, e: Exception?, title: String, mess
         .setCancelable(false).setNeutralButton("Okay", null)
     withContext(Dispatchers.Main) {
         errorBox.show()
+    }
+}
+
+// slightly adapted solution from https://gist.github.com/starry-shivam/901267c26eb030eb3faf1ccd4d2bdd32
+fun isMiui(): Boolean {
+    try {
+        val inputStream = Runtime.getRuntime()
+            .exec("getprop ro.miui.ui.version.code").inputStream
+        val miuiVer = BufferedReader(InputStreamReader(inputStream)).readLine()
+        return miuiVer.isNotEmpty()
+    } catch(e: IOException) {
+        return false
     }
 }
