@@ -1,0 +1,13 @@
+ - Introduce 'standard' and 'legacy' product flavors - see the README for details.
+
+ - Fix a bug that caused a crash when exporting MMS messages without ["display names"](https://developer.android.com/reference/android/provider/ContactsContract.ContactsColumns#DISPLAY_NAME) - by farfromrefug (issue #230 / PR #231)).
+
+ - Fix other bugs.
+
+ - Tamil translation - by TamilNeram (தமிழ் நேரம்).
+
+ - Update Italian and Polish translations.
+
+ - Bump both 'targetSdkVersion' and 'compileSdk' to 35.
+
+ - Update Gradle, Android Gradle Plugin (AGP), and dependencies.

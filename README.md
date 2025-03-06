@@ -48,6 +48,8 @@ SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). 
 
 For instructions on building the app from its source code, see [`BUILDING.md`](BUILDING.md).
 
+The app is currently available in two ["product flavors"](https://developer.android.com/build/build-variants#product-flavors): `standard` and `legacy`. `standard` will only run on devices with API level >= 21 ([Android 5.0 Lollipop](https://developer.android.com/about/versions/lollipop)), and uses the latest versions of all its dependencies. `legacy` will run on devices with API level as low as 19 ([Android 4.4 KitKat](https://developer.android.com/about/versions/kitkat)), but uses outdated versions of several of its dependencies. *There is no difference in functionality between the two flavors* (although some functionality is dependent on the *actual API level* of the device on which the app is run, as per the following section, regardless of which app flavor is used); accordingly, the `standard` flavor should always be used except when deploying to devices with API level < 21.
+
 ## Compatibility
 
 Current versions of SMS Import / Export should run on any Android (phone-like) device running KitKat / 4.4 (API level 19) or later, although message import and scheduled message export are only possible on devices running Marshmallow / 6.0 (API level 23) or later.

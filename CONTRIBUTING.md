@@ -44,6 +44,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Raman](https://hosted.weblate.org/user/deleted-56119/): Malayalam translation
  - Surena: Persian translation
  - [ngocanhtve](https://github.com/ngocanhtve): Vietnamese translation
+ - [TamilNeram (தமிழ் நேரம்)]( https://github.com/TamilNeram): Tamil translation
 
 ### Other
 
