@@ -80,7 +80,7 @@ This is utility to convert SMS export file as made by Nokia Suite (in CSV format
 
 Usage:
  
-`nokia-suite-convert.pl \[input.csv \[output.csv\]\]`
+`nokia-suite-convert.pl [input.csv [output.csv]]`
 
 - if output file is omitted, stard output is used
 - if both files are omitted, standard input/output are used
