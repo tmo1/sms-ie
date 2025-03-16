@@ -18,7 +18,7 @@ SMS Import / Export is a simple Android app that imports and exports SMS and MMS
 
 Version 2.0.0 introduced a major rewrite of the SMS and MMS messages import / export code, implementing a new message storage format (`v2`):
 
- - The messages are now stored in a [Newline-delimited JSON](https://en.wikipedia.org/wiki/JSON_streaming#Newline-Delimited_JSON) file (always named `messages.ndjson`), as opposed to the standard JSON previously used.
+ - The messages are now stored in a [Newline-delimited JSON](https://en.wikipedia.org/wiki/JSON_streaming#Newline-delimited_JSON) file (always named `messages.ndjson`), as opposed to the standard JSON previously used.
  
  - Binary MMS data is now stored separately from message text data and metadata; the `messages.ndjson` file, along with a `data/` directory containing the MMS binary data files copied directly from the Android filesystem (with their original filenames), are both encapsulated in a ZIP file.
  
