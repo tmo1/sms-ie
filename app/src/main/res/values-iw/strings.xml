@@ -23,8 +23,8 @@
     <string name="cancel">בטל</string>
     <string name="wipe_cancelled">המחיקה בוטלה</string>
     <string name="messages_wiped">הודעות נמחקו</string>
-    <string name="wiping_sms_messages">מוחק הודעות סמס…</string>
-    <string name="wiping_mms_messages">מוחק הודעות MMS…</string>
+    <string name="wiping_sms_messages">מוחק הודעות סמס …</string>
+    <string name="wiping_mms_messages">מוחק הודעות MMS …</string>
     <string name="homepage">דף הבית:</string>
     <string name="documentation">תיעוד:</string>
     <string name="import_contacts">ייבוא אנשי קשר</string>
@@ -59,4 +59,18 @@
     <string name="import_contacts_results">%1$d אנשי קשר יובאו
 \nזמן שחלף: %2$s.</string>
     <string name="contacts_write_permissions_required">ייבוא אנשי קשר דורש הרשאה לכתוב אנשי קשר.</string>
+    <string name="default_sms_app_dialog_title">אפליקציית SMS ברירת מחדל</string>
+    <string name="scheduled_export_executing">ביצוע ייצוא מתוזמן</string>
+    <string name="persistent_channel_name">שירותי רקע</string>
+    <string name="persistent_channel_description">הודעה מתמשכת על ייצוא מתוכנן ברקע</string>
+    <string name="copying_mms_binary_data">מעתיק נתונים בינאריים של MMS…</string>
+    <string name="importing_calls">מייבא שיחות …</string>
+    <string name="alerts_channel_name">התראות ייצוא מתוזמנות</string>
+    <string name="importing_messages">מייבא הודעות …</string>
+    <string name="okay">בסדר</string>
+    <string name="message_import_api_23_requirement">ייבוא הודעות אפשרי רק ב-Android Marshmallow / 6.0 (API רמת 23) ואילך.</string>
+    <string name="default_sms_app_warning"><b>אזהרה</b>: אפליקציה זו היא כרגע אפליקציית ברירת המחדל ל-SMS, מה שאומר שכל הודעות SMS או MMS נכנסות יאבדו! כדי להימנע מכך, הגדר אפליקציית SMS ברירת מחדל מתאימה.</string>
+    <string name="alerts_channel_description">התראות על הצלחה/כשל כאשר ייצוא מתוכנן הושלם</string>
+    <string name="become_default_sms_app_warning">ייבוא/ייצוא של SMS חייב להיות אפליקציית ברירת המחדל של SMS כדי לייבא או למחוק הודעות. אנא קרא את README וודא שאתה מבין את ההשלכות של ביצוע פעולה זו לפני שתמשיך.</string>
+    <string name="set_default_sms_app">הגדר אפליקציית SMS כברירת מחדל</string>
 </resources>
