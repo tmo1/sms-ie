@@ -1,0 +1,2 @@
+ - Avoid overlapping the system bar insets (issue #242)
+
