@@ -14,7 +14,7 @@
     <string name="wipe">Slet</string>
     <string name="wiping_mms_messages">Sletter MMS-beskeder…</string>
     <string name="cancel">Annuller</string>
-    <string name="app_about_text">SMS Import / Eksport \n \naf Thomas More og andre bidragydere \n \nVersion %1$s \n \nCopyright © 2021-2024 \n \nUdgivet under GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Eksport \n \naf Thomas More og andre bidragydere \n \nVersion %1$s \n \nCopyright © 2021-2025 \n \nUdgivet under GNU GPLv3</string>
     <string name="messages_wiped">Beskeder slettet</string>
     <string name="wiping_sms_messages">Sletter SMS-beskeder…</string>
     <string name="issue_tracker">Problemsporing:</string>
