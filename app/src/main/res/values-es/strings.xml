@@ -50,15 +50,7 @@
     <string name="scheduled_export_failure">Exportación incorrecta — consulte el logcat para obtener más detalles.</string>
     <string name="dialog_confirm_wipe">Advertencia: ¿Borrar todos los mensajes de este dispositivo de forma permanente, sin que se pueda deshacerlo\?</string>
     <string name="wiping_mms_messages">Borrando los mensajes MMS …</string>
-    <string name="app_about_text">SMS Import / Export
-\n
-\npor Thomas More y otros colaboradores
-\n
-\nVersión %1$s
-\n
-\nDerechos de autor © 2021-2024
-\n
-\nPublicado bajo la GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export \n \npor Thomas More y otros colaboradores \n \nVersión %1$s \n \nDerechos de autor © 2021-2024 \n \nPublicado bajo la GNU GPLv3</string>
     <string name="copying_mms_binary_data">Copiando los datos binarios del MMS …</string>
     <string name="importing_messages">Importando mensajes …</string>
     <string name="default_sms_app_dialog_title">Aplicación de SMS por defecto</string>
