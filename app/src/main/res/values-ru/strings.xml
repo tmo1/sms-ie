@@ -49,15 +49,7 @@
     <string name="include_binary_data">Включать двоичные данные MMS</string>
     <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
     <string name="scheduled_export_failure">Экспорт не удался — смотрите logcat для более подробной информации.</string>
-    <string name="app_about_text">SMS Import / Export
-\n
-\nавтор Thomas More и другие участники
-\n
-\nВерсия %1$s
-\n
-\nАвторские права © 2021–2024
-\n
-\nВыпущено под лицензией GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export \n \nавтор Thomas More и другие участники \n \nВерсия %1$s \n \nАвторские права © 2021–2024 \n \nВыпущено под лицензией GNU GPLv3</string>
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
     <string name="importing_messages">Импорт сообщений ...</string>
     <string name="copying_mms_binary_data">Копирование двоичных данных MMS ...</string>
