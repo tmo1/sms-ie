@@ -49,14 +49,6 @@
     <string name="wipe_cancelled">پاک‌سازی لغو شد</string>
     <string name="wiping_sms_messages">در حال پاک‌سازی پیامک‌ها …</string>
     <string name="wiping_mms_messages">در حال پاک‌سازی پیام‌های چندرسانه‌ای …</string>
-    <string name="app_about_text">درون‌برد / برون‌برد پیامک
-\n
-\nتوسط توماس مور و دیگر مشارکت‌کنندگان
-\n
-\nنسخه %1$s
-\n
-\nحق تالیف © 2021–2024
-\n
-\nمنتشر شده تحت GNU GPLv3</string>
+    <string name="app_about_text">درون‌برد / برون‌برد پیامک \n \nتوسط توماس مور و دیگر مشارکت‌کنندگان \n \nنسخه %1$s \n \nحق تالیف © 2021–2024 \n \nمنتشر شده تحت GNU GPLv3</string>
     <string name="dialog_confirm_wipe">هشدار: همه پیام‌های این وسیله به‌طور دائمی و بدون قابلیت بازگردانی آن پاک‌سازی شوند؟</string>
 </resources>
