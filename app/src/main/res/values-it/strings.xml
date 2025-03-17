@@ -46,15 +46,7 @@
     <string name="ready">Pronto</string>
     <string name="import_contacts">Importa contatti</string>
     <string name="scheduled_export_failure">Esportazione non riuscita: vedere logcat per maggiori dettagli.</string>
-    <string name="app_about_text">Importa/Esporta SMS
-\n
-\ndi Thomas More e altri collaboratori
-\n
-\nVersione %1$s
-\n
-\nCopyright © 2021-2024
-\n
-\nSoftware libero con copyleft, licenza GPLv3+</string>
+    <string name="app_about_text">Importa/Esporta SMS \n \ndi Thomas More e altri collaboratori \n \nVersione %1$s \n \nCopyright © 2021-2024 \n \nSoftware libero con copyleft, licenza GPLv3+</string>
     <string name="documentation">Documentazione:</string>
     <string name="issue_tracker">Segnalazione problemi:</string>
     <string name="about">Informazioni</string>
