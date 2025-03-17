@@ -70,15 +70,7 @@
     <string name="messages_wiped">Mesajlar silindi</string>
     <string name="wiping_sms_messages">SMS mesajları siliniyor…</string>
     <string name="wiping_mms_messages">MMS mesajları siliniyor…</string>
-    <string name="app_about_text">SMS İçe / Dışa Aktarma
-\n
-\nThomas More ve diğer katkıda bulunanlar tarafından
-\n
-\nSürüm %1$s
-\n
-\nTelif Hakkı © 2021-2024
-\n
-\nGNU GPLv3 altında yayınlandı</string>
+    <string name="app_about_text">SMS İçe / Dışa Aktarma \n \nThomas More ve diğer katkıda bulunanlar tarafından \n \nSürüm %1$s \n \nTelif Hakkı © 2021-2024 \n \nGNU GPLv3 altında yayınlandı</string>
     <string name="homepage">Ana sayfa:</string>
     <string name="documentation">Belgelendirme:</string>
     <string name="issue_tracker">Sorun izleyici:</string>
