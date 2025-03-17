@@ -18,15 +18,7 @@
     <string name="scheduled_export_success">%1$d SMS(-er), %2$d MMS(-er), og %3$d anrop eksportert.</string>
     <string name="wipe_messages">Tøm meldinger</string>
     <string name="homepage">Hjemmeside:</string>
-    <string name="app_about_text">SMS-import/eksport
-\n
-\nav Thomas More og andre bidragsytere
-\n
-\nVersjon %1$s
-\n
-\nOpphavsrett © 2021–24
-\n
-\nLisensiert GPLv3+</string>
+    <string name="app_about_text">SMS-import/eksport \n \nav Thomas More og andre bidragsytere \n \nVersjon %1$s \n \nOpphavsrett © 2021–24 \n \nLisensiert GPLv3+</string>
     <string name="scheduled_export_failure">Eksport mislyktes. Sjekk logcat for detaljer.</string>
     <string name="dialog_confirm_wipe">Advarsel: Vil du slette alle meldinger fra enheten for godt, uten å kunne angre\?</string>
     <string name="about">Om</string>

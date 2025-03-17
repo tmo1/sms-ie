@@ -40,15 +40,7 @@
     <string name="call_log_export_progress">%1$d de %2$d chamada(s) exportadas</string>
     <string name="scheduled_export_failure">Exportação sem sucesso — ver logcat para mais detalhes.</string>
     <string name="scheduled_export_executed">Exportação agendada executada</string>
-    <string name="app_about_text">SMS Import / Export
-\n
-\npor Thomas More e outros contribuidores
-\n
-\nVersão %1$s
-\n
-\nCopyright © 2021–2024
-\n
-\nDisponibilizado sob a GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export \n \npor Thomas More e outros contribuidores \n \nVersão %1$s \n \nCopyright © 2021–2024 \n \nDisponibilizado sob a GNU GPLv3</string>
     <string name="contacts_import_progress">%1$d contacto(s) importado(s)</string>
     <string name="export_contacts_results">%1$d contacto(s) exportado(s)
 \nTempo decorrido: %2$s.</string>

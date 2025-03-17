@@ -19,8 +19,7 @@
   ~
   ~ Vous devriez avoir reçu une copie de la Licence publique générale GNU
   ~ avec SMS Import / Export. Autrement, consultez <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="app_name">SMS Import / Export</string>
     <string name="export_messages_button_label">Exporter les messages</string>
     <string name="import_messages_button_label">Importer les messages</string>
@@ -72,15 +71,7 @@
     <string name="messages_wiped">Messages nettoyés</string>
     <string name="wiping_sms_messages">Nettoyage des messages SMS en cours…</string>
     <string name="wiping_mms_messages">Nettoyage des messages MMS en cours…</string>
-    <string name="app_about_text">SMS Import / Export
-\n
-\npar Thomas More et d\`autres contributeurs
-\n
-\nVersion %1$s
-\n
-\nCopyright © 2021–2024
-\n
-\nDélivré sous GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export \n \npar Thomas More et dautres contributeurs \n \nVersion %1$s \n \nCopyright © 2021–2024 \n \nDélivré sous GNU GPLv3</string>
     <string name="homepage">Page d\`accueil :</string>
     <string name="app_homepage" translatable="false">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">Documentation :</string>

@@ -58,15 +58,7 @@
     <string name="messages_wiped">Nachrichten gelöscht</string>
     <string name="wiping_sms_messages">Lösche SMS-Nachrichten…</string>
     <string name="wiping_mms_messages">Lösche MMS-Nachrichten…</string>
-    <string name="app_about_text">SMS Import / Export
-\n
-\nvon Thomas More und anderen Mitwirkenden
-\n
-\nVersion %1$s
-\n
-\nCopyright © 2021–24
-\n
-\nVeröffentlicht unter der GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export \n \nvon Thomas More und anderen Mitwirkenden \n \nVersion %1$s \n \nCopyright © 2021–24 \n \nVeröffentlicht unter der GNU GPLv3</string>
     <string name="homepage">Homepage:</string>
     <string name="documentation">Dokumentation:</string>
     <string name="issue_tracker">Fehlermeldung:</string>
