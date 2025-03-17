@@ -43,15 +43,7 @@
     <string name="messages_wiped">Usunięto wiadomości</string>
     <string name="wiping_sms_messages">Usuwanie wiadomości SMS …</string>
     <string name="wiping_mms_messages">Usuwanie wiadomości MMS …</string>
-    <string name="app_about_text">Import / Eksport SMS
-\n
-\nStworzone przez Thomasa More\'a oraz innych współtwórców
-\n
-\nWersja %1$s
-\n
-\nPrawa autorskie © 2021–2024
-\n
-\nWydane na licencji GNU GPLv3</string>
+    <string name="app_about_text">Import / Eksport SMS \n \nStworzone przez Thomasa More\'a oraz innych współtwórców \n \nWersja %1$s \n \nPrawa autorskie © 2021–2024 \n \nWydane na licencji GNU GPLv3</string>
     <string name="homepage">Strona internetowa:</string>
     <string name="documentation">Dokumentacja:</string>
     <string name="issue_tracker">Zgłoś problem:</string>
