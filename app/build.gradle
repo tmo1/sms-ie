@@ -46,23 +46,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
-        /* The following 'debug {}' stanza is necessary to avoid hitting the 64K reference limit:
-         https://developer.android.com/build/multidex
-         Minification can, however, slow down build times, and Android Studio warns about this.
-         This stanza is only necessary for building debug builds from the command line, or when
-         deploying to systems with API level < 21; when deploying from Android Studio to systems
-         with API level >= 21, multidex is enabled by default and the stanza can be deleted for
-         faster build times:
-         https://developer.android.com/build/multidex#mdex-on-l */
-        debug {
-            // https://stackoverflow.com/a/55785351
-            postprocessing {
-                removeUnusedCode true
-                obfuscate false
-                optimizeCode true
-            }
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
-        }
     }
 
     // Based on https://developer.android.com/build/build-variants#flavor-dimensions
@@ -115,6 +98,8 @@ dependencies {
     legacyImplementation 'androidx.appcompat:appcompat:1.6.1'
     legacyImplementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     legacyImplementation 'androidx.work:work-runtime-ktx:2.9.1'
+    // https://developer.android.com/build/multidex#mdex-pre-l
+    legacyImplementation 'androidx.multidex:multidex:2.0.1'
 
     testImplementation 'junit:junit:4.13.2'
 
