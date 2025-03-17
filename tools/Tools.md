@@ -76,13 +76,17 @@ and then visit `http://127.0.0.1:8222` in a web browser.
 
 ### [`nokia-suite-convert.pl`](contrib/nokia-suite-convert.pl)
 
-This is utility to convert SMS export file as made by Nokia Suite (in CSV format) into CSV format that can be parsed by [csv-convert.py](#csv-convert.py) above.
+This is an utility to convert SMS export file as made by Nokia Suite (in CSV format) into CSV format that can be parsed by [csv-convert.py](#csv-convert.py) above.
+Requires:
+- perl
+- Text::CSV (in Debian and alike libtext-csv-perl)
+- POSIX::strptime (in Debian and alike libposix-strptime-perl)
 
 Usage:
  
 `nokia-suite-convert.pl [input.csv [output.csv]]`
 
-- if output file is omitted, stard output is used
+- if output file is omitted, standard output is used
 - if both files are omitted, standard input/output are used
 
 ## External Tools
