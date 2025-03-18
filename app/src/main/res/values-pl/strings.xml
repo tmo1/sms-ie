@@ -43,7 +43,7 @@
     <string name="messages_wiped">Usunięto wiadomości</string>
     <string name="wiping_sms_messages">Usuwanie wiadomości SMS …</string>
     <string name="wiping_mms_messages">Usuwanie wiadomości MMS …</string>
-    <string name="app_about_text">Import / Eksport SMS \n \nStworzone przez Thomasa More\'a oraz innych współtwórców \n \nWersja %1$s \n \nPrawa autorskie © 2021–2024 \n \nWydane na licencji GNU GPLv3</string>
+    <string name="app_about_text">Import / Eksport SMS \n \nStworzone przez Thomasa More\'a oraz innych współtwórców \n \nWersja %1$s \n \nPrawa autorskie © 2021–2025 \n \nWydane na licencji GNU GPLv3</string>
     <string name="homepage">Strona internetowa:</string>
     <string name="documentation">Dokumentacja:</string>
     <string name="issue_tracker">Zgłoś problem:</string>
@@ -59,4 +59,6 @@
     <string name="default_sms_app_warning"><b>Uwaga</b>: Ta aplikacja jest obecnie domyślną aplikacją SMS, co oznacza, że wszelkie przychodzące wiadomości SMS lub MMS zostaną utracone! Aby tego uniknąć, należy ustawić odpowiednią domyślną aplikację SMS.</string>
     <string name="set_default_sms_app">Ustaw domyślną aplikację SMS</string>
     <string name="importing_calls">Importowanie połączeń …</string>
+    <string name="donations">Darowizny:</string>
+    <string name="app_donations">https://ko-fi.com/thomasmore</string>
 </resources>

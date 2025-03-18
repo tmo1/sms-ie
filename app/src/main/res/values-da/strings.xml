@@ -59,4 +59,6 @@
     <string name="call_log_import_progress">%1$d opkald importeret</string>
     <string name="export_contacts">Eksportér kontakter</string>
     <string name="export_contacts_results">%1$d kontakt(er) eksporteret\nVarighed: %2$s</string>
+    <string name="app_donations">https://ko-fi.com/thomasmore</string>
+    <string name="donations">Donationer:</string>
 </resources>
