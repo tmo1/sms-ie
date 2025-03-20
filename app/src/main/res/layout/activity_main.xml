@@ -17,158 +17,166 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
   -->
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/export_messages_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/export_messages_button_label"
-        app:layout_constraintBottom_toTopOf="@+id/export_call_log_button"
-        app:layout_constraintEnd_toStartOf="@+id/import_messages_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <Button
-        android:id="@+id/import_messages_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/import_messages_button_label"
-        app:layout_constraintBottom_toTopOf="@+id/import_call_log_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/export_messages_button"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <Button
-        android:id="@+id/export_call_log_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/export_call_log_button_label"
-        app:layout_constraintBottom_toTopOf="@id/export_contacts_button"
-        app:layout_constraintEnd_toStartOf="@+id/import_call_log_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/export_messages_button" />
-
-    <Button
-        android:id="@+id/import_call_log_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/import_call_log_button_label"
-        app:layout_constraintBottom_toTopOf="@id/import_contacts_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/export_call_log_button"
-        app:layout_constraintTop_toBottomOf="@+id/import_messages_button" />
-
-    <Button
-        android:id="@+id/export_contacts_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/export_contacts"
-        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
-        app:layout_constraintEnd_toStartOf="@+id/import_contacts_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/export_call_log_button" />
-
-    <Button
-        android:id="@+id/import_contacts_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/import_contacts"
-        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/export_contacts_button"
-        app:layout_constraintTop_toBottomOf="@+id/import_call_log_button" />
-
-    <Button
-        android:id="@+id/wipe_all_messages_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/wipe_messages"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/export_contacts_button"
-        tools:layout_editor_absoluteY="303dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        android:fitsSystemWindows="true"
+        tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/status_report"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/ready"
-        android:textSize="20sp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/default_sms_app_warning"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:progress="0"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/status_report"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
+        <Button
+            android:id="@+id/export_messages_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/export_messages_button_label"
+            app:layout_constraintBottom_toTopOf="@+id/export_call_log_button"
+            app:layout_constraintEnd_toStartOf="@+id/import_messages_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <TextView
-        android:id="@+id/default_sms_app_warning"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="30dp"
-        android:paddingEnd="20dp"
-        android:text="@string/default_sms_app_warning"
-        android:textSize="20sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/set_default_sms_app_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status_report" />
+        <Button
+            android:id="@+id/import_messages_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/import_messages_button_label"
+            app:layout_constraintBottom_toTopOf="@+id/import_call_log_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/export_messages_button"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <Button
-        android:id="@+id/set_default_sms_app_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/set_default_sms_app"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/default_sms_app_warning" />
+        <Button
+            android:id="@+id/export_call_log_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/export_call_log_button_label"
+            app:layout_constraintBottom_toTopOf="@id/export_contacts_button"
+            app:layout_constraintEnd_toStartOf="@+id/import_call_log_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/export_messages_button" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/import_call_log_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/import_call_log_button_label"
+            app:layout_constraintBottom_toTopOf="@id/import_contacts_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/export_call_log_button"
+            app:layout_constraintTop_toBottomOf="@+id/import_messages_button" />
+
+        <Button
+            android:id="@+id/export_contacts_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/export_contacts"
+            app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+            app:layout_constraintEnd_toStartOf="@+id/import_contacts_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/export_call_log_button" />
+
+        <Button
+            android:id="@+id/import_contacts_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/import_contacts"
+            app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/export_contacts_button"
+            app:layout_constraintTop_toBottomOf="@+id/import_call_log_button" />
+
+        <Button
+            android:id="@+id/wipe_all_messages_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/wipe_messages"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/export_contacts_button"
+            tools:layout_editor_absoluteY="303dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/status_report"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/ready"
+            android:textSize="20sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@id/default_sms_app_warning"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:progress="0"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/status_report"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+        <TextView
+            android:id="@+id/default_sms_app_warning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="30dp"
+            android:paddingEnd="20dp"
+            android:text="@string/default_sms_app_warning"
+            android:textSize="20sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/set_default_sms_app_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/status_report" />
+
+        <Button
+            android:id="@+id/set_default_sms_app_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_default_sms_app"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/default_sms_app_warning" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
