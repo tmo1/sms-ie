@@ -69,7 +69,6 @@ while (my $row = $csvin->getline ($fhin)) {
 	$date=timelocal_posix(0,$min,$hour,$day,$mon,$year);
 	$date*=1000;
 	$text=$row->[7];
-	$text =~ s"\r\n"\\n"g;
 	$csvout->say($fhout,[$type,$read,$addr,$date,$text]);
 }
 close $fhin;
