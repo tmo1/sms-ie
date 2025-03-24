@@ -46,7 +46,7 @@
     <string name="default_sms_app_requirement">אפליקציה זו חייבת להיות אפליקציית ה-סמס המוגדרת כברירת מחדל כדי לייבא או למחוק הודעות (תוכל לשנות בסיום הפעולה).</string>
     <string name="contacts_read_permission_required">ייצוא אנשי קשר דורש הרשאה לקריאת אנשי קשר.</string>
     <string name="issue_tracker">מאתר בעיות:</string>
-    <string name="app_about_text">ייבוא/ייצוא של SMS \n \nמאת Thomas More ותורמים אחרים \n \nגרסה %1$s \n \nזכויות יוצרים © 2021–24 \n \nשוחרר תחת GNU GPLv3</string>
+    <string name="app_about_text">ייבוא/ייצוא של SMS \n \nמאת Thomas More ותורמים אחרים \n \nגרסה %1$s \n \nזכויות יוצרים © 2021-2025\n \nשוחרר תחת GNU GPLv3</string>
     <string name="contacts_import_progress">%1$d אנשי קשר יובאו</string>
     <string name="import_contacts_results">%1$d אנשי קשר יובאו
 \nזמן שחלף: %2$s.</string>
@@ -65,4 +65,6 @@
     <string name="alerts_channel_description">התראות על הצלחה/כשל כאשר ייצוא מתוכנן הושלם</string>
     <string name="become_default_sms_app_warning">ייבוא/ייצוא של SMS חייב להיות אפליקציית ברירת המחדל של SMS כדי לייבא או למחוק הודעות. אנא קרא את README וודא שאתה מבין את ההשלכות של ביצוע פעולה זו לפני שתמשיך.</string>
     <string name="set_default_sms_app">הגדר אפליקציית SMS כברירת מחדל</string>
+    <string name="donations">תרומות:</string>
+    <string name="app_donations">https://ko-fi.com/thomasmore</string>
 </resources>
