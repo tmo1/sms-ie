@@ -29,7 +29,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -47,6 +46,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import androidx.core.net.toUri
 
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
@@ -59,7 +59,7 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         var callsTotal = 0
         var contacts = 0
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val treeUri = Uri.parse(prefs.getString(EXPORT_DIR, ""))
+        val treeUri = prefs.getString(EXPORT_DIR, "")!!.toUri() // https://stackoverflow.com/questions/57813653/why-sharedpreferences-getstring-may-return-null
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
         val date = getCurrentDateTime()
         val dateInString = "-${date.toString("yyyy-MM-dd")}"

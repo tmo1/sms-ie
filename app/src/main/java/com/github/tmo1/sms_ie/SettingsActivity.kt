@@ -235,7 +235,7 @@ class SettingsActivity : AppCompatActivity() {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 val context = requireContext()
                 val pm: PowerManager =
-                    context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                    context.getSystemService(POWER_SERVICE) as PowerManager
                 disableBattOptPreference.isChecked =
                     pm.isIgnoringBatteryOptimizations(context.packageName)
             } else {

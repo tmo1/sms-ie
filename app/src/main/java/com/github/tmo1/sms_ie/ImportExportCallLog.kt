@@ -41,6 +41,7 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
+import androidx.core.net.toUri
 
 suspend fun exportCallLog(
     appContext: Context, file: Uri, progressBar: ProgressBar?, statusReportText: TextView?
@@ -74,7 +75,7 @@ private suspend fun callLogToJSON(
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var total = 0
     val callCursor = appContext.contentResolver.query(
-        Uri.parse("content://call_log/calls"), null, null, null, null
+        "content://call_log/calls".toUri(), null, null, null, null
     )
     callCursor?.use {
         if (it.moveToFirst()) {

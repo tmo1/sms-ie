@@ -45,6 +45,7 @@ import java.io.InputStreamReader
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import androidx.core.net.toUri
 
 data class MmsBinaryPart(val uri: Uri, val filename: String)
 
@@ -174,7 +175,7 @@ private suspend fun mmsToJSON(
                 // the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
                 val msgId = it.getString(msgIdIndex)
                 val addressCursor = appContext.contentResolver.query(
-                    Uri.parse("content://mms/$msgId/addr"), null, null, null, null
+                    "content://mms/$msgId/addr".toUri(), null, null, null, null
                 )
                 addressCursor?.use { address ->
                     val addressTypeIndex =
@@ -224,7 +225,7 @@ private suspend fun mmsToJSON(
                     }
                 }
                 val partCursor = appContext.contentResolver.query(
-                    Uri.parse("content://mms/part"),
+                    "content://mms/part".toUri(),
 //                      Uri.parse("content://mms/$msgId/part"),
                     null, "mid=?", arrayOf(msgId), "seq ASC"
                 )
@@ -245,7 +246,7 @@ private suspend fun mmsToJSON(
                                 ) != null
                             ) {
                                 var filename =
-                                    Uri.parse(mmsPart.getString(Telephony.Mms.Part._DATA)).lastPathSegment
+                                    mmsPart.getString(Telephony.Mms.Part._DATA).toUri().lastPathSegment
                                 // see https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/master/src/com/android/providers/telephony/MmsProvider.java#520
                                 if (filename == null) {
                                     filename =
@@ -257,9 +258,7 @@ private suspend fun mmsToJSON(
                                 filename = "data/$filename"
                                 mmsPartList.add(
                                     MmsBinaryPart(
-                                        Uri.parse(
-                                            "content://mms/part/" + part.getString(partIdIndex)
-                                        ), filename
+                                        ("content://mms/part/" + part.getString(partIdIndex)).toUri(), filename
                                     )
                                 )
                             }
@@ -311,7 +310,7 @@ suspend fun importMessages(
         // the idea to use "content://mms/part" comes from here:
         // https://stackoverflow.com/a/6446831
         val partTableUri =
-            if (SDK_INT >= 29) Telephony.Mms.Part.CONTENT_URI else Uri.parse("content://mms/part")
+            if (SDK_INT >= 29) Telephony.Mms.Part.CONTENT_URI else "content://mms/part".toUri()
         val partCursor = appContext.contentResolver.query(partTableUri, null, null, null, null)
         partCursor?.use {
             partColumns.addAll(it.columnNames)
@@ -563,7 +562,7 @@ suspend fun importMessages(
                                             )
                                         )
                                         val messageId = insertUri.lastPathSegment
-                                        val addressUri = Uri.parse("content://mms/$messageId/addr")
+                                        val addressUri = "content://mms/$messageId/addr".toUri()
                                         addresses.forEach { address ->
                                             // Some MMS address metadata contain sub_ids, and attempting to import them can cause the address import to fail:
                                             // See: https://github.com/tmo1/sms-ie/issues/213
@@ -591,7 +590,7 @@ suspend fun importMessages(
                                         }
                                         val messageParts = messageJSON.optJSONArray("__parts")
                                         messageParts?.let {
-                                            val partUri = Uri.parse("content://mms/$messageId/part")
+                                            val partUri = "content://mms/$messageId/part".toUri()
                                             for (i in 0 until messageParts.length()) {
                                                 val messagePart = messageParts.getJSONObject(i)
                                                 val part = ContentValues()
@@ -630,7 +629,7 @@ suspend fun importMessages(
                                                         val filename =
                                                             messagePart.optString(Telephony.Mms.Part._DATA)
                                                         if (filename != "") {
-                                                            mmsPartMap[Uri.parse(filename).lastPathSegment.toString()] =
+                                                            mmsPartMap[filename.toUri().lastPathSegment.toString()] =
                                                                 insertPartUri
                                                         }
                                                     }

@@ -23,7 +23,6 @@
 package com.github.tmo1.sms_ie
 
 import android.Manifest
-import android.app.Activity
 import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -171,7 +170,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
-        // Create and register notification channel
+        // Create and register notification channels
         // https://developer.android.com/training/notify-user/channels
         // https://developer.android.com/training/notify-user/build-notification#Priority
         if (SDK_INT >= Build.VERSION_CODES.O) {
@@ -339,7 +338,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         // But we pass 'applicationContext' to the export functions, since they don't currently
         // create AlertDialogs. Perhaps we should just pass Activity context to them as well, to be
         // consistent.
-        if (requestCode == EXPORT_MESSAGES && resultCode == Activity.RESULT_OK) {
+        if (requestCode == EXPORT_MESSAGES && resultCode == RESULT_OK) {
             resultData?.data?.let {
                 //statusReportText.text = getString(R.string.begin_exporting_messages)
                 CoroutineScope(Dispatchers.Main).launch {
@@ -355,7 +354,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == IMPORT_MESSAGES && resultCode == Activity.RESULT_OK) {
+        if (requestCode == IMPORT_MESSAGES && resultCode == RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     // importMessages() requires API level 23, but we check for that back in importMessagesManual()
@@ -371,7 +370,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == EXPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
+        if (requestCode == EXPORT_CALL_LOG && resultCode == RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     total = exportCallLog(applicationContext, it, progressBar, statusReportText)
@@ -385,7 +384,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == IMPORT_CALL_LOG && resultCode == Activity.RESULT_OK) {
+        if (requestCode == IMPORT_CALL_LOG && resultCode == RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val callsImported =
@@ -400,7 +399,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == EXPORT_CONTACTS && resultCode == Activity.RESULT_OK) {
+        if (requestCode == EXPORT_CONTACTS && resultCode == RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val contactsExported =
@@ -416,7 +415,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             }
         }
 
-        if (requestCode == IMPORT_CONTACTS && resultCode == Activity.RESULT_OK) {
+        if (requestCode == IMPORT_CONTACTS && resultCode == RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val contactsImported =
@@ -431,7 +430,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == BECOME_DEFAULT_SMS_APP && resultCode == Activity.RESULT_OK) {
+        if (requestCode == BECOME_DEFAULT_SMS_APP && resultCode == RESULT_OK) {
             operation()
         }
     }
@@ -538,7 +537,7 @@ class ConfirmWipeFragment : DialogFragment() {
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
             listener = context as NoticeDialogListener
-        } catch (e: ClassCastException) {
+        } catch (_: ClassCastException) {
             // The activity doesn't implement the interface, throw exception
             throw ClassCastException(
                 ("$context must implement NoticeDialogListener")
@@ -571,7 +570,7 @@ class BecomeDefaultSMSAppFragment : DialogFragment() {
         super.onAttach(context)
         try {
             listener = context as NoticeDialogListener
-        } catch (e: ClassCastException) {
+        } catch (_: ClassCastException) {
             throw ClassCastException(
                 ("$context must implement NoticeDialogListener")
             )
