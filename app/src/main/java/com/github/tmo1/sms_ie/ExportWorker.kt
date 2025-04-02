@@ -2,7 +2,8 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, and contacts, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2023 Thomas More
+ * Copyright (c) 2022-2023,2025 Thomas More
+ * Copyright (c) 2023-2024 Andrew Gunnerson
  *
  * This file is part of SMS Import / Export.
  *
@@ -59,7 +60,8 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         var callsTotal = 0
         var contacts = 0
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val treeUri = prefs.getString(EXPORT_DIR, "")!!.toUri() // https://stackoverflow.com/questions/57813653/why-sharedpreferences-getstring-may-return-null
+        val treeUri = prefs.getString(EXPORT_DIR, "")!!
+            .toUri() // https://stackoverflow.com/questions/57813653/why-sharedpreferences-getstring-may-return-null
         val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
         val date = getCurrentDateTime()
         val dateInString = "-${date.toString("yyyy-MM-dd")}"
@@ -68,17 +70,22 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
         // many binder transactions in the background, which can happen when exporting many
         // messages. Running the service in the foreground prevents the app from being killed.
         // https://android.googlesource.com/platform/frameworks/base.git/+/71d75c09b9a06732a6edb4d1488d2aa3eb779e14%5E%21/
-        val foregroundNotification = NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
-            .setSmallIcon(R.mipmap.ic_launcher_foreground)
-            .setContentTitle(context.getString(R.string.scheduled_export_executing))
-            .setOngoing(true).build()
+        val foregroundNotification =
+            NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setContentTitle(context.getString(R.string.scheduled_export_executing))
+                .setOngoing(true).build()
         val foregroundFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
         } else {
             0
         }
         try {
-            setForeground(ForegroundInfo(NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags))
+            setForeground(
+                ForegroundInfo(
+                    NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags
+                )
+            )
         } catch (e: Exception) {
             // If the user didn't allow the disabling of battery optimizations, then Android 12+'s
             // restrictions for starting a foreground service from the background will prevent this
@@ -145,7 +152,9 @@ class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
             if (ActivityCompat.checkSelfPermission(
                     context, Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
+                ) == PackageManager.PERMISSION_GRANTED && (prefs.getBoolean(
+                    "export_success_notification", true
+                ) || result != Result.success())
             ) {
                 // see: https://stackoverflow.com/a/8765766
                 val notification = if (result == Result.success()) context.getString(
