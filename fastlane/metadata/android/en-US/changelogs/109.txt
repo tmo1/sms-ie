@@ -1,2 +1,13 @@
- - Avoid overlapping the system bar insets (issue #242)
+ - Avoid overlapping the system bar insets (issue #242).
+ 
+ - Fix crash when importing messages to an MIUI device that were exported from an MIUI device - by Askorbinovaya Kislota (issues #103, #152, #164, #206, #232 / PR #236).
 
+ - Add settings toggle to control issuing of notifications upon scheduled export success (issue #227).
+
+ - Add scrolling functionality to the main app screen, to prevent overlapping UI elements on small screens (issue #238).
+
+ - Update "About" screen.
+
+ - Add Danish translation - by catsnote (cat).
+
+ - Update Hebrew translation - by elid34 (elid).

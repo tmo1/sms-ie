@@ -18,6 +18,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): addition of [`ScrollView`](https://developer.android.com/reference/android/widget/ScrollView) to "About" screen ([PR #133](https://github.com/tmo1/sms-ie/pull/133))
  - [Andrew (andr5w)](https://github.com/andr5w): bug fix ([PR #168](https://github.com/tmo1/sms-ie/pull/168))
  - [farfromrefuge](https://github.com/farfromrefug): bug fix ([PR #231](https://github.com/tmo1/sms-ie/pull/231))
+ - [Askorbinovaya Kislota](https://github.com/askorbinovaya-kislota): bug fix ([PR #236](https://github.com/tmo1/sms-ie/pull/236))
 
 ### Translations
 
@@ -32,6 +33,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [yangyangdaji](https://github.com/yangyangdaji): updates to Simplified Chinese translation
  - [Merlignux](https://github.com/Merlignux): Portuguese translation
  - [python israel (nhman-python)](https://github.com/nhman-python): Hebrew translation
+ - [elid34 (elid)](https://github.com/elid34): update to Hebrew translation
  - [Артём (Artem13327)](https://hosted.weblate.org/user/Artem13327/): Russian translation
  - Axus Wizix: updates to Russian translation
  - [pjammo](https://github.com/pjammo): Italian translation
@@ -45,6 +47,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - Surena: Persian translation
  - [ngocanhtve](https://github.com/ngocanhtve): Vietnamese translation
  - [TamilNeram (தமிழ் நேரம்)]( https://github.com/TamilNeram): Tamil translation
+ - [catsnote (cat)](https://github.com/catsnote): Danish translation
 
 ### Other
 
@@ -54,3 +57,4 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [wittmane](https://github.com/wittmane), [dshepsis](https://github.com/dshepsis), and [sshaikh](https://github.com/sshaikh): figuring out broken `Subscription ID` handling on Android 14 ([Issue #128](https://github.com/tmo1/sms-ie/issues/128))
  - [Artem13327](https://github.com/Artem13327): [Update to automatic build and upload Github workflow](https://github.com/tmo1/sms-ie/pull/158)
  - [sta-c0000](https://github.com/sta-c0000): [Message browser tool](https://github.com/tmo1/sms-ie/pull/208)
+ - [fanto666](https://github.com/fanto666)]: [Nokia Suite CSV conversion tool](https://github.com/tmo1/sms-ie/pull/240)

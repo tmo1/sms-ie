@@ -3,6 +3,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/tmo1/sms-ie)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/tmo1/sms-ie)
 ![F-Droid Version](https://img.shields.io/f-droid/v/com.github.tmo1.sms_ie)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmo1/sms-ie/build.yml)
 
 ![GitHub issues](https://img.shields.io/github/issues/tmo1/sms-ie)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/tmo1/sms-ie)
@@ -191,7 +192,7 @@ Currently, [social stream data](https://developer.android.com/guide/topics/provi
 
 Contacts import and export is currently considered experimental, and the JSON format is subject to change.
 
-**Note:** Currently, when contacts are exported and then imported, the app may report a larger total of contacts imported than exported. This is due to the fact that when exporting, the total number of **`Contacts`** exported is reported (since this is a logical and straightforward thinng to do), whereas when importing, the total number of **`Raw Contacts`** imported is reported (since [as per the documentation](https://developer.android.com/guide/topics/providers/contacts-provider#ContactBasics), applications are not allowed to add `Contacts`, only `Raw Contacts`, and as noted above, a `Contact` may consist of an aggregation of multiple `Raw Contacts`).
+**Note:** Currently, when contacts are exported and then imported, the app may report a larger total of contacts imported than exported. This is due to the fact that when exporting, the total number of **`Contacts`** exported is reported (since this is a logical and straightforward thing to do), whereas when importing, the total number of **`Raw Contacts`** imported is reported (since [as per the documentation](https://developer.android.com/guide/topics/providers/contacts-provider#ContactBasics), applications are not allowed to add `Contacts`, only `Raw Contacts`, and as noted above, a `Contact` may consist of an aggregation of multiple `Raw Contacts`).
 
 ## Limitations
 
@@ -237,17 +238,9 @@ It is strongly recommended to redact any posted (ND)JSON and remove any sensitiv
 
 ### Logcat
 
-When reporting a problem, particularly a reproducible one, please attach a logcat (a collection of log messages produced by Android - see [here](https://developer.android.com/studio/command-line/logcat) and [here](https://developer.android.com/studio/debug/am-logcat)). If feasible, please reproduce the problem in a debug build of the latest code (see the [Installation](#intallation) section of this README for an easy way to obtain such a build) and include the logcat from that, since the debug builds have more detailed logging. Instructions for obtaining a logcat (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
+When reporting a problem, particularly a reproducible one, please attach a logcat (a collection of log messages produced by Android - see [here](https://developer.android.com/studio/command-line/logcat) and [here](https://developer.android.com/studio/debug/am-logcat)). If feasible, please reproduce the problem in a debug build of the latest code (see the [Installation](#installation) section of this README for an easy way to obtain such a build) and include the logcat from that, since the debug builds have more detailed logging. Instructions for obtaining a logcat (with increasing level of detail) can be found [here](https://wiki.lineageos.org/how-to/logcat), [here](https://f-droid.org/en/docs/Getting_logcat_messages_after_crash/), and [here](https://www.xda-developers.com/guide-sending-a-logcat-to-help-debug-your-favorite-app/).
 
 ### Known Issues
-
-#### MIUI
-
-When importing messages that have been exported from a MIUI system into a MIUI system, [the following error may be encountered](https://github.com/tmo1/sms-ie/issues/103):
-```
-java.lang.IllegalArgumentException: The non-sync-callers AND non-blocked-url should not specify DELETED for inserting.
-```
-For a possible solution, see [here](https://github.com/tmo1/sms-ie/issues/103#issuecomment-1620890135).
 
 #### SMS Messages With Multiple Recipients
 
