@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021-2022 Thomas More
+  ~ SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+  ~ call logs, and contacts, from and to JSON / NDJSON files.
+  ~
+  ~ Copyright (c) 2021-2025 Thomas More
+  ~ Copyright (c) 2022 Bindu
   ~
   ~ This file is part of SMS Import / Export.
   ~
@@ -18,13 +21,19 @@
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:fadeScrollbars="false"
     tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -171,4 +180,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/default_sms_app_warning" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
