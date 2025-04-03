@@ -20,5 +20,12 @@
 .cxx
 local.properties
 
+# The following lines have been added manually
+
 /.idea/deploymentTargetDropDown.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/misc.xml
+
 /app/release
+/app/legacy
+/app/standard
