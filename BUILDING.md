@@ -2,8 +2,6 @@
 
 The [SMS Import / Export Github repository](https://github.com/tmo1/sms-ie) can be cloned and the app built locally, from the command line or using [Android Studio](https://en.wikipedia.org/wiki/Android_Studio).
 
-**Note:** When using Android Studio to build debug builds and deploy them to systems with API level >= 21, it may be desirable to turn off minification; see the comments in the app's [`build.gradle`](https://github.com/tmo1/sms-ie/app/build.gradle) configuration file for details.
-
 Following are instructions for building the app from the command line.
 
 ## Prerequisites
@@ -72,7 +70,9 @@ Point Gradle to the installed SDK (see [here](https://stackoverflow.com/question
 The app is now ready to be built. To build a debug build, run:
 
 ```
-~$ ./gradlew assembleDebug
+~$ ./gradlew assembleStandardDebug
 ```
+
+(The [application level `build.gradle`](https://github.com/tmo1/sms-ie/blob/master/app/build.gradle) currently specifies four (theoretically) possible build variants: `legacyDebug`, `legacyRelease`, `standardDebug`, and `standardRelease`. `release` builds are [shrunken and minified](https://developer.android.com/build/shrink-code), while `debug` builds are not. For the difference between `legacy` and `standard` builds, see [here](https://github.com/tmo1/sms-ie#installation). The `legacyDebug` variant is not currently buildable from the command line, due to the [64K reference limit](https://developer.android.com/build/multidex).)
 
 For more information, including instructions for building and signing release builds, see [the official Android documentation](https://developer.android.com/build/building-cmdline), as well as [here](https://stackoverflow.com/questions/24398041/build-android-studio-app-via-command-line).

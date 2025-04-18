@@ -1,9 +1,11 @@
 # SMS Import / Export
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmo1/sms-ie/build.yml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmo1/sms-ie/codeql.yml?label=codeql)
+
 ![GitHub Release](https://img.shields.io/github/v/release/tmo1/sms-ie)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/tmo1/sms-ie)
 ![F-Droid Version](https://img.shields.io/f-droid/v/com.github.tmo1.sms_ie)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmo1/sms-ie/build.yml)
 
 ![GitHub issues](https://img.shields.io/github/issues/tmo1/sms-ie)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/tmo1/sms-ie)
