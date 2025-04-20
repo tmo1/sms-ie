@@ -32,7 +32,7 @@
     <string name="alerts_channel_name">திட்டமிடப்பட்ட ஏற்றுமதி எச்சரிக்கைகள்</string>
     <string name="alerts_channel_description">திட்டமிடப்பட்ட ஏற்றுமதி முடிந்ததும் வெற்றி/தோல்வி எச்சரிக்கைகள்</string>
     <string name="scheduled_export_executing">திட்டமிடப்பட்ட ஏற்றுமதி செயல்படுத்தல்</string>
-    <string name="scheduled_export_success">%1$d SMS (கள்), %2$d MMS (கள்), %3$d அழைப்புகள் மற்றும் %4 $ டி தொடர்புகள் ஏற்றுமதி செய்யப்பட்டன.</string>
+    <string name="scheduled_export_success">%1$d SMS (கள்), %2$d MMS (கள்), %3$d அழைப்புகள் மற்றும் %4$d தொடர்புகள் ஏற்றுமதி செய்யப்பட்டன.</string>
     <string name="scheduled_export_executed">திட்டமிடப்பட்ட ஏற்றுமதி செயல்படுத்தப்பட்டது</string>
     <string name="scheduled_export_failure">ஏற்றுமதி தோல்வியுற்றது - மேலும் விவரங்களுக்கு LogCat ஐப் பார்க்கவும்.</string>
     <string name="wipe_messages">செய்திகளைத் துடைக்கவும்</string>
@@ -43,7 +43,7 @@
     <string name="messages_wiped">செய்திகள் அழிக்கப்பட்டன</string>
     <string name="wiping_sms_messages">எச்எம்எச் செய்திகளைத் துடைத்தல்…</string>
     <string name="wiping_mms_messages">எம்.எம்.எச் செய்திகளைத் துடைத்தல்…</string>
-    <string name="app_about_text">எச்எம்எச் இறக்குமதி / ஏற்றுமதி\n\n தாமச் மோர் மற்றும் பிற பங்களிப்பாளர்கள்\n\n பதிப்பு %1$s\n\n பதிப்புரிமை © 2021–2024\n\n குனு சி.பி.எல்.வி 3 இன் கீழ் வெளியிடப்பட்டது</string>
+    <string name="app_about_text">எச்எம்எச் இறக்குமதி / ஏற்றுமதி\n\n தாமச் மோர்\nமற்றும் பிற பங்களிப்பாளர்கள்\n\n பதிப்பு %1$s\n\n பதிப்புரிமை © 2021–2025\n\n குனு சி.பி.எல்.வி 3 இன் கீழ் வெளியிடப்பட்டது</string>
     <string name="homepage">முகப்புப்பக்கம்:</string>
     <string name="documentation">ஆவணங்கள்:</string>
     <string name="issue_tracker">வெளியீடு டிராக்கர்:</string>
@@ -59,4 +59,6 @@
     <string name="set_default_sms_app">இயல்புநிலை SMS பயன்பாட்டை அமைக்கவும்</string>
     <string name="importing_calls">அழைப்புகளை இறக்குமதி செய்தல்…</string>
     <string name="okay">சரி</string>
+    <string name="donations">நன்கொடைகள்:</string>
+    <string name="app_donations">https://ko-fi.com/thomasmore</string>
 </resources>
