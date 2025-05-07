@@ -39,6 +39,14 @@
             android:title="Export at:"
             app:dependency="schedule_export" />
 
+        <EditTextPreference
+            android:key="export_interval_days"
+            android:title="Export every x days"
+            android:defaultValue="1"
+            android:inputType="number"
+            app:dependency="schedule_export"
+            app:useSimpleSummaryProvider="true" />
+
         <Preference
             android:key="export_dir"
             android:title="Export to directory:"
