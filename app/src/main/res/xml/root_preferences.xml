@@ -26,120 +26,120 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:key="main_preference_screen">
 
-    <PreferenceCategory android:title="Scheduled export"
+    <PreferenceCategory android:title="@string/pref_scheduled_export_category"
         android:key="scheduled_export_preference_category">
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="schedule_export"
-            android:title="Enable scheduled export" />
+            android:title="@string/pref_schedule_export" />
 
         <com.github.tmo1.sms_ie.TimePickerPreference
             android:key="export_time"
-            android:title="Export at:"
+            android:title="@string/pref_export_time"
             app:dependency="schedule_export" />
 
         <Preference
             android:key="export_dir"
-            android:title="Export to directory:"
+            android:title="@string/pref_export_dir"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_success_notification"
-            android:title="Export success notification"
-            android:summary="A notification will always be issued upon export failure, regardless of the value of this setting."
+            android:title="@string/pref_export_success_notification"
+            android:summary="@string/pref_export_success_notification_summary"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:key="disable_battery_optimizations"
-            android:title="Disable battery optimizations"
-            android:summary="Required on Android 14+ when exporting many items."
+            android:title="@string/pref_disable_battery_optimizations"
+            android:summary="@string/pref_disable_battery_optimizations_summary"
             android:persistent="false"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="delete_old_exports"
-            android:title="Delete old exports"
+            android:title="@string/pref_delete_old_exports"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="remove_datestamps_from_filenames"
-            android:title="Remove datestamps from filenames"
+            android:title="@string/pref_remove_datestamps_from_filenames"
             app:dependency="delete_old_exports"
             app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_messages"
-            android:title="Export messages"
+            android:title="@string/pref_export_messages"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_calls"
-            android:title="Export calls"
+            android:title="@string/pref_export_calls"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_contacts"
-            android:title="Export contacts"
+            android:title="@string/pref_export_contacts"
             app:dependency="schedule_export" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Export options">
+    <PreferenceCategory app:title="@string/pref_export_options_category">
 
         <SwitchPreferenceCompat
             android:key="include_binary_data"
-            android:title="@string/include_binary_data"
+            android:title="@string/pref_include_binary_data"
             app:defaultValue="true"
             app:singleLineTitle="false" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Import options">
+    <PreferenceCategory app:title="@string/pref_import_options_category">
 
         <SwitchPreferenceCompat
             android:key="deduplication"
-            android:title="Message and call log entry deduplication (experimental)"
+            android:title="@string/pref_deduplication"
             app:defaultValue="false"
             app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:key="import_sub_ids"
-            android:title="Include Subscription IDs in import"
+            android:title="@string/pref_import_sub_ids"
             app:defaultValue="false"
             app:singleLineTitle="false" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Debugging options">
+    <PreferenceCategory android:title="@string/pref_debugging_category">
 
         <SwitchPreferenceCompat
             android:key="debugging"
-            android:title="Enable debugging options"
+            android:title="@string/pref_debugging"
             app:defaultValue="false" />
 
         <EditTextPreference
             android:key="max_records"
-            android:title="Maximum records (SMS messages, MMS messages, contacts, and calls) to import (messages only) or export. (Leave empty or set to 0 for all.)"
+            android:title="@string/pref_max_records"
             app:defaultValue=""
             app:dependency="debugging"
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
             android:key="sms"
-            android:title="Process SMS messages"
+            android:title="@string/pref_sms"
             app:defaultValue="true"
             app:dependency="debugging" />
 
         <SwitchPreferenceCompat
             android:key="mms"
-            android:title="Process MMS messages"
+            android:title="@string/pref_mms"
             app:defaultValue="true"
             app:dependency="debugging" />
 
