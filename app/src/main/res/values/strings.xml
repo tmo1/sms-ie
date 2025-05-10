@@ -101,4 +101,31 @@
     <string name="importing_calls">Importing calls …</string>
     <string name="donations">Donations:</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>
+
+    <!-- Settings, add "pref_" for categorization. -->
+
+    <string name="pref_scheduled_export_category">Scheduled export</string>
+    <string name="pref_schedule_export">Enable scheduled export</string>
+    <string name="pref_export_time">Export at:</string>
+    <string name="pref_export_dir">Export to directory:</string>
+    <string name="pref_export_success_notification">Export success notification</string>
+    <string name="pref_export_success_notification_summary">A notification will always be issued upon export failure, regardless of the value of this setting.</string>
+    <string name="pref_disable_battery_optimizations">Disable battery optimizations</string>
+    <string name="pref_disable_battery_optimizations_summary">Required on Android 14+ when exporting many items.</string>
+    <string name="pref_delete_old_exports">Delete old exports</string>
+    <string name="pref_remove_datestamps_from_filenames">Remove datestamps from filenames</string>
+    <string name="pref_export_messages">Export messages</string>
+    <string name="pref_export_calls">Export calls</string>
+    <string name="pref_export_contacts">Export contacts</string>
+    <string name="pref_export_options_category">Export options</string>
+    <string name="pref_include_binary_data">@string/include_binary_data</string>
+    <string name="pref_import_options_category">Import options</string>
+    <string name="pref_deduplication">Message and call log entry deduplication (experimental)</string>
+    <string name="pref_import_sub_ids">Include Subscription IDs in import</string>
+    <string name="pref_debugging_category">Debugging options</string>
+    <string name="pref_debugging">Enable debugging options</string>
+    <string name="pref_max_records">Maximum records (SMS messages, MMS messages, contacts, and calls) to import (messages only) or export. (Leave empty or set to 0 for all.)</string>
+    <string name="pref_sms">Process SMS messages</string>
+    <string name="pref_mms">Process MMS messages</string>
+
 </resources>
