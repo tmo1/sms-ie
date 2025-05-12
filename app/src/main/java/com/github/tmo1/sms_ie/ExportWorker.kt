@@ -189,8 +189,13 @@ fun updateExportWork(context: Context, cancel: Boolean) {
     }
     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
     if (prefs.getBoolean("schedule_export", false)) {
-        // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java
+        val exportIntervalDays = prefs.getString("export_interval_days", "")?.toIntOrNull() ?: 1
         val now = Calendar.getInstance()
+        val dayOfYear = now.get(Calendar.DAY_OF_YEAR)
+        val remainder = dayOfYear % exportIntervalDays
+        val daysToAdd = if (remainder == 0) 0 else (exportIntervalDays - remainder)
+
+        // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java
         val exportTime = Calendar.getInstance()
         exportTime.set(Calendar.HOUR_OF_DAY, 0)
         exportTime.set(Calendar.MINUTE, 0)
@@ -200,6 +205,7 @@ fun updateExportWork(context: Context, cancel: Boolean) {
         if (exportTime < now) {
             exportTime.add(Calendar.DAY_OF_MONTH, 1)
         }
+        exportTime.add(Calendar.DAY_OF_MONTH, daysToAdd)
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
         Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
         val exportRequest: WorkRequest =
