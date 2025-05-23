@@ -13,7 +13,7 @@
     <string name="export_contacts_results">%1$d contatto/i esportato/i
 \nTempo trascorso: %2$s.</string>
     <string name="sms_permissions_required">L\'esportazione dei messaggi richiede l\'autorizzazione per leggere SMS e contatti.</string>
-    <string name="app_name">Importa/Esporta SMS</string>
+    <string name="app_name">SMS Import / Export</string>
     <string name="sms_export_progress">%1$d di %2$d SMS esportati</string>
     <string name="import_messages_results">%1$d SMS e %2$d MMS importati
 \nTempo trascorso: %3$s</string>
@@ -46,7 +46,7 @@
     <string name="ready">Pronto</string>
     <string name="import_contacts">Importa contatti</string>
     <string name="scheduled_export_failure">Esportazione non riuscita: vedere logcat per maggiori dettagli.</string>
-    <string name="app_about_text">Importa/Esporta SMS \n \ndi Thomas More e altri collaboratori \n \nVersione %1$s \n \nCopyright © 2021-2024 \n \nSoftware libero con copyleft, licenza GPLv3+</string>
+    <string name="app_about_text">SMS Import / Export \n \ndi Thomas More \ne altri collaboratori \n \nVersione %1$s \n \nCopyright © 2021-2024 \n \nSoftware libero con copyleft, licenza GNU GPLv3+</string>
     <string name="documentation">Documentazione:</string>
     <string name="issue_tracker">Segnalazione problemi:</string>
     <string name="about">Informazioni</string>
@@ -65,4 +65,5 @@
     <string name="alerts_channel_name">Avvisi per esportazione programmate</string>
     <string name="default_sms_app_warning"><b>Attenzione</b>: al momento questa è l\'applicazione predefinita per gli SMS. Significa che SMS e MMS in arrivo andranno persi! Per evitare questo problema, impostare un\'app SMS predefinita adeguata.</string>
     <string name="alerts_channel_description">Avvisi di successo/fallimento al completamento delle esportazioni programmate</string>
+    <string name="donations">Donazioni:</string>
 </resources>
