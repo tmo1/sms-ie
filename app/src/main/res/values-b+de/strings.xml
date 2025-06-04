@@ -87,4 +87,6 @@
     <string name="alerts_channel_name">Geplante Exportmeldungen</string>
     <string name="alerts_channel_description">Erfolgs-/Fehlermeldungen nach Abschluss geplanter Exporte</string>
     <string name="importing_calls">Importiere Anrufe…</string>
+    <string name="donations">Spenden:</string>
+    <string name="app_donations">https://ko-fi.com/thomasmore</string>
 </resources>
