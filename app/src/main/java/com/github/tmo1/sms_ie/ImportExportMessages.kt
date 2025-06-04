@@ -296,14 +296,14 @@ suspend fun importMessages(
             appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
         smsCursor?.use {
             smsColumns.addAll(it.columnNames)
-            smsColumns.removeAll(setOf("_id", "thread_id", "deleted", "sync_state"))
+            smsColumns.removeAll(setOf("_id", "thread_id", "deleted", "sync_state", "need_download"))
         }
         val mmsColumns = mutableSetOf<String>()
         val mmsCursor =
             appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
         mmsCursor?.use {
             mmsColumns.addAll(it.columnNames)
-            mmsColumns.removeAll(setOf("_id", "thread_id", "deleted", "sync_state"))
+            mmsColumns.removeAll(setOf("_id", "thread_id", "deleted", "sync_state", "need_download"))
         }
         val partColumns = mutableSetOf<String>()
         // I can't find an officially documented way of getting the Part table URI for API < 29
