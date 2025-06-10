@@ -92,7 +92,8 @@ private suspend fun callLogToJSON(
                 // From the documentation at https://developer.android.com/reference/android/provider/CallLog.Calls#CACHED_NAME
                 // "The cached name associated with the phone number, if it exists.
                 // This value is typically filled in by the dialer app for the caching purpose, so it's not guaranteed to be present, and may not be current if the contact information associated with this number has changed."
-                val displayName = lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
+                val displayName =
+                    lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
                 if (displayName != null) jsonWriter.name("display_name").value(displayName)
                 jsonWriter.endObject()
                 total++
@@ -138,8 +139,9 @@ suspend fun importCallLog(
                             while (jsonReader.hasNext()) {
                                 val name = jsonReader.nextName()
                                 val value = jsonReader.nextString()
+                                // https://github.com/tmo1/sms-ie/issues/210
                                 if ((callLogColumns.contains(name)) and (name !in setOf(
-                                        BaseColumns._ID, BaseColumns._COUNT
+                                        BaseColumns._ID, BaseColumns._COUNT, "LAST_SEVEN_NUMBER"
                                     ))
                                 ) {
                                     callLogMetadata.put(name, value)
