@@ -1,0 +1,5 @@
+- Import i eksport kontaktów (eksperymentalne)
+
+ - Tłumaczenie na język hebrajski
+
+ - Naprawiono awarię podczas zaplanowanego eksportu do miejsca docelowego Nextcloud

@@ -1,0 +1,1 @@
+Importuje i eksportuje wiadomości SMS i MMS, listę połączeń i kontakty.
