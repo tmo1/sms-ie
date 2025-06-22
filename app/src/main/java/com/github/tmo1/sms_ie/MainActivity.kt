@@ -30,7 +30,6 @@ import android.app.role.RoleManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
@@ -44,10 +43,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
@@ -67,7 +65,6 @@ const val IMPORT_CALL_LOG = 4
 const val EXPORT_CONTACTS = 5
 const val IMPORT_CONTACTS = 6
 const val BECOME_DEFAULT_SMS_APP = 100
-const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "SMSIE"
 const val CHANNEL_ID_PERSISTENT = "PERSISTENT"
 const val CHANNEL_ID_ALERTS = "ALERTS"
@@ -76,8 +73,14 @@ const val NOTIFICATION_ID_ALERT = 1
 
 class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,
     BecomeDefaultSMSAppFragment.NoticeDialogListener {
-
     private lateinit var prefs: SharedPreferences
+
+    private val requestPermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
+            // We currently request permissions on startup, but don't block UI interactions if they
+            // are denied. When performing an action, the user will be notified that they need to
+            // grant permissions.
+        }
 
     // We use 'operation' to tell onActivityResult() which operation to run after the user has made
     // the app into the default SMS app. This feels hackish, but it's simple and effective, and
@@ -116,25 +119,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         super.onCreate(savedInstanceState)
 
         // get necessary permissions on startup
-        val allPermissions = listOf(
+        requestPermissions.launch(arrayOf(
             Manifest.permission.READ_SMS,
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.WRITE_CALL_LOG
-        )
-        val necessaryPermissions = mutableListOf<String>()
-        allPermissions.forEach {
-            if (ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
-                necessaryPermissions.add(it)
-            }
-        }
-
-        if (necessaryPermissions.any()) {
-            ActivityCompat.requestPermissions(
-                this, necessaryPermissions.toTypedArray(), PERMISSIONS_REQUEST
-            )
-        }
+            Manifest.permission.WRITE_CALL_LOG,
+        ))
 
         // set up UI
         setContentView(R.layout.activity_main)
