@@ -167,12 +167,7 @@ suspend fun automaticExport(
             val file = documentTree.createFile("application/zip", "messages$dateInString.zip")
                 ?: throw IOException("Failed to create messages output file")
 
-            Log.i(LOG_TAG, "Beginning messages export ...")
             messages = exportMessages(appContext, file.uri, updateProgress)
-            Log.i(
-                LOG_TAG,
-                "Messages export successful: ${messages.sms} SMSs and ${messages.mms} MMSs exported"
-            )
             deleteOldExports(prefs, documentTree, file, "messages")
         } catch (e: Exception) {
             firstException = firstException ?: e
@@ -184,11 +179,7 @@ suspend fun automaticExport(
             val file = documentTree.createFile("application/json", "calls$dateInString.json")
                 ?: throw IOException("Failed to create call log output file")
 
-            Log.i(LOG_TAG, "Beginning call log export ...")
             calls = exportCallLog(appContext, file.uri, updateProgress)
-            Log.i(
-                LOG_TAG, "Call log export successful: $calls calls exported"
-            )
             deleteOldExports(prefs, documentTree, file, "calls")
         } catch (e: Exception) {
             firstException = firstException ?: e
@@ -200,11 +191,7 @@ suspend fun automaticExport(
             val file = documentTree.createFile("application/json", "contacts$dateInString.json")
                 ?: throw IOException("Failed to create contacts output file")
 
-            Log.i(LOG_TAG, "Beginning contacts export ...")
             contacts = exportContacts(appContext, file.uri, updateProgress)
-            Log.i(
-                LOG_TAG, "Contacts export successful: $contacts contacts exported"
-            )
             deleteOldExports(prefs, documentTree, file, "contacts")
         } catch (e: Exception) {
             firstException = firstException ?: e
