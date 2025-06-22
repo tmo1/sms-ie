@@ -47,6 +47,8 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
@@ -85,6 +87,11 @@ data class FailureData(val title: String, val message: String) {
     )
 }
 
+// Prevent multiple operations from running at the same time. We don't use the unique work API
+// because if there is an upcoming scheduled export, manual operations are forced to wait until that
+// executes first.
+private val GLOBAL_LOCK = Mutex()
+
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
 class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -119,7 +126,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         refreshForegroundNotification(progress)
     }
 
-    override suspend fun doWork(): Result {
+    override suspend fun doWork(): Result = GLOBAL_LOCK.withLock {
         val context = applicationContext
 
         refreshForegroundNotification(Progress(0, 0, null))
