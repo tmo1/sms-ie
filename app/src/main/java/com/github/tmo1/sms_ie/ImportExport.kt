@@ -30,18 +30,23 @@ package com.github.tmo1.sms_ie
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
 import android.provider.Telephony
+import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
@@ -128,6 +133,106 @@ suspend fun wipeSmsAndMmsMessages(
             appContext.contentResolver.delete(Telephony.Mms.CONTENT_URI, null, null)
             hideProgressBar(progressBar)
         }
+    }
+}
+
+suspend fun automaticExport(appContext: Context): Triple<MessageTotal, Int, Int> {
+    val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+
+    var messages = MessageTotal()
+    var calls = 0
+    var contacts = 0
+
+    val treeUri = prefs.getString(EXPORT_DIR, "")!!
+        .toUri() // https://stackoverflow.com/questions/57813653/why-sharedpreferences-getstring-may-return-null
+    // Cannot fail because our min SDK version is >= 21.
+    val documentTree = DocumentFile.fromTreeUri(appContext, treeUri)!!
+    val date = getCurrentDateTime()
+    val dateInString = "-${date.toString("yyyy-MM-dd")}"
+
+    // We want to back up as much as possible, so avoid failing fast.
+    var firstException: Exception? = null
+
+    if (prefs.getBoolean("export_messages", true)) {
+        try {
+            val file = documentTree.createFile("application/zip", "messages$dateInString.zip")
+                ?: throw IOException("Failed to create messages output file")
+
+            Log.i(LOG_TAG, "Beginning messages export ...")
+            messages = exportMessages(appContext, file.uri, null, null)
+            Log.i(
+                LOG_TAG,
+                "Messages export successful: ${messages.sms} SMSs and ${messages.mms} MMSs exported"
+            )
+            deleteOldExports(prefs, documentTree, file, "messages")
+        } catch (e: Exception) {
+            firstException = firstException ?: e
+        }
+    }
+
+    if (prefs.getBoolean("export_calls", true)) {
+        try {
+            val file = documentTree.createFile("application/json", "calls$dateInString.json")
+                ?: throw IOException("Failed to create call log output file")
+
+            Log.i(LOG_TAG, "Beginning call log export ...")
+            calls = exportCallLog(appContext, file.uri, null, null).sms
+            Log.i(
+                LOG_TAG, "Call log export successful: $calls calls exported"
+            )
+            deleteOldExports(prefs, documentTree, file, "calls")
+        } catch (e: Exception) {
+            firstException = firstException ?: e
+        }
+    }
+
+    if (prefs.getBoolean("export_contacts", true)) {
+        try {
+            val file = documentTree.createFile("application/json", "contacts$dateInString.json")
+                ?: throw IOException("Failed to create contacts output file")
+
+            Log.i(LOG_TAG, "Beginning contacts export ...")
+            contacts = exportContacts(appContext, file.uri, null, null)
+            Log.i(
+                LOG_TAG, "Contacts export successful: $contacts contacts exported"
+            )
+            deleteOldExports(prefs, documentTree, file, "contacts")
+        } catch (e: Exception) {
+            firstException = firstException ?: e
+        }
+    }
+
+    if (firstException != null) {
+        throw firstException
+    }
+
+    return Triple(messages, calls, contacts)
+}
+
+fun deleteOldExports(
+    prefs: SharedPreferences, documentTree: DocumentFile, newExport: DocumentFile?, prefix: String
+) {
+    if (prefs.getBoolean("delete_old_exports", false)) {
+        Log.i(LOG_TAG, "Deleting old exports ...")
+        // The following line is necessary in case there already existed a file with the
+        // provided filename, in which case Android will add a numeric suffix to the new
+        // file's filename ("messages-yyyy-MM-dd (1).json")
+        val newFilename = newExport?.name.toString()
+        val files = documentTree.listFiles()
+        var total = 0
+        val extension = if (prefix == "messages") "zip" else "json"
+        files.forEach {
+            val name = it.name
+            if (name != null && name != newFilename && name.startsWith(prefix)
+                    && name.endsWith(".$extension")) {
+                it.delete()
+                total++
+            }
+        }
+        if (prefs.getBoolean("remove_datestamps_from_filenames", false)) {
+            newExport?.renameTo("$prefix.$extension")
+        }
+        Log.i(LOG_TAG, "$total exports deleted")
     }
 }
 

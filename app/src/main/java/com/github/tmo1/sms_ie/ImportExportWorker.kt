@@ -27,7 +27,6 @@ package com.github.tmo1.sms_ie
 import android.Manifest
 import android.app.ForegroundServiceStartNotAllowedException
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.Build
@@ -35,7 +34,6 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -47,7 +45,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
-import androidx.core.net.toUri
 
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
@@ -60,15 +57,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         val context = applicationContext
         var result = Result.success()
-        var messageTotal = MessageTotal()
-        var callsTotal = 0
-        var contacts = 0
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val treeUri = prefs.getString(EXPORT_DIR, "")!!
-            .toUri() // https://stackoverflow.com/questions/57813653/why-sharedpreferences-getstring-may-return-null
-        val documentTree = context.let { DocumentFile.fromTreeUri(context, treeUri) }
-        val date = getCurrentDateTime()
-        val dateInString = "-${date.toString("yyyy-MM-dd")}"
 
         // Android 14 introduced a new battery optimization that will kill apps that perform too
         // many binder transactions in the background, which can happen when exporting many
@@ -103,55 +92,21 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         }
 
         withContext(Dispatchers.IO) {
-            if (prefs.getBoolean("export_messages", true)) {
-                val file = documentTree?.createFile("application/zip", "messages$dateInString.zip")
-                val fileUri = file?.uri
-                if (fileUri != null) {
-                    Log.i(LOG_TAG, "Beginning messages export ...")
-                    messageTotal = exportMessages(context, fileUri, null, null)
-                    Log.i(
-                        LOG_TAG,
-                        "Messages export successful: ${messageTotal.sms} SMSs and ${messageTotal.mms} MMSs exported"
-                    )
-                    deleteOldExports(prefs, documentTree, file, "messages")
-                } else {
-                    Log.e(LOG_TAG, "Messages export failed - could not create file")
-                    result = Result.failure()
-                }
-            }
+            val message = try {
+                val (messages, calls, contacts) = automaticExport(context)
 
-            if (prefs.getBoolean("export_calls", true)) {
-                val file = documentTree?.createFile("application/json", "calls$dateInString.json")
-                val fileUri = file?.uri
-                if (fileUri != null) {
-                    Log.i(LOG_TAG, "Beginning call log export ...")
-                    val total = exportCallLog(context, fileUri, null, null)
-                    callsTotal = total.sms
-                    Log.i(
-                        LOG_TAG, "Call log export successful: $callsTotal calls exported"
-                    )
-                    deleteOldExports(prefs, documentTree, file, "calls")
-                } else {
-                    Log.e(LOG_TAG, "Call log export failed - could not create file")
-                    result = Result.failure()
-                }
-            }
+                context.getString(
+                    R.string.scheduled_export_success,
+                    messages.sms,
+                    messages.mms,
+                    calls,
+                    contacts,
+                )
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "Scheduled export failed", e)
+                result = Result.failure()
 
-            if (prefs.getBoolean("export_contacts", true)) {
-                val file =
-                    documentTree?.createFile("application/json", "contacts$dateInString.json")
-                val fileUri = file?.uri
-                if (fileUri != null) {
-                    Log.i(LOG_TAG, "Beginning contacts export ...")
-                    contacts = exportContacts(context, fileUri, null, null)
-                    Log.i(
-                        LOG_TAG, "Contacts export successful: $contacts contacts exported"
-                    )
-                    deleteOldExports(prefs, documentTree, file, "contacts")
-                } else {
-                    Log.e(LOG_TAG, "Contacts export failed - could not create file")
-                    result = Result.failure()
-                }
+                context.getString(R.string.scheduled_export_failure)
             }
 
             if (ActivityCompat.checkSelfPermission(
@@ -160,20 +115,13 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     "export_success_notification", true
                 ) || result != Result.success())
             ) {
-                // see: https://stackoverflow.com/a/8765766
-                val notification = if (result == Result.success()) context.getString(
-                    R.string.scheduled_export_success,
-                    messageTotal.sms,
-                    messageTotal.mms,
-                    callsTotal,
-                    contacts
-                ) else context.getString(R.string.scheduled_export_failure)
                 // https://developer.android.com/training/notify-user/build-notification#builder
                 val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID_ALERTS)
                     //.setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setSmallIcon(R.drawable.ic_scheduled_export_done)
                     .setContentTitle(context.getString(R.string.scheduled_export_executed))
-                    .setContentText(notification).setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentText(message)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // https://developer.android.com/training/notify-user/build-notification#notify
                 with(NotificationManagerCompat.from(applicationContext)) {
                     // notificationId is a unique int for each notification that you must define
@@ -210,34 +158,5 @@ fun updateExportWork(context: Context, cancel: Boolean) {
             OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
                 .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS).build()
         WorkManager.getInstance(context).enqueue(exportRequest)
-    }
-}
-
-fun deleteOldExports(
-    prefs: SharedPreferences, documentTree: DocumentFile, newExport: DocumentFile?, prefix: String
-) {
-    if (prefs.getBoolean("delete_old_exports", false)) {
-        Log.i(LOG_TAG, "Deleting old exports ...")
-        // The following line is necessary in case there already existed a file with the
-        // provided filename, in which case Android will add a numeric suffix to the new
-        // file's filename ("messages-yyyy-MM-dd (1).json")
-        val newFilename = newExport?.name.toString()
-        val files = documentTree.listFiles()
-        var total = 0
-        val extension = if (prefix == "messages") "zip" else "json"
-        files.forEach {
-            val name = it.name
-            if (name != null && name != newFilename && name.startsWith(prefix) && name.endsWith(
-                    ".$extension"
-                )
-            ) {
-                it.delete()
-                total++
-            }
-        }
-        if (prefs.getBoolean("remove_datestamps_from_filenames", false)) {
-            newExport?.renameTo("$prefix.$extension")
-        }
-        Log.i(LOG_TAG, "$total exports deleted")
     }
 }
