@@ -43,7 +43,6 @@
     <string name="export_call_log_button_label">Esporta registro chiamate</string>
     <string name="ready">Pronto</string>
     <string name="import_contacts">Importa contatti</string>
-    <string name="scheduled_export_failure">Esportazione non riuscita: vedere logcat per maggiori dettagli.</string>
     <string name="app_about_text">SMS Import / Export \n \ndi Thomas More \ne altri collaboratori \n \nVersione %1$s \n \nCopyright © 2021-2024 \n \nSoftware libero con copyleft, licenza GNU GPLv3+</string>
     <string name="documentation">Documentazione:</string>
     <string name="issue_tracker">Segnalazione problemi:</string>

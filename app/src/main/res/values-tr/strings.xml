@@ -59,7 +59,6 @@
     <string name="include_binary_data">İkili MMS verilerini dahil et</string>
     <string name="scheduled_export_executed">Planlanan dışa aktarma gerçekleştirildi</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d arama ve %4$d kisi dışa aktarıldı.</string>
-    <string name="scheduled_export_failure">Dışa aktarma başarısız — daha fazla ayrıntı için logcat\'e bakın.</string>
     <string name="wipe_messages">Mesajları Sil</string>
     <string name="dialog_confirm_wipe">Uyarı: Bu aygıttaki tüm mesajlar geri alamadan kalıcı olarak silinsin mi\?</string>
     <string name="wipe">Sil</string>

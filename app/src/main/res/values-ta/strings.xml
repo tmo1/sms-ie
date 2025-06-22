@@ -34,7 +34,6 @@
     <string name="scheduled_export_executing">திட்டமிடப்பட்ட ஏற்றுமதி செயல்படுத்தல்</string>
     <string name="scheduled_export_success">%1$d SMS (கள்), %2$d MMS (கள்), %3$d அழைப்புகள் மற்றும் %4$d தொடர்புகள் ஏற்றுமதி செய்யப்பட்டன.</string>
     <string name="scheduled_export_executed">திட்டமிடப்பட்ட ஏற்றுமதி செயல்படுத்தப்பட்டது</string>
-    <string name="scheduled_export_failure">ஏற்றுமதி தோல்வியுற்றது - மேலும் விவரங்களுக்கு LogCat ஐப் பார்க்கவும்.</string>
     <string name="wipe_messages">செய்திகளைத் துடைக்கவும்</string>
     <string name="dialog_confirm_wipe">எச்சரிக்கை: இந்த சாதனத்திலிருந்து அனைத்து செய்திகளையும் நிரந்தரமாக துடைக்கவும், அதை செயல்தவிர்க்க முடியாமல்?</string>
     <string name="wipe">துடைக்க</string>

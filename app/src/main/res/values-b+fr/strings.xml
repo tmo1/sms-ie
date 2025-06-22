@@ -62,7 +62,6 @@
     <string name="scheduled_export_executing">Exportation planifiée en cours d\'exécution</string>
     <string name="scheduled_export_executed">Exportation planifiée exécutée</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d appel(s), et %4$d contact(s) exporté(s).</string>
-    <string name="scheduled_export_failure">Échec de l\'exportation — voir le fichier de logs pour plus d\'information.</string>
     <string name="wipe_messages">Effacer les messages</string>
     <string name="dialog_confirm_wipe">Attention : Supprimer définitivement tous les messages de cet équipement, sans possibilité d\'annulation ?</string>
     <string name="wipe">Supprimer</string>
