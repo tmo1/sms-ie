@@ -47,6 +47,16 @@
     <string name="import_call_log_results">%1$d call(s) imported\nElapsed time: %2$s</string>
     <string name="export_contacts_results">%1$d contact(s) exported\nElapsed time: %2$s</string>
     <string name="import_contacts_results">%1$d contact(s) imported\nElapsed time: %2$s</string>
+
+    <string name="scheduled_export_error_title">Scheduled export error</string>
+    <string name="call_log_export_error_title">Call log export error</string>
+    <string name="call_log_import_error_title">Call log import error</string>
+    <string name="contacts_export_error_title">Contacts export error</string>
+    <string name="contacts_import_error_title">Contacts import error</string>
+    <string name="messages_export_error_title">Messages export error</string>
+    <string name="messages_import_error_title">Messages import error</string>
+    <string name="messages_wipe_error_title">Messages wipe error</string>
+
     <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and contacts.</string>
     <string name="default_sms_app_requirement">This app must be the default SMS app to import or wipe messages.</string>
     <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call Logs and Contacts.</string>
@@ -91,14 +101,19 @@
     <string name="export_contacts">Export Contacts</string>
     <string name="import_contacts">Import Contacts</string>
     <string name="copying_mms_binary_data">Copying MMS binary data …</string>
+    <string name="exporting_messages">Exporting messages …</string>
     <string name="importing_messages">Importing messages …</string>
+    <string name="wiping_messages">Wiping messages …</string>
     <string name="become_default_sms_app_warning">SMS Import / Export must be the default SMS app in order to import or wipe messages. Please read the README and make sure you understand the implications of doing this before proceeding.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Default SMS App</string>
     <string name="message_import_api_23_requirement">Importing messages is only possible on Android Marshmallow / 6.0 (API level 23) or later.</string>
     <string name="default_sms_app_warning"><b>Warning</b>: This app is currently the default SMS app, which means that any incoming SMS or MMS messages will be lost! To avoid this, set a proper default SMS app.</string>
     <string name="set_default_sms_app">Set default SMS app</string>
+    <string name="exporting_calls">Exporting calls …</string>
     <string name="importing_calls">Importing calls …</string>
+    <string name="exporting_contacts">Exporting contacts …</string>
+    <string name="importing_contacts">Importing contacts …</string>
     <string name="donations">Donations:</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>
 </resources>

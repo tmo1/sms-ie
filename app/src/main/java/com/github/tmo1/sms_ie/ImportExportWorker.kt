@@ -30,22 +30,36 @@ import android.app.ForegroundServiceStartNotAllowedException
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import android.net.Uri
 import android.os.Build
+import android.text.format.DateUtils.formatElapsedTime
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+
+enum class Action {
+    EXPORT_AUTOMATIC,
+    EXPORT_CALL_LOG_MANUAL,
+    IMPORT_CALL_LOG_MANUAL,
+    EXPORT_CONTACTS_MANUAL,
+    IMPORT_CONTACTS_MANUAL,
+    EXPORT_MESSAGES_MANUAL,
+    IMPORT_MESSAGES_MANUAL,
+    WIPE_MESSAGES_MANUAL,
+}
 
 data class SuccessData(val message: String) {
     constructor(outputData: Data) : this(
@@ -76,10 +90,20 @@ data class FailureData(val title: String, val message: String) {
 class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     companion object {
+        const val TAG_MANUAL_ACTION = "manual"
         const val TAG_AUTOMATIC_EXPORT = "export"
     }
 
     private val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    private val action = inputData.getInt("action", -1).let { index ->
+        if (index == -1) {
+            // See scheduleAutomaticExport() below for why we don't specify this action explicitly.
+            Action.EXPORT_AUTOMATIC
+        } else {
+            Action.values()[index]
+        }
+    }
+    val actionFile = inputData.getString("file")?.toUri()
 
     // Avoid trying setForeground() multiple times when updating progress if it is not allowed.
     private var foregroundIsDenied = false
@@ -101,12 +125,22 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         refreshForegroundNotification(Progress(0, 0, null))
 
         val result = try {
-            Log.i(LOG_TAG, "Starting scheduled export")
+            Log.i(LOG_TAG, "Starting $action")
             Result.success(performAction().toOutputData())
         } catch (e: Exception) {
-            Log.e(LOG_TAG, "Scheduled export failed", e)
+            Log.e(LOG_TAG, "$action failed", e)
 
-            val title = context.getString(R.string.scheduled_export_failure)
+            val titleResId = when (action) {
+                Action.EXPORT_AUTOMATIC -> R.string.scheduled_export_error_title
+                Action.EXPORT_CALL_LOG_MANUAL -> R.string.call_log_export_error_title
+                Action.IMPORT_CALL_LOG_MANUAL -> R.string.call_log_import_error_title
+                Action.EXPORT_CONTACTS_MANUAL -> R.string.contacts_export_error_title
+                Action.IMPORT_CONTACTS_MANUAL -> R.string.contacts_import_error_title
+                Action.EXPORT_MESSAGES_MANUAL -> R.string.messages_export_error_title
+                Action.IMPORT_MESSAGES_MANUAL -> R.string.messages_import_error_title
+                Action.WIPE_MESSAGES_MANUAL -> R.string.messages_wipe_error_title
+            }
+            val title = context.getString(titleResId)
             val message = buildString {
                 append(e.localizedMessage)
             }
@@ -114,12 +148,14 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             Result.failure(FailureData(title, message).toOutputData())
         } finally {
             // Regardless of what happens, ensure that the next scheduled run occurs.
-            scheduleAutomaticExport(context, false)
+            if (action == Action.EXPORT_AUTOMATIC) {
+                scheduleAutomaticExport(context, false)
+            }
         }
 
-        notifyResult(result)
+        notifyResult(result, action)
 
-        Log.i(LOG_TAG, "Result: $result")
+        Log.i(LOG_TAG, "$action result: $result")
 
         return result
     }
@@ -136,7 +172,17 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         }
         foregroundLastTimestamp = now
 
-        val title = applicationContext.getString(R.string.scheduled_export_executing)
+        val titleResId = when (action) {
+            Action.EXPORT_AUTOMATIC -> R.string.scheduled_export_executing
+            Action.EXPORT_CALL_LOG_MANUAL -> R.string.exporting_calls
+            Action.IMPORT_CALL_LOG_MANUAL -> R.string.importing_calls
+            Action.EXPORT_CONTACTS_MANUAL -> R.string.exporting_contacts
+            Action.IMPORT_CONTACTS_MANUAL -> R.string.importing_contacts
+            Action.EXPORT_MESSAGES_MANUAL -> R.string.exporting_messages
+            Action.IMPORT_MESSAGES_MANUAL -> R.string.importing_messages
+            Action.WIPE_MESSAGES_MANUAL -> R.string.wiping_messages
+        }
+        val title = applicationContext.getString(titleResId)
 
         // Android 14 introduced a new battery optimization that will kill apps that perform too
         // many binder transactions in the background, which can happen when exporting many
@@ -184,22 +230,112 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private suspend fun performAction(): SuccessData {
-        val context = applicationContext
-        val (messages, calls, contacts) = automaticExport(context, ::updateProgress)
+        if (actionFile == null && action != Action.EXPORT_AUTOMATIC
+                && action != Action.WIPE_MESSAGES_MANUAL) {
+            throw IllegalStateException("No file specified for $action")
+        }
 
-        val successMsg = context.getString(
-            R.string.scheduled_export_success,
-            messages.sms,
-            messages.mms,
-            calls,
-            contacts,
-        )
+        val context = applicationContext
+        val startTime = System.nanoTime()
+
+        val successMsg = when (action) {
+            Action.EXPORT_AUTOMATIC -> {
+                val (messages, calls, contacts) = automaticExport(context, ::updateProgress)
+
+                context.getString(
+                    R.string.scheduled_export_success,
+                    messages.sms,
+                    messages.mms,
+                    calls,
+                    contacts,
+                )
+            }
+            Action.EXPORT_CALL_LOG_MANUAL -> {
+                val calls = exportCallLog(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.export_call_log_results, calls, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+            Action.IMPORT_CALL_LOG_MANUAL -> {
+                val calls = importCallLog(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.import_call_log_results, calls, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+            Action.EXPORT_CONTACTS_MANUAL -> {
+                val contacts = exportContacts(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.export_contacts_results, contacts, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+            Action.IMPORT_CONTACTS_MANUAL -> {
+                val contacts = importContacts(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.import_contacts_results, contacts, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+            Action.EXPORT_MESSAGES_MANUAL -> {
+                val messages = exportMessages(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.export_messages_results, messages.sms, messages.mms, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+            Action.IMPORT_MESSAGES_MANUAL -> {
+                // MainActivity will not launch this action if the Android version is too old.
+                @SuppressLint("NewApi")
+                val messages = importMessages(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.import_messages_results, messages.sms, messages.mms, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+            Action.WIPE_MESSAGES_MANUAL -> {
+                wipeSmsAndMmsMessages(context, ::updateProgress)
+
+                context.getString(R.string.messages_wiped)
+            }
+        }
 
         return SuccessData(successMsg)
     }
 
     @SuppressLint("InlinedApi")
-    private fun notifyResult(result: Result) {
+    private fun notifyResult(result: Result, action: Action) {
+        // We only show completion notifications for the scheduled export. For manual actions, the
+        // error is communicated back to MainActivity through the worker result.
+        if (action != Action.EXPORT_AUTOMATIC) {
+            return
+        }
+
         val havePermissions = ActivityCompat.checkSelfPermission(
             applicationContext,
             Manifest.permission.POST_NOTIFICATIONS,
@@ -229,6 +365,22 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 }
 
+fun scheduleManualAction(context: Context, action: Action, file: Uri?) {
+    if (action == Action.EXPORT_AUTOMATIC) {
+        throw IllegalArgumentException("Cannot schedule for manual action: $action")
+    }
+
+    val request = OneTimeWorkRequestBuilder<ImportExportWorker>()
+        .addTag(ImportExportWorker.TAG_MANUAL_ACTION)
+        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+        .setInputData(workDataOf(
+            "action" to action.ordinal,
+            "file" to file?.toString(),
+        ))
+        .build()
+    WorkManager.getInstance(context).enqueue(request)
+}
+
 fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
     if (cancel) {
         WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
@@ -248,9 +400,14 @@ fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
         }
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
         Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
-        val exportRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
-                .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS).build()
+        val exportRequest = OneTimeWorkRequestBuilder<ImportExportWorker>()
+            .addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
+            .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS)
+            // We intentionally do not pass in any input data for the periodic job. The parameters
+            // are persisted to disk, which makes refactoring more difficult in the future since
+            // care must be taken during upgrades to ensure old parameter values will still work.
+            // Instead, we'll just assume that no parameters means scheduled automatic exports.
+            .build()
         WorkManager.getInstance(context).enqueue(exportRequest)
     }
 }
