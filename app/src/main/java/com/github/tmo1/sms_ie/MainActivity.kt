@@ -271,6 +271,18 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
 
                 progressBar.visibility = if (isRunning) View.VISIBLE else View.INVISIBLE
+
+                // Although ImportExportWorker uses a unique work ID to guarantee that multiple
+                // operations won't run at the same time, we should still try to prevent the user
+                // from causing this situation.
+                exportMessagesButton.isEnabled = !isRunning
+                importMessagesButton.isEnabled = !isRunning
+                exportCallLogButton.isEnabled = !isRunning
+                importCallLogButton.isEnabled = !isRunning
+                exportContactsButton.isEnabled = !isRunning
+                importContactsButton.isEnabled = !isRunning
+                wipeAllMessagesButton.isEnabled = !isRunning
+                setDefaultSMSAppButton.isEnabled = !isRunning
             })
     }
 
