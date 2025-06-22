@@ -48,7 +48,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -166,6 +170,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val exportContactsButton: Button = findViewById(R.id.export_contacts_button)
         val importContactsButton: Button = findViewById(R.id.import_contacts_button)
         val setDefaultSMSAppButton: Button = findViewById(R.id.set_default_sms_app_button)
+        val statusReportText: TextView = findViewById(R.id.status_report)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
         exportMessagesButton.setOnClickListener { exportMessagesManual() }
         importMessagesButton.setOnClickListener {
@@ -217,6 +223,56 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             // Remove legacy notification channels to accommodate upgrades
             notificationManager.deleteNotificationChannel("MYCHANNEL")
         }
+
+        val workManager = WorkManager.getInstance(this)
+        workManager
+            .getWorkInfosLiveData(WorkQuery.fromTags(
+                ImportExportWorker.TAG_MANUAL_ACTION,
+                ImportExportWorker.TAG_AUTOMATIC_EXPORT,
+            ))
+            .observe(this, Observer {
+                var isRunning = false
+
+                // There should only be one active worker. The only other one would be the enqueued
+                // work for the next scheduled export.
+                for (workInfo in it) {
+                    when (workInfo.state) {
+                        WorkInfo.State.RUNNING -> {
+                            isRunning = true
+
+                            val progress = Progress(workInfo.progress)
+                            progressBar.isIndeterminate = progress.total == 0
+                            progressBar.max = progress.total
+                            progressBar.progress = progress.current
+                            statusReportText.text = progress.message
+                        }
+                        WorkInfo.State.SUCCEEDED -> {
+                            val success = SuccessData(workInfo.outputData)
+                            statusReportText.text = success.message
+                        }
+                        WorkInfo.State.FAILED -> {
+                            val failure = FailureData(workInfo.outputData)
+                            // Just show the general error from the title in the status.
+                            statusReportText.text = failure.title
+                        }
+                        // We want cancelled work (when changing scheduled export settings) to be
+                        // pruned below too.
+                        WorkInfo.State.CANCELLED -> {}
+                        else -> continue
+                    }
+
+                    // WorkManager keeps a history of completed jobs for a certain period of time.
+                    // We want to get rid of this history once we've seen the result and updated the
+                    // UI accordingly. It's a bit hacky, but this way, we'll only see new status
+                    // updates without needing to separately keep track of which completed work IDs
+                    // we've already observed.
+                    if (workInfo.state.isFinished) {
+                        workManager.pruneWork()
+                    }
+                }
+
+                progressBar.visibility = if (isRunning) View.VISIBLE else View.INVISIBLE
+            })
     }
 
     override fun onResume() {
