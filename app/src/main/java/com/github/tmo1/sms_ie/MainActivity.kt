@@ -46,6 +46,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
@@ -246,8 +247,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                         }
                         WorkInfo.State.FAILED -> {
                             val failure = FailureData(workInfo.outputData)
-                            // Just show the general error from the title in the status.
+                            // Just show the general error from the title in the status. The more
+                            // detailed message will be shown in the dialog box.
                             statusReportText.text = failure.title
+
+                            ErrorMessageFragment.newInstance(failure.title, failure.message)
+                                .show(supportFragmentManager, "error")
                         }
                         // We want cancelled work (when changing scheduled export settings) to be
                         // pruned below too.
@@ -441,6 +446,21 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
         postSmsRoleAction = null
     }
+}
+
+class ErrorMessageFragment : DialogFragment() {
+    companion object {
+        fun newInstance(title: String, message: String) = ErrorMessageFragment().apply {
+            arguments = bundleOf("title" to title, "message" to message)
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        AlertDialog.Builder(requireContext())
+            .setTitle(requireArguments().getString("title"))
+            .setMessage(requireArguments().getString("message"))
+            .setPositiveButton(android.R.string.ok) { _, _ -> }
+            .create()
 }
 
 // https://developer.android.com/guide/topics/ui/dialogs
