@@ -51,7 +51,7 @@ import androidx.core.net.toUri
 
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
-class ExportWorker(appContext: Context, workerParams: WorkerParameters) :
+class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         val context = applicationContext
@@ -203,7 +203,7 @@ fun updateExportWork(context: Context, cancel: Boolean) {
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
         Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
         val exportRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<ExportWorker>().addTag(EXPORT_WORK_TAG)
+            OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(EXPORT_WORK_TAG)
                 .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS).build()
         WorkManager.getInstance(context).enqueue(exportRequest)
     }
