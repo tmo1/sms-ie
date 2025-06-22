@@ -64,12 +64,18 @@ const val EXPORT_CALL_LOG = 3
 const val IMPORT_CALL_LOG = 4
 const val EXPORT_CONTACTS = 5
 const val IMPORT_CONTACTS = 6
-const val BECOME_DEFAULT_SMS_APP = 100
 const val LOG_TAG = "SMSIE"
 const val CHANNEL_ID_PERSISTENT = "PERSISTENT"
 const val CHANNEL_ID_ALERTS = "ALERTS"
 const val NOTIFICATION_ID_PERSISTENT = 0
 const val NOTIFICATION_ID_ALERT = 1
+
+private const val STATE_POST_SMS_ROLE_ACTION = "post_sms_role_action"
+
+private enum class PostSmsRoleAction {
+    IMPORT_MESSAGES,
+    WIPE_MESSAGES,
+}
 
 class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,
     BecomeDefaultSMSAppFragment.NoticeDialogListener {
@@ -81,13 +87,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             // are denied. When performing an action, the user will be notified that they need to
             // grant permissions.
         }
+    private val requestSmsRole =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            launchPostSmsRoleAction(result.resultCode == RESULT_OK)
+        }
 
-    // We use 'operation' to tell onActivityResult() which operation to run after the user has made
-    // the app into the default SMS app. This feels hackish, but it's simple and effective, and
-    // while it would be easy enough to pass the operation as a parameter to checkDefaultSMSApp(),
-    // I couldn't figure out a simple and effective way to pass the operation through to
-    // to onDefaultSMSAppDialogPositiveClick()
-    private lateinit var operation: () -> Unit
+    // Action to perform after the SMS role has been acquired. Saved across Activity recreation.
+    private var postSmsRoleAction: PostSmsRoleAction? = null
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -118,6 +124,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (savedInstanceState != null) {
+            val postSmsRoleActionIndex = savedInstanceState.getInt(STATE_POST_SMS_ROLE_ACTION, -1)
+            if (postSmsRoleActionIndex != -1) {
+                postSmsRoleAction = PostSmsRoleAction.values()[postSmsRoleActionIndex]
+            }
+        }
+
         // get necessary permissions on startup
         requestPermissions.launch(arrayOf(
             Manifest.permission.READ_SMS,
@@ -141,7 +154,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
         exportMessagesButton.setOnClickListener { exportMessagesManual() }
         importMessagesButton.setOnClickListener {
-            operation = ::importMessagesManual
+            postSmsRoleAction = PostSmsRoleAction.IMPORT_MESSAGES
             checkDefaultSMSApp()
         }
         exportCallLogButton.setOnClickListener { exportCallLogManual() }
@@ -149,7 +162,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         exportContactsButton.setOnClickListener { exportContactsManual() }
         importContactsButton.setOnClickListener { importContactsManual() }
         wipeAllMessagesButton.setOnClickListener {
-            operation = ::wipeMessagesManual
+            postSmsRoleAction = PostSmsRoleAction.WIPE_MESSAGES
             checkDefaultSMSApp()
         }
         setDefaultSMSAppButton.setOnClickListener { startActivity(Intent(ACTION_MANAGE_DEFAULT_APPS_SETTINGS))}
@@ -208,6 +221,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         } else {
             defaultSMSAppWarning.visibility = View.GONE
             setDefaultSMSAppButton.visibility = View.GONE
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        postSmsRoleAction?.let {
+            outState.putInt(STATE_POST_SMS_ROLE_ACTION, it.ordinal)
         }
     }
 
@@ -429,9 +450,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
             }
         }
-        if (requestCode == BECOME_DEFAULT_SMS_APP && resultCode == RESULT_OK) {
-            operation()
-        }
     }
 
     // Dialog ('wipe confirmation' and 'become default SMS app') button callbacks
@@ -455,18 +473,15 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     override fun onDefaultSMSAppDialogPositiveClick(dialog: DialogFragment) {
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
-            val roleManager = getSystemService(RoleManager::class.java)
-            startActivityForResult(
-                roleManager.createRequestRoleIntent(RoleManager.ROLE_SMS), BECOME_DEFAULT_SMS_APP
-            )
+        val intent = if (SDK_INT >= Build.VERSION_CODES.Q) {
+            getSystemService(RoleManager::class.java)
+                .createRequestRoleIntent(RoleManager.ROLE_SMS)
         } else {
-            val becomeDefaultSMSAppIntent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
-            becomeDefaultSMSAppIntent.putExtra(
-                Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName
-            )
-            startActivityForResult(becomeDefaultSMSAppIntent, BECOME_DEFAULT_SMS_APP)
+            Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
+                putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+            }
         }
+        requestSmsRole.launch(intent)
     }
 
     private fun setStatusReport(statusReport: String) {
@@ -478,19 +493,30 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         // https://stackoverflow.com/questions/32885948/how-to-set-an-sms-app-as-default-app-in-android-programmatically
         // https://stackoverflow.com/questions/64135681/change-default-sms-app-intent-not-working-on-android-10
         // https://stackoverflow.com/questions/59554835/android-10-default-sms-app-dialog-not-showing-up/60372137#60372137
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
+        val haveRole = if (SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(RoleManager::class.java)
-            if (roleManager.isRoleAvailable(RoleManager.ROLE_SMS) && !roleManager.isRoleHeld(
-                    RoleManager.ROLE_SMS
-                )
-            ) {
-                BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
-            } else operation()
+            !roleManager.isRoleAvailable(RoleManager.ROLE_SMS)
+                    || roleManager.isRoleHeld(RoleManager.ROLE_SMS)
         } else {
-            if (Telephony.Sms.getDefaultSmsPackage(this) != packageName) {
-                BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
-            } else operation()
+            Telephony.Sms.getDefaultSmsPackage(this) == packageName
         }
+
+        if (haveRole) {
+            launchPostSmsRoleAction(true)
+        } else {
+            BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
+        }
+    }
+
+    private fun launchPostSmsRoleAction(canLaunch: Boolean) {
+        if (canLaunch) {
+            when (postSmsRoleAction!!) {
+                PostSmsRoleAction.IMPORT_MESSAGES -> importMessagesManual()
+                PostSmsRoleAction.WIPE_MESSAGES -> wipeMessagesManual()
+            }
+        }
+
+        postSmsRoleAction = null
     }
 }
 
