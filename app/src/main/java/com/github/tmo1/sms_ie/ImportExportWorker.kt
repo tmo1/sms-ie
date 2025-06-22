@@ -54,8 +54,18 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         const val TAG_AUTOMATIC_EXPORT = "export"
     }
 
+    // Avoid trying setForeground() multiple times when updating progress if it is not allowed.
+    private var foregroundIsDenied = false
+    // Avoid updating the notification too frequently or else Android will rate limit us and block
+    // any notification from being sent.
+    private var foregroundLastTimestamp = 0L
+
     private suspend fun updateProgress(progress: Progress) {
+        // [Unthrottled] For updating MainActivity and anything else that might be monitoring this
+        // worker's progress.
         setProgress(progress.toWorkData())
+        // [Throttled] For updating the foreground service notification.
+        refreshForegroundNotification(progress)
     }
 
     override suspend fun doWork(): Result {
@@ -63,37 +73,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         var result = Result.success()
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
-        // Android 14 introduced a new battery optimization that will kill apps that perform too
-        // many binder transactions in the background, which can happen when exporting many
-        // messages. Running the service in the foreground prevents the app from being killed.
-        // https://android.googlesource.com/platform/frameworks/base.git/+/71d75c09b9a06732a6edb4d1488d2aa3eb779e14%5E%21/
-        val foregroundNotification =
-            NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                .setContentTitle(context.getString(R.string.scheduled_export_executing))
-                .setOngoing(true).build()
-        val foregroundFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
-        } else {
-            0
-        }
-        try {
-            setForeground(
-                ForegroundInfo(
-                    NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags
-                )
-            )
-        } catch (e: Exception) {
-            // If the user didn't allow the disabling of battery optimizations, then Android 12+'s
-            // restrictions for starting a foreground service from the background will prevent this
-            // from working. Try to run the job in the background anyway because it might work if
-            // there aren't too many items to export.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is ForegroundServiceStartNotAllowedException) {
-                Log.w(LOG_TAG, "Foreground service not allowed - trying to run in background", e)
-            } else {
-                throw e
-            }
-        }
+        refreshForegroundNotification(Progress(0, 0, null))
 
         withContext(Dispatchers.IO) {
             val message = try {
@@ -136,6 +116,65 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         scheduleAutomaticExport(context, false)
         //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
         return result
+    }
+
+    private suspend fun refreshForegroundNotification(progress: Progress) {
+        if (foregroundIsDenied) {
+            return
+        }
+
+        // Throttle to 1 update per second to avoid hitting Android's rate limits.
+        val now = System.nanoTime()
+        if (now - foregroundLastTimestamp < 1_000_000_000) {
+            return
+        }
+        foregroundLastTimestamp = now
+
+        val title = applicationContext.getString(R.string.scheduled_export_executing)
+
+        // Android 14 introduced a new battery optimization that will kill apps that perform too
+        // many binder transactions in the background, which can happen when exporting many
+        // messages. Running the service in the foreground prevents the app from being killed.
+        // https://android.googlesource.com/platform/frameworks/base.git/+/71d75c09b9a06732a6edb4d1488d2aa3eb779e14%5E%21/
+        val foregroundNotification =
+            NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(progress.message)
+                .setStyle(NotificationCompat.BigTextStyle())
+                .setProgress(progress.total, progress.current, progress.total == 0)
+                .setOngoing(true)
+                .apply {
+                    // Inhibit 10-second delay when showing persistent notification
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+                    }
+                }
+                .build()
+        val foregroundFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+        } else {
+            0
+        }
+
+        try {
+            setForeground(
+                ForegroundInfo(
+                    NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags
+                )
+            )
+        } catch (e: Exception) {
+            // If the user didn't allow the disabling of battery optimizations, then Android 12+'s
+            // restrictions for starting a foreground service from the background will prevent this
+            // from working. Try to run the job in the background anyway because it might work if
+            // there aren't too many items to export.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is ForegroundServiceStartNotAllowedException) {
+                Log.w(LOG_TAG, "Foreground service not allowed - trying to run in background", e)
+                foregroundIsDenied = true
+            } else {
+                throw e
+            }
+        }
     }
 }
 
