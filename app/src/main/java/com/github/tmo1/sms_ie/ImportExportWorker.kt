@@ -143,6 +143,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             val title = context.getString(titleResId)
             val message = buildString {
                 append(e.localizedMessage)
+
+                append("\n\n")
+                append(context.getString(R.string.see_logcat))
             }
 
             Result.failure(FailureData(title, message).toOutputData())

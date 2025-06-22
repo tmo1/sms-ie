@@ -57,6 +57,8 @@
     <string name="messages_import_error_title">Messages import error</string>
     <string name="messages_wipe_error_title">Messages wipe error</string>
 
+    <string name="see_logcat">See logcat for more information.</string>
+
     <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and contacts.</string>
     <string name="default_sms_app_requirement">This app must be the default SMS app to import or wipe messages.</string>
     <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call Logs and Contacts.</string>
