@@ -54,7 +54,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 const val EXPORT_MESSAGES = 1
@@ -70,13 +72,6 @@ const val CHANNEL_ID_PERSISTENT = "PERSISTENT"
 const val CHANNEL_ID_ALERTS = "ALERTS"
 const val NOTIFICATION_ID_PERSISTENT = 0
 const val NOTIFICATION_ID_ALERT = 1
-
-// PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
-// and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
-// but are apparently unavailable in a public class
-const val PDU_HEADERS_FROM = "137"
-
-data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
 class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,
     BecomeDefaultSMSAppFragment.NoticeDialogListener {

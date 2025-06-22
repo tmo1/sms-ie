@@ -35,6 +35,7 @@ import android.util.Log
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,7 +46,13 @@ import java.io.InputStreamReader
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
-import androidx.core.net.toUri
+
+// PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
+// and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
+// but are apparently unavailable in a public class
+const val PDU_HEADERS_FROM = "137"
+
+data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
 data class MmsBinaryPart(val uri: Uri, val filename: String)
 
