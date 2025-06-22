@@ -355,13 +355,9 @@ suspend fun importMessages(
                         zipEntry = zipInputStream.nextEntry
                     }
                     if (zipEntry == null) {
-                        displayError(
-                            appContext,
-                            null,
-                            "Can't find 'messages.ndjson'",
-                            "Please make sure that the provided file is a ZIP file in the correct format"
+                        throw UserFriendlyException(
+                            appContext.getString(R.string.missing_messages_ndjson_error)
                         )
-                        return@let
                     }
 
                     progress = progress.copy(message = appContext.getString(R.string.importing_messages))
@@ -652,13 +648,7 @@ suspend fun importMessages(
                                     }
                                 }
                             } catch (e: Exception) {
-                                displayError(
-                                    appContext,
-                                    e,
-                                    "Error importing messages",
-                                    "An error was encountered while importing messages"
-                                )
-                                // throw e
+                                throw e
                             }
                         }
                     }

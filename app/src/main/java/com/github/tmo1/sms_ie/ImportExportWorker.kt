@@ -144,6 +144,15 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             val message = buildString {
                 append(e.localizedMessage)
 
+                // If we're showing an user-friendly error message, also include the description of
+                // the direct cause.
+                if (e is UserFriendlyException) {
+                    e.cause?.let {
+                        append("\n\n")
+                        append(it.localizedMessage)
+                    }
+                }
+
                 append("\n\n")
                 append(context.getString(R.string.see_logcat))
             }

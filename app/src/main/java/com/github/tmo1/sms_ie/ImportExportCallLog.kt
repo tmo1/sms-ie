@@ -196,9 +196,7 @@ suspend fun importCallLog(
                         }
                         jsonReader.endArray()
                     } catch (e: Exception) {
-                        displayError(
-                            appContext, e, "Error importing call log", "Error parsing JSON"
-                        )
+                        throw UserFriendlyException(appContext.getString(R.string.json_parse_error), e)
                     }
                 }
             }

@@ -28,7 +28,6 @@
 package com.github.tmo1.sms_ie
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -59,6 +58,9 @@ data class Progress(val current: Int, val total: Int, val message: String?) {
         "message" to message,
     )
 }
+
+class UserFriendlyException(message: String? = null, cause: Throwable? = null)
+    : Exception(message, cause)
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
@@ -229,22 +231,5 @@ fun deleteOldExports(
             newExport?.renameTo("$prefix.$extension")
         }
         Log.i(LOG_TAG, "$total exports deleted")
-    }
-}
-
-// From: https://stackoverflow.com/a/18143773
-suspend fun displayError(appContext: Context, e: Exception?, title: String, message: String) {
-    val messageExpanded = if (e != null) {
-        e.printStackTrace()
-        "$message:\n\n\"$e\"\n\nSee logcat for more information."
-    } else {
-        message
-    }
-    val errorBox = AlertDialog.Builder(appContext)
-    errorBox.setTitle(title).setMessage(messageExpanded)
-    //errorBox.setTitle(title).setMessage("$message:\n\n\"$e\"\n\nSee logcat for more information.")
-        .setCancelable(false).setNeutralButton("Okay", null)
-    withContext(Dispatchers.Main) {
-        errorBox.show()
     }
 }
