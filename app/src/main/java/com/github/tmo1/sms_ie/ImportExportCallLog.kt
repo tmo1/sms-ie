@@ -45,23 +45,21 @@ import androidx.core.net.toUri
 
 suspend fun exportCallLog(
     appContext: Context, file: Uri, progressBar: ProgressBar?, statusReportText: TextView?
-): MessageTotal {
+): Int {
     //val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
-        val totals = MessageTotal()
+        val total: Int
         val displayNames = mutableMapOf<String, String?>()
         appContext.contentResolver.openOutputStream(file).use { outputStream ->
             BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
                 val jsonWriter = JsonWriter(writer)
                 jsonWriter.setIndent("  ")
                 jsonWriter.beginArray()
-                totals.sms = callLogToJSON(
-                    appContext, jsonWriter, displayNames, progressBar, statusReportText
-                )
+                total = callLogToJSON(appContext, jsonWriter, displayNames, progressBar, statusReportText)
                 jsonWriter.endArray()
             }
         }
-        totals
+        total
     }
 }
 

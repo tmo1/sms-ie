@@ -176,7 +176,7 @@ suspend fun automaticExport(appContext: Context): Triple<MessageTotal, Int, Int>
                 ?: throw IOException("Failed to create call log output file")
 
             Log.i(LOG_TAG, "Beginning call log export ...")
-            calls = exportCallLog(appContext, file.uri, null, null).sms
+            calls = exportCallLog(appContext, file.uri, null, null)
             Log.i(
                 LOG_TAG, "Call log export successful: $calls calls exported"
             )

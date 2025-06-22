@@ -368,9 +368,10 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (requestCode == EXPORT_CALL_LOG && resultCode == RESULT_OK) {
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = exportCallLog(applicationContext, it, progressBar, statusReportText)
+                    val callsExported =
+                        exportCallLog(applicationContext, it, progressBar, statusReportText)
                     statusReportText.text = getString(
-                        R.string.export_call_log_results, total.sms, formatElapsedTime(
+                        R.string.export_call_log_results, callsExported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
                                 System.nanoTime() - startTime, TimeUnit.NANOSECONDS
                             )
