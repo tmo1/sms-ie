@@ -53,6 +53,10 @@ import androidx.core.net.toUri
 // https://developer.android.com/codelabs/android-workmanager#3
 class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
+    companion object {
+        const val TAG_AUTOMATIC_EXPORT = "export"
+    }
+
     override suspend fun doWork(): Result {
         val context = applicationContext
         var result = Result.success()
@@ -185,7 +189,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
 fun updateExportWork(context: Context, cancel: Boolean) {
     if (cancel) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(EXPORT_WORK_TAG)
+        WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
     }
     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
     if (prefs.getBoolean("schedule_export", false)) {
@@ -203,7 +207,7 @@ fun updateExportWork(context: Context, cancel: Boolean) {
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
         Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
         val exportRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(EXPORT_WORK_TAG)
+            OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
                 .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS).build()
         WorkManager.getInstance(context).enqueue(exportRequest)
     }
