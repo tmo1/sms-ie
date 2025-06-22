@@ -53,6 +53,7 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -315,6 +316,18 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         ConfirmWipeFragment().show(supportFragmentManager, "wipe")
     }
 
+    private suspend fun updateProgress(progress: Progress) {
+        val statusReportText: TextView = findViewById(R.id.status_report)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
+
+        withContext(Dispatchers.Main) {
+            progressBar.isIndeterminate = progress.total == 0
+            progressBar.max = progress.total
+            progressBar.progress = progress.current
+            statusReportText.text = progress.message
+        }
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, resultData: Intent?
@@ -322,7 +335,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         super.onActivityResult(requestCode, resultCode, resultData)
         var total: MessageTotal
         val statusReportText: TextView = findViewById(R.id.status_report)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val startTime = System.nanoTime()
         // Throughout this function, we pass 'this@MainActivity' to the import functions, since they
         // currently create AlertDialogs upon catching exceptions, and AlertDialogs need
@@ -337,7 +349,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 //statusReportText.text = getString(R.string.begin_exporting_messages)
                 CoroutineScope(Dispatchers.Main).launch {
-                    total = exportMessages(applicationContext, it, progressBar, statusReportText)
+                    total = exportMessages(applicationContext, it, ::updateProgress)
                     statusReportText.text = getString(
                         R.string.export_messages_results, total.sms, total.mms, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
@@ -353,7 +365,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     // importMessages() requires API level 23, but we check for that back in importMessagesManual()
-                    total = importMessages(this@MainActivity, it, progressBar, statusReportText)
+                    total = importMessages(this@MainActivity, it, ::updateProgress)
                     statusReportText.text = getString(
                         R.string.import_messages_results, total.sms, total.mms, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
@@ -369,7 +381,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val callsExported =
-                        exportCallLog(applicationContext, it, progressBar, statusReportText)
+                        exportCallLog(applicationContext, it, ::updateProgress)
                     statusReportText.text = getString(
                         R.string.export_call_log_results, callsExported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
@@ -384,7 +396,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val callsImported =
-                        importCallLog(this@MainActivity, it, progressBar, statusReportText)
+                        importCallLog(this@MainActivity, it, ::updateProgress)
                     statusReportText.text = getString(
                         R.string.import_call_log_results, callsImported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
@@ -399,7 +411,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val contactsExported =
-                        exportContacts(applicationContext, it, progressBar, statusReportText)
+                        exportContacts(applicationContext, it, ::updateProgress)
                     statusReportText.text = getString(
                         R.string.export_contacts_results, contactsExported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
@@ -415,7 +427,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             resultData?.data?.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     val contactsImported =
-                        importContacts(this@MainActivity, it, progressBar, statusReportText)
+                        importContacts(this@MainActivity, it, ::updateProgress)
                     statusReportText.text = getString(
                         R.string.import_contacts_results, contactsImported, formatElapsedTime(
                             TimeUnit.SECONDS.convert(
@@ -440,9 +452,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
     override fun onWipeDialogPositiveClick(dialog: DialogFragment) {
         val statusReportText: TextView = findViewById(R.id.status_report)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
         CoroutineScope(Dispatchers.Main).launch {
-            wipeSmsAndMmsMessages(applicationContext, statusReportText, progressBar)
+            wipeSmsAndMmsMessages(applicationContext, ::updateProgress)
             statusReportText.text = getString(R.string.messages_wiped)
         }
     }

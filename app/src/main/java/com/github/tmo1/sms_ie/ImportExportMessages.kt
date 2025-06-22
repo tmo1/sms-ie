@@ -32,8 +32,6 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.provider.Telephony
 import android.util.Log
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
@@ -57,7 +55,7 @@ data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 data class MmsBinaryPart(val uri: Uri, val filename: String)
 
 suspend fun exportMessages(
-    appContext: Context, file: Uri, progressBar: ProgressBar?, statusReportText: TextView?
+    appContext: Context, file: Uri, updateProgress: suspend (Progress) -> Unit
 ): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
@@ -69,7 +67,7 @@ suspend fun exportMessages(
                 zipOutputStream.putNextEntry(jsonZipEntry)
                 if (prefs.getBoolean("sms", true)) {
                     totals.sms = smsToJSON(
-                        appContext, zipOutputStream, displayNames, progressBar, statusReportText
+                        appContext, zipOutputStream, displayNames, updateProgress
                     )
                 }
                 val mmsPartList = mutableListOf<MmsBinaryPart>()
@@ -79,15 +77,13 @@ suspend fun exportMessages(
                         zipOutputStream,
                         displayNames,
                         mmsPartList,
-                        progressBar,
-                        statusReportText
+                        updateProgress,
                     )
                 }
                 zipOutputStream.closeEntry()
                 if (prefs.getBoolean("mms", true)) {
-                    setStatusText(
-                        statusReportText, appContext.getString(R.string.copying_mms_binary_data)
-                    )
+                    updateProgress(Progress(0, 0, appContext.getString(R.string.copying_mms_binary_data)))
+
                     val buffer = ByteArray(1048576)
                     mmsPartList.forEach {
                         val partZipEntry = ZipEntry(it.filename)
@@ -120,17 +116,17 @@ private suspend fun smsToJSON(
     appContext: Context,
     zipOutputStream: ZipOutputStream,
     displayNames: MutableMap<String, String?>,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    updateProgress: suspend (Progress) -> Unit,
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
-    var total = 0
+    var progress = Progress(0, 0, null)
     val smsCursor =
         appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
     smsCursor?.use {
         if (it.moveToFirst()) {
-            initProgressBar(progressBar, it)
-            val totalSms = it.count
+            progress = progress.copy(total = it.count)
+            updateProgress(progress)
+
             val addressIndex = it.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
             do {
                 val smsMessage = JSONObject()
@@ -141,18 +137,22 @@ private suspend fun smsToJSON(
                 val displayName = lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
                 if (displayName != null) smsMessage.put("__display_name", displayName)
                 zipOutputStream.write((smsMessage.toString() + "\n").toByteArray())
-                total++
-                incrementProgress(progressBar)
-                setStatusText(
-                    statusReportText,
-                    appContext.getString(R.string.sms_export_progress, total, totalSms)
+
+                progress = progress.copy(
+                    current = progress.current + 1,
+                    message = appContext.getString(
+                        R.string.sms_export_progress,
+                        progress.current + 1,
+                        progress.total,
+                    ),
                 )
-                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                updateProgress(progress)
+
+                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
-            hideProgressBar(progressBar)
         }
     }
-    return total
+    return progress.current
 }
 
 private suspend fun mmsToJSON(
@@ -160,17 +160,17 @@ private suspend fun mmsToJSON(
     zipOutputStream: ZipOutputStream,
     displayNames: MutableMap<String, String?>,
     mmsPartList: MutableList<MmsBinaryPart>,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    updateProgress: suspend (Progress) -> Unit,
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
-    var total = 0
+    var progress = Progress(0, 0, null)
     val mmsCursor =
         appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
     mmsCursor?.use {
         if (it.moveToFirst()) {
-            val totalMms = it.count
-            initProgressBar(progressBar, it)
+            progress = progress.copy(total = it.count)
+            updateProgress(progress)
+
             val msgIdIndex = it.getColumnIndexOrThrow("_id")
             // write MMS metadata
             do {
@@ -275,25 +275,30 @@ private suspend fun mmsToJSON(
                     }
                 }
                 zipOutputStream.write((mmsMessage.toString() + "\n").toByteArray())
-                total++
-                incrementProgress(progressBar)
-                setStatusText(
-                    statusReportText,
-                    appContext.getString(R.string.mms_export_progress, total, totalMms)
+
+                progress = progress.copy(
+                    current = progress.current + 1,
+                    message = appContext.getString(
+                        R.string.mms_export_progress,
+                        progress.current + 1,
+                        progress.total,
+                    ),
                 )
-                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                updateProgress(progress)
+
+                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
-            hideProgressBar(progressBar)
         }
     }
-    return total
+    return progress.current
 }
 
 @RequiresApi(Build.VERSION_CODES.M)
 suspend fun importMessages(
-    appContext: Context, uri: Uri, progressBar: ProgressBar?, statusReportText: TextView?
+    appContext: Context, uri: Uri, updateProgress: suspend (Progress) -> Unit
 ): MessageTotal {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    var progress = Progress(0, 0, null)
     val deduplication = prefs.getBoolean("deduplication", false)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
@@ -338,7 +343,6 @@ suspend fun importMessages(
         )
         val threadIdMap = HashMap<String, String>()
         uri.let { zipUri ->
-            initIndeterminateProgressBar(progressBar)
             val mmsPartMap =
                 mutableMapOf<String, Uri>() // This assumes that no binary data file is ever referenced by more than one message part
             appContext.contentResolver.openInputStream(zipUri).use { inputStream ->
@@ -359,9 +363,10 @@ suspend fun importMessages(
                         )
                         return@let
                     }
-                    setStatusText(
-                        statusReportText, appContext.getString(R.string.importing_messages)
-                    )
+
+                    progress = progress.copy(message = appContext.getString(R.string.importing_messages))
+                    updateProgress(progress)
+
                     BufferedReader(InputStreamReader(zipInputStream)).useLines { lines ->
                         lines.forEachIndexed JSONLine@{ lineNumber, line ->
                             try {
@@ -439,13 +444,13 @@ suspend fun importMessages(
                                     } else {
                                         Log.d(LOG_TAG, "SMS insert succeeded")
                                         totals.sms++
-                                        setStatusText(
-                                            statusReportText, appContext.getString(
-                                                R.string.message_import_progress,
-                                                totals.sms,
-                                                totals.mms
-                                            )
-                                        )
+
+                                        progress = progress.copy(message = appContext.getString(
+                                            R.string.message_import_progress,
+                                            totals.sms,
+                                            totals.mms,
+                                        ))
+                                        updateProgress(progress)
                                     }
                                 } else { // it's MMS
                                     Log.d(LOG_TAG, "Message is MMS")
@@ -561,13 +566,14 @@ suspend fun importMessages(
                                     } else {
                                         Log.d(LOG_TAG, "MMS insert succeeded")
                                         totals.mms++
-                                        setStatusText(
-                                            statusReportText, appContext.getString(
-                                                R.string.message_import_progress,
-                                                totals.sms,
-                                                totals.mms
-                                            )
-                                        )
+
+                                        progress = progress.copy(message = appContext.getString(
+                                            R.string.message_import_progress,
+                                            totals.sms,
+                                            totals.mms,
+                                        ))
+                                        updateProgress(progress)
+
                                         val messageId = insertUri.lastPathSegment
                                         val addressUri = "content://mms/$messageId/addr".toUri()
                                         addresses.forEach { address ->
@@ -659,9 +665,9 @@ suspend fun importMessages(
                 }
             }
             if (prefs.getBoolean("include_binary_data", true)) {
-                setStatusText(
-                    statusReportText, appContext.getString(R.string.copying_mms_binary_data)
-                )
+                progress = progress.copy(message = appContext.getString(R.string.copying_mms_binary_data))
+                updateProgress(progress)
+
                 val buffer = ByteArray(1048576)
                 appContext.contentResolver.openInputStream(zipUri).use { inputStream ->
                     ZipInputStream(inputStream).use { zipInputStream ->
@@ -699,7 +705,6 @@ suspend fun importMessages(
                 }
             }
         }
-        hideProgressBar(progressBar)
         totals
     }
 }

@@ -32,21 +32,33 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
 import android.provider.Telephony
 import android.util.Log
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
+import androidx.work.Data
+import androidx.work.workDataOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+
+data class Progress(val current: Int, val total: Int, val message: String?) {
+    constructor(workData: Data) : this(
+        workData.getInt("current", 0),
+        workData.getInt("total", 0),
+        workData.getString("message"),
+    )
+
+    fun toWorkData(): Data = workDataOf(
+        "current" to current,
+        "total" to total,
+        "message" to message,
+    )
+}
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
@@ -116,27 +128,24 @@ fun lookupDisplayName(
     return displayName
 }
 
-suspend fun wipeSmsAndMmsMessages(
-    appContext: Context, statusReportText: TextView, progressBar: ProgressBar
-) {
+suspend fun wipeSmsAndMmsMessages(appContext: Context, updateProgress: suspend (Progress) -> Unit) {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+
     withContext(Dispatchers.IO) {
         if (prefs.getBoolean("sms", true)) {
-            setStatusText(statusReportText, appContext.getString(R.string.wiping_sms_messages))
-            initIndeterminateProgressBar(progressBar)
+            updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_sms_messages)))
             appContext.contentResolver.delete(Telephony.Sms.CONTENT_URI, null, null)
-            hideProgressBar(progressBar)
         }
         if (prefs.getBoolean("mms", true)) {
-            setStatusText(statusReportText, appContext.getString(R.string.wiping_mms_messages))
-            initIndeterminateProgressBar(progressBar)
+            updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_mms_messages)))
             appContext.contentResolver.delete(Telephony.Mms.CONTENT_URI, null, null)
-            hideProgressBar(progressBar)
         }
     }
 }
 
-suspend fun automaticExport(appContext: Context): Triple<MessageTotal, Int, Int> {
+suspend fun automaticExport(
+    appContext: Context, updateProgress: suspend (Progress) -> Unit
+): Triple<MessageTotal, Int, Int> {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
 
     var messages = MessageTotal()
@@ -159,7 +168,7 @@ suspend fun automaticExport(appContext: Context): Triple<MessageTotal, Int, Int>
                 ?: throw IOException("Failed to create messages output file")
 
             Log.i(LOG_TAG, "Beginning messages export ...")
-            messages = exportMessages(appContext, file.uri, null, null)
+            messages = exportMessages(appContext, file.uri, updateProgress)
             Log.i(
                 LOG_TAG,
                 "Messages export successful: ${messages.sms} SMSs and ${messages.mms} MMSs exported"
@@ -176,7 +185,7 @@ suspend fun automaticExport(appContext: Context): Triple<MessageTotal, Int, Int>
                 ?: throw IOException("Failed to create call log output file")
 
             Log.i(LOG_TAG, "Beginning call log export ...")
-            calls = exportCallLog(appContext, file.uri, null, null)
+            calls = exportCallLog(appContext, file.uri, updateProgress)
             Log.i(
                 LOG_TAG, "Call log export successful: $calls calls exported"
             )
@@ -192,7 +201,7 @@ suspend fun automaticExport(appContext: Context): Triple<MessageTotal, Int, Int>
                 ?: throw IOException("Failed to create contacts output file")
 
             Log.i(LOG_TAG, "Beginning contacts export ...")
-            contacts = exportContacts(appContext, file.uri, null, null)
+            contacts = exportContacts(appContext, file.uri, updateProgress)
             Log.i(
                 LOG_TAG, "Contacts export successful: $contacts contacts exported"
             )
@@ -233,38 +242,6 @@ fun deleteOldExports(
             newExport?.renameTo("$prefix.$extension")
         }
         Log.i(LOG_TAG, "$total exports deleted")
-    }
-}
-
-suspend fun initProgressBar(progressBar: ProgressBar?, cursor: Cursor) {
-    withContext(Dispatchers.Main) {
-        progressBar?.isIndeterminate = false
-        progressBar?.progress = 0
-        progressBar?.visibility = View.VISIBLE
-        progressBar?.max = cursor.count
-    }
-}
-
-suspend fun initIndeterminateProgressBar(progressBar: ProgressBar?) {
-    withContext(Dispatchers.Main) {
-        progressBar?.isIndeterminate = true
-        progressBar?.visibility = View.VISIBLE
-    }
-}
-
-suspend fun hideProgressBar(progressBar: ProgressBar?) {
-    withContext(Dispatchers.Main) {
-        progressBar?.visibility = View.INVISIBLE
-    }
-}
-
-suspend fun setStatusText(statusReportText: TextView?, message: String) {
-    withContext(Dispatchers.Main) { statusReportText?.text = message }
-}
-
-suspend fun incrementProgress(progressBar: ProgressBar?) {
-    withContext(Dispatchers.Main) {
-        progressBar?.incrementProgressBy(1)
     }
 }
 

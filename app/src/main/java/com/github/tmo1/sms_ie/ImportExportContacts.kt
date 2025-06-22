@@ -30,8 +30,6 @@ import android.util.Base64
 import android.util.JsonReader
 import android.util.JsonWriter
 import android.util.Log
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -43,8 +41,7 @@ import java.io.OutputStreamWriter
 suspend fun exportContacts(
     appContext: Context,
     file: Uri,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    updateProgress: suspend (Progress) -> Unit,
 ): Int {
     return withContext(Dispatchers.IO) {
         var total: Int
@@ -56,8 +53,7 @@ suspend fun exportContacts(
                 total = contactsToJSON(
                     appContext,
                     jsonWriter,
-                    progressBar,
-                    statusReportText
+                    updateProgress,
                 )
                 jsonWriter.endArray()
             }
@@ -69,11 +65,10 @@ suspend fun exportContacts(
 private suspend fun contactsToJSON(
     appContext: Context,
     jsonWriter: JsonWriter,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    updateProgress: suspend (Progress) -> Unit,
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
-    var total = 0
+    var progress = Progress(0, 0, null)
     //TODO
     val contactsCursor =
         appContext.contentResolver.query(
@@ -86,8 +81,9 @@ private suspend fun contactsToJSON(
         )
     contactsCursor?.use { it ->
         if (it.moveToFirst()) {
-            val totalContacts = it.count
-            initProgressBar(progressBar, it)
+            progress = progress.copy(total = it.count)
+            updateProgress(progress)
+
             val contactsIdIndex = it.getColumnIndexOrThrow(BaseColumns._ID)
             do {
                 jsonWriter.beginObject()
@@ -157,29 +153,31 @@ private suspend fun contactsToJSON(
                     }
                 }
                 jsonWriter.endObject()
-                total++
-                incrementProgress(progressBar)
-                setStatusText(
-                    statusReportText,
-                    appContext.getString(R.string.contacts_export_progress, total, totalContacts)
+
+                progress = progress.copy(
+                    current = progress.current + 1,
+                    message = appContext.getString(
+                        R.string.contacts_export_progress,
+                        progress.current + 1,
+                        progress.total,
+                    ),
                 )
-                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                updateProgress(progress)
+
+                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
-            hideProgressBar(progressBar)
         }
     }
-    return total
+    return progress.current
 }
 
 suspend fun importContacts(
     appContext: Context,
     uri: Uri,
-    progressBar: ProgressBar,
-    statusReportText: TextView
+    updateProgress: suspend (Progress) -> Unit,
 ): Int {
     return withContext(Dispatchers.IO) {
-        var contactsCount = 0
-        initIndeterminateProgressBar(progressBar)
+        var progress = Progress(0, 0, null)
         uri.let {
             appContext.contentResolver.openInputStream(it).use { inputStream ->
                 BufferedReader(InputStreamReader(inputStream)).use { reader ->
@@ -265,14 +263,15 @@ suspend fun importContacts(
                                                 ContactsContract.AUTHORITY,
                                                 ops
                                             )
-                                            contactsCount++
-                                            setStatusText(
-                                                statusReportText,
-                                                appContext.getString(
+
+                                            progress = progress.copy(
+                                                current = progress.current + 1,
+                                                message = appContext.getString(
                                                     R.string.contacts_import_progress,
-                                                    contactsCount
-                                                )
+                                                    progress.current + 1,
+                                                ),
                                             )
+                                            updateProgress(progress)
                                         } catch (e: Exception) {
                                             Log.e(
                                                 LOG_TAG,
@@ -299,8 +298,7 @@ suspend fun importContacts(
                     }
                 }
             }
-            hideProgressBar(progressBar)
-            contactsCount
+            progress.current
         }
     }
 }

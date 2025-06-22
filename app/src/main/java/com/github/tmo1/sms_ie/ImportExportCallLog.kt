@@ -32,8 +32,7 @@ import android.provider.CallLog
 import android.util.JsonReader
 import android.util.JsonWriter
 import android.util.Log
-import android.widget.ProgressBar
-import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -41,12 +40,10 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import androidx.core.net.toUri
 
 suspend fun exportCallLog(
-    appContext: Context, file: Uri, progressBar: ProgressBar?, statusReportText: TextView?
+    appContext: Context, file: Uri, updateProgress: suspend (Progress) -> Unit
 ): Int {
-    //val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     return withContext(Dispatchers.IO) {
         val total: Int
         val displayNames = mutableMapOf<String, String?>()
@@ -55,7 +52,7 @@ suspend fun exportCallLog(
                 val jsonWriter = JsonWriter(writer)
                 jsonWriter.setIndent("  ")
                 jsonWriter.beginArray()
-                total = callLogToJSON(appContext, jsonWriter, displayNames, progressBar, statusReportText)
+                total = callLogToJSON(appContext, jsonWriter, displayNames, updateProgress)
                 jsonWriter.endArray()
             }
         }
@@ -67,18 +64,18 @@ private suspend fun callLogToJSON(
     appContext: Context,
     jsonWriter: JsonWriter,
     displayNames: MutableMap<String, String?>,
-    progressBar: ProgressBar?,
-    statusReportText: TextView?
+    updateProgress: suspend (Progress) -> Unit,
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
-    var total = 0
+    var progress = Progress(0, 0, null)
     val callCursor = appContext.contentResolver.query(
         "content://call_log/calls".toUri(), null, null, null, null
     )
     callCursor?.use {
         if (it.moveToFirst()) {
-            val totalCalls = it.count
-            initProgressBar(progressBar, it)
+            progress = progress.copy(total = it.count)
+            updateProgress(progress)
+
             val addressIndex = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
             do {
                 jsonWriter.beginObject()
@@ -94,24 +91,29 @@ private suspend fun callLogToJSON(
                     lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
                 if (displayName != null) jsonWriter.name("display_name").value(displayName)
                 jsonWriter.endObject()
-                total++
-                incrementProgress(progressBar)
-                setStatusText(
-                    statusReportText,
-                    appContext.getString(R.string.call_log_export_progress, total, totalCalls)
+
+                progress = progress.copy(
+                    current = progress.current + 1,
+                    message = appContext.getString(
+                        R.string.call_log_export_progress,
+                        progress.current + 1,
+                        progress.total,
+                    ),
                 )
-                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                updateProgress(progress)
+
+                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
             } while (it.moveToNext())
-            hideProgressBar(progressBar)
         }
     }
-    return total
+    return progress.current
 }
 
 suspend fun importCallLog(
-    appContext: Context, uri: Uri, progressBar: ProgressBar, statusReportText: TextView
+    appContext: Context, uri: Uri, updateProgress: suspend (Progress) -> Unit
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    var progress = Progress(0, 0, null)
     val deduplication = prefs.getBoolean("deduplication", false)
     return withContext(Dispatchers.IO) {
         val callLogColumns = mutableSetOf<String>()
@@ -119,8 +121,6 @@ suspend fun importCallLog(
             CallLog.Calls.CONTENT_URI, null, null, null, null
         )
         callLogCursor?.use { callLogColumns.addAll(it.columnNames) }
-        var callLogCount = 0
-        initIndeterminateProgressBar(progressBar)
         uri.let {
             appContext.contentResolver.openInputStream(it).use { inputStream ->
                 BufferedReader(InputStreamReader(inputStream)).use { reader ->
@@ -128,9 +128,10 @@ suspend fun importCallLog(
                     val callLogMetadata = ContentValues()
                     try {
                         jsonReader.beginArray()
-                        setStatusText(
-                            statusReportText, appContext.getString(R.string.importing_calls)
-                        )
+
+                        progress = progress.copy(message = appContext.getString(R.string.importing_calls))
+                        updateProgress(progress)
+
                         JSONReader@ while (jsonReader.hasNext()) {
                             jsonReader.beginObject()
                             callLogMetadata.clear()
@@ -182,12 +183,14 @@ suspend fun importCallLog(
                                 if (insertUri == null) {
                                     Log.v(LOG_TAG, "Call insert failed!")
                                 } else {
-                                    callLogCount++
-                                    setStatusText(
-                                        statusReportText, appContext.getString(
-                                            R.string.call_log_import_progress, callLogCount
-                                        )
+                                    progress = progress.copy(
+                                        current = progress.current + 1,
+                                        message = appContext.getString(
+                                            R.string.call_log_import_progress,
+                                            progress.current + 1,
+                                        ),
                                     )
+                                    updateProgress(progress)
                                 }
                             }
                         }
@@ -199,8 +202,7 @@ suspend fun importCallLog(
                     }
                 }
             }
-            hideProgressBar(progressBar)
-            callLogCount
+            progress.current
         }
     }
 }

@@ -54,6 +54,10 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         const val TAG_AUTOMATIC_EXPORT = "export"
     }
 
+    private suspend fun updateProgress(progress: Progress) {
+        setProgress(progress.toWorkData())
+    }
+
     override suspend fun doWork(): Result {
         val context = applicationContext
         var result = Result.success()
@@ -93,7 +97,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
         withContext(Dispatchers.IO) {
             val message = try {
-                val (messages, calls, contacts) = automaticExport(context)
+                val (messages, calls, contacts) = automaticExport(context, ::updateProgress)
 
                 context.getString(
                     R.string.scheduled_export_success,
