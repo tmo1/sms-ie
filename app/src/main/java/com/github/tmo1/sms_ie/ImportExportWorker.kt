@@ -37,15 +37,39 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import androidx.work.workDataOf
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+
+data class SuccessData(val message: String) {
+    constructor(outputData: Data) : this(
+        outputData.getString("message") ?: "",
+    )
+
+    fun toOutputData(): Data = workDataOf(
+        "success" to true,
+        "message" to message,
+    )
+}
+
+data class FailureData(val title: String, val message: String) {
+    constructor(outputData: Data) : this(
+        outputData.getString("title") ?: "",
+        outputData.getString("message") ?: "",
+    )
+
+    fun toOutputData(): Data = workDataOf(
+        "success" to false,
+        "title" to title,
+        "message" to message,
+    )
+}
 
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
@@ -73,31 +97,30 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         val context = applicationContext
-        var result = Result.success()
 
         refreshForegroundNotification(Progress(0, 0, null))
 
-        withContext(Dispatchers.IO) {
-            val message = try {
-                val (messages, calls, contacts) = automaticExport(context, ::updateProgress)
+        val result = try {
+            Log.i(LOG_TAG, "Starting scheduled export")
+            Result.success(performAction().toOutputData())
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Scheduled export failed", e)
 
-                context.getString(
-                    R.string.scheduled_export_success,
-                    messages.sms,
-                    messages.mms,
-                    calls,
-                    contacts,
-                )
-            } catch (e: Exception) {
-                Log.e(LOG_TAG, "Scheduled export failed", e)
-                result = Result.failure()
-
-                context.getString(R.string.scheduled_export_failure)
+            val title = context.getString(R.string.scheduled_export_failure)
+            val message = buildString {
+                append(e.localizedMessage)
             }
 
-            notifyResult(result, message)
+            Result.failure(FailureData(title, message).toOutputData())
+        } finally {
+            // Regardless of what happens, ensure that the next scheduled run occurs.
+            scheduleAutomaticExport(context, false)
         }
-        scheduleAutomaticExport(context, false)
+
+        notifyResult(result)
+
+        Log.i(LOG_TAG, "Result: $result")
+
         //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
         return result
     }
@@ -161,16 +184,33 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         }
     }
 
+    private suspend fun performAction(): SuccessData {
+        val context = applicationContext
+        val (messages, calls, contacts) = automaticExport(context, ::updateProgress)
+
+        val successMsg = context.getString(
+            R.string.scheduled_export_success,
+            messages.sms,
+            messages.mms,
+            calls,
+            contacts,
+        )
+
+        return SuccessData(successMsg)
+    }
+
     @SuppressLint("InlinedApi")
-    private fun notifyResult(result: Result, message: String) {
+    private fun notifyResult(result: Result) {
         val havePermissions = ActivityCompat.checkSelfPermission(
             applicationContext,
             Manifest.permission.POST_NOTIFICATIONS,
         ) == PackageManager.PERMISSION_GRANTED
         val notifyForSuccess = prefs.getBoolean("export_success_notification", true)
 
-        val success = result != Result.failure()
-        val title = applicationContext.getString(R.string.scheduled_export_executed)
+        val success = result.outputData.getBoolean("success", false)
+        val title = result.outputData.getString("title")
+            ?: applicationContext.getString(R.string.scheduled_export_executed)
+        val message = result.outputData.getString("message")
 
         if (havePermissions && (notifyForSuccess || !success)) {
             // https://developer.android.com/training/notify-user/build-notification#builder
