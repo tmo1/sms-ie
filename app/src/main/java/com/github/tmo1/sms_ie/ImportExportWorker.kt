@@ -129,13 +129,13 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 }
             }
         }
-        updateExportWork(context, false)
+        scheduleAutomaticExport(context, false)
         //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
         return result
     }
 }
 
-fun updateExportWork(context: Context, cancel: Boolean) {
+fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
     if (cancel) {
         WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
     }

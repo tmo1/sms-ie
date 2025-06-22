@@ -137,7 +137,7 @@ class SettingsActivity : AppCompatActivity() {
             // https://stackoverflow.com/questions/66449883/kotlin-onsharedpreferencechangelistener
             val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
                 if (key == "schedule_export") {
-                    context?.let { updateExportWork(it, true) }
+                    context?.let { scheduleAutomaticExport(it, true) }
                     if (SDK_INT >= 33 && sharedPrefs.getBoolean(key, false)) {
                         context?.let {
                             if (ContextCompat.checkSelfPermission(
