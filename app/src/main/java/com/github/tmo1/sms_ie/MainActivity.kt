@@ -36,7 +36,6 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
 import android.provider.Telephony
-import android.text.format.DateUtils.formatElapsedTime
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -53,15 +52,10 @@ import androidx.preference.PreferenceManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 const val LOG_TAG = "SMSIE"
 const val CHANNEL_ID_PERSISTENT = "PERSISTENT"
@@ -374,115 +368,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         ConfirmWipeFragment().show(supportFragmentManager, "wipe")
     }
 
-    private suspend fun updateProgress(progress: Progress) {
-        val statusReportText: TextView = findViewById(R.id.status_report)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
-
-        withContext(Dispatchers.Main) {
-            progressBar.isIndeterminate = progress.total == 0
-            progressBar.max = progress.total
-            progressBar.progress = progress.current
-            statusReportText.text = progress.message
-        }
-    }
-
     private fun launchPendingAction(uri: Uri?, nullUriAllowed: Boolean) {
-        if (uri == null && !nullUriAllowed) {
-            return
-        }
-
-        var total: MessageTotal
-        val statusReportText: TextView = findViewById(R.id.status_report)
-        val startTime = System.nanoTime()
-
-        when (pendingAction) {
-            Action.EXPORT_MESSAGES_MANUAL -> {
-                //statusReportText.text = getString(R.string.begin_exporting_messages)
-                CoroutineScope(Dispatchers.Main).launch {
-                    total = exportMessages(applicationContext, uri!!, ::updateProgress)
-                    statusReportText.text = getString(
-                        R.string.export_messages_results, total.sms, total.mms, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-//                    logElapsedTime(startTime)
-                }
-            }
-            Action.IMPORT_MESSAGES_MANUAL -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    // importMessages() requires API level 23, but we check for that back in importMessagesManual()
-                    total = importMessages(this@MainActivity, uri!!, ::updateProgress)
-                    statusReportText.text = getString(
-                        R.string.import_messages_results, total.sms, total.mms, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-//                    logElapsedTime(startTime)
-                }
-            }
-            Action.EXPORT_CALL_LOG_MANUAL -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val callsExported =
-                        exportCallLog(applicationContext, uri!!, ::updateProgress)
-                    statusReportText.text = getString(
-                        R.string.export_call_log_results, callsExported, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
-            Action.IMPORT_CALL_LOG_MANUAL -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val callsImported =
-                        importCallLog(this@MainActivity, uri!!, ::updateProgress)
-                    statusReportText.text = getString(
-                        R.string.import_call_log_results, callsImported, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
-            Action.EXPORT_CONTACTS_MANUAL -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val contactsExported =
-                        exportContacts(applicationContext, uri!!, ::updateProgress)
-                    statusReportText.text = getString(
-                        R.string.export_contacts_results, contactsExported, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
-            Action.IMPORT_CONTACTS_MANUAL -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val contactsImported =
-                        importContacts(this@MainActivity, uri!!, ::updateProgress)
-                    statusReportText.text = getString(
-                        R.string.import_contacts_results, contactsImported, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
-            Action.WIPE_MESSAGES_MANUAL -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    wipeSmsAndMmsMessages(applicationContext, ::updateProgress)
-                    statusReportText.text = getString(R.string.messages_wiped)
-                }
-            }
-            else -> {}
+        if (uri != null || nullUriAllowed) {
+            scheduleManualAction(this, pendingAction!!, uri)
         }
 
         // Always clear the pending action, even if we don't start anything (eg. if the user
