@@ -121,7 +121,6 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
         Log.i(LOG_TAG, "Result: $result")
 
-        //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
         return result
     }
 
