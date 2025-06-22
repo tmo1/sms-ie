@@ -136,6 +136,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/ready"
+        android:freezesText="true"
         android:textSize="20sp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/default_sms_app_warning"
