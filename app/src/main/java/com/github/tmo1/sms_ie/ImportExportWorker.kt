@@ -25,6 +25,7 @@
 package com.github.tmo1.sms_ie
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ForegroundServiceStartNotAllowedException
 import android.content.Context
 import android.content.pm.PackageManager
@@ -54,6 +55,8 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         const val TAG_AUTOMATIC_EXPORT = "export"
     }
 
+    private val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+
     // Avoid trying setForeground() multiple times when updating progress if it is not allowed.
     private var foregroundIsDenied = false
     // Avoid updating the notification too frequently or else Android will rate limit us and block
@@ -71,7 +74,6 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         val context = applicationContext
         var result = Result.success()
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
         refreshForegroundNotification(Progress(0, 0, null))
 
@@ -93,25 +95,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 context.getString(R.string.scheduled_export_failure)
             }
 
-            if (ActivityCompat.checkSelfPermission(
-                    context, Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED && (prefs.getBoolean(
-                    "export_success_notification", true
-                ) || result != Result.success())
-            ) {
-                // https://developer.android.com/training/notify-user/build-notification#builder
-                val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID_ALERTS)
-                    //.setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setSmallIcon(R.drawable.ic_scheduled_export_done)
-                    .setContentTitle(context.getString(R.string.scheduled_export_executed))
-                    .setContentText(message)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // https://developer.android.com/training/notify-user/build-notification#notify
-                with(NotificationManagerCompat.from(applicationContext)) {
-                    // notificationId is a unique int for each notification that you must define
-                    notify(NOTIFICATION_ID_ALERT, builder.build())
-                }
-            }
+            notifyResult(result, message)
         }
         scheduleAutomaticExport(context, false)
         //FIXME: as written, this always returns success, since the work is launched asynchronously and these lines execute immediately upon coroutine launch
@@ -174,6 +158,34 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             } else {
                 throw e
             }
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    private fun notifyResult(result: Result, message: String) {
+        val havePermissions = ActivityCompat.checkSelfPermission(
+            applicationContext,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+        val notifyForSuccess = prefs.getBoolean("export_success_notification", true)
+
+        val success = result != Result.failure()
+        val title = applicationContext.getString(R.string.scheduled_export_executed)
+
+        if (havePermissions && (notifyForSuccess || !success)) {
+            // https://developer.android.com/training/notify-user/build-notification#builder
+            val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID_ALERTS)
+                //.setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_scheduled_export_done)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(NotificationCompat.BigTextStyle())
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+            // https://developer.android.com/training/notify-user/build-notification#notify
+            NotificationManagerCompat.from(applicationContext)
+                // notificationId is a unique int for each notification that you must define
+                .notify(NOTIFICATION_ID_ALERT, builder.build())
         }
     }
 }
