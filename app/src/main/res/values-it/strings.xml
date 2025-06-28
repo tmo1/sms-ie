@@ -8,10 +8,8 @@
 \nTempo trascorso: %3$s</string>
     <string name="import_call_log_results">%1$d chiamata/e importata/e
 \nTempo trascorso: %2$s</string>
-    <string name="import_contacts_results">%1$d contatto/i importato/i
-\nTempo trascorso: %2$s.</string>
-    <string name="export_contacts_results">%1$d contatto/i esportato/i
-\nTempo trascorso: %2$s.</string>
+    <string name="import_contacts_results">%1$d contatto/i importato/i \nTempo trascorso: %2$s.</string>
+    <string name="export_contacts_results">%1$d contatto/i esportato/i \nTempo trascorso: %2$s.</string>
     <string name="sms_permissions_required">L\'esportazione dei messaggi richiede l\'autorizzazione per leggere SMS e contatti.</string>
     <string name="app_name">SMS Import / Export</string>
     <string name="sms_export_progress">%1$d di %2$d SMS esportati</string>
