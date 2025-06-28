@@ -41,15 +41,13 @@
     <string name="sms_permissions_required">导出消息的功能，需要读取短信及联系人的权限。</string>
     <string name="call_logs_read_write_permissions_required">导入通话记录的功能，需要读取、写入通话记录的权限。</string>
     <string name="dialog_confirm_wipe">警告：要无法撤销地永久擦除此设备上的所有消息吗？</string>
-    <string name="export_contacts_results">导出了 %1$d 位联系人
-\n耗费时间：%2$s。</string>
+    <string name="export_contacts_results">导出了 %1$d 位联系人 \n耗费时间：%2$s。</string>
     <string name="contacts_read_permission_required">导出联系人需要读取联系人权限。</string>
     <string name="export_contacts">导出联系人</string>
     <string name="import_contacts">导入联系人</string>
     <string name="contacts_export_progress">导出了 %2$d 位联系人中的 %1$d 位</string>
     <string name="contacts_import_progress">导入了 %1$d 名联系人</string>
-    <string name="import_contacts_results">导入了 %1$d 名联系人
-\n耗时: %2$s。</string>
+    <string name="import_contacts_results">导入了 %1$d 名联系人 \n耗时: %2$s。</string>
     <string name="contacts_write_permissions_required">导入联系人需要写入联系人的权限。</string>
     <string name="scheduled_export_executing">执行预定输出</string>
     <string name="importing_messages">正在导入消息 ...</string>
