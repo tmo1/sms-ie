@@ -16,10 +16,8 @@
 \nزمان سپری شده: %2$s</string>
     <string name="import_call_log_results">%1$d تماس درون‌برد شد
 \nزمان سپری شده: %2$s</string>
-    <string name="export_contacts_results">%1$d مخاطب برون‌برد شد
-\nزمان سپری شده: %2$s.</string>
-    <string name="import_contacts_results">%1$d مخاطب درون‌برد شد
-\nزمان سپری شده: %2$s.</string>
+    <string name="export_contacts_results">%1$d مخاطب برون‌برد شد \nزمان سپری شده: %2$s.</string>
+    <string name="import_contacts_results">%1$d مخاطب درون‌برد شد \nزمان سپری شده: %2$s.</string>
     <string name="sms_permissions_required">برون‌برد پیام‌ها برای خواندن پیامک‌ها و مخاطبین به مجوز نیاز دارد.</string>
     <string name="call_logs_read_write_permissions_required">درون‌برد گزارش‌های تماس برای خواندن و نوشتن گزارش‌های تماس به مجوز نیاز دارد.</string>
     <string name="contacts_read_permission_required">برون‌برد مخاطبین برای خواندن مخاطبین به مجوز نیاز دارد.</string>
