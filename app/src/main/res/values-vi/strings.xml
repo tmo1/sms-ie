@@ -21,10 +21,8 @@
 \nThời gian đã trôi qua: %2$s</string>
     <string name="import_call_log_results">%1$d cuộc gọi đã được nhập
 \nThời gian đã trôi qua: %2$s</string>
-    <string name="export_contacts_results">%1$d liên hệ đã được xuất
-\nThời gian đã trôi qua: %2$s.</string>
-    <string name="import_contacts_results">%1$d liên hệ đã được nhập
-\nThời gian đã trôi qua: %2$s.</string>
+    <string name="export_contacts_results">%1$d liên hệ đã được xuất \nThời gian đã trôi qua: %2$s.</string>
+    <string name="import_contacts_results">%1$d liên hệ đã được nhập \nThời gian đã trôi qua: %2$s.</string>
     <string name="sms_permissions_required">Việc xuất tin nhắn cần có quyền đọc SMS và danh bạ.</string>
     <string name="default_sms_app_requirement">Ứng dụng này phải là ứng dụng SMS mặc định để nhập hoặc xóa tin nhắn.</string>
     <string name="okay">ĐƯỢC</string>
