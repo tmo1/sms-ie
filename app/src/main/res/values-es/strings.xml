@@ -12,10 +12,8 @@
     <string name="message_import_progress">%1$d SMS(es) y %2$d MMS(es) importados</string>
     <string name="import_call_log_results">%1$d llamada(s) importada(s)
 \nTiempo transcurrido: %2$s</string>
-    <string name="export_contacts_results">%1$d contacto(s) exportado(s)
-\nTiempo transcurrido: %2$s.</string>
-    <string name="import_contacts_results">%1$d contacto(s) importado(s)
-\nTiempo transcurrido: %2$s.</string>
+    <string name="export_contacts_results">%1$d contacto(s) exportado(s) \nTiempo transcurrido: %2$s.</string>
+    <string name="import_contacts_results">%1$d contacto(s) importado(s) \nTiempo transcurrido: %2$s.</string>
     <string name="sms_permissions_required">Exportar mensajes requiere permiso para leer los SMS y los contactos.</string>
     <string name="call_logs_permissions_required">Para exportar los registros de llamadas es necesario tener permiso para leer los registros de llamadas y los contactos.</string>
     <string name="contacts_read_permission_required">Para exportar los contactos se requiere el permiso de lectura de los contactos.</string>
