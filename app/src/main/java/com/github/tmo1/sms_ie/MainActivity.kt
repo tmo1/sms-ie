@@ -152,6 +152,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.WRITE_CALL_LOG,
+            // No need to API level check since androidx does so itself for POST_NOTIFICATIONS.
+            //noinspection InlinedApi
+            Manifest.permission.POST_NOTIFICATIONS,
         ))
 
         // set up UI
