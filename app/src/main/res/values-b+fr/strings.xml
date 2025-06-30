@@ -45,8 +45,8 @@
     <string name="import_messages_results">%1$d SMS et %2$d MMS importé(s).\nTemps écoulé : %3$s</string>
     <string name="export_call_log_results">%1$d appel(s) exporté(s)\nTemps écoulé : %2$s</string>
     <string name="import_call_log_results">%1$d appel(s) importé(s)\nTemps écoulé : %2$s</string>
-    <string name="export_contacts_results">%1$d contact(s) exporté(s)\nTemps écoulé : %2$s.</string>
-    <string name="import_contacts_results">%1$d contact(s) importé(s)\nTemps écoulé : %2$s.</string>
+    <string name="export_contacts_results">%1$d contact(s) exporté(s)\nTemps écoulé : %2$s</string>
+    <string name="import_contacts_results">%1$d contact(s) importé(s)\nTemps écoulé : %2$s</string>
     <string name="sms_permissions_required">L\'exportation des messages nécessite l\'autorisation de lire les SMS et les contacts.</string>
     <string name="default_sms_app_requirement">Cette application doit être définie comme application SMS par défaut afin d\'importer ou supprimer les messages.</string>
     <string name="call_logs_permissions_required">L\'exportation de l\'historique des appels nécessite l\'autorisation de lire l\'historique des appels et les contacts.</string>
