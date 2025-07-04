@@ -17,8 +17,8 @@
     <string name="import_messages_results">%1$d SMS (கள்) மற்றும் %2$d MMS (கள்) இறக்குமதி செய்யப்படுகின்றன\n கழிந்த நேரம்: %3$s</string>
     <string name="export_call_log_results">%1$d அழைப்பு (கள்) ஏற்றுமதி செய்யப்பட்டது\n கழிந்த நேரம்: %2$s</string>
     <string name="import_call_log_results">%1$d அழைப்பு (கள்) இறக்குமதி செய்யப்பட்டது\n கழிந்த நேரம்: %2$s</string>
-    <string name="export_contacts_results">%1$d தொடர்பு (கள்) ஏற்றுமதி செய்யப்பட்டது\n கழிந்த நேரம்: %2$s.</string>
-    <string name="import_contacts_results">%1$d தொடர்பு (கள்) இறக்குமதி செய்யப்பட்டது\n கழிந்த நேரம்: %2$s.</string>
+    <string name="export_contacts_results">%1$d தொடர்பு (கள்) ஏற்றுமதி செய்யப்பட்டது\n கழிந்த நேரம்: %2$s</string>
+    <string name="import_contacts_results">%1$d தொடர்பு (கள்) இறக்குமதி செய்யப்பட்டது\n கழிந்த நேரம்: %2$s</string>
     <string name="sms_permissions_required">செய்திகளை ஏற்றுமதி செய்வதற்கு எச்எம்எச் மற்றும் தொடர்புகளைப் படிக்க இசைவு தேவை.</string>
     <string name="default_sms_app_requirement">இந்த பயன்பாடு செய்திகளை இறக்குமதி செய்ய அல்லது துடைக்க இயல்புநிலை எச்எம்எச் பயன்பாடாக இருக்க வேண்டும்.</string>
     <string name="call_logs_permissions_required">அழைப்பு பதிவுகளை ஏற்றுமதி செய்ய அழைப்பு பதிவுகள் மற்றும் தொடர்புகளைப் படிக்க இசைவு தேவை.</string>
