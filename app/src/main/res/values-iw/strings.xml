@@ -16,7 +16,6 @@
     <string name="include_binary_data">כלול נתוני MMS בינאריים (מקודדים)</string>
     <string name="scheduled_export_executed">ייצוא מתוזמן בוצע</string>
     <string name="scheduled_export_success">%1$d הודעות סמס, %2$d mms, %3$d שיחות ו-%4$d אנשי קשר יוצאו.</string>
-    <string name="scheduled_export_failure">הייצוא לא הצליח - ראה logcat לפרטים נוספים.</string>
     <string name="dialog_confirm_wipe">אזהרה: למחוק את כל ההודעות מהמכשיר הזה לצמיתות, מבלי שתוכל לבטל זאת\?</string>
     <string name="cancel">בטל</string>
     <string name="wipe_cancelled">המחיקה בוטלה</string>

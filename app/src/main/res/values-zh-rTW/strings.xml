@@ -57,7 +57,6 @@
     <string name="sms_permissions_required">需要讀取簡訊與聯絡人權限才能匯出訊息。</string>
     <string name="persistent_channel_name">背景服務</string>
     <string name="persistent_channel_description">預定的背景匯出作業持續性通知</string>
-    <string name="scheduled_export_failure">匯出完成 — 檢視記錄以了解更多資訊。</string>
     <string name="message_import_api_23_requirement">匯入訊息僅支援 Android Marshmallow / 6.0 (API 級別 23) 以上版本。</string>
     <string name="become_default_sms_app_warning">「SMS 匯入 / 匯出」必須設為預設簡訊應用程式才能匯入或清除訊息。\n使用前請參閱說明文件了解這些功能的用途。</string>
     <string name="call_logs_permissions_required">需要讀取聯絡人與通話記錄權限才能匯出資料。</string>

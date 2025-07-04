@@ -52,7 +52,6 @@
     <string name="call_logs_read_write_permissions_required">Nhập nhật ký cuộc gọi cần có quyền đọc và ghi nhật ký cuộc gọi.</string>
     <string name="contacts_read_permission_required">Xuất danh bạ cần có quyền đọc Danh bạ.</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d cuộc gọi và %4$d liên hệ đã được xuất.</string>
-    <string name="scheduled_export_failure">Xuất không thành công — xem logcat để biết thêm chi tiết.</string>
     <string name="wipe_messages">Xóa tin nhắn</string>
     <string name="contacts_write_permissions_required">Nhập danh bạ cần có quyền ghi Danh bạ.</string>
     <string name="settings">Thiết đặt</string>
