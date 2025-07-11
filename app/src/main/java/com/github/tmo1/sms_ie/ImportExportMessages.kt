@@ -36,6 +36,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -44,6 +45,7 @@ import java.io.InputStreamReader
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlin.coroutines.coroutineContext
 
 // PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
 // and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
@@ -86,6 +88,8 @@ suspend fun exportMessages(
 
                     val buffer = ByteArray(1048576)
                     mmsPartList.forEach {
+                        ensureActive()
+
                         val partZipEntry = ZipEntry(it.filename)
                         zipOutputStream.putNextEntry(partZipEntry)
                         try {
@@ -129,6 +133,8 @@ private suspend fun smsToJSON(
 
             val addressIndex = it.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
             do {
+                coroutineContext.ensureActive()
+
                 val smsMessage = JSONObject()
                 it.columnNames.forEachIndexed { i, columnName ->
                     val value = it.getString(i)
@@ -174,6 +180,8 @@ private suspend fun mmsToJSON(
             val msgIdIndex = it.getColumnIndexOrThrow("_id")
             // write MMS metadata
             do {
+                coroutineContext.ensureActive()
+
                 val mmsMessage = JSONObject()
                 it.columnNames.forEachIndexed { i, columnName ->
                     val value = it.getString(i)
@@ -365,6 +373,8 @@ suspend fun importMessages(
 
                     BufferedReader(InputStreamReader(zipInputStream)).useLines { lines ->
                         lines.forEachIndexed JSONLine@{ lineNumber, line ->
+                            coroutineContext.ensureActive()
+
                             Log.d(LOG_TAG, "Processing line #$lineNumber")
                             // Log.d(LOG_TAG, "Processing: $line")
                             val messageMetadata = ContentValues()
@@ -659,6 +669,8 @@ suspend fun importMessages(
                     ZipInputStream(inputStream).use { zipInputStream ->
                         var zipEntry = zipInputStream.nextEntry
                         while (zipEntry != null) {
+                            coroutineContext.ensureActive()
+
                             if (zipEntry.name.startsWith("data/")) {
                                 val partUri = mmsPartMap[zipEntry.name.substring(5)]
                                 partUri?.let {

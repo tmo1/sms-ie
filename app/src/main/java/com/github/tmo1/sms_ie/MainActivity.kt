@@ -170,6 +170,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val setDefaultSMSAppButton: Button = findViewById(R.id.set_default_sms_app_button)
         val statusReportText: TextView = findViewById(R.id.status_report)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
+        val cancelButton: Button = findViewById(R.id.cancel_button)
 
         exportMessagesButton.setOnClickListener { exportMessagesManual() }
         importMessagesButton.setOnClickListener {
@@ -230,6 +231,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             ))
             .observe(this, Observer {
                 var isRunning = false
+                var canCancel = false
 
                 // There should only be one active worker. The only other one would be the enqueued
                 // work for the next scheduled export.
@@ -243,6 +245,11 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                             progressBar.max = progress.total
                             progressBar.progress = progress.current
                             statusReportText.text = progress.message
+                            canCancel = progress.canCancel
+
+                            cancelButton.setOnClickListener {
+                                workManager.cancelWorkById(workInfo.id)
+                            }
                         }
                         WorkInfo.State.SUCCEEDED -> {
                             val success = SuccessData(workInfo.outputData)
@@ -257,9 +264,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                             ErrorMessageFragment.newInstance(failure.title, failure.message)
                                 .show(supportFragmentManager, "error")
                         }
-                        // We want cancelled work (when changing scheduled export settings) to be
-                        // pruned below too.
-                        WorkInfo.State.CANCELLED -> {}
+                        // Cancelled work can occur when changing scheduled export settings or when
+                        // the user explicitly cancels a running operation. We want both to be
+                        // pruned below.
+                        WorkInfo.State.CANCELLED -> {
+                            statusReportText.text = getString(R.string.operation_cancelled)
+                        }
                         else -> continue
                     }
 
@@ -274,6 +284,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 }
 
                 progressBar.visibility = if (isRunning) View.VISIBLE else View.INVISIBLE
+                cancelButton.visibility = if (canCancel) View.VISIBLE else View.INVISIBLE
 
                 // Although ImportExportWorker uses a unique work ID to guarantee that multiple
                 // operations won't run at the same time, we should still try to prevent the user

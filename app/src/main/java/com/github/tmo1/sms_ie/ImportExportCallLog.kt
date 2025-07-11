@@ -35,11 +35,13 @@ import android.util.Log
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
+import kotlin.coroutines.coroutineContext
 
 suspend fun exportCallLog(
     appContext: Context, file: Uri, updateProgress: suspend (Progress) -> Unit
@@ -78,6 +80,8 @@ private suspend fun callLogToJSON(
 
             val addressIndex = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
             do {
+                coroutineContext.ensureActive()
+
                 jsonWriter.beginObject()
                 it.columnNames.forEachIndexed { i, columnName ->
                     val value = it.getString(i)
@@ -133,6 +137,8 @@ suspend fun importCallLog(
                         updateProgress(progress)
 
                         JSONReader@ while (jsonReader.hasNext()) {
+                            ensureActive()
+
                             jsonReader.beginObject()
                             callLogMetadata.clear()
                             while (jsonReader.hasNext()) {

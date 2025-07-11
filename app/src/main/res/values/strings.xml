@@ -80,6 +80,7 @@
     <string name="dialog_confirm_wipe">Warning: Wipe all messages from this device permanently, without being able to undo it\?</string>
     <string name="wipe">Wipe</string>
     <string name="cancel">Cancel</string>
+    <string name="operation_cancelled">Operation cancelled</string>
     <string name="wipe_cancelled">Wipe cancelled</string>
     <string name="messages_wiped">Messages wiped</string>
     <string name="wiping_sms_messages">Wiping SMS messages …</string>

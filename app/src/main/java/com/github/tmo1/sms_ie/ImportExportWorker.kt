@@ -27,6 +27,7 @@ package com.github.tmo1.sms_ie
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ForegroundServiceStartNotAllowedException
+import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
@@ -61,6 +62,12 @@ enum class Action {
     EXPORT_MESSAGES_MANUAL,
     IMPORT_MESSAGES_MANUAL,
     WIPE_MESSAGES_MANUAL,
+    ;
+
+    // Wiping calls ContentResolver.delete(), which does not have a variant that accepts a
+    // CancellationSignal instance. The operation cannot be cancelled without killing the app.
+    val isCancellable: Boolean
+        get() = this != WIPE_MESSAGES_MANUAL
 }
 
 data class SuccessData(val message: String) {
@@ -120,8 +127,10 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
     private suspend fun updateProgress(progress: Progress) {
         // [Unthrottled] For updating MainActivity and anything else that might be monitoring this
-        // worker's progress.
-        setProgress(progress.toWorkData())
+        // worker's progress. We currently funnel information about whether the operation can be
+        // cancelled here because WorkInfo does not expose the input parameters like the action.
+        // MainActivity has no other way to know if this is cancellable.
+        setProgress(progress.copy(canCancel = action.isCancellable).toWorkData())
         // [Throttled] For updating the foreground service notification.
         refreshForegroundNotification(progress)
     }
@@ -172,7 +181,16 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
         }
 
-        notifyResult(result, action)
+        // The androidx work library currently has a bug where the foreground notification is
+        // not removed when the foreground service is stopped after cancellation. This is
+        // reproducible even if this function is just replaced with a simple delay(10000).
+        if (isStopped) {
+            Log.w(LOG_TAG, "Explicitly cancelling foreground notification")
+            val notificationManager = NotificationManagerCompat.from(applicationContext)
+            notificationManager.cancel(NOTIFICATION_ID_PERSISTENT)
+        } else {
+            notifyResult(result, action)
+        }
 
         Log.i(LOG_TAG, "$action result: $result")
 
@@ -219,6 +237,23 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     // Inhibit 10-second delay when showing persistent notification
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+                    }
+
+                    if (action.isCancellable) {
+                        val actionPendingIntent = PendingIntent.getService(
+                            applicationContext,
+                            0,
+                            CancelWorkerService.createIntent(applicationContext, id),
+                            PendingIntent.FLAG_IMMUTABLE or
+                                    PendingIntent.FLAG_UPDATE_CURRENT or
+                                    PendingIntent.FLAG_ONE_SHOT,
+                        )
+
+                        addAction(NotificationCompat.Action.Builder(
+                            null,
+                            applicationContext.getString(android.R.string.cancel),
+                            actionPendingIntent,
+                        ).build())
                     }
                 }
                 .build()

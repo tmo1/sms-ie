@@ -32,11 +32,13 @@ import android.util.JsonWriter
 import android.util.Log
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
+import kotlin.coroutines.coroutineContext
 
 suspend fun exportContacts(
     appContext: Context,
@@ -106,6 +108,8 @@ private suspend fun contactsToJSON(
                         jsonWriter.name("raw_contacts")
                         jsonWriter.beginArray()
                         do {
+                            coroutineContext.ensureActive()
+
                             jsonWriter.beginObject()
                             raw.columnNames.forEachIndexed { i, columnName ->
                                 val value = raw.getString(i)
@@ -191,6 +195,8 @@ suspend fun importContacts(
                         jsonReader.beginArray()
                         // Loop through Contacts
                         while (jsonReader.hasNext()) {
+                            ensureActive()
+
                             jsonReader.beginObject()
                             // Loop through Contact fields until we find the array of Raw Contacts
                             while (jsonReader.hasNext()) {

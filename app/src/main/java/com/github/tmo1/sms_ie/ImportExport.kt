@@ -45,17 +45,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-data class Progress(val current: Int, val total: Int, val message: String?) {
+data class Progress(
+    val current: Int,
+    val total: Int,
+    val message: String?,
+    val canCancel: Boolean = false,
+) {
     constructor(workData: Data) : this(
         workData.getInt("current", 0),
         workData.getInt("total", 0),
         workData.getString("message"),
+        workData.getBoolean("can_cancel", false),
     )
 
     fun toWorkData(): Data = workDataOf(
         "current" to current,
         "total" to total,
         "message" to message,
+        "can_cancel" to canCancel,
     )
 }
 
