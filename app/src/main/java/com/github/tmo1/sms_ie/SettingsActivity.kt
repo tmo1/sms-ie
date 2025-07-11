@@ -22,8 +22,8 @@
 
 package com.github.tmo1.sms_ie
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -42,12 +42,10 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreferenceCompat
-import android.Manifest
 
 const val REQUEST_EXPORT_FOLDER = 4
 const val EXPORT_DIR = "export_dir"
 const val DISABLE_BATTERY_OPTIMIZATIONS = "disable_battery_optimizations"
-const val EXPORT_WORK_TAG = "export"
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -139,7 +137,7 @@ class SettingsActivity : AppCompatActivity() {
             // https://stackoverflow.com/questions/66449883/kotlin-onsharedpreferencechangelistener
             val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
                 if (key == "schedule_export") {
-                    context?.let { updateExportWork(it, true) }
+                    context?.let { scheduleAutomaticExport(it, true) }
                     if (SDK_INT >= 33 && sharedPrefs.getBoolean(key, false)) {
                         context?.let {
                             if (ContextCompat.checkSelfPermission(
@@ -212,7 +210,7 @@ class SettingsActivity : AppCompatActivity() {
                 // for worker testing: https://developer.android.com/topic/libraries/architecture/workmanager/basics#samples
                 /*val exportRequest: WorkRequest =
                     OneTimeWorkRequestBuilder<ExportWorker>()
-                        .addTag(EXPORT_WORK_TAG)
+                        .addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
                         .build()
                 activity?.let {
                     WorkManager

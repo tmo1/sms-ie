@@ -26,7 +26,6 @@
     <string name="documentation">应用说明和开发背景：</string>
     <string name="issue_tracker">交流本软件的问题：</string>
     <string name="about">应用简介</string>
-    <string name="scheduled_export_failure">导出失败——具体怎么回事，请查看软件日志。</string>
     <string name="app_name">短信导入/导出</string>
     <string name="import_call_log_button_label">导入通话记录</string>
     <string name="call_log_export_progress">共 %2$d 条通话记录，导出了 %1$d 条</string>

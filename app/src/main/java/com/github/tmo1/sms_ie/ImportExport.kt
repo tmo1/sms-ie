@@ -28,20 +28,46 @@
 package com.github.tmo1.sms_ie
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
 import android.provider.Telephony
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
+import androidx.work.Data
+import androidx.work.workDataOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
+
+data class Progress(
+    val current: Int,
+    val total: Int,
+    val message: String?,
+    val canCancel: Boolean = false,
+) {
+    constructor(workData: Data) : this(
+        workData.getInt("current", 0),
+        workData.getInt("total", 0),
+        workData.getString("message"),
+        workData.getBoolean("can_cancel", false),
+    )
+
+    fun toWorkData(): Data = workDataOf(
+        "current" to current,
+        "total" to total,
+        "message" to message,
+        "can_cancel" to canCancel,
+    )
+}
+
+class UserFriendlyException(message: String? = null, cause: Throwable? = null)
+    : Exception(message, cause)
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
@@ -111,71 +137,106 @@ fun lookupDisplayName(
     return displayName
 }
 
-suspend fun wipeSmsAndMmsMessages(
-    appContext: Context, statusReportText: TextView, progressBar: ProgressBar
-) {
+suspend fun wipeSmsAndMmsMessages(appContext: Context, updateProgress: suspend (Progress) -> Unit) {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+
     withContext(Dispatchers.IO) {
         if (prefs.getBoolean("sms", true)) {
-            setStatusText(statusReportText, appContext.getString(R.string.wiping_sms_messages))
-            initIndeterminateProgressBar(progressBar)
+            updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_sms_messages)))
             appContext.contentResolver.delete(Telephony.Sms.CONTENT_URI, null, null)
-            hideProgressBar(progressBar)
         }
         if (prefs.getBoolean("mms", true)) {
-            setStatusText(statusReportText, appContext.getString(R.string.wiping_mms_messages))
-            initIndeterminateProgressBar(progressBar)
+            updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_mms_messages)))
             appContext.contentResolver.delete(Telephony.Mms.CONTENT_URI, null, null)
-            hideProgressBar(progressBar)
         }
     }
 }
 
-suspend fun initProgressBar(progressBar: ProgressBar?, cursor: Cursor) {
-    withContext(Dispatchers.Main) {
-        progressBar?.isIndeterminate = false
-        progressBar?.progress = 0
-        progressBar?.visibility = View.VISIBLE
-        progressBar?.max = cursor.count
+suspend fun automaticExport(
+    appContext: Context, updateProgress: suspend (Progress) -> Unit
+): Triple<MessageTotal, Int, Int> {
+    val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+
+    var messages = MessageTotal()
+    var calls = 0
+    var contacts = 0
+
+    val treeUri = prefs.getString(EXPORT_DIR, "")!!
+        .toUri() // https://stackoverflow.com/questions/57813653/why-sharedpreferences-getstring-may-return-null
+    // Cannot fail because our min SDK version is >= 21.
+    val documentTree = DocumentFile.fromTreeUri(appContext, treeUri)!!
+    val date = getCurrentDateTime()
+    val dateInString = "-${date.toString("yyyy-MM-dd")}"
+
+    // We want to back up as much as possible, so avoid failing fast.
+    var firstException: Exception? = null
+
+    if (prefs.getBoolean("export_messages", true)) {
+        try {
+            val file = documentTree.createFile("application/zip", "messages$dateInString.zip")
+                ?: throw IOException("Failed to create messages output file")
+
+            messages = exportMessages(appContext, file.uri, updateProgress)
+            deleteOldExports(prefs, documentTree, file, "messages")
+        } catch (e: Exception) {
+            firstException = firstException ?: e
+        }
     }
+
+    if (prefs.getBoolean("export_calls", true)) {
+        try {
+            val file = documentTree.createFile("application/json", "calls$dateInString.json")
+                ?: throw IOException("Failed to create call log output file")
+
+            calls = exportCallLog(appContext, file.uri, updateProgress)
+            deleteOldExports(prefs, documentTree, file, "calls")
+        } catch (e: Exception) {
+            firstException = firstException ?: e
+        }
+    }
+
+    if (prefs.getBoolean("export_contacts", true)) {
+        try {
+            val file = documentTree.createFile("application/json", "contacts$dateInString.json")
+                ?: throw IOException("Failed to create contacts output file")
+
+            contacts = exportContacts(appContext, file.uri, updateProgress)
+            deleteOldExports(prefs, documentTree, file, "contacts")
+        } catch (e: Exception) {
+            firstException = firstException ?: e
+        }
+    }
+
+    if (firstException != null) {
+        throw firstException
+    }
+
+    return Triple(messages, calls, contacts)
 }
 
-suspend fun initIndeterminateProgressBar(progressBar: ProgressBar?) {
-    withContext(Dispatchers.Main) {
-        progressBar?.isIndeterminate = true
-        progressBar?.visibility = View.VISIBLE
-    }
-}
-
-suspend fun hideProgressBar(progressBar: ProgressBar?) {
-    withContext(Dispatchers.Main) {
-        progressBar?.visibility = View.INVISIBLE
-    }
-}
-
-suspend fun setStatusText(statusReportText: TextView?, message: String) {
-    withContext(Dispatchers.Main) { statusReportText?.text = message }
-}
-
-suspend fun incrementProgress(progressBar: ProgressBar?) {
-    withContext(Dispatchers.Main) {
-        progressBar?.incrementProgressBy(1)
-    }
-}
-
-// From: https://stackoverflow.com/a/18143773
-suspend fun displayError(appContext: Context, e: Exception?, title: String, message: String) {
-    val messageExpanded = if (e != null) {
-        e.printStackTrace()
-        "$message:\n\n\"$e\"\n\nSee logcat for more information."
-    } else {
-        message
-    }
-    val errorBox = AlertDialog.Builder(appContext)
-    errorBox.setTitle(title).setMessage(messageExpanded)
-    //errorBox.setTitle(title).setMessage("$message:\n\n\"$e\"\n\nSee logcat for more information.")
-        .setCancelable(false).setNeutralButton("Okay", null)
-    withContext(Dispatchers.Main) {
-        errorBox.show()
+fun deleteOldExports(
+    prefs: SharedPreferences, documentTree: DocumentFile, newExport: DocumentFile?, prefix: String
+) {
+    if (prefs.getBoolean("delete_old_exports", false)) {
+        Log.i(LOG_TAG, "Deleting old exports ...")
+        // The following line is necessary in case there already existed a file with the
+        // provided filename, in which case Android will add a numeric suffix to the new
+        // file's filename ("messages-yyyy-MM-dd (1).json")
+        val newFilename = newExport?.name.toString()
+        val files = documentTree.listFiles()
+        var total = 0
+        val extension = if (prefix == "messages") "zip" else "json"
+        files.forEach {
+            val name = it.name
+            if (name != null && name != newFilename && name.startsWith(prefix)
+                    && name.endsWith(".$extension")) {
+                it.delete()
+                total++
+            }
+        }
+        if (prefs.getBoolean("remove_datestamps_from_filenames", false)) {
+            newExport?.renameTo("$prefix.$extension")
+        }
+        Log.i(LOG_TAG, "$total exports deleted")
     }
 }

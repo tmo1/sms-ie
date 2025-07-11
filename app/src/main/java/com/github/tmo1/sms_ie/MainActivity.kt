@@ -30,13 +30,12 @@ import android.app.role.RoleManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
 import android.provider.Telephony
-import android.text.format.DateUtils.formatElapsedTime
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -44,51 +43,66 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
-const val EXPORT_MESSAGES = 1
-const val IMPORT_MESSAGES = 2
-const val EXPORT_CALL_LOG = 3
-const val IMPORT_CALL_LOG = 4
-const val EXPORT_CONTACTS = 5
-const val IMPORT_CONTACTS = 6
-const val BECOME_DEFAULT_SMS_APP = 100
-const val PERMISSIONS_REQUEST = 1
 const val LOG_TAG = "SMSIE"
 const val CHANNEL_ID_PERSISTENT = "PERSISTENT"
 const val CHANNEL_ID_ALERTS = "ALERTS"
 const val NOTIFICATION_ID_PERSISTENT = 0
 const val NOTIFICATION_ID_ALERT = 1
 
-// PduHeaders are referenced here https://developer.android.com/reference/android/provider/Telephony.Mms.Addr#TYPE
-// and defined here https://android.googlesource.com/platform/frameworks/opt/mms/+/4bfcd8501f09763c10255442c2b48fad0c796baa/src/java/com/google/android/mms/pdu/PduHeaders.java
-// but are apparently unavailable in a public class
-const val PDU_HEADERS_FROM = "137"
+private const val STATE_PENDING_ACTION = "pending_action"
+private const val STATE_POST_SMS_ROLE_ACTION = "post_sms_role_action"
 
-data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
+private enum class PostSmsRoleAction {
+    IMPORT_MESSAGES,
+    WIPE_MESSAGES,
+}
 
 class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,
     BecomeDefaultSMSAppFragment.NoticeDialogListener {
-
     private lateinit var prefs: SharedPreferences
 
-    // We use 'operation' to tell onActivityResult() which operation to run after the user has made
-    // the app into the default SMS app. This feels hackish, but it's simple and effective, and
-    // while it would be easy enough to pass the operation as a parameter to checkDefaultSMSApp(),
-    // I couldn't figure out a simple and effective way to pass the operation through to
-    // to onDefaultSMSAppDialogPositiveClick()
-    private lateinit var operation: () -> Unit
+    private val requestPermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
+            // We currently request permissions on startup, but don't block UI interactions if they
+            // are denied. When performing an action, the user will be notified that they need to
+            // grant permissions.
+        }
+    private val requestExistingFile =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            launchPendingAction(uri, false)
+        }
+    private val requestNewJsonFile =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+            launchPendingAction(uri, false)
+        }
+    private val requestNewZipFile =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+            launchPendingAction(uri, false)
+        }
+    private val requestSmsRole =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            launchPostSmsRoleAction(result.resultCode == RESULT_OK)
+        }
+
+    // Action to perform after file selection. Saved across Activity recreation.
+    private var pendingAction: Action? = null
+    // Action to perform after the SMS role has been acquired. Saved across Activity recreation.
+    private var postSmsRoleAction: PostSmsRoleAction? = null
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -119,26 +133,29 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (savedInstanceState != null) {
+            val pendingActionIndex = savedInstanceState.getInt(STATE_PENDING_ACTION, -1)
+            if (pendingActionIndex != -1) {
+                pendingAction = Action.values()[pendingActionIndex]
+            }
+
+            val postSmsRoleActionIndex = savedInstanceState.getInt(STATE_POST_SMS_ROLE_ACTION, -1)
+            if (postSmsRoleActionIndex != -1) {
+                postSmsRoleAction = PostSmsRoleAction.values()[postSmsRoleActionIndex]
+            }
+        }
+
         // get necessary permissions on startup
-        val allPermissions = listOf(
+        requestPermissions.launch(arrayOf(
             Manifest.permission.READ_SMS,
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.WRITE_CALL_LOG
-        )
-        val necessaryPermissions = mutableListOf<String>()
-        allPermissions.forEach {
-            if (ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
-                necessaryPermissions.add(it)
-            }
-        }
-
-        if (necessaryPermissions.any()) {
-            ActivityCompat.requestPermissions(
-                this, necessaryPermissions.toTypedArray(), PERMISSIONS_REQUEST
-            )
-        }
+            Manifest.permission.WRITE_CALL_LOG,
+            // No need to API level check since androidx does so itself for POST_NOTIFICATIONS.
+            //noinspection InlinedApi
+            Manifest.permission.POST_NOTIFICATIONS,
+        ))
 
         // set up UI
         setContentView(R.layout.activity_main)
@@ -151,10 +168,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val exportContactsButton: Button = findViewById(R.id.export_contacts_button)
         val importContactsButton: Button = findViewById(R.id.import_contacts_button)
         val setDefaultSMSAppButton: Button = findViewById(R.id.set_default_sms_app_button)
+        val statusReportText: TextView = findViewById(R.id.status_report)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
+        val cancelButton: Button = findViewById(R.id.cancel_button)
 
         exportMessagesButton.setOnClickListener { exportMessagesManual() }
         importMessagesButton.setOnClickListener {
-            operation = ::importMessagesManual
+            postSmsRoleAction = PostSmsRoleAction.IMPORT_MESSAGES
             checkDefaultSMSApp()
         }
         exportCallLogButton.setOnClickListener { exportCallLogManual() }
@@ -162,7 +182,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         exportContactsButton.setOnClickListener { exportContactsManual() }
         importContactsButton.setOnClickListener { importContactsManual() }
         wipeAllMessagesButton.setOnClickListener {
-            operation = ::wipeMessagesManual
+            postSmsRoleAction = PostSmsRoleAction.WIPE_MESSAGES
             checkDefaultSMSApp()
         }
         setDefaultSMSAppButton.setOnClickListener { startActivity(Intent(ACTION_MANAGE_DEFAULT_APPS_SETTINGS))}
@@ -202,6 +222,82 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             // Remove legacy notification channels to accommodate upgrades
             notificationManager.deleteNotificationChannel("MYCHANNEL")
         }
+
+        val workManager = WorkManager.getInstance(this)
+        workManager
+            .getWorkInfosLiveData(WorkQuery.fromTags(
+                ImportExportWorker.TAG_MANUAL_ACTION,
+                ImportExportWorker.TAG_AUTOMATIC_EXPORT,
+            ))
+            .observe(this, Observer {
+                var isRunning = false
+                var canCancel = false
+
+                // There should only be one active worker. The only other one would be the enqueued
+                // work for the next scheduled export.
+                for (workInfo in it) {
+                    when (workInfo.state) {
+                        WorkInfo.State.RUNNING -> {
+                            isRunning = true
+
+                            val progress = Progress(workInfo.progress)
+                            progressBar.isIndeterminate = progress.total == 0
+                            progressBar.max = progress.total
+                            progressBar.progress = progress.current
+                            statusReportText.text = progress.message
+                            canCancel = progress.canCancel
+
+                            cancelButton.setOnClickListener {
+                                workManager.cancelWorkById(workInfo.id)
+                            }
+                        }
+                        WorkInfo.State.SUCCEEDED -> {
+                            val success = SuccessData(workInfo.outputData)
+                            statusReportText.text = success.message
+                        }
+                        WorkInfo.State.FAILED -> {
+                            val failure = FailureData(workInfo.outputData)
+                            // Just show the general error from the title in the status. The more
+                            // detailed message will be shown in the dialog box.
+                            statusReportText.text = failure.title
+
+                            ErrorMessageFragment.newInstance(failure.title, failure.message)
+                                .show(supportFragmentManager, "error")
+                        }
+                        // Cancelled work can occur when changing scheduled export settings or when
+                        // the user explicitly cancels a running operation. We want both to be
+                        // pruned below.
+                        WorkInfo.State.CANCELLED -> {
+                            statusReportText.text = getString(R.string.operation_cancelled)
+                        }
+                        else -> continue
+                    }
+
+                    // WorkManager keeps a history of completed jobs for a certain period of time.
+                    // We want to get rid of this history once we've seen the result and updated the
+                    // UI accordingly. It's a bit hacky, but this way, we'll only see new status
+                    // updates without needing to separately keep track of which completed work IDs
+                    // we've already observed.
+                    if (workInfo.state.isFinished) {
+                        workManager.pruneWork()
+                    }
+                }
+
+                progressBar.visibility = if (isRunning) View.VISIBLE else View.INVISIBLE
+                cancelButton.visibility = if (canCancel) View.VISIBLE else View.INVISIBLE
+
+                // Although ImportExportWorker uses a unique work ID to guarantee that multiple
+                // operations won't run at the same time, we should still try to prevent the user
+                // from causing this situation.
+                exportMessagesButton.isEnabled = !isRunning
+                importMessagesButton.isEnabled = !isRunning
+                exportCallLogButton.isEnabled = !isRunning
+                importCallLogButton.isEnabled = !isRunning
+                exportContactsButton.isEnabled = !isRunning
+                importContactsButton.isEnabled = !isRunning
+                wipeAllMessagesButton.isEnabled = !isRunning
+                setDefaultSMSAppButton.isEnabled = !isRunning
+            })
     }
 
     override fun onResume() {
@@ -224,24 +320,23 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
-    private fun exportMessagesManual() {/*if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_SMS
-            ) == PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED
-        )*/
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        pendingAction?.let {
+            outState.putInt(STATE_PENDING_ACTION, it.ordinal)
+        }
+        postSmsRoleAction?.let {
+            outState.putInt(STATE_POST_SMS_ROLE_ACTION, it.ordinal)
+        }
+    }
+
+    private fun exportMessagesManual() {
         if (checkReadSMSContactsPermissions(this)) {
+            pendingAction = Action.EXPORT_MESSAGES_MANUAL
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "application/zip"
-                putExtra(Intent.EXTRA_TITLE, "messages-$dateInString.zip")
-            }
-            startActivityForResult(intent, EXPORT_MESSAGES)
+            requestNewZipFile.launch("messages-$dateInString.zip")
         } else {
             setStatusReport(getString(R.string.sms_permissions_required))
         }
@@ -252,24 +347,18 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             setStatusReport(getString(R.string.message_import_api_23_requirement))
             return
         }
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type =
-                if (SDK_INT < 29) "*/*" else "application/zip" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-        }
-        startActivityForResult(intent, IMPORT_MESSAGES)
+
+        pendingAction = Action.IMPORT_MESSAGES_MANUAL
+        //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+        requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/zip"))
     }
 
     private fun exportCallLogManual() {
         if (checkReadCallLogsContactsPermissions(this)) {
+            pendingAction = Action.EXPORT_CALL_LOG_MANUAL
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "application/json"
-                putExtra(Intent.EXTRA_TITLE, "calls-$dateInString.json")
-            }
-            startActivityForResult(intent, EXPORT_CALL_LOG)
+            requestNewJsonFile.launch("calls-$dateInString.json")
         } else {
             setStatusReport(getString(R.string.call_logs_permissions_required))
         }
@@ -277,12 +366,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
     private fun importCallLogManual() {
         if (checkReadWriteCallLogPermissions(this)) {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type =
-                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-            }
-            startActivityForResult(intent, IMPORT_CALL_LOG)
+            pendingAction = Action.IMPORT_CALL_LOG_MANUAL
+            //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+            requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/json"))
         } else {
             setStatusReport(getString(R.string.call_logs_read_write_permissions_required))
         }
@@ -290,14 +376,10 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
     private fun exportContactsManual() {
         if (checkReadContactsPermission(this)) {
+            pendingAction = Action.EXPORT_CONTACTS_MANUAL
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "application/json"
-                putExtra(Intent.EXTRA_TITLE, "contacts-$dateInString.json")
-            }
-            startActivityForResult(intent, EXPORT_CONTACTS)
+            requestNewJsonFile.launch("contacts-$dateInString.json")
         } else {
             setStatusReport(getString(R.string.contacts_read_permission_required))
         }
@@ -305,12 +387,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
     private fun importContactsManual() {
         if (checkWriteContactsPermission(this)) {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type =
-                    if (SDK_INT < 29) "*/*" else "application/json" //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-            }
-            startActivityForResult(intent, IMPORT_CONTACTS)
+            pendingAction = Action.IMPORT_CONTACTS_MANUAL
+            //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+            requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/json"))
         } else {
             setStatusReport(getString(R.string.contacts_write_permissions_required))
         }
@@ -320,119 +399,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         ConfirmWipeFragment().show(supportFragmentManager, "wipe")
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(
-        requestCode: Int, resultCode: Int, resultData: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, resultData)
-        var total: MessageTotal
-        val statusReportText: TextView = findViewById(R.id.status_report)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
-        val startTime = System.nanoTime()
-        // Throughout this function, we pass 'this@MainActivity' to the import functions, since they
-        // currently create AlertDialogs upon catching exceptions, and AlertDialogs need
-        // Activity context - see:
-        // https://stackoverflow.com/a/7229248
-        // https://stackoverflow.com/a/52224145
-        // https://stackoverflow.com/a/51516252
-        // But we pass 'applicationContext' to the export functions, since they don't currently
-        // create AlertDialogs. Perhaps we should just pass Activity context to them as well, to be
-        // consistent.
-        if (requestCode == EXPORT_MESSAGES && resultCode == RESULT_OK) {
-            resultData?.data?.let {
-                //statusReportText.text = getString(R.string.begin_exporting_messages)
-                CoroutineScope(Dispatchers.Main).launch {
-                    total = exportMessages(applicationContext, it, progressBar, statusReportText)
-                    statusReportText.text = getString(
-                        R.string.export_messages_results, total.sms, total.mms, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-//                    logElapsedTime(startTime)
-                }
-            }
-        }
-        if (requestCode == IMPORT_MESSAGES && resultCode == RESULT_OK) {
-            resultData?.data?.let {
-                CoroutineScope(Dispatchers.Main).launch {
-                    // importMessages() requires API level 23, but we check for that back in importMessagesManual()
-                    total = importMessages(this@MainActivity, it, progressBar, statusReportText)
-                    statusReportText.text = getString(
-                        R.string.import_messages_results, total.sms, total.mms, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-//                    logElapsedTime(startTime)
-                }
-            }
-        }
-        if (requestCode == EXPORT_CALL_LOG && resultCode == RESULT_OK) {
-            resultData?.data?.let {
-                CoroutineScope(Dispatchers.Main).launch {
-                    total = exportCallLog(applicationContext, it, progressBar, statusReportText)
-                    statusReportText.text = getString(
-                        R.string.export_call_log_results, total.sms, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
-        }
-        if (requestCode == IMPORT_CALL_LOG && resultCode == RESULT_OK) {
-            resultData?.data?.let {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val callsImported =
-                        importCallLog(this@MainActivity, it, progressBar, statusReportText)
-                    statusReportText.text = getString(
-                        R.string.import_call_log_results, callsImported, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
-        }
-        if (requestCode == EXPORT_CONTACTS && resultCode == RESULT_OK) {
-            resultData?.data?.let {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val contactsExported =
-                        exportContacts(applicationContext, it, progressBar, statusReportText)
-                    statusReportText.text = getString(
-                        R.string.export_contacts_results, contactsExported, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
+    private fun launchPendingAction(uri: Uri?, nullUriAllowed: Boolean) {
+        if (uri != null || nullUriAllowed) {
+            scheduleManualAction(this, pendingAction!!, uri)
         }
 
-        if (requestCode == IMPORT_CONTACTS && resultCode == RESULT_OK) {
-            resultData?.data?.let {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val contactsImported =
-                        importContacts(this@MainActivity, it, progressBar, statusReportText)
-                    statusReportText.text = getString(
-                        R.string.import_contacts_results, contactsImported, formatElapsedTime(
-                            TimeUnit.SECONDS.convert(
-                                System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                            )
-                        )
-                    )
-                }
-            }
-        }
-        if (requestCode == BECOME_DEFAULT_SMS_APP && resultCode == RESULT_OK) {
-            operation()
-        }
+        // Always clear the pending action, even if we don't start anything (eg. if the user
+        // cancelled the file selection).
+        pendingAction = null
     }
 
     // Dialog ('wipe confirmation' and 'become default SMS app') button callbacks
@@ -443,12 +417,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     // defined by the NoticeDialogFragment.NoticeDialogListener interface
 
     override fun onWipeDialogPositiveClick(dialog: DialogFragment) {
-        val statusReportText: TextView = findViewById(R.id.status_report)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
-        CoroutineScope(Dispatchers.Main).launch {
-            wipeSmsAndMmsMessages(applicationContext, statusReportText, progressBar)
-            statusReportText.text = getString(R.string.messages_wiped)
-        }
+        pendingAction = Action.WIPE_MESSAGES_MANUAL
+        launchPendingAction(null, true)
     }
 
     override fun onWipeDialogNegativeClick(dialog: DialogFragment) {
@@ -457,18 +427,15 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     override fun onDefaultSMSAppDialogPositiveClick(dialog: DialogFragment) {
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
-            val roleManager = getSystemService(RoleManager::class.java)
-            startActivityForResult(
-                roleManager.createRequestRoleIntent(RoleManager.ROLE_SMS), BECOME_DEFAULT_SMS_APP
-            )
+        val intent = if (SDK_INT >= Build.VERSION_CODES.Q) {
+            getSystemService(RoleManager::class.java)
+                .createRequestRoleIntent(RoleManager.ROLE_SMS)
         } else {
-            val becomeDefaultSMSAppIntent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
-            becomeDefaultSMSAppIntent.putExtra(
-                Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName
-            )
-            startActivityForResult(becomeDefaultSMSAppIntent, BECOME_DEFAULT_SMS_APP)
+            Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
+                putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+            }
         }
+        requestSmsRole.launch(intent)
     }
 
     private fun setStatusReport(statusReport: String) {
@@ -480,20 +447,46 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         // https://stackoverflow.com/questions/32885948/how-to-set-an-sms-app-as-default-app-in-android-programmatically
         // https://stackoverflow.com/questions/64135681/change-default-sms-app-intent-not-working-on-android-10
         // https://stackoverflow.com/questions/59554835/android-10-default-sms-app-dialog-not-showing-up/60372137#60372137
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
+        val haveRole = if (SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(RoleManager::class.java)
-            if (roleManager.isRoleAvailable(RoleManager.ROLE_SMS) && !roleManager.isRoleHeld(
-                    RoleManager.ROLE_SMS
-                )
-            ) {
-                BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
-            } else operation()
+            !roleManager.isRoleAvailable(RoleManager.ROLE_SMS)
+                    || roleManager.isRoleHeld(RoleManager.ROLE_SMS)
         } else {
-            if (Telephony.Sms.getDefaultSmsPackage(this) != packageName) {
-                BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
-            } else operation()
+            Telephony.Sms.getDefaultSmsPackage(this) == packageName
+        }
+
+        if (haveRole) {
+            launchPostSmsRoleAction(true)
+        } else {
+            BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
         }
     }
+
+    private fun launchPostSmsRoleAction(canLaunch: Boolean) {
+        if (canLaunch) {
+            when (postSmsRoleAction!!) {
+                PostSmsRoleAction.IMPORT_MESSAGES -> importMessagesManual()
+                PostSmsRoleAction.WIPE_MESSAGES -> wipeMessagesManual()
+            }
+        }
+
+        postSmsRoleAction = null
+    }
+}
+
+class ErrorMessageFragment : DialogFragment() {
+    companion object {
+        fun newInstance(title: String, message: String) = ErrorMessageFragment().apply {
+            arguments = bundleOf("title" to title, "message" to message)
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        AlertDialog.Builder(requireContext())
+            .setTitle(requireArguments().getString("title"))
+            .setMessage(requireArguments().getString("message"))
+            .setPositiveButton(android.R.string.ok) { _, _ -> }
+            .create()
 }
 
 // https://developer.android.com/guide/topics/ui/dialogs

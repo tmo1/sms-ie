@@ -34,7 +34,6 @@
     <string name="scheduled_export_executing">Wykonywanie zaplanowanego eksportu</string>
     <string name="scheduled_export_executed">Zaplanowany eksport wykonany</string>
     <string name="scheduled_export_success">Wyeksportowano %1$d SMSów, %2$d MMSów, %3$d połączeń i %4$d kontaktów.</string>
-    <string name="scheduled_export_failure">Eksport nie powiódł się — zobacz logcat, aby uzyskać więcej informacji.</string>
     <string name="wipe_messages">Usuń wiadomości</string>
     <string name="dialog_confirm_wipe">Ostrzeżenie: czy chcesz usunąć wszystkie wiadomości z tego urządzenia bez możliwości ich przywrócenia\?</string>
     <string name="wipe">Usuń</string>

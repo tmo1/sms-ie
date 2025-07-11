@@ -37,7 +37,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : DialogPrefe
     fun persistMinutesFromMidnight(minutesFromMidnight: Int) {
         super.persistInt(minutesFromMidnight)
         notifyChanged()
-        updateExportWork(context, true)
+        scheduleAutomaticExport(context, true)
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {

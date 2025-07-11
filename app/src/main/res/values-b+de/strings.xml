@@ -49,7 +49,6 @@
     <string name="include_binary_data">Einschließlich binärer MMS-Daten</string>
     <string name="scheduled_export_executed">Geplanter Export ausgeführt</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS , %3$d Anruf(e) und %4$d Kontakt(e) exportiert.</string>
-    <string name="scheduled_export_failure">Export fehlgeschlagen — siehe Logcat für weitere Details.</string>
     <string name="wipe_messages">Lösche Nachrichten</string>
     <string name="dialog_confirm_wipe">Warnung: Alle Nachrichten von diesem Gerät dauerhaft löschen, ohne es rückgängig machen zu können\?</string>
     <string name="wipe">Löschen</string>
