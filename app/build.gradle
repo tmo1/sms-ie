@@ -86,14 +86,14 @@ android {
 
 dependencies {
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
     standardImplementation 'androidx.core:core-ktx:1.16.0'
     standardImplementation 'androidx.appcompat:appcompat:1.7.1'
     standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    standardImplementation 'androidx.work:work-runtime-ktx:2.10.1'
+    standardImplementation 'androidx.work:work-runtime-ktx:2.10.2'
 
     legacyImplementation 'androidx.core:core-ktx:1.13.1'
     legacyImplementation 'androidx.appcompat:appcompat:1.6.1'
