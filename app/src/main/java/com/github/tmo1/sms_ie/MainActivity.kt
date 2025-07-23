@@ -34,6 +34,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
 import android.provider.Telephony
 import android.view.Menu
@@ -486,6 +488,32 @@ class ErrorMessageFragment : DialogFragment() {
             .setTitle(requireArguments().getString("title"))
             .setMessage(requireArguments().getString("message"))
             .setPositiveButton(android.R.string.ok) { _, _ -> }
+            .setNeutralButton(R.string.open_log_dir) { _, _ ->
+                // The external files directory (/sdcard/Android/data/<package>/files) is only
+                // readable via USB (adb or mtp) or via the system file manager (DocumentsUI) in
+                // recent versions of Android. This intent will open the system file manager to the
+                // proper directory. Unfortunately, passing it a file:// URI directly will fail with
+                // FileUriExposedException. We need to manually construct a SAF content:// URI.
+                // While these constants are not documented, since they are part of content:// URIs,
+                // Android realistically can't ever change them without revoking permissions to
+                // files that apps have already been granted access to. Android's own tests also
+                // hardcode them.
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    val appExternalDir = requireContext().getExternalFilesDir(null)!!
+                    val globalExternalDir = Environment.getExternalStorageDirectory()
+                    val relPath = appExternalDir.relativeTo(globalExternalDir)
+
+                    setDataAndType(
+                        DocumentsContract.buildDocumentUri(
+                            "com.android.externalstorage.documents",
+                            "primary:$relPath",
+                        ),
+                        "vnd.android.document/directory",
+                    )
+                }
+
+                startActivity(intent)
+            }
             .create()
 }
 

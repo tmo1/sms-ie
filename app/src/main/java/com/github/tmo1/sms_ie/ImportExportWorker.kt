@@ -48,8 +48,10 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.io.File
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
@@ -140,6 +142,30 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
         refreshForegroundNotification(Progress(0, 0, null))
 
+        Log.d(LOG_TAG, "Starting log file")
+        Log.d(LOG_TAG, "- App version: ${BuildConfig.VERSION_NAME}")
+        Log.d(LOG_TAG, "- API level: ${Build.VERSION.SDK_INT}")
+
+        // Redirecting stdout is better than using -f because the logcat implementation calls
+        // fflush() only when outputting to stdout. When using -f, interrupting logcat may mean that
+        // its buffered data doesn't get flushed.
+        val logcatFile = File(context.getExternalFilesDir(null), "logcat.log")
+        val logcatUseStdout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        val logcatExtraArgs = if (logcatUseStdout) {
+            emptyArray()
+        } else {
+            arrayOf("-f", logcatFile.absolutePath)
+        }
+
+        val logcatProcess = ProcessBuilder("logcat", "*:V", *logcatExtraArgs)
+            .apply {
+                if (logcatUseStdout) {
+                    redirectOutput(logcatFile)
+                }
+            }
+            .redirectErrorStream(true)
+            .start()
+
         val result = try {
             Log.i(LOG_TAG, "Starting $action")
             Result.success(performAction().toOutputData())
@@ -193,6 +219,17 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         }
 
         Log.i(LOG_TAG, "$action result: $result")
+
+        // This log message also serves as an indicator to know that the logs are complete. See the
+        // note about the -f option above.
+        try {
+            Log.d(LOG_TAG, "Stopping log file")
+            delay(100)
+
+            logcatProcess.destroy()
+        } finally {
+            logcatProcess.waitFor()
+        }
 
         return result
     }
