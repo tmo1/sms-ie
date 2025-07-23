@@ -1,0 +1,21 @@
+ - Run all manual operations in Android Worker processes, so that they survive device configuration changes (issue #85), leaving the app, and screen shutoff (issue #266) - by Andrew Gunnerson (PR #268).
+
+ - Add a "Cancel" button for all operations except for message wiping - by Andrew Gunnerson (PR #268).
+
+ - Disable operation buttons while an operation is already running (issue #273) - by Andrew Gunnerson (PR #268).
+
+ - Refactor code - by Andrew Gunnerson (PR #268).
+
+ - Fix a bug that broke call import with Huawei EMUI devices (issue #210).
+
+ - Fix a bug that broke message import with Xiaomi MIUI devices (issue #263) - by MarcMush (PR #264).
+
+ - Add Chinese (Traditional Han script) translation - by Unknownman820.
+
+ - Update various translations.
+
+ - Update 'compileSdk' and 'targetSdkVersion' to 36.
+
+ - Update Java versions in build files to 17.
+
+ - Update Gradle, Android Gradle Plugin, and Gradle dependencies.

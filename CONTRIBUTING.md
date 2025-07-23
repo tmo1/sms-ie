@@ -14,40 +14,49 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Bindu (vbh)](https://github.com/vbh): call log import support ([PR #21](https://github.com/tmo1/sms-ie/pull/21))
  - [Jan Hustak (codingjourney)](https://github.com/codingjourney): bug fix ([PR #30](https://github.com/tmo1/sms-ie/pull/30))
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): bug fix ([PR #39](https://github.com/tmo1/sms-ie/pull/39))
- - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131)); overhaul of the notification framework ([PR #187](https://github.com/tmo1/sms-ie/pull/187))
+ - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131)); overhaul of the notification framework ([PR #187](https://github.com/tmo1/sms-ie/pull/187)); redesign to run all manual operations in worker processes ([PR #268](https://github.com/tmo1/sms-ie/pull/268))
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): addition of [`ScrollView`](https://developer.android.com/reference/android/widget/ScrollView) to "About" screen ([PR #133](https://github.com/tmo1/sms-ie/pull/133))
  - [Andrew (andr5w)](https://github.com/andr5w): bug fix ([PR #168](https://github.com/tmo1/sms-ie/pull/168))
  - [farfromrefuge](https://github.com/farfromrefug): bug fix ([PR #231](https://github.com/tmo1/sms-ie/pull/231))
  - [Askorbinovaya Kislota](https://github.com/askorbinovaya-kislota): bug fix ([PR #236](https://github.com/tmo1/sms-ie/pull/236))
+ - [MarcMush](https://github.com/MarcMush): bug fix ([PR #264](https://github.com/tmo1/sms-ie/pull/264))
 
-### Translations
+### Translations (Strings)
 
- - [nautilusx](https://github.com/nautilusx): German translation
- - [baitmooth](https://github.com/baitmooth): additions to German translation
- - [AntoninDelFabbro](https://github.com/AntoninDelFabbro): French translation (and assistance with the German one)
- - [Philippe (Philippe213)](https://hosted.weblate.org/user/philippe213/): update to French translation
- - [mavosaure](https://github.com/mavosaure): update to French translation
- - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål translation
- - [poipoipoipoipoipoipoipoipoi](https://github.com/poipoipoipoipoipoipoipoipoi): Simplified Chinese translation
- - [Eric (hamburger1024)](https://hosted.weblate.org/user/hamburger1024/): updates to Simplified Chinese translation
- - [yangyangdaji](https://github.com/yangyangdaji): updates to Simplified Chinese translation
- - [Merlignux](https://github.com/Merlignux): Portuguese translation
- - [python israel (nhman-python)](https://github.com/nhman-python): Hebrew translation
- - [elid34 (elid)](https://github.com/elid34): update to Hebrew translation
- - [Артём (Artem13327)](https://hosted.weblate.org/user/Artem13327/): Russian translation
- - Axus Wizix: updates to Russian translation
- - [pjammo](https://github.com/pjammo): Italian translation
- - [Translator-3000](https://hosted.weblate.org/user/Translator-3000/): update to Italian translation
- - [jacek (TX5400)](https://hosted.weblate.org/user/TX5400/): Polish translation
- - [Eryk Michalak (gnu-ewm)](https://github.com/gnu-ewm): updates to Polish translation
- - [gallegonovato](https://github.com/gallegonovato): Spanish translation
- - [Bai (Baturax)](https://github.com/Baturax): Turkish translation
- - [Oğuz Ersen (ersen0 / oerson)](https://github.com/oersen): updates to Turkish translation
- - [Raman](https://hosted.weblate.org/user/deleted-56119/): Malayalam translation
- - Surena: Persian translation
- - [ngocanhtve](https://github.com/ngocanhtve): Vietnamese translation
- - [TamilNeram (தமிழ் நேரம்)]( https://github.com/TamilNeram): Tamil translation
- - [catsnote (cat)](https://github.com/catsnote): Danish translation
+ - [nautilusx](https://github.com/nautilusx): German
+ - [baitmooth](https://github.com/baitmooth): additions to German
+ - [AntoninDelFabbro](https://github.com/AntoninDelFabbro): French (and assistance with the German one)
+ - [Philippe (Philippe213)](https://hosted.weblate.org/user/philippe213/): update to French
+ - [mavosaure](https://github.com/mavosaure): update to French
+ - [Allan Nordhøy (comradekingu)](https://github.com/comradekingu): Norwegian Bokmål
+ - [poipoipoipoipoipoipoipoipoi](https://github.com/poipoipoipoipoipoipoipoipoi): Simplified Chinese
+ - [Eric (hamburger1024)](https://hosted.weblate.org/user/hamburger1024/): updates to Simplified Chinese
+ - [yangyangdaji](https://github.com/yangyangdaji): updates to Simplified Chinese
+ - [Merlignux](https://github.com/Merlignux): Portuguese
+ - [python israel (nhman-python)](https://github.com/nhman-python): Hebrew
+ - [elid34 (elid)](https://github.com/elid34): update to Hebrew
+ - [Артём (Artem13327)](https://hosted.weblate.org/user/Artem13327/): Russian
+ - Axus Wizix: updates to Russian
+ - [pjammo](https://github.com/pjammo): Italian
+ - [Translator-3000](https://hosted.weblate.org/user/Translator-3000/): update to Italian
+ - [jacek (TX5400)](https://hosted.weblate.org/user/TX5400/): Polish
+ - [Eryk Michalak (gnu-ewm)](https://github.com/gnu-ewm): updates to Polish
+ - [gallegonovato](https://github.com/gallegonovato): Spanish
+ - [Bai (Baturax)](https://github.com/Baturax): Turkish
+ - [Oğuz Ersen (ersen0 / oerson)](https://github.com/oersen): updates to Turkish
+ - [Raman](https://hosted.weblate.org/user/deleted-56119/): Malayalam
+ - Surena: Persian
+ - [ngocanhtve](https://github.com/ngocanhtve): Vietnamese
+ - [TamilNeram (தமிழ் நேரம்)]( https://github.com/TamilNeram): Tamil
+ - [catsnote (cat)](https://github.com/catsnote): Danish
+ - [Ettore Atalan (Atalanttore)](https://github.com/Atalanttore): update to German
+ - [Vladi69](https://github.com/Vladi69): update to Italian
+ - [Unknownman820](https://github.com/Unknownman820): Chinese (Traditional Han script)
+ 
+### Translations (Fastlane)
+
+ - [Unknownman820](https://github.com/Unknownman820): Chinese (Traditional Han Script)
+ - [rehork](https://github.com/rehork): Polish
 
 ### Other
 
