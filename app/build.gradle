@@ -27,12 +27,12 @@ plugins {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.github.tmo1.sms_ie"
         minSdkVersion 19
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 109
         versionName "2.4.3"
         base.archivesName = applicationId + '-v' + versionName
