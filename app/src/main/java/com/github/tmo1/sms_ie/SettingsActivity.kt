@@ -34,14 +34,21 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreferenceCompat
+import androidx.recyclerview.widget.RecyclerView
 
 const val REQUEST_EXPORT_FOLDER = 4
 const val EXPORT_DIR = "export_dir"
@@ -51,15 +58,33 @@ class SettingsActivity : AppCompatActivity() {
 
     //private lateinit var prefs: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
                 .commit()
         }
-        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        //setSupportActionBar(findViewById(R.id.toolbar))
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.avoidObstructions { insets ->
+            // Shift the toolbar down using margins, but use padding for the sides. When the phone
+            // is in landscape and the phone has a notch, it looks nicer to have the bar's
+            // background extend horizontally fully.
+            updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top
+            }
+            updatePadding(
+                left = insets.left,
+                right = insets.right,
+            )
+        }
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        setTitle(R.string.settings)
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
@@ -85,6 +110,29 @@ class SettingsActivity : AppCompatActivity() {
             } else {
                 Log.d("Permission: ", "Denied")
             }
+        }
+
+        override fun onCreateRecyclerView(
+            inflater: LayoutInflater,
+            parent: ViewGroup,
+            savedInstanceState: Bundle?
+        ): RecyclerView {
+            val view = super.onCreateRecyclerView(inflater, parent, savedInstanceState)
+
+            // Since we're edge-to-edge, preference options further down can be drawn under the
+            // translucent navigation bar. Make sure the RecyclerView leaves padding at the end so
+            // that the final setting is tappable when the user scrolls to the bottom.
+            view.clipToPadding = false
+
+            view.avoidObstructions { insets ->
+                updatePadding(
+                    bottom = insets.bottom,
+                    left = insets.left,
+                    right = insets.right,
+                )
+            }
+
+            return view
         }
 
         @SuppressLint("BatteryLife")

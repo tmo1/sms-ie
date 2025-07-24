@@ -21,30 +21,32 @@
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:fadeScrollbars="false"
+    android:orientation="vertical"
     tools:context=".MainActivity">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:theme="?attr/actionBarTheme" />
+
+    <ScrollView
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fadeScrollbars="false">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <Button
         android:id="@+id/export_messages_button"
@@ -55,7 +57,7 @@
         app:layout_constraintEnd_toStartOf="@+id/import_messages_button"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/import_messages_button"
@@ -66,7 +68,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/export_messages_button"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/export_call_log_button"
@@ -193,5 +195,5 @@
         app:layout_constraintTop_toBottomOf="@+id/default_sms_app_warning" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</ScrollView>
+    </ScrollView>
+</LinearLayout>
