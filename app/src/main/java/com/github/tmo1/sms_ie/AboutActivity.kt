@@ -20,15 +20,31 @@
 
 package com.github.tmo1.sms_ie
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ScrollView
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updatePadding
 
 class AboutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
         val aboutText: TextView = findViewById(R.id.aboutText)
         aboutText.text = getString(R.string.app_about_text, BuildConfig.VERSION_NAME)
+
+        val scrollView: ScrollView = findViewById(R.id.about_content)
+        scrollView.clipToPadding = false
+
+        scrollView.avoidObstructions { insets ->
+            updatePadding(
+                left = insets.left,
+                top = insets.top,
+                right = insets.right,
+                bottom = insets.bottom,
+            )
+        }
     }
 }
