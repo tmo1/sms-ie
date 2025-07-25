@@ -10,7 +10,7 @@
     <string name="documentation">Документация:</string>
     <string name="about">О приложении</string>
     <string name="issue_tracker">Отслеживание задач:</string>
-    <string name="import_contacts_results">%1$d контакт(ов) импортирован(о) \nЗатрачено времени: %2$s.</string>
+    <string name="import_contacts_results">%1$d контакт(ов) импортирован(о) \nЗатрачено времени: %2$s</string>
     <string name="default_sms_app_requirement">Это приложение должно быть SMS-приложением по умолчанию для импорта или очистки сообщений.</string>
     <string name="messages_wiped">Сообщения очищены</string>
     <string name="homepage">Домашняя страница:</string>
@@ -25,7 +25,7 @@
     <string name="wipe">Очистка</string>
     <string name="wipe_messages">Очистка сообщений</string>
     <string name="contacts_import_progress">%1$d контакт(ов) импортировано</string>
-    <string name="export_contacts_results">%1$d контакт(ов) экспортирован(о) \nЗатрачено времени: %2$s.</string>
+    <string name="export_contacts_results">%1$d контакт(ов) экспортирован(о) \nЗатрачено времени: %2$s</string>
     <string name="import_call_log_results">%1$d звонок(ов) импортирован(о)
 \nЗатрачено времени: %2$s</string>
     <string name="export_call_log_results">%1$d звонок(ов) экспортирован(о)
@@ -52,4 +52,14 @@
     <string name="copying_mms_binary_data">Копирование двоичных данных MMS ...</string>
     <string name="message_import_api_23_requirement">Импорт сообщений возможен только на Android Marshmallow / 6.0 (Уровень API 23) и выше.</string>
     <string name="persistent_channel_name">Фоновые сервисы</string>
+    <string name="persistent_channel_description">Постоянное уведомление о фоновом запланированном экспорте</string>
+    <string name="alerts_channel_name">Оповещения о запланированном экспорте</string>
+    <string name="alerts_channel_description">Оповещения об успешном завершении/сбое при завершении запланированного экспорта</string>
+    <string name="scheduled_export_executing">Выполнение запланированного экспорта</string>
+    <string name="become_default_sms_app_warning">SMS Import / Export должно быть SMS-приложением по умолчанию, чтобы импортировать или удалять сообщения. Пожалуйста, прочтите README и убедитесь, что вы понимаете последствия этого, прежде чем продолжить.</string>
+    <string name="default_sms_app_dialog_title">Приложение SMS по умолчанию</string>
+    <string name="default_sms_app_warning"><b>Внимание</b>: В настоящее время это приложение является SMS-приложением по умолчанию, что означает, что все входящие SMS или MMS-сообщения будут потеряны! Чтобы избежать этого, установите соответствующее SMS-приложение по умолчанию.</string>
+    <string name="set_default_sms_app">Установить SMS-приложением по умолчанию</string>
+    <string name="importing_calls">Импорт вызовов …</string>
+    <string name="donations">Пожертвования:</string>
 </resources>
