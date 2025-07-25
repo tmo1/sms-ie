@@ -148,9 +148,9 @@ private suspend fun contactsToJSON(
                                         }
                                         jsonWriter.endObject()
                                     } while (data.moveToNext())
+                                    jsonWriter.endArray()
                                 }
                             }
-                            jsonWriter.endArray()
                             jsonWriter.endObject()
                         } while (raw.moveToNext())
                         jsonWriter.endArray()
