@@ -233,6 +233,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 .setStyle(NotificationCompat.BigTextStyle())
                 .setProgress(progress.total, progress.current, progress.total == 0)
                 .setOngoing(true)
+                // Ensure that the device won't vibrate or make a notification sound every time the
+                // progress is updated.
+                .setOnlyAlertOnce(true)
                 .apply {
                     // Inhibit 10-second delay when showing persistent notification
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
