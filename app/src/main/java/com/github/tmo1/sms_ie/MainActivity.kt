@@ -203,7 +203,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 NotificationChannel(
                     CHANNEL_ID_PERSISTENT,
                     getString(R.string.persistent_channel_name),
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
                 ).apply {
                     description = getString(R.string.persistent_channel_description)
                 }
