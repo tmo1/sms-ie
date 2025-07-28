@@ -60,4 +60,21 @@
     <string name="importing_calls">Importowanie połączeń …</string>
     <string name="donations">Darowizny:</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>
+    <string name="scheduled_export_error_title">Błąd zaplanowanego eksportu</string>
+    <string name="call_log_export_error_title">Błąd eksportu rejestru połączeń</string>
+    <string name="call_log_import_error_title">Błąd importu rejestru połączeń</string>
+    <string name="contacts_export_error_title">Błąd eksportu kontaktów</string>
+    <string name="contacts_import_error_title">Błąd importu kontaktów</string>
+    <string name="messages_export_error_title">Błąd eksportu wiadomości</string>
+    <string name="messages_import_error_title">Błąd importu wiadomości</string>
+    <string name="messages_wipe_error_title">Błąd usuwania wiadomości</string>
+    <string name="json_parse_error">Błąd analizowania pliku JSON</string>
+    <string name="missing_messages_ndjson_error">Nie można znaleźć pliku \"messages.ndjson\". Upewnij się, że dostarczony plik jest plikiem ZIP w prawidłowym formacie.</string>
+    <string name="see_logcat">Więcej informacji można znaleźć w logcat.</string>
+    <string name="operation_cancelled">Operacja anulowana</string>
+    <string name="exporting_messages">Eksportowanie wiadomości …</string>
+    <string name="wiping_messages">Usuwanie wiadomości …</string>
+    <string name="exporting_calls">Eksportowanie rejestru połączeń …</string>
+    <string name="exporting_contacts">Eksportowanie kontaktów …</string>
+    <string name="importing_contacts">Importowanie kontaktów …</string>
 </resources>
