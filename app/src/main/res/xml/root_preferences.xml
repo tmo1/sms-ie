@@ -120,6 +120,10 @@
     <PreferenceCategory android:title="Debugging options">
 
         <SwitchPreferenceCompat
+            android:key="save_logcat"
+            android:title="@string/pref_save_logcat_name" />
+
+        <SwitchPreferenceCompat
             android:key="debugging"
             android:title="Enable debugging options"
             app:defaultValue="false" />

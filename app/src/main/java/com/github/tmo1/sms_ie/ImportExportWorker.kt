@@ -83,16 +83,18 @@ data class SuccessData(val message: String) {
     )
 }
 
-data class FailureData(val title: String, val message: String) {
+data class FailureData(val title: String, val message: String, val savedLogcat: Boolean) {
     constructor(outputData: Data) : this(
         outputData.getString("title") ?: "",
         outputData.getString("message") ?: "",
+        outputData.getBoolean("saved_logcat", false),
     )
 
     fun toOutputData(): Data = workDataOf(
         "success" to false,
         "title" to title,
         "message" to message,
+        "saved_logcat" to savedLogcat,
     )
 }
 
@@ -100,6 +102,8 @@ data class FailureData(val title: String, val message: String) {
 // because if there is an upcoming scheduled export, manual operations are forced to wait until that
 // executes first.
 private val GLOBAL_LOCK = Mutex()
+
+fun logcatFile(context: Context) = File(context.getExternalFilesDir(null), "logcat.log")
 
 // https://developer.android.com/topic/libraries/architecture/workmanager/basics#kotlin
 // https://developer.android.com/codelabs/android-workmanager#3
@@ -142,29 +146,33 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
         refreshForegroundNotification(Progress(0, 0, null))
 
-        Log.d(LOG_TAG, "Starting log file")
-        Log.d(LOG_TAG, "- App version: ${BuildConfig.VERSION_NAME}")
-        Log.d(LOG_TAG, "- API level: ${Build.VERSION.SDK_INT}")
-
         // Redirecting stdout is better than using -f because the logcat implementation calls
         // fflush() only when outputting to stdout. When using -f, interrupting logcat may mean that
         // its buffered data doesn't get flushed.
-        val logcatFile = File(context.getExternalFilesDir(null), "logcat.log")
-        val logcatUseStdout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        val logcatExtraArgs = if (logcatUseStdout) {
-            emptyArray()
-        } else {
-            arrayOf("-f", logcatFile.absolutePath)
-        }
+        val logcatProcess = if (prefs.getBoolean("save_logcat", false)) {
+            Log.d(LOG_TAG, "Starting log file")
+            Log.d(LOG_TAG, "- App version: ${BuildConfig.VERSION_NAME}")
+            Log.d(LOG_TAG, "- API level: ${Build.VERSION.SDK_INT}")
 
-        val logcatProcess = ProcessBuilder("logcat", "*:V", *logcatExtraArgs)
-            .apply {
-                if (logcatUseStdout) {
-                    redirectOutput(logcatFile)
-                }
+            val logcatFile = logcatFile(context)
+            val logcatUseStdout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+            val logcatExtraArgs = if (logcatUseStdout) {
+                emptyArray()
+            } else {
+                arrayOf("-f", logcatFile.absolutePath)
             }
-            .redirectErrorStream(true)
-            .start()
+
+            ProcessBuilder("logcat", "*:V", *logcatExtraArgs)
+                .apply {
+                    if (logcatUseStdout) {
+                        redirectOutput(logcatFile)
+                    }
+                }
+                .redirectErrorStream(true)
+                .start()
+        } else {
+            null
+        }
 
         val result = try {
             Log.i(LOG_TAG, "Starting $action")
@@ -196,10 +204,14 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 }
 
                 append("\n\n")
-                append(context.getString(R.string.see_logcat))
+                if (logcatProcess != null) {
+                    append(context.getString(R.string.see_logcat_save_enabled))
+                } else {
+                    append(context.getString(R.string.see_logcat_save_disabled))
+                }
             }
 
-            Result.failure(FailureData(title, message).toOutputData())
+            Result.failure(FailureData(title, message, logcatProcess != null).toOutputData())
         } finally {
             // Regardless of what happens, ensure that the next scheduled run occurs.
             if (action == Action.EXPORT_AUTOMATIC) {
@@ -222,13 +234,15 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
         // This log message also serves as an indicator to know that the logs are complete. See the
         // note about the -f option above.
-        try {
-            Log.d(LOG_TAG, "Stopping log file")
-            delay(100)
+        logcatProcess?.let {
+            try {
+                Log.d(LOG_TAG, "Stopping log file")
+                delay(100)
 
-            logcatProcess.destroy()
-        } finally {
-            logcatProcess.waitFor()
+                it.destroy()
+            } finally {
+                it.waitFor()
+            }
         }
 
         return result

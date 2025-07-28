@@ -114,6 +114,9 @@ class SettingsActivity : AppCompatActivity() {
                 updateExportDirPreferenceSummary()
             }
 
+            findPreference<SwitchPreferenceCompat>("save_logcat")!!.summary =
+                getString(R.string.pref_save_logcat_desc, logcatFile(requireContext()))
+
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 disableBattOptPreference.setOnPreferenceChangeListener { _, newValue ->
                     if (newValue == true) {
