@@ -65,13 +65,13 @@
     <string name="contacts_export_progress">%1$d von %2$d Kontakt(e) exportiert</string>
     <string name="export_contacts_results">%1$d Kontakt(e) exportiert \nZeitaufwand: %2$s</string>
     <string name="contacts_read_permission_required">Das Exportieren von Kontakten erfordert die Berechtigung zum Lesen von Kontakten.</string>
-    <string name="export_contacts">Exportiere Kontakte</string>
-    <string name="import_contacts">Importiere Kontakte</string>
+    <string name="export_contacts">Kontakte exportieren</string>
+    <string name="import_contacts">Kontakte importieren</string>
     <string name="import_contacts_results">%1$d Kontakt(e) importiert \nZeitaufwand: %2$s</string>
     <string name="contacts_import_progress">%1$d Kontakt(e) importiert</string>
     <string name="contacts_write_permissions_required">Der Import von Kontakten erfordert die Berechtigung zum Schreiben von Kontakten.</string>
-    <string name="copying_mms_binary_data">Kopiere MMS-Binärdaten…</string>
-    <string name="importing_messages">Importiere Nachrichten…</string>
+    <string name="copying_mms_binary_data">MMS-Binärdaten werden kopiert …</string>
+    <string name="importing_messages">Mitteilungen werden importiert …</string>
     <string name="default_sms_app_dialog_title">Standard-SMS-App</string>
     <string name="become_default_sms_app_warning">SMS Import / Export muss die Standard-SMS-App sein, um Nachrichten zu importieren oder zu löschen. Bitte lies die README und vergewissere dich, dass du die Auswirkungen dieses Vorgangs verstehst, bevor du fortfährst.</string>
     <string name="okay">OK</string>
@@ -83,7 +83,13 @@
     <string name="persistent_channel_description">Dauerhafte Benachrichtigung für geplanten Export im Hintergrund</string>
     <string name="alerts_channel_name">Geplante Exportmeldungen</string>
     <string name="alerts_channel_description">Erfolgs-/Fehlermeldungen nach Abschluss geplanter Exporte</string>
-    <string name="importing_calls">Importiere Anrufe…</string>
+    <string name="importing_calls">Anrufe werden importiert …</string>
     <string name="donations">Spenden:</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>
+    <string name="importing_contacts">Kontakte werden importiert …</string>
+    <string name="exporting_contacts">Kontakte werden exportiert …</string>
+    <string name="exporting_calls">Anrufe werden exportiert …</string>
+    <string name="operation_cancelled">Vorgang abgebrochen</string>
+    <string name="exporting_messages">Mitteilungen werden exportiert …</string>
+    <string name="wiping_messages">Mitteilungen werden gelöscht …</string>
 </resources>

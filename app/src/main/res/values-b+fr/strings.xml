@@ -91,4 +91,21 @@
     <string name="importing_calls">Importation des appels…</string>
     <string name="donations">Dons :</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>
+    <string name="importing_contacts">Importation des contacts…</string>
+    <string name="scheduled_export_error_title">Erreur de l\'exportation planifiée</string>
+    <string name="call_log_export_error_title">Erreur de l\'exportation des appels</string>
+    <string name="call_log_import_error_title">Erreur de l\'importation des appels</string>
+    <string name="contacts_export_error_title">Erreur de l\'exportation des contacts</string>
+    <string name="contacts_import_error_title">Erreur de l\'importation des contacts</string>
+    <string name="messages_export_error_title">Erreur de l\'exportation des messages</string>
+    <string name="messages_import_error_title">Erreur de l\'importation des messages</string>
+    <string name="messages_wipe_error_title">Erreur de l\'effaçage des messages</string>
+    <string name="json_parse_error">Erreur de parsing du fichier JSON</string>
+    <string name="missing_messages_ndjson_error">\'messages.ndjson\' introuvable. Veuillez vérifier que le fichier ZIP a le bon format.</string>
+    <string name="see_logcat">Voir le logcat pour plus d\'informations.</string>
+    <string name="operation_cancelled">Opération annulée</string>
+    <string name="exporting_messages">Exportation des messages…</string>
+    <string name="wiping_messages">Effaçage des messages…</string>
+    <string name="exporting_calls">Exportation des appels…</string>
+    <string name="exporting_contacts">Exportation des contacts…</string>
 </resources>
