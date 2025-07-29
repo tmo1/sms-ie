@@ -40,13 +40,19 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
@@ -131,6 +137,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Let the app draw under the status bar. The appcompat library figures out what needs to be
+        // done to prevent the app from shifting up. Edge-to-edge is required for
+        // android:windowLightStatusBar in themes.xml to work so that light text isn't used on a
+        // light status bar.
+        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState != null) {
@@ -159,7 +171,30 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
         // set up UI
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.avoidObstructions { insets ->
+            // Shift the toolbar down using margins, but use padding for the sides. When the phone
+            // is in landscape and the phone has a notch, it looks nicer to have the bar's
+            // background extend horizontally fully.
+            updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top
+            }
+            updatePadding(
+                left = insets.left,
+                right = insets.right,
+            )
+        }
+        setSupportActionBar(toolbar)
+
+        findViewById<ScrollView>(R.id.main_content).avoidObstructions { insets ->
+            updatePadding(
+                left = insets.left,
+                right = insets.right,
+                bottom = insets.bottom,
+            )
+        }
+
         val exportMessagesButton: Button = findViewById(R.id.export_messages_button)
         val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
         val importMessagesButton: Button = findViewById(R.id.import_messages_button)
