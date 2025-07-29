@@ -59,7 +59,11 @@
 
     <string name="json_parse_error">Error parsing JSON file</string>
     <string name="missing_messages_ndjson_error">Can\'t find \'messages.ndjson\'. Please make sure that the provided file is a ZIP file in the correct format.</string>
-    <string name="see_logcat">See logcat for more information.</string>
+    <string name="see_logcat_save_disabled">See logcat for more information. Enable \"Save logcat\" in the debug settings to automatically save the logcat to a file for future operations.</string>
+    <string name="see_logcat_save_enabled">See logcat in the log directory for more information.</string>
+    <string name="open_log_dir">Open log directory</string>
+    <string name="pref_save_logcat_name">Save logcat</string>
+    <string name="pref_save_logcat_desc">Save logcat to %1$s when an operation is running.</string>
 
     <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and contacts.</string>
     <string name="default_sms_app_requirement">This app must be the default SMS app to import or wipe messages.</string>
