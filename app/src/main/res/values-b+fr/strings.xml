@@ -102,7 +102,6 @@
     <string name="messages_wipe_error_title">Erreur de l\'effaçage des messages</string>
     <string name="json_parse_error">Erreur de parsing du fichier JSON</string>
     <string name="missing_messages_ndjson_error">\'messages.ndjson\' introuvable. Veuillez vérifier que le fichier ZIP a le bon format.</string>
-    <string name="see_logcat">Voir le logcat pour plus d\'informations.</string>
     <string name="operation_cancelled">Opération annulée</string>
     <string name="exporting_messages">Exportation des messages…</string>
     <string name="wiping_messages">Effaçage des messages…</string>

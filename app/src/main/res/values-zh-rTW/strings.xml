@@ -70,7 +70,6 @@
     <string name="messages_wipe_error_title">清除訊息錯誤</string>
     <string name="json_parse_error">解析 JSON 檔案發生錯誤</string>
     <string name="missing_messages_ndjson_error">找不到「messages.ndjson」。\n請確認您已備妥正確的 ZIP 格式檔案。</string>
-    <string name="see_logcat">檢視 Logcat 以取得更多資訊。</string>
     <string name="operation_cancelled">作業取消</string>
     <string name="exporting_messages">正在匯出訊息…</string>
     <string name="wiping_messages">正在清除訊息…</string>
