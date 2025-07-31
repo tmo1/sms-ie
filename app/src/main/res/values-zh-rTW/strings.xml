@@ -60,4 +60,20 @@
     <string name="message_import_api_23_requirement">匯入訊息僅支援 Android Marshmallow / 6.0 (API 級別 23) 以上版本。</string>
     <string name="become_default_sms_app_warning">「SMS 匯入 / 匯出」必須設為預設簡訊應用程式才能匯入或清除訊息。\n使用前請參閱說明文件了解這些功能的用途。</string>
     <string name="call_logs_permissions_required">需要讀取聯絡人與通話記錄權限才能匯出資料。</string>
+    <string name="scheduled_export_error_title">預定匯出作業發生錯誤</string>
+    <string name="call_log_export_error_title">匯出通話記錄錯誤</string>
+    <string name="call_log_import_error_title">匯入通話記錄錯誤</string>
+    <string name="contacts_export_error_title">匯出聯絡人錯誤</string>
+    <string name="contacts_import_error_title">匯入聯絡人錯誤</string>
+    <string name="messages_export_error_title">匯出訊息錯誤</string>
+    <string name="messages_import_error_title">匯入訊息錯誤</string>
+    <string name="messages_wipe_error_title">清除訊息錯誤</string>
+    <string name="json_parse_error">解析 JSON 檔案發生錯誤</string>
+    <string name="missing_messages_ndjson_error">找不到「messages.ndjson」。\n請確認您已備妥正確的 ZIP 格式檔案。</string>
+    <string name="operation_cancelled">作業取消</string>
+    <string name="exporting_messages">正在匯出訊息…</string>
+    <string name="wiping_messages">正在清除訊息…</string>
+    <string name="exporting_calls">正在匯出通話…</string>
+    <string name="exporting_contacts">正在匯出聯絡人…</string>
+    <string name="importing_contacts">正在匯入聯絡人…</string>
 </resources>
