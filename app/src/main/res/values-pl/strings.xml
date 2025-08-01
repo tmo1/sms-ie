@@ -76,4 +76,9 @@
     <string name="exporting_calls">Eksportowanie rejestru połączeń …</string>
     <string name="exporting_contacts">Eksportowanie kontaktów …</string>
     <string name="importing_contacts">Importowanie kontaktów …</string>
+    <string name="see_logcat_save_disabled">Więcej informacji można znaleźć w sekcji logcat. Włącz opcję „Zapisz logcat” w ustawieniach debugowania, aby automatycznie zapisywać logcat do pliku na potrzeby przyszłych operacji.</string>
+    <string name="see_logcat_save_enabled">Więcej informacji można znaleźć w logcat w katalogu logów.</string>
+    <string name="open_log_dir">Otwórz katalog logów</string>
+    <string name="pref_save_logcat_name">Zapisz logcat</string>
+    <string name="pref_save_logcat_desc">Zapisz logcat do %1$s, gdy operacja jest uruchomiona.</string>
 </resources>
