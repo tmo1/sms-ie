@@ -26,6 +26,7 @@ package com.github.tmo1.sms_ie
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.BackgroundServiceStartNotAllowedException
 import android.app.ForegroundServiceStartNotAllowedException
 import android.app.PendingIntent
 import android.content.Context
@@ -123,10 +124,19 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             Action.values()[index]
         }
     }
-    val actionFile = inputData.getString("file")?.toUri()
+    private val actionFile = inputData.getString("file")?.toUri()
 
-    // Avoid trying setForeground() multiple times when updating progress if it is not allowed.
-    private var foregroundIsDenied = false
+    private val notificationManager = NotificationManagerCompat.from(applicationContext)
+
+    // Avoid trying setForeground() multiple times when updating progress if it is not allowed or if
+    // the androidx work library's internal startService() mechanism for launching a service to
+    // update the notification is blocked.
+    // Whether setForeground() can be used.
+    // * It can sometimes fail with ForegroundServiceStartNotAllowedException on Android 12+ if the
+    //   user did not disable battery optimizations for SMS I/E.
+    // * It can fail with BackgroundServiceStartNotAllowedException on Android 12+ if the worker was
+    //   launched by MainActivity and the screen goes to sleep.
+    private var notifyViaForeground = true
     // Avoid updating the notification too frequently or else Android will rate limit us and block
     // any notification from being sent.
     private var foregroundLastTimestamp = 0L
@@ -224,7 +234,6 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         // reproducible even if this function is just replaced with a simple delay(10000).
         if (isStopped) {
             Log.w(LOG_TAG, "Explicitly cancelling foreground notification")
-            val notificationManager = NotificationManagerCompat.from(applicationContext)
             notificationManager.cancel(NOTIFICATION_ID_PERSISTENT)
         } else {
             notifyResult(result, action)
@@ -249,10 +258,6 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private suspend fun refreshForegroundNotification(progress: Progress) {
-        if (foregroundIsDenied) {
-            return
-        }
-
         // Throttle to 1 update per second to avoid hitting Android's rate limits.
         val now = System.nanoTime()
         if (now - foregroundLastTimestamp < 1_000_000_000) {
@@ -318,22 +323,49 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         }
 
         try {
-            setForeground(
-                ForegroundInfo(
-                    NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags
+            if (notifyViaForeground) {
+                setForeground(
+                    ForegroundInfo(
+                        NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags
+                    )
                 )
-            )
+                return
+            }
         } catch (e: Exception) {
-            // If the user didn't allow the disabling of battery optimizations, then Android 12+'s
-            // restrictions for starting a foreground service from the background will prevent this
-            // from working. Try to run the job in the background anyway because it might work if
-            // there aren't too many items to export.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is ForegroundServiceStartNotAllowedException) {
+            val isSOrNewer = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+            // See AOSP's frameworks/base/core/java/android/app/ContextImpl.java.
+            val isForegroundRestriction = if (isSOrNewer) {
+                e is ForegroundServiceStartNotAllowedException
+            } else {
+                e is IllegalStateException
+            }
+
+            if (isForegroundRestriction) {
+                // If the user didn't allow the disabling of battery optimizations, then Android
+                // 12+'s restrictions for starting a foreground service from the background will
+                // prevent this from working. Try to run the job in the background anyway because
+                // it might work if there aren't too many items to export.
                 Log.w(LOG_TAG, "Foreground service not allowed - trying to run in background", e)
-                foregroundIsDenied = true
+                notifyViaForeground = false
+            } else if (isSOrNewer && e is BackgroundServiceStartNotAllowedException) {
+                // For whatever reason, WorkForegroundUpdater launches a new background service just
+                // to update the notification instead of doing so directly. This seems to fail after
+                // a few minutes if the job was launched via MainActivity and the screen turns off
+                // while the operation is running.
+                Log.w(LOG_TAG, "WorkForegroundUpdater failed to launch service", e)
+                notifyViaForeground = false
             } else {
                 throw e
             }
+        }
+
+        // Fallback path. Show the notification ourselves.
+        val havePermissions = ActivityCompat.checkSelfPermission(
+            applicationContext,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+        if (havePermissions) {
+            notificationManager.notify(NOTIFICATION_ID_PERSISTENT, foregroundNotification)
         }
     }
 
