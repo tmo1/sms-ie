@@ -28,6 +28,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.BackgroundServiceStartNotAllowedException
 import android.app.ForegroundServiceStartNotAllowedException
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.PackageManager
@@ -127,6 +128,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     private val actionFile = inputData.getString("file")?.toUri()
 
     private val notificationManager = NotificationManagerCompat.from(applicationContext)
+    private var notification = createForegroundNotification(Progress(0, 0, null))
 
     // Avoid trying setForeground() multiple times when updating progress if it is not allowed or if
     // the androidx work library's internal startService() mechanism for launching a service to
@@ -257,14 +259,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         return result
     }
 
-    private suspend fun refreshForegroundNotification(progress: Progress) {
-        // Throttle to 1 update per second to avoid hitting Android's rate limits.
-        val now = System.nanoTime()
-        if (now - foregroundLastTimestamp < 1_000_000_000) {
-            return
-        }
-        foregroundLastTimestamp = now
-
+    private fun createForegroundNotification(progress: Progress): Notification {
         val titleResId = when (action) {
             Action.EXPORT_AUTOMATIC -> R.string.scheduled_export_executing
             Action.EXPORT_CALL_LOG_MANUAL -> R.string.exporting_calls
@@ -277,58 +272,59 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         }
         val title = applicationContext.getString(titleResId)
 
+        return NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(progress.message)
+            .setStyle(NotificationCompat.BigTextStyle())
+            .setProgress(progress.total, progress.current, progress.total == 0)
+            .setOngoing(true)
+            // Ensure that the device won't vibrate or make a notification sound every time the
+            // progress is updated.
+            .setOnlyAlertOnce(true)
+            .apply {
+                // Inhibit 10-second delay when showing persistent notification
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+                }
+
+                if (action.isCancellable) {
+                    val actionPendingIntent = PendingIntent.getService(
+                        applicationContext,
+                        0,
+                        CancelWorkerService.createIntent(applicationContext, id),
+                        PendingIntent.FLAG_IMMUTABLE or
+                                PendingIntent.FLAG_UPDATE_CURRENT or
+                                PendingIntent.FLAG_ONE_SHOT,
+                    )
+
+                    addAction(NotificationCompat.Action.Builder(
+                        null,
+                        applicationContext.getString(android.R.string.cancel),
+                        actionPendingIntent,
+                    ).build())
+                }
+            }
+            .build()
+    }
+
+    private suspend fun refreshForegroundNotification(progress: Progress) {
+        // Throttle to 1 update per second to avoid hitting Android's rate limits.
+        val now = System.nanoTime()
+        if (now - foregroundLastTimestamp < 1_000_000_000) {
+            return
+        }
+        foregroundLastTimestamp = now
+
         // Android 14 introduced a new battery optimization that will kill apps that perform too
         // many binder transactions in the background, which can happen when exporting many
         // messages. Running the service in the foreground prevents the app from being killed.
         // https://android.googlesource.com/platform/frameworks/base.git/+/71d75c09b9a06732a6edb4d1488d2aa3eb779e14%5E%21/
-        val foregroundNotification =
-            NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                .setContentTitle(title)
-                .setContentText(progress.message)
-                .setStyle(NotificationCompat.BigTextStyle())
-                .setProgress(progress.total, progress.current, progress.total == 0)
-                .setOngoing(true)
-                // Ensure that the device won't vibrate or make a notification sound every time the
-                // progress is updated.
-                .setOnlyAlertOnce(true)
-                .apply {
-                    // Inhibit 10-second delay when showing persistent notification
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-                    }
-
-                    if (action.isCancellable) {
-                        val actionPendingIntent = PendingIntent.getService(
-                            applicationContext,
-                            0,
-                            CancelWorkerService.createIntent(applicationContext, id),
-                            PendingIntent.FLAG_IMMUTABLE or
-                                    PendingIntent.FLAG_UPDATE_CURRENT or
-                                    PendingIntent.FLAG_ONE_SHOT,
-                        )
-
-                        addAction(NotificationCompat.Action.Builder(
-                            null,
-                            applicationContext.getString(android.R.string.cancel),
-                            actionPendingIntent,
-                        ).build())
-                    }
-                }
-                .build()
-        val foregroundFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
-        } else {
-            0
-        }
+        notification = createForegroundNotification(progress)
 
         try {
             if (notifyViaForeground) {
-                setForeground(
-                    ForegroundInfo(
-                        NOTIFICATION_ID_PERSISTENT, foregroundNotification, foregroundFlags
-                    )
-                )
+                setForeground(getForegroundInfo())
                 return
             }
         } catch (e: Exception) {
@@ -365,8 +361,20 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             Manifest.permission.POST_NOTIFICATIONS,
         ) == PackageManager.PERMISSION_GRANTED
         if (havePermissions) {
-            notificationManager.notify(NOTIFICATION_ID_PERSISTENT, foregroundNotification)
+            notificationManager.notify(NOTIFICATION_ID_PERSISTENT, notification)
         }
+    }
+
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        val foregroundFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+        } else {
+            0
+        }
+
+        return ForegroundInfo(
+            NOTIFICATION_ID_PERSISTENT, notification, foregroundFlags
+        )
     }
 
     private suspend fun performAction(): SuccessData {
