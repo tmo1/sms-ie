@@ -76,4 +76,9 @@
     <string name="exporting_calls">正在匯出通話…</string>
     <string name="exporting_contacts">正在匯出聯絡人…</string>
     <string name="importing_contacts">正在匯入聯絡人…</string>
+    <string name="see_logcat_save_disabled">檢視 Logcat 以取得更多資訊。\n請在偵錯設定啟用「儲存 Logcat」自動記錄日後操作至 Logcat 檔案。</string>
+    <string name="see_logcat_save_enabled">檢視儲存路徑中的 Logcat 以取得更多資訊。</string>
+    <string name="open_log_dir">開啟記錄資料夾</string>
+    <string name="pref_save_logcat_name">儲存 Logcat</string>
+    <string name="pref_save_logcat_desc">作業執行時儲存 Logcat 至 %1$s。</string>
 </resources>
