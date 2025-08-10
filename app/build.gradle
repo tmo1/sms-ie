@@ -98,7 +98,7 @@ dependencies {
     standardImplementation 'androidx.core:core-ktx:1.16.0'
     standardImplementation 'androidx.appcompat:appcompat:1.7.1'
     standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    standardImplementation 'androidx.work:work-runtime-ktx:2.10.2'
+    standardImplementation 'androidx.work:work-runtime-ktx:2.10.3'
 
     legacyImplementation 'androidx.core:core-ktx:1.13.1'
     legacyImplementation 'androidx.appcompat:appcompat:1.6.1'
@@ -107,7 +107,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 
 }
