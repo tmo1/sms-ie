@@ -29,7 +29,7 @@ plugins {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         applicationId "com.github.tmo1.sms_ie"
