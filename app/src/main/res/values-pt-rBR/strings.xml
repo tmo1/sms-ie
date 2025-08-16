@@ -1,2 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Importar / Exportar SMS</string>
+    <string name="export_messages_button_label">Exportar Mensagens</string>
+    <string name="import_messages_button_label">Importar Mensagens</string>
+    <string name="export_call_log_button_label">Exportar Registro de Chamadas</string>
+    <string name="import_call_log_button_label">Importar Registro de Chamadas</string>
+    <string name="ready">Pronto(a)</string>
+    <string name="call_log_export_progress">%1$d de %2$d chamada(s) exportada(s)</string>
+    <string name="call_log_import_progress">%1$d chamada(s) importada(s)</string>
+    <string name="sms_export_progress">%1$d de %2$d SMS(s) exportada(s)</string>
+    <string name="mms_export_progress">%1$d de %2$d MMS(s) exportada(s)</string>
+    <string name="message_import_progress">%1$d SMS(s) e %2$d MMS(s) importada(s)</string>
+    <string name="contacts_export_progress">%1$d de %2$d contato(s) exportado(s)</string>
+    <string name="contacts_import_progress">%1$d contato(s) importado(s)</string>
+    <string name="export_messages_results">%1$d SMS(s) e %2$d MMS(s) exportada(s) \nTempo utilizado: %3$s</string>
+    <string name="import_messages_results">%1$d SMS(s) e %2$d MMS(s) importada(s) \nTempo utilizado: %3$s</string>
+    <string name="export_call_log_results">%1$d chamada(s) exportada(s) \nTempo utilizado: %2$s</string>
+    <string name="import_call_log_results">%1$d chamada(s) importada(s) \nTempo utilizado: %2$s</string>
+    <string name="export_contacts_results">%1$d contato(s) exportado(s) \nTempo utilizado: %3$s</string>
+    <string name="import_contacts_results">%1$d contato(s) importado(s) \nTempo utilizado: %3$s</string>
+    <string name="scheduled_export_error_title">Erro na exportação agendada</string>
+    <string name="call_log_export_error_title">Erro na exportação do registro de chamadas</string>
+    <string name="call_log_import_error_title">Erro na importação do registro de chamadas</string>
+    <string name="contacts_export_error_title">Erro na exportação de contatos</string>
+    <string name="contacts_import_error_title">Erro na importação de contatos</string>
+    <string name="messages_export_error_title">Erro na exportação de mensagens</string>
+    <string name="messages_import_error_title">Erro na importação de mensagens</string>
+    <string name="messages_wipe_error_title">Erro ao apagar mensagens</string>
+    <string name="json_parse_error">Erro ao analisar o arquivo JSON</string>
+</resources>
