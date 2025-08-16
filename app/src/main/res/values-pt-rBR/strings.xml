@@ -28,4 +28,8 @@
     <string name="messages_import_error_title">Erro na importação de mensagens</string>
     <string name="messages_wipe_error_title">Erro ao apagar mensagens</string>
     <string name="json_parse_error">Erro ao analisar o arquivo JSON</string>
+    <string name="missing_messages_ndjson_error">Não foi possível encontrar \'messages.ndjson\'. Certifique-se de que o arquivo fornecido seja um arquivo ZIP no formato correto.</string>
+    <string name="see_logcat_save_disabled">Consulte logcat para obter mais informações. Ative \"Salvar logcat\" nas configurações de depuração para salvar automaticamente o logcat em um arquivo para operações futuras.</string>
+    <string name="see_logcat_save_enabled">Veja logcat no diretório de registro para mais informações.</string>
+    <string name="open_log_dir">Abrir diretório de registro</string>
 </resources>
