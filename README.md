@@ -248,6 +248,10 @@ When reporting a problem, particularly a reproducible one, please attach a logca
 
 SMS messages with multiple recipients are currently not handled entirely correctly; see [issue #159](https://github.com/tmo1/sms-ie/issues/159) for details and the current status of support for such messages.
 
+## RCS Messages
+
+SMS Import / Export has no explicit support for [RCS](https://en.wikipedia.org/wiki/Rich_Communication_Services) messages, since Android does not expose public, documented APIs for querying and inserting such messages. Internally, however, Android apparently treats RCS messages as MMS messages, and SMS Import / Export has been reported to include RCS messages in its MMS exports. See [issue #291](https://github.com/tmo1/sms-ie/issues/291) for futher details.
+
 ## Translations
 
 SMS Import / Export has been translated (from the original English) into the following languages (note that some of these translations may contain inaccuracies, due to changes to the app's original text since they were made):
