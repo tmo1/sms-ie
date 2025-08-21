@@ -1,0 +1,16 @@
+ - Add a debugging option to save a logcat of the most recent operation to a user accessible file - by Andrew Gunnerson (PR #278).
+
+ - Add full edge-to-edge support - by Andrew Gunnerson (PR #279).
+
+ - Fix a regression that caused manual operations to fail if the screen shuts off (issue #277) - by Andrew Gunnerson (PR #289).
+
+ - Fix a regression that caused operations to fail on Android versions older than 12 (issues #288 and #292) - by Andrew Gunnerson and Thomas More (PR #289).
+
+ - Fix a regression that caused excessive notification alerts (issue #276) - by Andrew Gunnerson (PR #281).
+
+ - Fix a bug that caused contact export to fail under certain circumstances (issue #280) - by Andrew Gunnerson (PR #282).
+
+ - Update various translations.
+
+ - Update Gradle dependencies and AGP version.
+
