@@ -48,7 +48,7 @@
     <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
     <string name="app_about_text">SMS Import / Export \n \nавтор Thomas More и другие участники \n \nВерсия %1$s \n \nАвторские права © 2021–2024 \n \nВыпущено под лицензией GNU GPLv3</string>
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
-    <string name="importing_messages">Импорт сообщений ...</string>
+    <string name="importing_messages">Импорт сообщений …</string>
     <string name="copying_mms_binary_data">Копирование двоичных данных MMS ...</string>
     <string name="message_import_api_23_requirement">Импорт сообщений возможен только на Android Marshmallow / 6.0 (Уровень API 23) и выше.</string>
     <string name="persistent_channel_name">Фоновые сервисы</string>
@@ -62,4 +62,24 @@
     <string name="set_default_sms_app">Установить SMS-приложением по умолчанию</string>
     <string name="importing_calls">Импорт вызовов …</string>
     <string name="donations">Пожертвования:</string>
+    <string name="call_log_export_error_title">Экспортировать журнал вызовов не удалось</string>
+    <string name="call_log_import_error_title">Импортировать журнал вызовов не удалось</string>
+    <string name="contacts_export_error_title">Экспортировать контакты не удалось</string>
+    <string name="contacts_import_error_title">Импортировать контакты не удалось</string>
+    <string name="messages_export_error_title">Экспортировать сообщения не удалось</string>
+    <string name="messages_import_error_title">Импортировать сообщения не удалось</string>
+    <string name="messages_wipe_error_title">Очистить сообщения не удалось</string>
+    <string name="missing_messages_ndjson_error">Не удалось найти файл \'messages.ndjson\'. Убедитесь, что предоставленный файл — это ZIP-архив в правильном формате.</string>
+    <string name="see_logcat_save_disabled">Дополнительные сведения см. в разделе logcat. Включите опцию \"Сохранять logcat\" в настройках отладки, чтобы автоматически сохранять logcat в файл для последующих операций.</string>
+    <string name="see_logcat_save_enabled">Дополнительные сведения см. в разделе logcat в каталоге журналов.</string>
+    <string name="open_log_dir">Откройте каталог журналов</string>
+    <string name="pref_save_logcat_name">Сохранять logcat</string>
+    <string name="pref_save_logcat_desc">Сохранять logcat в %1$s во время выполнения операции.</string>
+    <string name="operation_cancelled">Операция отменена</string>
+    <string name="exporting_messages">Экспорт сообщений …</string>
+    <string name="wiping_messages">Очистка сообщений …</string>
+    <string name="exporting_calls">Экспорт вызовов …</string>
+    <string name="exporting_contacts">Экспорт контактов …</string>
+    <string name="importing_contacts">Импорт контактов …</string>
+    <string name="json_parse_error">Разобрать JSON-файл не удалось</string>
 </resources>
