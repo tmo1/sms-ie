@@ -27,6 +27,7 @@ package com.github.tmo1.sms_ie
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteException
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -35,6 +36,7 @@ import android.util.Log
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,7 +47,6 @@ import java.io.InputStreamReader
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
-import androidx.core.net.toUri
 
 data class MmsBinaryPart(val uri: Uri, val filename: String)
 
@@ -118,32 +119,54 @@ private suspend fun smsToJSON(
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var total = 0
-    val smsCursor =
-        appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
-    smsCursor?.use {
-        if (it.moveToFirst()) {
-            initProgressBar(progressBar, it)
-            val totalSms = it.count
-            val addressIndex = it.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
-            do {
-                val smsMessage = JSONObject()
-                it.columnNames.forEachIndexed { i, columnName ->
-                    val value = it.getString(i)
-                    if (value != null) smsMessage.put(columnName, value)
-                }
-                val displayName = lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
-                if (displayName != null) smsMessage.put("__display_name", displayName)
-                zipOutputStream.write((smsMessage.toString() + "\n").toByteArray())
-                total++
-                incrementProgress(progressBar)
-                setStatusText(
-                    statusReportText,
-                    appContext.getString(R.string.sms_export_progress, total, totalSms)
-                )
-                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
-            } while (it.moveToNext())
-            hideProgressBar(progressBar)
+    val selection = if (prefs.getBoolean("message_filtering", false)) {
+        val list = arrayListOf<MessageFilter>()
+        getMessageFilters(prefs, list)
+        list.filter { it.active && !it.column.startsWith("mms.") }
+            .joinToString(separator = " AND ") {
+                "${
+                    if (it.column.startsWith("sms.")) it.column.drop(4) else it.column
+                } ${it.operator} ${it.value}"
+            }
+    } else null
+    Log.d(LOG_TAG, "SMS selection: $selection")
+    try {
+        val smsCursor =
+            appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, selection, null, null)
+        smsCursor?.use {
+            if (it.moveToFirst()) {
+                initProgressBar(progressBar, it)
+                val totalSms = it.count
+                val addressIndex = it.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
+                do {
+                    val smsMessage = JSONObject()
+                    it.columnNames.forEachIndexed { i, columnName ->
+                        val value = it.getString(i)
+                        if (value != null) smsMessage.put(columnName, value)
+                    }
+                    val displayName =
+                        lookupDisplayName(appContext, displayNames, it.getString(addressIndex))
+                    if (displayName != null) smsMessage.put("__display_name", displayName)
+                    zipOutputStream.write((smsMessage.toString() + "\n").toByteArray())
+                    total++
+                    incrementProgress(progressBar)
+                    setStatusText(
+                        statusReportText,
+                        appContext.getString(R.string.sms_export_progress, total, totalSms)
+                    )
+                    if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                } while (it.moveToNext())
+                hideProgressBar(progressBar)
+            }
         }
+    } catch (e: SQLiteException) {
+        Log.e(LOG_TAG, "SQLite exception while querying SMS - if message filters are in use, check their syntax.", e)
+        /*displayError(
+            appContext,
+            e,
+            "SQLite Exception",
+            "An SQLite exception occurred. This may be caused by improper filter syntax - if message filters are in use, check their syntax."
+        )*/
     }
     return total
 }
@@ -158,126 +181,151 @@ private suspend fun mmsToJSON(
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var total = 0
-    val mmsCursor =
-        appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, null, null, null)
-    mmsCursor?.use {
-        if (it.moveToFirst()) {
-            val totalMms = it.count
-            initProgressBar(progressBar, it)
-            val msgIdIndex = it.getColumnIndexOrThrow("_id")
-            // write MMS metadata
-            do {
-                val mmsMessage = JSONObject()
-                it.columnNames.forEachIndexed { i, columnName ->
-                    val value = it.getString(i)
-                    if (value != null) mmsMessage.put(columnName, value)
-                }
-                // the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
-                val msgId = it.getString(msgIdIndex)
-                val addressCursor = appContext.contentResolver.query(
-                    "content://mms/$msgId/addr".toUri(), null, null, null, null
-                )
-                addressCursor?.use { address ->
-                    val addressTypeIndex =
-                        addressCursor.getColumnIndexOrThrow(Telephony.Mms.Addr.TYPE)
-                    val addressIndex =
-                        addressCursor.getColumnIndexOrThrow(Telephony.Mms.Addr.ADDRESS)
-                    // write sender address object
-                    if (address.moveToFirst()) {
-                        do {
-                            if (addressTypeIndex.let { x -> address.getString(x) } == PDU_HEADERS_FROM) {
-                                val mmsSenderAddress = JSONObject()
-                                address.columnNames.forEachIndexed { i, columnName ->
-                                    val value = address.getString(i)
-                                    if (value != null) mmsSenderAddress.put(columnName, value)
-                                }
-                                val displayName = lookupDisplayName(
-                                    appContext, displayNames, address.getString(addressIndex)
-                                )
-                                if (displayName != null) mmsSenderAddress.put(
-                                    "__display_name", displayName
-                                )
-                                mmsMessage.put("__sender_address", mmsSenderAddress)
-                                break
-                            }
-                        } while (address.moveToNext())
+    val selection = if (prefs.getBoolean("message_filtering", false)) {
+        val list = arrayListOf<MessageFilter>()
+        getMessageFilters(prefs, list)
+        list.filter { it.active && !it.column.startsWith("sms.") }
+            .joinToString(separator = " AND ") {
+                "${
+                    if (it.column.startsWith("mms.")) it.column.drop(4) else it.column
+                } ${it.operator} ${it.value}"
+            }
+    } else null
+    Log.d(LOG_TAG, "MMS selection: $selection")
+    try {
+        val mmsCursor =
+            appContext.contentResolver.query(Telephony.Mms.CONTENT_URI, null, selection, null, null)
+        mmsCursor?.use {
+            if (it.moveToFirst()) {
+                val totalMms = it.count
+                initProgressBar(progressBar, it)
+                val msgIdIndex = it.getColumnIndexOrThrow("_id")
+                // write MMS metadata
+                do {
+                    val mmsMessage = JSONObject()
+                    it.columnNames.forEachIndexed { i, columnName ->
+                        val value = it.getString(i)
+                        if (value != null) mmsMessage.put(columnName, value)
                     }
-                    // write array of recipient address objects
-                    if (address.moveToFirst()) {
-                        val mmsRecipientAddresses = JSONArray()
-                        do {
-                            if (addressTypeIndex.let { x -> address.getString(x) } != PDU_HEADERS_FROM) {
-                                val mmsRecipientAddress = JSONObject()
-                                address.columnNames.forEachIndexed { i, columnName ->
-                                    val value = address.getString(i)
-                                    if (value != null) mmsRecipientAddress.put(columnName, value)
-                                }
-                                val displayName = lookupDisplayName(
-                                    appContext, displayNames, address.getString(addressIndex)
-                                )
-                                if (displayName != null) mmsRecipientAddress.put(
-                                    "__display_name", displayName
-                                )
-                                mmsRecipientAddresses.put(mmsRecipientAddress)
-                            }
-                        } while (address.moveToNext())
-                        mmsMessage.put("__recipient_addresses", mmsRecipientAddresses)
-                    }
-                }
-                val partCursor = appContext.contentResolver.query(
-                    "content://mms/part".toUri(),
-//                      Uri.parse("content://mms/$msgId/part"),
-                    null, "mid=?", arrayOf(msgId), "seq ASC"
-                )
-                // write array of MMS parts
-                partCursor?.use { part ->
-                    if (part.moveToFirst()) {
-                        val mmsParts = JSONArray()
-                        val partIdIndex = part.getColumnIndexOrThrow("_id")
-                        val dataIndex = part.getColumnIndexOrThrow("_data")
-                        do {
-                            val mmsPart = JSONObject()
-                            part.columnNames.forEachIndexed { i, columnName ->
-                                val value = part.getString(i)
-                                if (value != null) mmsPart.put(columnName, value)
-                            }
-                            if (prefs.getBoolean("include_binary_data", true) && part.getString(
-                                    dataIndex
-                                ) != null
-                            ) {
-                                var filename =
-                                    mmsPart.getString(Telephony.Mms.Part._DATA).toUri().lastPathSegment
-                                // see https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/master/src/com/android/providers/telephony/MmsProvider.java#520
-                                if (filename == null) {
-                                    filename =
-                                        "MISSING_FILENAME" + System.currentTimeMillis() + mmsPart.getString(
-                                            Telephony.Mms.Part.CONTENT_LOCATION
-                                        )
-                                    mmsPart.put(Telephony.Mms.Part._DATA, filename)
-                                }
-                                filename = "data/$filename"
-                                mmsPartList.add(
-                                    MmsBinaryPart(
-                                        ("content://mms/part/" + part.getString(partIdIndex)).toUri(), filename
+                    // the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
+                    val msgId = it.getString(msgIdIndex)
+                    val addressCursor = appContext.contentResolver.query(
+                        "content://mms/$msgId/addr".toUri(), null, null, null, null
+                    )
+                    addressCursor?.use { address ->
+                        val addressTypeIndex =
+                            addressCursor.getColumnIndexOrThrow(Telephony.Mms.Addr.TYPE)
+                        val addressIndex =
+                            addressCursor.getColumnIndexOrThrow(Telephony.Mms.Addr.ADDRESS)
+                        // write sender address object
+                        if (address.moveToFirst()) {
+                            do {
+                                if (addressTypeIndex.let { x -> address.getString(x) } == PDU_HEADERS_FROM) {
+                                    val mmsSenderAddress = JSONObject()
+                                    address.columnNames.forEachIndexed { i, columnName ->
+                                        val value = address.getString(i)
+                                        if (value != null) mmsSenderAddress.put(columnName, value)
+                                    }
+                                    val displayName = lookupDisplayName(
+                                        appContext, displayNames, address.getString(addressIndex)
                                     )
-                                )
-                            }
-                            mmsParts.put(mmsPart)
-                        } while (part.moveToNext())
-                        mmsMessage.put("__parts", mmsParts)
+                                    if (displayName != null) mmsSenderAddress.put(
+                                        "__display_name", displayName
+                                    )
+                                    mmsMessage.put("__sender_address", mmsSenderAddress)
+                                    break
+                                }
+                            } while (address.moveToNext())
+                        }
+                        // write array of recipient address objects
+                        if (address.moveToFirst()) {
+                            val mmsRecipientAddresses = JSONArray()
+                            do {
+                                if (addressTypeIndex.let { x -> address.getString(x) } != PDU_HEADERS_FROM) {
+                                    val mmsRecipientAddress = JSONObject()
+                                    address.columnNames.forEachIndexed { i, columnName ->
+                                        val value = address.getString(i)
+                                        if (value != null) mmsRecipientAddress.put(
+                                            columnName,
+                                            value
+                                        )
+                                    }
+                                    val displayName = lookupDisplayName(
+                                        appContext, displayNames, address.getString(addressIndex)
+                                    )
+                                    if (displayName != null) mmsRecipientAddress.put(
+                                        "__display_name", displayName
+                                    )
+                                    mmsRecipientAddresses.put(mmsRecipientAddress)
+                                }
+                            } while (address.moveToNext())
+                            mmsMessage.put("__recipient_addresses", mmsRecipientAddresses)
+                        }
                     }
-                }
-                zipOutputStream.write((mmsMessage.toString() + "\n").toByteArray())
-                total++
-                incrementProgress(progressBar)
-                setStatusText(
-                    statusReportText,
-                    appContext.getString(R.string.mms_export_progress, total, totalMms)
-                )
-                if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
-            } while (it.moveToNext())
-            hideProgressBar(progressBar)
+                    val partCursor = appContext.contentResolver.query(
+                        "content://mms/part".toUri(),
+//                      Uri.parse("content://mms/$msgId/part"),
+                        null, "mid=?", arrayOf(msgId), "seq ASC"
+                    )
+                    // write array of MMS parts
+                    partCursor?.use { part ->
+                        if (part.moveToFirst()) {
+                            val mmsParts = JSONArray()
+                            val partIdIndex = part.getColumnIndexOrThrow("_id")
+                            val dataIndex = part.getColumnIndexOrThrow("_data")
+                            do {
+                                val mmsPart = JSONObject()
+                                part.columnNames.forEachIndexed { i, columnName ->
+                                    val value = part.getString(i)
+                                    if (value != null) mmsPart.put(columnName, value)
+                                }
+                                if (prefs.getBoolean("include_binary_data", true) && part.getString(
+                                        dataIndex
+                                    ) != null
+                                ) {
+                                    var filename = mmsPart.getString(Telephony.Mms.Part._DATA)
+                                        .toUri().lastPathSegment
+                                    // see https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/master/src/com/android/providers/telephony/MmsProvider.java#520
+                                    if (filename == null) {
+                                        filename =
+                                            "MISSING_FILENAME" + System.currentTimeMillis() + mmsPart.getString(
+                                                Telephony.Mms.Part.CONTENT_LOCATION
+                                            )
+                                        mmsPart.put(Telephony.Mms.Part._DATA, filename)
+                                    }
+                                    filename = "data/$filename"
+                                    mmsPartList.add(
+                                        MmsBinaryPart(
+                                            ("content://mms/part/" + part.getString(partIdIndex)).toUri(),
+                                            filename
+                                        )
+                                    )
+                                }
+                                mmsParts.put(mmsPart)
+                            } while (part.moveToNext())
+                            mmsMessage.put("__parts", mmsParts)
+                        }
+                    }
+                    zipOutputStream.write((mmsMessage.toString() + "\n").toByteArray())
+                    total++
+                    incrementProgress(progressBar)
+                    setStatusText(
+                        statusReportText,
+                        appContext.getString(R.string.mms_export_progress, total, totalMms)
+                    )
+                    if (total == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                } while (it.moveToNext())
+                hideProgressBar(progressBar)
+            }
         }
+    }  catch (e: SQLiteException) {
+        Log.e(LOG_TAG, "SQLite exception while querying MMS - if message filters are in use, check their syntax.", e)
+        /*displayError(
+            appContext,
+            e,
+            "SQLite Exception",
+            "An SQLite exception occurred. This may be caused by improper filter syntax - if message filters are in use, check their syntax."
+        )*/
     }
     return total
 }
@@ -574,8 +622,7 @@ suspend fun importMessages(
                                             }
                                             address.put(
                                                 Telephony.Mms.Addr.MSG_ID, messageId
-                                            )
-                                            /*Log.v(
+                                            )/*Log.v(
                                                 LOG_TAG,
                                                 "Trying to insert MMS address - metadata:" + address.toString()
                                             )*/

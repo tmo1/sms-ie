@@ -47,8 +47,12 @@ The above applies only to SMS and MMS messages; the format for call logs and con
 
 ## Installation
 
-SMS Import / Export is available from [Github](https://github.com/tmo1/sms-ie). Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built (debug) packages of the latest code pushed to the repository are generally available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
+SMS Import / Export is available from [GitHub](https://github.com/tmo1/sms-ie). Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built (debug) packages of the latest code pushed to the repository are generally available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
 
+ - Application ID: `com.github.tmo1.sms_ie`
+ 
+ - App signing certificate fingerprint (SHA-256) (for GitHub, as opposed to F-Droid, releases): `C1:05:E6:D9:67:55:42:D4:34:A9:CD:E9:DC:79:B2:49:F1:AC:0A:FC:3B:8A:AE:C7:D5:C8:20:11:36:CF:FD:BE`
+ 
 For instructions on building the app from its source code, see [`BUILDING.md`](BUILDING.md).
 
 The app is currently available in two ["product flavors"](https://developer.android.com/build/build-variants#product-flavors): `standard` and `legacy`. `standard` will only run on devices with API level >= 21 ([Android 5.0 Lollipop](https://developer.android.com/about/versions/lollipop)), and uses the latest versions of all its dependencies. `legacy` will run on devices with API level as low as 19 ([Android 4.4 KitKat](https://developer.android.com/about/versions/kitkat)), but uses outdated versions of several of its dependencies. *There is no difference in functionality between the two flavors* (although some functionality is dependent on the *actual API level* of the device on which the app is run, as per the following section, regardless of which app flavor is used); accordingly, the `standard` flavor should always be used except when deploying to devices with API level < 21.
@@ -74,6 +78,10 @@ Note that upon import or wipe, message apps present on the system may not immedi
 ## Import / Export Locations
 
 SMS Import / Export does all input and output via the Android [Storage Access Framework (SAF)](https://developer.android.com/guide/topics/providers/document-provider). The app should thus be able to import from and export to any location available via the SAF, including both local storage (internal, SD card, or USB attached) as well as cloud storage accessible through the SAF, via either a dedicated app (e.g., the [Nextcloud Android App](https://github.com/nextcloud/android)) or [Rclone](https://rclone.org/) through [RSAF](https://github.com/chenxiaolong/RSAF).
+
+## Message Filtering
+
+SMS Import / Export can filter messages on export; see [here](MESSAGE-FILTERING.md) for an explanation of the filtering system and usage examples.
 
 ### Encryption
 

@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, and contacts, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2024 Thomas More
+ * Copyright (c) 2021-2025 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -108,6 +108,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             R.id.about -> {
                 val launchAboutActivity = Intent(this, AboutActivity::class.java)
                 startActivity(launchAboutActivity)
+                //finish()
+                true
+            }
+
+            R.id.message_filters -> {
+                val launchMessageFiltersActivity = Intent(this, MessageFiltersActivity::class.java)
+                startActivity(launchMessageFiltersActivity)
                 //finish()
                 true
             }

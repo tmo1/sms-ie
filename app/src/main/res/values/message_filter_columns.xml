@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021-2022,2025 Thomas More
+  ~ Copyright (c) 2025 Thomas More
   ~
   ~ This file is part of SMS Import / Export.
   ~
@@ -17,23 +18,6 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
   -->
+<resources>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item
-        android:id="@+id/settings"
-        android:title="@string/settings"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/message_filters"
-        android:title="@string/message_filters"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/about"
-        android:title="@string/about"
-        app:showAsAction="never" />
-
-</menu>
+</resources>

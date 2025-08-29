@@ -101,4 +101,15 @@
     <string name="importing_calls">Importing calls …</string>
     <string name="donations">Donations:</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>
+    <string name="message_filters_header">Message filters</string>
+    <string name="add_message_filter_button_label">Add message filter</string>
+    <string name="enable_message_filtering_note">Note: message filtering must be enabled in the app\'s settings in order for these filters to be used.</string>
+    <string name="tap_filter_to_edit_or_delete">Tap a filter to edit or delete it</string>
+    <string name="message_filters">Message Filters</string>
+    <string name="value">column value</string>
+    <string name="filter_active">Active</string>
+    <string name="column_name">Column Name:</string>
+    <string name="operator">Operator:</string>
+    <string name="column_value">Column Value:</string>
+    <string name="active">Active:</string>
 </resources>
