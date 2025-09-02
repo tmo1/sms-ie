@@ -92,10 +92,10 @@ class SettingsActivity : AppCompatActivity() {
         // https://stackoverflow.com/questions/70803830/updating-a-preference-summary-in-android-when-the-user-sets-it
         private val prefs by lazy { preferenceManager.sharedPreferences }
         private val targetDirPreference: Preference by lazy {
-            findPreference<Preference>(EXPORT_DIR) ?: error("Missing export directory preference!")
+            findPreference(EXPORT_DIR) ?: error("Missing export directory preference!")
         }
         private val disableBattOptPreference: SwitchPreferenceCompat by lazy {
-            findPreference<SwitchPreferenceCompat>(DISABLE_BATTERY_OPTIMIZATIONS)
+            findPreference(DISABLE_BATTERY_OPTIMIZATIONS)
                 ?: error("Missing disable battery optimizations preference!")
         }
         private val requestDisableBattOpt =

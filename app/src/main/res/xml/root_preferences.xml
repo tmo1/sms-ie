@@ -99,6 +99,12 @@
             app:defaultValue="true"
             app:singleLineTitle="false" />
 
+        <SwitchPreferenceCompat
+            android:key="message_filtering"
+            android:title="Enable message filtering"
+            app:defaultValue="false"
+            app:singleLineTitle="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Import options">

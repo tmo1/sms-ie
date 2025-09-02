@@ -122,7 +122,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             // See scheduleAutomaticExport() below for why we don't specify this action explicitly.
             Action.EXPORT_AUTOMATIC
         } else {
-            Action.values()[index]
+            Action.entries[index]
         }
     }
     private val actionFile = inputData.getString("file")?.toUri()

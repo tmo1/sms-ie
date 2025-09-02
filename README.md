@@ -79,6 +79,10 @@ Note that upon import or wipe, message apps present on the system may not immedi
 
 SMS Import / Export does all input and output via the Android [Storage Access Framework (SAF)](https://developer.android.com/guide/topics/providers/document-provider). The app should thus be able to import from and export to any location available via the SAF, including both local storage (internal, SD card, or USB attached) as well as cloud storage accessible through the SAF, via either a dedicated app (e.g., the [Nextcloud Android App](https://github.com/nextcloud/android)) or [Rclone](https://rclone.org/) through [RSAF](https://github.com/chenxiaolong/RSAF).
 
+## Message Filtering
+
+SMS Import / Export can filter messages on export; see [here](MESSAGE-FILTERING.md) for an explanation of the filtering system and usage examples.
+
 ### Encryption
 
 [SMS Import / Export does not have any internal encryption / decryption functionality](https://github.com/tmo1/sms-ie/issues/82), and [there are currently no plans to add such functionality](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908098763). Instead, the currently recommended method for automatic encryption / decryption is to use an [Rclone crypt remote](https://rclone.org/crypt/) via [RSAF](https://github.com/chenxiaolong/RSAF) to transparently encrypt data as it is exported and decrypt it as it is imported. (The RSAF developer explains how to do this [here](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1907097444), but cautions that he would only suggest this method for those already familiar with Rclone.) [Note](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908772982) that this method will only work for internal storage or cloud storage accessible via Rclone, but not for SD card or USB attached storage.

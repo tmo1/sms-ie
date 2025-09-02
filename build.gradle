@@ -22,14 +22,14 @@
  */
 
 buildscript {
-    ext.kotlin_version = "2.2.0"
+    ext.kotlin_version = "2.2.10"
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.12.1'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10'
     }
 }
 
@@ -44,3 +44,4 @@ tasks.register('clean', Delete) {
     // https://stackoverflow.com/questions/77564583/getting-rid-of-builddir-deprecation
     delete rootProject.layout.buildDirectory
 }
+

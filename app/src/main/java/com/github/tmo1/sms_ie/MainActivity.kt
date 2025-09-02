@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, and contacts, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2024 Thomas More
+ * Copyright (c) 2021-2025 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -134,6 +134,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 true
             }
 
+            R.id.message_filters -> {
+                val launchMessageFiltersActivity = Intent(this, MessageFiltersActivity::class.java)
+                startActivity(launchMessageFiltersActivity)
+                //finish()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -150,12 +157,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (savedInstanceState != null) {
             val pendingActionIndex = savedInstanceState.getInt(STATE_PENDING_ACTION, -1)
             if (pendingActionIndex != -1) {
-                pendingAction = Action.values()[pendingActionIndex]
+                pendingAction = Action.entries.toTypedArray()[pendingActionIndex]
             }
 
             val postSmsRoleActionIndex = savedInstanceState.getInt(STATE_POST_SMS_ROLE_ACTION, -1)
             if (postSmsRoleActionIndex != -1) {
-                postSmsRoleAction = PostSmsRoleAction.values()[postSmsRoleActionIndex]
+                postSmsRoleAction = PostSmsRoleAction.entries.toTypedArray()[postSmsRoleActionIndex]
             }
         }
 
