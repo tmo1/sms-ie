@@ -111,6 +111,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
     // Action to perform after file selection. Saved across Activity recreation.
     private var pendingAction: Action? = null
+
     // Action to perform after the SMS role has been acquired. Saved across Activity recreation.
     private var postSmsRoleAction: PostSmsRoleAction? = null
 
@@ -169,16 +170,18 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
 
         // get necessary permissions on startup
-        requestPermissions.launch(arrayOf(
-            Manifest.permission.READ_SMS,
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.WRITE_CONTACTS,
-            Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.WRITE_CALL_LOG,
-            // No need to API level check since androidx does so itself for POST_NOTIFICATIONS.
-            //noinspection InlinedApi
-            Manifest.permission.POST_NOTIFICATIONS,
-        ))
+        requestPermissions.launch(
+            arrayOf(
+                Manifest.permission.READ_SMS,
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.WRITE_CONTACTS,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.WRITE_CALL_LOG,
+                // No need to API level check since androidx does so itself for POST_NOTIFICATIONS.
+                //noinspection InlinedApi
+                Manifest.permission.POST_NOTIFICATIONS,
+            )
+        )
 
         // set up UI
         setContentView(R.layout.activity_main)
@@ -241,7 +244,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             postSmsRoleAction = PostSmsRoleAction.WIPE_MESSAGES
             checkDefaultSMSApp()
         }
-        setDefaultSMSAppButton.setOnClickListener { startActivity(Intent(ACTION_MANAGE_DEFAULT_APPS_SETTINGS))}
+        setDefaultSMSAppButton.setOnClickListener {
+            startActivity(
+                Intent(
+                    ACTION_MANAGE_DEFAULT_APPS_SETTINGS
+                )
+            )
+        }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -281,10 +290,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
         val workManager = WorkManager.getInstance(this)
         workManager
-            .getWorkInfosLiveData(WorkQuery.fromTags(
-                ImportExportWorker.TAG_MANUAL_ACTION,
-                ImportExportWorker.TAG_AUTOMATIC_EXPORT,
-            ))
+            .getWorkInfosLiveData(
+                WorkQuery.fromTags(
+                    ImportExportWorker.TAG_MANUAL_ACTION,
+                    ImportExportWorker.TAG_AUTOMATIC_EXPORT,
+                )
+            )
             .observe(this, Observer {
                 var isRunning = false
                 var canCancel = false
@@ -307,10 +318,12 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                                 workManager.cancelWorkById(workInfo.id)
                             }
                         }
+
                         WorkInfo.State.SUCCEEDED -> {
                             val success = SuccessData(workInfo.outputData)
                             statusReportText.text = success.message
                         }
+
                         WorkInfo.State.FAILED -> {
                             val failure = FailureData(workInfo.outputData)
                             // Just show the general error from the title in the status. The more
@@ -329,6 +342,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                         WorkInfo.State.CANCELLED -> {
                             statusReportText.text = getString(R.string.operation_cancelled)
                         }
+
                         else -> continue
                     }
 
@@ -348,16 +362,18 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 // Although ImportExportWorker uses a unique work ID to guarantee that multiple
                 // operations won't run at the same time, we should still try to prevent the user
                 // from causing this situation.
-                exportMessagesButton.isEnabled = !isRunning
-                importMessagesButton.isEnabled = !isRunning
-                exportCallLogButton.isEnabled = !isRunning
-                importCallLogButton.isEnabled = !isRunning
-                exportContactsButton.isEnabled = !isRunning
-                importContactsButton.isEnabled = !isRunning
-                exportBlockedNumbersButton.isEnabled = !isRunning
-                importBlockedNumbersButton.isEnabled = !isRunning
-                wipeAllMessagesButton.isEnabled = !isRunning
-                setDefaultSMSAppButton.isEnabled = !isRunning
+                listOf(
+                    exportMessagesButton,
+                    importMessagesButton,
+                    exportCallLogButton,
+                    importCallLogButton,
+                    exportContactsButton,
+                    importContactsButton,
+                    exportBlockedNumbersButton,
+                    importBlockedNumbersButton,
+                    wipeAllMessagesButton,
+                    setDefaultSMSAppButton
+                ).forEach { button -> button.isEnabled = !isRunning }
             })
     }
 
@@ -478,6 +494,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
         requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/zip"))
     }
+
     private fun wipeMessagesManual() {
         ConfirmWipeFragment().show(supportFragmentManager, "wipe")
     }
