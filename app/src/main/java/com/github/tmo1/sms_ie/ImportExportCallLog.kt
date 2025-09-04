@@ -1,6 +1,6 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
- * call logs, and contacts, from and to JSON / NDJSON files.
+ * call logs, contacts, and blocked numbers, from and to JSON / NDJSON files.
  *
  * Copyright (c) 2021-2025 Thomas More
  *
@@ -108,7 +108,11 @@ private suspend fun callLogToJSON(
 
                 if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull()
                         ?: -1)
-                ) break
+                )
+                {
+                    Log.d(LOG_TAG, "Breaking due to debug settings")
+                    break
+                }
             } while (it.moveToNext())
         }
     }
@@ -140,6 +144,7 @@ suspend fun importCallLog(
                         updateProgress(progress)
 
                         JSONReader@ while (jsonReader.hasNext()) {
+
                             ensureActive()
 
                             jsonReader.beginObject()
@@ -201,6 +206,13 @@ suspend fun importCallLog(
                                     )
                                     updateProgress(progress)
                                 }
+                            }
+                            if (progress.current == (prefs.getString(
+                                    "max_records", ""
+                                )?.toIntOrNull() ?: -1)
+                            ) {
+                                Log.d(LOG_TAG, "Breaking due to debug settings")
+                                break
                             }
                         }
                         jsonReader.endArray()
