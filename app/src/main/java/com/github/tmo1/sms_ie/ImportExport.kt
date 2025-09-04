@@ -66,16 +66,15 @@ data class Progress(
     )
 }
 
-class UserFriendlyException(message: String? = null, cause: Throwable? = null)
-    : Exception(message, cause)
+class UserFriendlyException(message: String? = null, cause: Throwable? = null) :
+    Exception(message, cause)
 
 fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
         appContext, Manifest.permission.READ_SMS
     ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
         appContext, Manifest.permission.READ_CONTACTS
-    ) == PackageManager.PERMISSION_GRANTED
-    /*else {
+    ) == PackageManager.PERMISSION_GRANTED/*else {
         Toast.makeText(
             appContext,
             appContext.getString(R.string.sms_permissions_required),
@@ -155,11 +154,13 @@ suspend fun wipeSmsAndMmsMessages(appContext: Context, updateProgress: suspend (
 suspend fun automaticExport(
     appContext: Context, updateProgress: suspend (Progress) -> Unit
 ): Triple<MessageTotal, Int, Int> {
+
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
 
     var messages = MessageTotal()
     var calls = 0
     var contacts = 0
+    //var blockedNumbers = 0
 
     val treeUri = prefs.getString(EXPORT_DIR, "")!!
         .toUri() // https://stackoverflow.com/questions/57813653/why-sharedpreferences-getstring-may-return-null
@@ -207,6 +208,23 @@ suspend fun automaticExport(
         }
     }
 
+    /*It doesn't seem practical to include blocked numbers in scheduled exports, since using the blocked numbers API
+    requires that we be the default SMS app or the default phone app, both of which require manual intervention
+    to do and undo.
+    https://developer.android.com/reference/android/provider/BlockedNumberContract#permissions*/
+
+    /*if (prefs.getBoolean("export_blocked_numbers", true)) {
+        try {
+            val file = documentTree.createFile("application/zip", "blocked_numbers$dateInString.zip")
+                ?: throw IOException("Failed to create blocked numbers output file")
+
+            blockedNumbers = exportBlockedNumbers(appContext, file.uri, updateProgress)
+            deleteOldExports(prefs, documentTree, file, "blocked_numbers")
+        } catch (e: Exception) {
+            firstException = firstException ?: e
+        }
+    }*/
+
     if (firstException != null) {
         throw firstException
     }
@@ -228,8 +246,7 @@ fun deleteOldExports(
         val extension = if (prefix == "messages") "zip" else "json"
         files.forEach {
             val name = it.name
-            if (name != null && name != newFilename && name.startsWith(prefix)
-                    && name.endsWith(".$extension")) {
+            if (name != null && name != newFilename && name.startsWith(prefix) && name.endsWith(".$extension")) {
                 it.delete()
                 total++
             }

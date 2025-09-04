@@ -89,6 +89,12 @@
             android:title="Export contacts"
             app:dependency="schedule_export" />
 
+        <!--<SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="export_blocked_numbers"
+            android:title="Export blocked_numbers"
+            app:dependency="schedule_export" />-->
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Export options">

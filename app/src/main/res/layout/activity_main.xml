@@ -97,7 +97,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:text="@string/export_contacts"
-        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+        app:layout_constraintBottom_toTopOf="@id/export_blocked_numbers_button"
         app:layout_constraintEnd_toStartOf="@+id/import_contacts_button"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,11 +108,33 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:text="@string/import_contacts"
-        app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+        app:layout_constraintBottom_toTopOf="@id/import_blocked_numbers_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/export_contacts_button"
         app:layout_constraintTop_toBottomOf="@+id/import_call_log_button" />
+
+        <Button
+            android:id="@+id/export_blocked_numbers_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/export_blocked_numbers"
+            app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+            app:layout_constraintEnd_toStartOf="@id/import_blocked_numbers_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/export_contacts_button" />
+
+        <Button
+            android:id="@+id/import_blocked_numbers_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/import_blocked_numbers"
+            app:layout_constraintBottom_toTopOf="@id/wipe_all_messages_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/export_blocked_numbers_button"
+            app:layout_constraintTop_toBottomOf="@+id/import_contacts_button" />
 
     <Button
         android:id="@+id/wipe_all_messages_button"
@@ -122,7 +144,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/export_contacts_button"
+        app:layout_constraintTop_toBottomOf="@id/export_blocked_numbers_button"
         tools:layout_editor_absoluteY="303dp" />
 
     <androidx.constraintlayout.widget.Guideline

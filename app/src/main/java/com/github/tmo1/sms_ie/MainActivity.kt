@@ -77,6 +77,8 @@ private const val STATE_POST_SMS_ROLE_ACTION = "post_sms_role_action"
 
 private enum class PostSmsRoleAction {
     IMPORT_MESSAGES,
+    EXPORT_BLOCKED_NUMBERS,
+    IMPORT_BLOCKED_NUMBERS,
     WIPE_MESSAGES,
 }
 
@@ -205,12 +207,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
 
         val exportMessagesButton: Button = findViewById(R.id.export_messages_button)
-        val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
         val importMessagesButton: Button = findViewById(R.id.import_messages_button)
+        val exportCallLogButton: Button = findViewById(R.id.export_call_log_button)
         val importCallLogButton: Button = findViewById(R.id.import_call_log_button)
-        val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
         val exportContactsButton: Button = findViewById(R.id.export_contacts_button)
         val importContactsButton: Button = findViewById(R.id.import_contacts_button)
+        val exportBlockedNumbersButton: Button = findViewById(R.id.export_blocked_numbers_button)
+        val importBlockedNumbersButton: Button = findViewById(R.id.import_blocked_numbers_button)
+        val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
         val setDefaultSMSAppButton: Button = findViewById(R.id.set_default_sms_app_button)
         val statusReportText: TextView = findViewById(R.id.status_report)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
@@ -225,6 +229,14 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         importCallLogButton.setOnClickListener { importCallLogManual() }
         exportContactsButton.setOnClickListener { exportContactsManual() }
         importContactsButton.setOnClickListener { importContactsManual() }
+        exportBlockedNumbersButton.setOnClickListener {
+            postSmsRoleAction = PostSmsRoleAction.EXPORT_BLOCKED_NUMBERS
+            checkDefaultSMSApp()
+        }
+        importBlockedNumbersButton.setOnClickListener {
+            postSmsRoleAction = PostSmsRoleAction.IMPORT_BLOCKED_NUMBERS
+            checkDefaultSMSApp()
+        }
         wipeAllMessagesButton.setOnClickListener {
             postSmsRoleAction = PostSmsRoleAction.WIPE_MESSAGES
             checkDefaultSMSApp()
@@ -342,6 +354,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 importCallLogButton.isEnabled = !isRunning
                 exportContactsButton.isEnabled = !isRunning
                 importContactsButton.isEnabled = !isRunning
+                exportBlockedNumbersButton.isEnabled = !isRunning
+                importBlockedNumbersButton.isEnabled = !isRunning
                 wipeAllMessagesButton.isEnabled = !isRunning
                 setDefaultSMSAppButton.isEnabled = !isRunning
             })
@@ -442,6 +456,28 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
     }
 
+    private fun exportBlockedNumbersManual() {
+        if (SDK_INT < 24) {
+            setStatusReport(getString(R.string.blocked_numbers_api_24_requirement))
+            return
+        }
+
+        pendingAction = Action.EXPORT_BLOCKED_NUMBERS_MANUAL
+        val date = getCurrentDateTime()
+        val dateInString = date.toString("yyyy-MM-dd")
+        requestNewZipFile.launch("blocked_numbers-$dateInString.zip")
+    }
+
+    private fun importBlockedNumbersManual() {
+        if (SDK_INT < 24) {
+            setStatusReport(getString(R.string.blocked_numbers_api_24_requirement))
+            return
+        }
+
+        pendingAction = Action.IMPORT_BLOCKED_NUMBERS_MANUAL
+        //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
+        requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/zip"))
+    }
     private fun wipeMessagesManual() {
         ConfirmWipeFragment().show(supportFragmentManager, "wipe")
     }
@@ -513,6 +549,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         if (canLaunch) {
             when (postSmsRoleAction!!) {
                 PostSmsRoleAction.IMPORT_MESSAGES -> importMessagesManual()
+                PostSmsRoleAction.EXPORT_BLOCKED_NUMBERS -> exportBlockedNumbersManual()
+                PostSmsRoleAction.IMPORT_BLOCKED_NUMBERS -> importBlockedNumbersManual()
                 PostSmsRoleAction.WIPE_MESSAGES -> wipeMessagesManual()
             }
         }

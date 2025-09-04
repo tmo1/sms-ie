@@ -58,15 +58,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 enum class Action {
-    EXPORT_AUTOMATIC,
-    EXPORT_CALL_LOG_MANUAL,
-    IMPORT_CALL_LOG_MANUAL,
-    EXPORT_CONTACTS_MANUAL,
-    IMPORT_CONTACTS_MANUAL,
-    EXPORT_MESSAGES_MANUAL,
-    IMPORT_MESSAGES_MANUAL,
-    WIPE_MESSAGES_MANUAL,
-    ;
+    EXPORT_AUTOMATIC, EXPORT_CALL_LOG_MANUAL, IMPORT_CALL_LOG_MANUAL, EXPORT_CONTACTS_MANUAL, IMPORT_CONTACTS_MANUAL, EXPORT_MESSAGES_MANUAL, IMPORT_MESSAGES_MANUAL, EXPORT_BLOCKED_NUMBERS_MANUAL, IMPORT_BLOCKED_NUMBERS_MANUAL, WIPE_MESSAGES_MANUAL, ;
 
     // Wiping calls ContentResolver.delete(), which does not have a variant that accepts a
     // CancellationSignal instance. The operation cannot be cancelled without killing the app.
@@ -139,6 +131,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     // * It can fail with BackgroundServiceStartNotAllowedException on Android 12+ if the worker was
     //   launched by MainActivity and the screen goes to sleep.
     private var notifyViaForeground = true
+
     // Avoid updating the notification too frequently or else Android will rate limit us and block
     // any notification from being sent.
     private var foregroundLastTimestamp = 0L
@@ -174,14 +167,11 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 arrayOf("-f", logcatFile.absolutePath)
             }
 
-            ProcessBuilder("logcat", "*:V", *logcatExtraArgs)
-                .apply {
+            ProcessBuilder("logcat", "*:V", *logcatExtraArgs).apply {
                     if (logcatUseStdout) {
                         redirectOutput(logcatFile)
                     }
-                }
-                .redirectErrorStream(true)
-                .start()
+                }.redirectErrorStream(true).start()
         } else {
             null
         }
@@ -194,12 +184,14 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
             val titleResId = when (action) {
                 Action.EXPORT_AUTOMATIC -> R.string.scheduled_export_error_title
+                Action.EXPORT_MESSAGES_MANUAL -> R.string.messages_export_error_title
+                Action.IMPORT_MESSAGES_MANUAL -> R.string.messages_import_error_title
                 Action.EXPORT_CALL_LOG_MANUAL -> R.string.call_log_export_error_title
                 Action.IMPORT_CALL_LOG_MANUAL -> R.string.call_log_import_error_title
                 Action.EXPORT_CONTACTS_MANUAL -> R.string.contacts_export_error_title
                 Action.IMPORT_CONTACTS_MANUAL -> R.string.contacts_import_error_title
-                Action.EXPORT_MESSAGES_MANUAL -> R.string.messages_export_error_title
-                Action.IMPORT_MESSAGES_MANUAL -> R.string.messages_import_error_title
+                Action.EXPORT_BLOCKED_NUMBERS_MANUAL -> R.string.blocked_numbers_export_error_title
+                Action.IMPORT_BLOCKED_NUMBERS_MANUAL -> R.string.blocked_numbers_import_error_title
                 Action.WIPE_MESSAGES_MANUAL -> R.string.messages_wipe_error_title
             }
             val title = context.getString(titleResId)
@@ -262,27 +254,25 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     private fun createForegroundNotification(progress: Progress): Notification {
         val titleResId = when (action) {
             Action.EXPORT_AUTOMATIC -> R.string.scheduled_export_executing
+            Action.EXPORT_MESSAGES_MANUAL -> R.string.exporting_messages
+            Action.IMPORT_MESSAGES_MANUAL -> R.string.importing_messages
             Action.EXPORT_CALL_LOG_MANUAL -> R.string.exporting_calls
             Action.IMPORT_CALL_LOG_MANUAL -> R.string.importing_calls
             Action.EXPORT_CONTACTS_MANUAL -> R.string.exporting_contacts
             Action.IMPORT_CONTACTS_MANUAL -> R.string.importing_contacts
-            Action.EXPORT_MESSAGES_MANUAL -> R.string.exporting_messages
-            Action.IMPORT_MESSAGES_MANUAL -> R.string.importing_messages
+            Action.EXPORT_BLOCKED_NUMBERS_MANUAL -> R.string.exporting_blocked_numbers
+            Action.IMPORT_BLOCKED_NUMBERS_MANUAL -> R.string.importing_blocked_numbers
             Action.WIPE_MESSAGES_MANUAL -> R.string.wiping_messages
         }
         val title = applicationContext.getString(titleResId)
 
         return NotificationCompat.Builder(applicationContext, CHANNEL_ID_PERSISTENT)
-            .setSmallIcon(R.mipmap.ic_launcher_foreground)
-            .setContentTitle(title)
-            .setContentText(progress.message)
-            .setStyle(NotificationCompat.BigTextStyle())
-            .setProgress(progress.total, progress.current, progress.total == 0)
-            .setOngoing(true)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground).setContentTitle(title)
+            .setContentText(progress.message).setStyle(NotificationCompat.BigTextStyle())
+            .setProgress(progress.total, progress.current, progress.total == 0).setOngoing(true)
             // Ensure that the device won't vibrate or make a notification sound every time the
             // progress is updated.
-            .setOnlyAlertOnce(true)
-            .apply {
+            .setOnlyAlertOnce(true).apply {
                 // Inhibit 10-second delay when showing persistent notification
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
@@ -293,19 +283,18 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                         applicationContext,
                         0,
                         CancelWorkerService.createIntent(applicationContext, id),
-                        PendingIntent.FLAG_IMMUTABLE or
-                                PendingIntent.FLAG_UPDATE_CURRENT or
-                                PendingIntent.FLAG_ONE_SHOT,
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_ONE_SHOT,
                     )
 
-                    addAction(NotificationCompat.Action.Builder(
-                        null,
-                        applicationContext.getString(android.R.string.cancel),
-                        actionPendingIntent,
-                    ).build())
+                    addAction(
+                        NotificationCompat.Action.Builder(
+                            null,
+                            applicationContext.getString(android.R.string.cancel),
+                            actionPendingIntent,
+                        ).build()
+                    )
                 }
-            }
-            .build()
+            }.build()
     }
 
     private suspend fun refreshForegroundNotification(progress: Progress) {
@@ -378,8 +367,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private suspend fun performAction(): SuccessData {
-        if (actionFile == null && action != Action.EXPORT_AUTOMATIC
-                && action != Action.WIPE_MESSAGES_MANUAL) {
+        if (actionFile == null && action != Action.EXPORT_AUTOMATIC && action != Action.WIPE_MESSAGES_MANUAL) {
             throw IllegalStateException("No file specified for $action")
         }
 
@@ -388,7 +376,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
         val successMsg = when (action) {
             Action.EXPORT_AUTOMATIC -> {
-                val (messages, calls, contacts) = automaticExport(context, ::updateProgress)
+                val (messages, calls, contacts) = automaticExport(
+                    context, ::updateProgress
+                )
 
                 context.getString(
                     R.string.scheduled_export_success,
@@ -398,50 +388,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     contacts,
                 )
             }
-            Action.EXPORT_CALL_LOG_MANUAL -> {
-                val calls = exportCallLog(context, actionFile!!, ::updateProgress)
 
-                context.getString(
-                    R.string.export_call_log_results, calls, formatElapsedTime(
-                        TimeUnit.SECONDS.convert(
-                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                        )
-                    )
-                )
-            }
-            Action.IMPORT_CALL_LOG_MANUAL -> {
-                val calls = importCallLog(context, actionFile!!, ::updateProgress)
-
-                context.getString(
-                    R.string.import_call_log_results, calls, formatElapsedTime(
-                        TimeUnit.SECONDS.convert(
-                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                        )
-                    )
-                )
-            }
-            Action.EXPORT_CONTACTS_MANUAL -> {
-                val contacts = exportContacts(context, actionFile!!, ::updateProgress)
-
-                context.getString(
-                    R.string.export_contacts_results, contacts, formatElapsedTime(
-                        TimeUnit.SECONDS.convert(
-                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                        )
-                    )
-                )
-            }
-            Action.IMPORT_CONTACTS_MANUAL -> {
-                val contacts = importContacts(context, actionFile!!, ::updateProgress)
-
-                context.getString(
-                    R.string.import_contacts_results, contacts, formatElapsedTime(
-                        TimeUnit.SECONDS.convert(
-                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
-                        )
-                    )
-                )
-            }
             Action.EXPORT_MESSAGES_MANUAL -> {
                 val messages = exportMessages(context, actionFile!!, ::updateProgress)
 
@@ -453,10 +400,11 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     )
                 )
             }
+
             Action.IMPORT_MESSAGES_MANUAL -> {
                 // MainActivity will not launch this action if the Android version is too old.
-                @SuppressLint("NewApi")
-                val messages = importMessages(context, actionFile!!, ::updateProgress)
+                @SuppressLint("NewApi") val messages =
+                    importMessages(context, actionFile!!, ::updateProgress)
 
                 context.getString(
                     R.string.import_messages_results, messages.sms, messages.mms, formatElapsedTime(
@@ -466,6 +414,80 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                     )
                 )
             }
+
+            Action.EXPORT_CALL_LOG_MANUAL -> {
+                val calls = exportCallLog(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.export_call_log_results, calls, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+
+            Action.IMPORT_CALL_LOG_MANUAL -> {
+                val calls = importCallLog(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.import_call_log_results, calls, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+
+            Action.EXPORT_CONTACTS_MANUAL -> {
+                val contacts = exportContacts(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.export_contacts_results, contacts, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+
+            Action.IMPORT_CONTACTS_MANUAL -> {
+                val contacts = importContacts(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.import_contacts_results, contacts, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+
+            Action.EXPORT_BLOCKED_NUMBERS_MANUAL -> {
+                val blockedNumbers = exportBlockedNumbers(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.export_blocked_numbers_results, blockedNumbers, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+
+            Action.IMPORT_BLOCKED_NUMBERS_MANUAL -> {
+                val blockedNumbers = importBlockedNumbers(context, actionFile!!, ::updateProgress)
+
+                context.getString(
+                    R.string.import_blocked_numbers_results, blockedNumbers, formatElapsedTime(
+                        TimeUnit.SECONDS.convert(
+                            System.nanoTime() - startTime, TimeUnit.NANOSECONDS
+                        )
+                    )
+                )
+            }
+
+
             Action.WIPE_MESSAGES_MANUAL -> {
                 wipeSmsAndMmsMessages(context, ::updateProgress)
 
@@ -499,10 +521,8 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             // https://developer.android.com/training/notify-user/build-notification#builder
             val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID_ALERTS)
                 //.setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setSmallIcon(R.drawable.ic_scheduled_export_done)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setStyle(NotificationCompat.BigTextStyle())
+                .setSmallIcon(R.drawable.ic_scheduled_export_done).setContentTitle(title)
+                .setContentText(message).setStyle(NotificationCompat.BigTextStyle())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
             // https://developer.android.com/training/notify-user/build-notification#notify
@@ -518,14 +538,14 @@ fun scheduleManualAction(context: Context, action: Action, file: Uri?) {
         throw IllegalArgumentException("Cannot schedule for manual action: $action")
     }
 
-    val request = OneTimeWorkRequestBuilder<ImportExportWorker>()
-        .addTag(ImportExportWorker.TAG_MANUAL_ACTION)
-        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-        .setInputData(workDataOf(
-            "action" to action.ordinal,
-            "file" to file?.toString(),
-        ))
-        .build()
+    val request =
+        OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_MANUAL_ACTION)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST).setInputData(
+                workDataOf(
+                    "action" to action.ordinal,
+                    "file" to file?.toString(),
+                )
+            ).build()
     WorkManager.getInstance(context).enqueue(request)
 }
 
@@ -548,14 +568,14 @@ fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
         }
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
         Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
-        val exportRequest = OneTimeWorkRequestBuilder<ImportExportWorker>()
-            .addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
-            .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS)
-            // We intentionally do not pass in any input data for the periodic job. The parameters
-            // are persisted to disk, which makes refactoring more difficult in the future since
-            // care must be taken during upgrades to ensure old parameter values will still work.
-            // Instead, we'll just assume that no parameters means scheduled automatic exports.
-            .build()
+        val exportRequest =
+            OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
+                .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS)
+                // We intentionally do not pass in any input data for the periodic job. The parameters
+                // are persisted to disk, which makes refactoring more difficult in the future since
+                // care must be taken during upgrades to ensure old parameter values will still work.
+                // Instead, we'll just assume that no parameters means scheduled automatic exports.
+                .build()
         WorkManager.getInstance(context).enqueue(exportRequest)
     }
 }

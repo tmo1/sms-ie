@@ -106,7 +106,9 @@ private suspend fun callLogToJSON(
                 )
                 updateProgress(progress)
 
-                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull()
+                        ?: -1)
+                ) break
             } while (it.moveToNext())
         }
     }
@@ -133,7 +135,8 @@ suspend fun importCallLog(
                     try {
                         jsonReader.beginArray()
 
-                        progress = progress.copy(message = appContext.getString(R.string.importing_calls))
+                        progress =
+                            progress.copy(message = appContext.getString(R.string.importing_calls))
                         updateProgress(progress)
 
                         JSONReader@ while (jsonReader.hasNext()) {
@@ -202,7 +205,9 @@ suspend fun importCallLog(
                         }
                         jsonReader.endArray()
                     } catch (e: Exception) {
-                        throw UserFriendlyException(appContext.getString(R.string.json_parse_error), e)
+                        throw UserFriendlyException(
+                            appContext.getString(R.string.json_parse_error), e
+                        )
                     }
                 }
             }

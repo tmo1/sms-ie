@@ -11,7 +11,7 @@
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/tmo1/sms-ie)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tmo1/sms-ie)
 
-SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages, call logs, and contacts from and to (ND)JSON files. (Contacts import and export are currently functional but considered experimental.) Root is not required.
+SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages, call logs, contacts, and blocked numbers from and to (ND)JSON files. (Contacts import and export are currently functional but considered experimental.) Root is not required.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
@@ -59,17 +59,17 @@ The app is currently available in two ["product flavors"](https://developer.andr
 
 ## Compatibility
 
-Current versions of SMS Import / Export should run on any Android (phone-like) device running KitKat / 4.4 (API level 19) or later, although message import and scheduled message export are only possible on devices running Marshmallow / 6.0 (API level 23) or later.
+Current versions of SMS Import / Export should run on any Android (phone-like) device running KitKat / 4.4 (API level 19) or later, although message import and scheduled message export are only possible on devices running Marshmallow / 6.0 (API level 23) or later, and blocked numbers import and export are only possible on devices running Nougat / 7.0 (API level 24) or later.
 
 The app is tested primarily on stock Android and [LineageOS](https://lineageos.org/), but should generally run on other versions of Android as well.
 
 ## Usage
 
- - Import or export messages, call log, or contacts: Click the respective button, then select an import or export source or destination.
+ - Import or export messages, call logs, contacts, or blocked numbers: Click the respective button, then select an import or export source or destination.
  
  - Wipe messages: Click the `Wipe Messages` button, then confirm by pressing the `Wipe` button in the pop-up dialog box.
 
-These operations may take some time for large numbers of messages, calls, or contacts. The app will report the total number of SMS and MMS messages, calls, or contacts imported or exported, and the elapsed time, upon successful conclusion.
+These operations may take some time for large amounts of data. The app will report the total number of SMS and MMS messages, calls, contacts, or blocked numbers imported or exported, and the elapsed time, upon successful conclusion.
 
 By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a much smaller ZIP file.
 
@@ -113,6 +113,8 @@ Call log deduplication works similarly but is simpler: call log entries are assu
 
 To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
 
+(Scheduled export of blocked numbers is not implemented, since [accessing the blocked numbers database requires that the app be the default SMS app or the default phone app](https://developer.android.com/reference/android/provider/BlockedNumberContract#permissions), and switching the default SMS or phone apps to SMS Import / Export and then back to proper SMS and phone apps require manual intervention.)
+
 #### Running As A Foreground Service
 
 On recent versions of Android, scheduled exports that export many MMS messages or that run for more than ten minutes may be killed by the system. To avoid this, scheduled exports can be run as a foreground service, which requires disabling battery optimizations for the app. (See [issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131).)
@@ -129,7 +131,7 @@ When scheduled exports are enabled, the following options can be used to control
 
 To export messages, permission to read SMSs and Contacts is required (the need for the latter is explained below). The app will ask for these permissions on startup, if it does not already have them.
 
-To import or wipe messages, SMS Import / Export must be the default messaging app. This is due to [an Android design decision](https://android-developers.googleblog.com/2013/10/getting-your-sms-apps-ready-for-kitkat.html).
+To import or wipe messages or import or export blocked numbers, SMS Import / Export must be the default messaging app, as set forth [here](https://android-developers.googleblog.com/2013/10/getting-your-sms-apps-ready-for-kitkat.html) and [here](https://developer.android.com/reference/android/provider/BlockedNumberContract#permissions).
 
 > [!WARNING] 
 > **While an app is the default messaging app, it takes full responsibility for handling incoming SMS and MMS messages, and if does not store them, they will be lost. SMS Import / Export ignores incoming messages, so in order to avoid losing such messages, the device it is running on should be disconnected from the network (by putting it into airplane mode, or similar means) before the app is made the default messaging app, and only reconnected to the network after a proper messaging app is made the default.**
@@ -204,6 +206,16 @@ Contacts import and export is currently considered experimental, and the JSON fo
 
 **Note:** Currently, when contacts are exported and then imported, the app may report a larger total of contacts imported than exported. This is due to the fact that when exporting, the total number of **`Contacts`** exported is reported (since this is a logical and straightforward thing to do), whereas when importing, the total number of **`Raw Contacts`** imported is reported (since [as per the documentation](https://developer.android.com/guide/topics/providers/contacts-provider#ContactBasics), applications are not allowed to add `Contacts`, only `Raw Contacts`, and as noted above, a `Contact` may consist of an aggregation of multiple `Raw Contacts`).
 
+### Blocked Numbers
+
+Blocked number records contain just three fields, documented [here](https://developer.android.com/reference/android/provider/BlockedNumberContract):
+
+ - `original_number`: The actual number.
+ 
+ - `e164_number`: A normalized version of the number (if normalization is possible).
+ 
+ - `_ID`: The SQLite `ID`.
+ 
 ## Limitations
 
 ### Contacts
