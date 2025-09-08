@@ -1,0 +1,11 @@
+ - Implement SQLite WHERE clause message filtering.
+
+ - Implement blocked numbers import and export.
+
+ - Fix 'max_records' call log handling.
+
+ - Update Russian translation.
+
+ - Refactor.
+
+ - Update AGP to 8.13.0.
