@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '2.2.10'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.2.20'
 }
 
 android {
@@ -100,7 +100,7 @@ dependencies {
     standardImplementation 'androidx.core:core-ktx:1.17.0'
     standardImplementation 'androidx.appcompat:appcompat:1.7.1'
     standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    standardImplementation 'androidx.work:work-runtime-ktx:2.10.3'
+    standardImplementation 'androidx.work:work-runtime-ktx:2.10.4'
 
     legacyImplementation 'androidx.core:core-ktx:1.13.1'
     legacyImplementation 'androidx.appcompat:appcompat:1.6.1'
