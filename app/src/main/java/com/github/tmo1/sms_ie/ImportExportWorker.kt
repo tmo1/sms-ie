@@ -223,13 +223,22 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
         }
 
-        // The androidx work library currently has a bug where the foreground notification is
-        // not removed when the foreground service is stopped after cancellation. This is
-        // reproducible even if this function is just replaced with a simple delay(10000).
-        if (isStopped) {
+        // There are two scenarios where we need to manually dismiss the notification:
+        //
+        // 1. The androidx work library has a bug where the foreground notification is not removed
+        //    when the foreground service is stopped after cancellation. This is reproducible even
+        //    if this function is just replaced with a simple delay(10000).
+        // 2. When the user does not disable battery optimizations, the status notification is shown
+        //    by us instead of the foreground service.
+        if (isStopped || !notifyViaForeground) {
             Log.w(LOG_TAG, "Explicitly cancelling foreground notification")
             notificationManager.cancel(NOTIFICATION_ID_PERSISTENT)
-        } else {
+        }
+
+        // Don't show completion notifications for cancelled jobs since cancellations are always
+        // initiated by the user. There's no need to annoy them with a cancellation exception error
+        // message.
+        if (!isStopped) {
             notifyResult(result, action)
         }
 
