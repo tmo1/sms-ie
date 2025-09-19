@@ -13,7 +13,7 @@
     <string name="wipe">Slet</string>
     <string name="wiping_mms_messages">Sletter MMS-beskeder…</string>
     <string name="cancel">Annuller</string>
-    <string name="app_about_text">SMS Import / Eksport \n \naf Thomas More og andre bidragydere \n \nVersion %1$s \n \nCopyright © 2021-2025 \n \nUdgivet under GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Eksport \n \naf Thomas More \nog andre bidragydere \n \nVersion %1$s \n \nCopyright © 2021-2025 \n \nUdgivet under GNU GPLv3</string>
     <string name="messages_wiped">Beskeder slettet</string>
     <string name="wiping_sms_messages">Sletter SMS-beskeder…</string>
     <string name="issue_tracker">Problemsporing:</string>
@@ -60,4 +60,25 @@
     <string name="export_contacts_results">%1$d kontakt(er) eksporteret\nVarighed: %2$s</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>
     <string name="donations">Donationer:</string>
+    <string name="scheduled_export_error_title">Fejl ved planlagt eksport</string>
+    <string name="call_log_export_error_title">Fejl ved eksport af opkaldslog</string>
+    <string name="call_log_import_error_title">Fejl ved import af opkaldslog</string>
+    <string name="contacts_export_error_title">Fejl ved eksport af kontakter</string>
+    <string name="contacts_import_error_title">Fejl ved import af kontakter</string>
+    <string name="messages_export_error_title">Fejl ved eksport af beskeder</string>
+    <string name="messages_import_error_title">Fejl ved import af beskeder</string>
+    <string name="messages_wipe_error_title">Fejl ved sletning af beskeder</string>
+    <string name="json_parse_error">Fejl ved fortolkning af JSON-fil</string>
+    <string name="missing_messages_ndjson_error">Kan ikke finde \'messages.ndjson\'. Sørg for, at den angivne fil er en ZIP-fil i det korrekte format.</string>
+    <string name="see_logcat_save_disabled">Se logcat for flere oplysninger. Aktivér \"Gem logcat\" i fejlfindingsindstillingerne for automatisk at gemme logcat i en fil til fremtidig brug.</string>
+    <string name="see_logcat_save_enabled">Se logcat i logmappen for flere oplysninger.</string>
+    <string name="open_log_dir">Åbn logmappe</string>
+    <string name="pref_save_logcat_name">Gem logcat</string>
+    <string name="pref_save_logcat_desc">Gem logcat til %1$s, når en handling kører.</string>
+    <string name="operation_cancelled">Handling afbrudt</string>
+    <string name="exporting_messages">Eksporterer beskeder…</string>
+    <string name="wiping_messages">Sletter beskeder…</string>
+    <string name="exporting_calls">Eksporterer opkald…</string>
+    <string name="exporting_contacts">Eksporterer kontakter…</string>
+    <string name="importing_contacts">Importerer kontakter…</string>
 </resources>
