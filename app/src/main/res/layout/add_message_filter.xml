@@ -32,8 +32,7 @@
         <Spinner
             android:id="@+id/message_column_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background" />
+            android:layout_height="wrap_content" />
     </TableRow>
 
     <TableRow>
@@ -46,8 +45,7 @@
         <Spinner
             android:id="@+id/operator"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background" />
+            android:layout_height="wrap_content" />
     </TableRow>
 
     <TableRow>
@@ -61,7 +59,6 @@
             android:id="@+id/message_column_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background"
             android:hint="@string/value"
             android:importantForAutofill="no"
             android:inputType="text" />
