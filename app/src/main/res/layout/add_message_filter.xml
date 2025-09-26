@@ -19,10 +19,17 @@
   -->
 
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="1"
+    android:measureWithLargestChild="true"
+    android:paddingStart="?attr/dialogPreferredPadding"
+    android:paddingEnd="?attr/dialogPreferredPadding"
+    android:paddingTop="?attr/dialogPreferredPadding">
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -31,11 +38,13 @@
 
         <Spinner
             android:id="@+id/message_column_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,11 +53,13 @@
 
         <Spinner
             android:id="@+id/operator"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,14 +68,16 @@
 
         <EditText
             android:id="@+id/message_column_value"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/value"
             android:importantForAutofill="no"
             android:inputType="text" />
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,7 +88,7 @@
             android:id="@+id/filter_active"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
             android:checked="true" />
     </TableRow>
 </TableLayout>
