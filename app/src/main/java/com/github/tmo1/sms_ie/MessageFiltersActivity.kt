@@ -35,6 +35,7 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
@@ -52,6 +53,7 @@ const val MMS = 1
 class MessageFiltersActivity : AppCompatActivity() {
     val list = arrayListOf<MessageFilter>()
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         // https://developer.android.com/guide/fragments/communicate#fragment-result
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
