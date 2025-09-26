@@ -51,7 +51,7 @@
     <string name="import_contacts">Import kontaktów</string>
     <string name="copying_mms_binary_data">Kopiowanie binarnych danych MMS...</string>
     <string name="importing_messages">Importowanie wiadomości...</string>
-    <string name="become_default_sms_app_warning">Import/Eksport SMS-ów musi być domyślną aplikacją do wiadomości SMS, aby można było importować lub usuwać wiadomości. Przed kontynuowaniem przeczytaj plik README i upewnij się, że rozumiesz konsekwencje takiego działania.</string>
+    <string name="become_default_sms_app_warning">Aby importować lub usuwać wiadomości SMS lub importować lub eksportować zablokowane numery, aplikacja SMS Import / Export musi być domyślną aplikacją do obsługi wiadomości SMS. Przed kontynuowaniem przeczytaj plik README i upewnij się, że rozumiesz konsekwencje tej czynności.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Domyślna aplikacja dla SMSów</string>
     <string name="message_import_api_23_requirement">Importowanie wiadomości jest możliwe tylko na Androidzie Marshmallow / 6.0 (poziom API 23) lub nowszym.</string>
@@ -81,4 +81,27 @@
     <string name="open_log_dir">Otwórz katalog logów</string>
     <string name="pref_save_logcat_name">Zapisz logcat</string>
     <string name="pref_save_logcat_desc">Zapisz logcat do %1$s, gdy operacja jest uruchomiona.</string>
+    <string name="blocked_numbers_export_progress">%1$d z %2$d zablokowanych numerów zostało wyeksportowanych</string>
+    <string name="blocked_numbers_import_progress">Zaimportowano %1$d zablokowanych numerów</string>
+    <string name="export_blocked_numbers_results">Wyeksportowano %1$d zablokowanych numerów.\nMinęło: %2$s</string>
+    <string name="import_blocked_numbers_results">Zaimportowano %1$d zablokowanych numerów.\nMinęło: %2$s</string>
+    <string name="blocked_numbers_export_error_title">Błąd eksportu zablokowanych numerów</string>
+    <string name="blocked_numbers_import_error_title">Błąd importu zablokowanych numerów</string>
+    <string name="missing_blocked_numbers_ndjson_error">Nie można znaleźć pliku „blocked_numbers.ndjson”. Upewnij się, że dostarczony plik jest plikiem ZIP w prawidłowym formacie.</string>
+    <string name="exporting_blocked_numbers">Eksportowanie zablokowanych numerów …</string>
+    <string name="importing_blocked_numbers">Importowanie zablokowanych numerów …</string>
+    <string name="blocked_numbers_api_24_requirement">Importowanie i eksportowanie zablokowanych numerów jest możliwe w systemie Android Nougat / 7.0 (poziom API 24) lub nowszym.</string>
+    <string name="message_filters_header">Filtry wiadomości</string>
+    <string name="add_message_filter_button_label">Dodaj filtr wiadomości</string>
+    <string name="enable_message_filtering_note">Uwaga: aby filtry te mogły być używane, należy włączyć filtrowanie wiadomości w ustawieniach aplikacji.</string>
+    <string name="tap_filter_to_edit_or_delete">Dotknij filtra, aby go edytować lub usunąć</string>
+    <string name="message_filters">Filtry wiadomości</string>
+    <string name="value">wartość kolumny</string>
+    <string name="filter_active">Aktywny</string>
+    <string name="column_name">Nazwa kolumny:</string>
+    <string name="operator">Operator:</string>
+    <string name="column_value">Wartość kolumny:</string>
+    <string name="active">Aktywny:</string>
+    <string name="export_blocked_numbers">Eksportuj zablokowane numery</string>
+    <string name="import_blocked_numbers">Importuj zablokowane numery</string>
 </resources>
