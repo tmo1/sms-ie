@@ -1,1 +1,1 @@
-Importer et exporter les SMS et MMS, les journaux d'appels et les contacts.
+Importer et exporter les SMS, les MMS et plus.
