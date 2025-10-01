@@ -1,5 +1,5 @@
-SMS Import / Export importe et exporte les SMS et MMS, les journaux d'appels et les contact avec des fichiers (ND)JSON/ZIP. (L'importation et l'exportation des contacts sont fonctionnelles mais considérées comme expérimentales). Ne nécessite pas de root.
+SMS Import / Export importe et exporte les SMS et MMS, les journaux d'appels, les contacts, les numéros bloqués avec des fichiers (ND)JSON/ZIP. (L'importation et l'exportation des contacts sont fonctionnelles mais considérées comme expérimentales). Ne nécessite pas de root.
 
-L'auteur principal de SMS Import / Export est Thomas More. D'autres ont contribué au code et aux traductions. Le logiciel est copyright 2021-2024, publié sous licence publique générale GNU version 3 ou ultérieure.
+L'auteur principal de SMS Import / Export est Thomas More. D'autres ont contribué au code et aux traductions. Le logiciel est copyright 2021-2025, publié sous licence publique générale GNU version 3 ou ultérieure.
 
 SMS Import / Export est un projet couplé à <a href="https://github.com/tmo1/sms-db">sms-db</a>, un outil Linux pour construire une base de données SQLite à partir de collection de SMS et MMS dans divers formats. sms-db devrait un jour, espérons-le, importer et exporter des fichiers ZIP compatibles avec SMS Import / Export.
