@@ -19,55 +19,85 @@
   -->
 
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="1"
+    android:measureWithLargestChild="true"
+    android:paddingStart="?attr/dialogPreferredPadding"
+    android:paddingEnd="?attr/dialogPreferredPadding"
+    android:paddingTop="?attr/dialogPreferredPadding">
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/column_name" />
 
-        <Spinner
-            android:id="@+id/message_column_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background" />
+        <FrameLayout
+            android:background="@drawable/view_border"
+            android:layout_margin="2dp">
+            <Spinner
+                android:id="@+id/message_column_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp" />
+        </FrameLayout>
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/operator" />
 
-        <Spinner
-            android:id="@+id/operator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background" />
+        <FrameLayout
+            android:background="@drawable/view_border"
+            android:layout_margin="2dp">
+            <Spinner
+                android:id="@+id/operator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp" />
+        </FrameLayout>
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/column_value" />
 
-        <EditText
-            android:id="@+id/message_column_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background"
-            android:hint="@string/value"
-            android:importantForAutofill="no"
-            android:inputType="text" />
+        <FrameLayout
+            android:background="@drawable/view_border"
+            android:layout_margin="2dp">
+            <!-- Intentionally styled to look like the spinners above. -->
+            <EditText
+                android:id="@+id/message_column_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:background="@null"
+                android:minHeight="36dp"
+                android:textSize="16sp"
+                android:hint="@string/value"
+                android:importantForAutofill="no"
+                android:inputType="text" />
+        </FrameLayout>
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_weight="1"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -78,7 +108,7 @@
             android:id="@+id/filter_active"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
             android:checked="true" />
     </TableRow>
 </TableLayout>
