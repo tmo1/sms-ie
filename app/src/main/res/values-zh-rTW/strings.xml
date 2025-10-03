@@ -58,7 +58,7 @@
     <string name="persistent_channel_name">背景服務</string>
     <string name="persistent_channel_description">預定的背景匯出作業持續性通知</string>
     <string name="message_import_api_23_requirement">匯入訊息僅支援 Android Marshmallow / 6.0 (API 級別 23) 以上版本。</string>
-    <string name="become_default_sms_app_warning">「SMS 匯入 / 匯出」必須設為預設簡訊應用程式才能匯入或清除訊息。\n使用前請參閱說明文件了解這些功能的用途。</string>
+    <string name="become_default_sms_app_warning">「SMS 匯入 / 匯出」必須設為預設簡訊應用程式才能匯入、清除訊息，或是處理已封鎖的號碼。\n使用前請參閱說明文件了解這些功能的用途。</string>
     <string name="call_logs_permissions_required">需要讀取聯絡人與通話記錄權限才能匯出資料。</string>
     <string name="scheduled_export_error_title">預定匯出作業發生錯誤</string>
     <string name="call_log_export_error_title">匯出通話記錄錯誤</string>
@@ -81,4 +81,27 @@
     <string name="open_log_dir">開啟記錄資料夾</string>
     <string name="pref_save_logcat_name">儲存 Logcat</string>
     <string name="pref_save_logcat_desc">作業執行時儲存 Logcat 至 %1$s。</string>
+    <string name="blocked_numbers_export_progress">已匯出 %1$d / %2$d 組封鎖號碼</string>
+    <string name="blocked_numbers_import_progress">已匯入 %1$d 組封鎖號碼</string>
+    <string name="export_blocked_numbers_results">已匯出 %1$d 組封鎖號碼\n耗時：%2$s</string>
+    <string name="import_blocked_numbers_results">已匯入 %1$d 組封鎖號碼\n耗時：%2$s</string>
+    <string name="blocked_numbers_export_error_title">匯出封鎖號碼時發生錯誤</string>
+    <string name="blocked_numbers_import_error_title">匯入封鎖號碼時發生錯誤</string>
+    <string name="missing_blocked_numbers_ndjson_error">找不到「blocked_numbers.ndjson」。\n請確認您已備妥正確的 ZIP 格式檔案。</string>
+    <string name="exporting_blocked_numbers">正在匯出封鎖號碼…</string>
+    <string name="importing_blocked_numbers">正在匯入封鎖號碼…</string>
+    <string name="blocked_numbers_api_24_requirement">匯入與匯出已封鎖的號碼僅支援 Android Nougat / 7.0 (API 級別 24) 以上版本。</string>
+    <string name="message_filters_header">篩選訊息</string>
+    <string name="add_message_filter_button_label">建立篩選條件</string>
+    <string name="enable_message_filtering_note">請注意：必須前往應用程式設定啟用篩選服務，才能使用這項功能。</string>
+    <string name="tap_filter_to_edit_or_delete">輕觸篩選器以編輯或刪除</string>
+    <string name="message_filters">篩選訊息</string>
+    <string name="value">欄位數值</string>
+    <string name="filter_active">活躍</string>
+    <string name="column_name">欄位名稱：</string>
+    <string name="operator">執行：</string>
+    <string name="column_value">欄位數值：</string>
+    <string name="active">活躍：</string>
+    <string name="export_blocked_numbers">匯出封鎖號碼</string>
+    <string name="import_blocked_numbers">匯入封鎖號碼</string>
 </resources>
