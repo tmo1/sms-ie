@@ -46,7 +46,7 @@
     <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
     <string name="include_binary_data">Включать двоичные данные MMS</string>
     <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
-    <string name="app_about_text">SMS Import / Export \n \nавтор Thomas More и другие участники \n \nВерсия %1$s \n \nАвторские права © 2021–2024 \n \nВыпущено под лицензией GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export \n \nАвтор Thomas More и другие участники \n \nВерсия %1$s \n \nАвторские права © 2021–2025 \n \nВыпущено под лицензией GNU GPLv3</string>
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены\?</string>
     <string name="importing_messages">Импорт сообщений …</string>
     <string name="copying_mms_binary_data">Копирование двоичных данных MMS ...</string>
@@ -69,10 +69,10 @@
     <string name="messages_export_error_title">Экспортировать сообщения не удалось</string>
     <string name="messages_import_error_title">Импортировать сообщения не удалось</string>
     <string name="messages_wipe_error_title">Очистить сообщения не удалось</string>
-    <string name="missing_messages_ndjson_error">Не удалось найти файл \'messages.ndjson\'. Убедитесь, что предоставленный файл — это ZIP-архив в правильном формате.</string>
+    <string name="missing_messages_ndjson_error">Не удалось найти файл \'messages.ndjson\'. Убедитесь, что предоставленный файл - это ZIP-архив в правильном формате.</string>
     <string name="see_logcat_save_disabled">Дополнительные сведения см. в разделе logcat. Включите опцию \"Сохранять logcat\" в настройках отладки, чтобы автоматически сохранять logcat в файл для последующих операций.</string>
     <string name="see_logcat_save_enabled">Дополнительные сведения см. в разделе logcat в каталоге журналов.</string>
-    <string name="open_log_dir">Откройте каталог журналов</string>
+    <string name="open_log_dir">Открыть каталог журналов</string>
     <string name="pref_save_logcat_name">Сохранять logcat</string>
     <string name="pref_save_logcat_desc">Сохранять logcat в %1$s во время выполнения операции.</string>
     <string name="operation_cancelled">Операция отменена</string>
@@ -82,4 +82,22 @@
     <string name="exporting_contacts">Экспорт контактов …</string>
     <string name="importing_contacts">Импорт контактов …</string>
     <string name="json_parse_error">Разобрать JSON-файл не удалось</string>
+    <string name="blocked_numbers_export_progress">%1$d из %2$d заблокированных номеров экспортированы</string>
+    <string name="blocked_numbers_import_progress">%1$d заблокированных номеров импортировано</string>
+    <string name="export_blocked_numbers_results">Экспортировано %1$d заблокированных номеров.\nПрошло времени: %2$s</string>
+    <string name="import_blocked_numbers_results">Импортировано %1$d заблокированных номера.\nПрошло времени: %2$s</string>
+    <string name="scheduled_export_error_title">Ошибка запланированного экспорта</string>
+    <string name="blocked_numbers_export_error_title">Ошибка экспорта заблокированных номеров</string>
+    <string name="blocked_numbers_import_error_title">Ошибка импорта заблокированных номеров</string>
+    <string name="missing_blocked_numbers_ndjson_error">Не удалось найти файл \'blocked_numbers.ndjson\'. Убедитесь, что предоставленный файл - это ZIP-архив в правильном формате.</string>
+    <string name="exporting_blocked_numbers">Экспорт заблокированных номеров…</string>
+    <string name="importing_blocked_numbers">Импорт заблокированных номеров…</string>
+    <string name="message_filters_header">Фильтры сообщений</string>
+    <string name="add_message_filter_button_label">Добавить фильтр сообщений</string>
+    <string name="enable_message_filtering_note">Примечание: для использования этих фильтров необходимо включить фильтрацию сообщений в настройках приложения.</string>
+    <string name="tap_filter_to_edit_or_delete">Нажмите на фильтр, чтобы изменить или удалить его</string>
+    <string name="message_filters">Фильтры сообщений</string>
+    <string name="blocked_numbers_api_24_requirement">Импорт и экспорт заблокированных номеров возможен только на устройствах Android Nougat / 7.0 (API level 24) или более поздних версиях.</string>
+    <string name="export_blocked_numbers">Экспорт заблокированных номеров</string>
+    <string name="import_blocked_numbers">Импорт заблокированных номеров</string>
 </resources>
