@@ -73,7 +73,7 @@
     <string name="copying_mms_binary_data">MMS-Binärdaten werden kopiert …</string>
     <string name="importing_messages">Mitteilungen werden importiert …</string>
     <string name="default_sms_app_dialog_title">Standard-SMS-App</string>
-    <string name="become_default_sms_app_warning">SMS Import / Export muss die Standard-SMS-App sein, um Nachrichten zu importieren oder zu löschen. Bitte lies die README und vergewissere dich, dass du die Auswirkungen dieses Vorgangs verstehst, bevor du fortfährst.</string>
+    <string name="become_default_sms_app_warning">SMS Import / Export muss die Standard-SMS-App sein, um Nachrichten zu importieren oder zu löschen oder gesperrte Nummern zu importieren oder zu exportieren.. Bitte lies die README und vergewissere dich, dass du die Auswirkungen dieses Vorgangs verstehst, bevor du fortfährst.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_warning"><b>Warnung</b>: Diese App ist derzeit die Standard-SMS-App, was bedeutet, dass alle eingehenden SMS- oder MMS-Nachrichten verloren gehen! Um dies zu vermeiden, stelle eine passende Standard-SMS-App ein.</string>
     <string name="scheduled_export_executing">Geplanter Export wird ausgeführt</string>
@@ -121,4 +121,13 @@
     <string name="active">Aktiv:</string>
     <string name="export_blocked_numbers">Gesperrte Nummern exportieren</string>
     <string name="import_blocked_numbers">Gesperrte Nummern importieren</string>
+    <string name="messages_wipe_error_title">Fehler beim Löschen von Nachrichten</string>
+    <string name="json_parse_error">Fehler beim Analysieren der JSON-Datei</string>
+    <string name="missing_messages_ndjson_error">Kann „messages.ndjson“ nicht finden. Bitte stelle sicher, dass die bereitgestellte Datei eine ZIP-Datei im richtigen Format ist.</string>
+    <string name="missing_blocked_numbers_ndjson_error">Kann „blocked_numbers.ndjson” nicht finden. Bitte stelle sicher, dass die bereitgestellte Datei eine ZIP-Datei im richtigen Format ist.</string>
+    <string name="pref_save_logcat_name">Logcat speichern</string>
+    <string name="see_logcat_save_disabled">Weitere Informationen findest du unter Logcat. Aktiviere „Logcat speichern” in den Debug-Einstellungen, um das Logcat automatisch in einer Datei für zukünftige Vorgänge zu speichern.</string>
+    <string name="see_logcat_save_enabled">Weitere Informationen findest du unter Logcat im Protokollverzeichnis.</string>
+    <string name="pref_save_logcat_desc">Logcat bei laufendem Vorgang unter %1$s speichern.</string>
+    <string name="blocked_numbers_api_24_requirement">Das Importieren und Exportieren von blockierten Nummern ist nur unter Android Nougat / 7.0 (API-Level 24) oder höher möglich.</string>
 </resources>
