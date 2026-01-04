@@ -71,7 +71,9 @@ The app is tested primarily on stock Android and [LineageOS](https://lineageos.o
 
 These operations may take some time for large amounts of data. The app will report the total number of SMS and MMS messages, calls, contacts, or blocked numbers imported or exported, and the elapsed time, upon successful conclusion.
 
-By default, binary MMS data (such as images and videos) are exported. The user can choose to exclude them, which will often result in a much smaller ZIP file.
+By default, binary MMS data (such as images and videos) are exported. The user can choose not to include them, which will often result in a much smaller ZIP file. This behavior is controlled by the settings toggle `Include binary MMS data`.
+
+Although all values in [the standard Android MMS database table columns](https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#DATE) are either strings or data types that are convertible to strings, some implementations of Android add non-standard columns (such as `preview_data`) that contain BLOB (binary) data. The app can either include such data (base64-encoded) in the exported JSON, or ignore it; this is controlled by the settings toggle `Include BLOBs present in the MMS database table`. The default is to include BLOB data, in order to avoid any possibility of losing important data unless the user explicitly accepts this possibility, but if this data is not deemed important, then the app can be instructed to exclude it, in order to potentially reduce the export file size and export duration, and to avoid reducing the readability of the JSON by cluttering it with large chunks of encoded binary data. (Currently, even if BLOBs are included in the exported JSON they will be ignored when importing.)
 
 Note that upon import or wipe, message apps present on the system may not immediately correctly reflect the new state of the message database due to app caching and / or local storage. This can be resolved by clearing such cache and storage, e.g. `Settings / Apps / Messaging / Storage & cache / Clear storage | Clear cache`.
 
@@ -176,6 +178,8 @@ MMS message objects have the following additions to the tag-value pairs of their
  
  - A tag-value pair of the form `"__parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part).
  
+If BLOB values are exported (see [the usage section](#usage)), they will be base64 encoded, and their tags will have the suffix `__base64__` appended to indicate this. This will also prevent such data from being included when importing, since the suffix will prevent the tags from matching any columns present in the target system's MMS database table.
+
 Android stores binary data of MMS parts as individual files in its filesystem. SMS Import / Export copies these files directly into a `data/` directory in the ZIP file, retaining their original filenames (without the full path). The association of these files with MMS parts is based on the values of the [`_DATA`](https://developer.android.com/reference/android/provider/Telephony.Mms.Part#_DATA) tags of the MMS parts. (SMS Import / Export utilizes only the actual filename (the last segment of the path) for this association. If there is [a problem accessing the binary data](https://github.com/tmo1/sms-ie/issues/42), then the data may not be present.)
 
 ### Call Logs

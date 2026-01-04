@@ -1,0 +1,15 @@
+ - Handle MMS BLOB data without crashing during export. Such data can either be included in the export (the default) or skipped, controllable by a settings toggle (issue #87).
+
+ - Cancel persistent notification when not using foreground service (issues #298, #309, and #311) - by Andrew Gunnerson (PR #300).
+
+ - Fix text readability problems in the Message Filters activity (issue #304) - by Andrew Gunnerson (PR #305).
+
+ - Bump standard flavor minSdkVersion to 23.
+
+ - Update various translations.
+
+ - Update various dependencies.
+
+ - Update AGP to 8.13.2.
+
+ - Update Kotlin serialization plugin to 2.3.0.
