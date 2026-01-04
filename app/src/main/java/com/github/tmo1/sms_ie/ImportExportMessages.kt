@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, and contacts, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2025 Thomas More
+ * Copyright (c) 2021-2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -27,10 +27,12 @@ package com.github.tmo1.sms_ie
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor.FIELD_TYPE_BLOB
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.provider.Telephony
+import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
@@ -176,6 +178,7 @@ private suspend fun mmsToJSON(
     updateProgress: suspend (Progress) -> Unit,
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    val includeBlobs = prefs.getBoolean("include_blobs", true)
     var progress = Progress(0, 0, null)
     val mmsCursor = appContext.contentResolver.query(
         Telephony.Mms.CONTENT_URI, null, messageSelection(appContext, MMS), null, null
@@ -190,8 +193,17 @@ private suspend fun mmsToJSON(
                 coroutineContext.ensureActive()
                 val mmsMessage = JSONObject()
                 it.columnNames.forEachIndexed { i, columnName ->
-                    val value = it.getString(i)
-                    if (value != null) mmsMessage.put(columnName, value)
+                    if (it.getType(i) != FIELD_TYPE_BLOB) {
+                        val value = it.getString(i)
+                        if (value != null) mmsMessage.put(columnName, value)
+                    } else if (includeBlobs) {
+                        val value = it.getBlob(i)
+                        if (value != null) mmsMessage.put(
+                            "${columnName}__base64__", Base64.encodeToString(
+                                value, Base64.NO_WRAP
+                            )
+                        )
+                    }
                 }
                 // the following is adapted from https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android/6446831#6446831
                 val msgId = it.getString(msgIdIndex)

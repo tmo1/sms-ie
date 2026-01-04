@@ -2,7 +2,7 @@
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
   ~ call logs, and contacts, from and to JSON / NDJSON files.
   ~
-  ~ Copyright (c) 2021-2025 Thomas More
+  ~ Copyright (c) 2021-2026 Thomas More
   ~ Copyright (c) 2023 Andrew Gunnerson
   ~
   ~ This file is part of SMS Import / Export.
@@ -102,6 +102,12 @@
         <SwitchPreferenceCompat
             android:key="include_binary_data"
             android:title="@string/include_binary_data"
+            app:defaultValue="true"
+            app:singleLineTitle="false" />
+
+        <SwitchPreferenceCompat
+            android:key="include_blobs"
+            android:title="Include BLOBs present in the MMS database table"
             app:defaultValue="true"
             app:singleLineTitle="false" />
 
