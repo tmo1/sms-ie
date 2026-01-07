@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
-  ~ Copyright (c) 2021-2025 Thomas More
+  ~ SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+    call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
+  ~
+  ~ Copyright (c) 2021-2026 Thomas More
   ~
   ~ This file is part of SMS Import / Export.
   ~
@@ -103,78 +105,6 @@
             </TableRow>
 
         </TableLayout>
-
-        <!--<LinearLayout
-            android:id="@+id/appWebpages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/aboutText">
-
-            <TextView
-                android:id="@+id/appHomepage"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/app_homepage" />
-
-            <TextView
-                android:id="@+id/appDocumentation"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/app_documentation" />
-
-            <TextView
-                android:id="@+id/appIssueTracker"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/app_issue_tracker" />
-
-        </LinearLayout>-->
-
-
-        <!--<ListView
-            android:id="@+id/webpages"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toBottomOf="@id/appAuthors"
-            app:layout_constraintBottom_toBottomOf="parent" />-->
-
-
-        <!--<TextView
-            android:id="@+id/appHomepage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/app_homepage"
-            app:layout_constraintBottom_toTopOf="@+id/appDocumentation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appAuthors" />
-
-        <TextView
-            android:id="@+id/appDocumentation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/app_documentation"
-            app:layout_constraintBottom_toTopOf="@+id/appIssueTracker"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appHomepage" />
-
-        <TextView
-            android:id="@+id/appIssueTracker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/app_issue_tracker"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_ToBottomOf="@+id/appDocumentation" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
