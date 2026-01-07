@@ -329,9 +329,10 @@ suspend fun importMessages(
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var progress = Progress(0, 0, null)
     val deduplication = prefs.getBoolean("deduplication", false)
+    val importSubIds = prefs.getBoolean("import_sub_ids", false)
     return withContext(Dispatchers.IO) {
         val totals = MessageTotal()
-        // get column names of local SMS, MMS, and MMS part tables
+        // get column names of local SMS, MMS, MMS address, and MMS part tables
         val smsColumns = mutableSetOf<String>()
         val smsCursor =
             appContext.contentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null)
@@ -354,6 +355,21 @@ suspend fun importMessages(
                 )
             )
         }
+        val addressColumns = mutableSetOf<String>()
+        // I don't know if there's a way to query the MMS address table without supplying a
+        // dummy message ID, but this seems to work:
+        val addressTableUri = "content://mms/0/addr".toUri()
+        val addressCursor = appContext.contentResolver.query(addressTableUri, null, null, null, null)
+        addressCursor?.use {
+            addressColumns.addAll(it.columnNames)
+            addressColumns.removeAll(
+                setOf(
+                    Telephony.Mms.Addr.MSG_ID,
+                    Telephony.Mms.Addr._ID,
+                    Telephony.Mms.Addr._COUNT
+                )
+            )
+        }
         val partColumns = mutableSetOf<String>()
         // I can't find an officially documented way of getting the Part table URI for API < 29
         // the idea to use "content://mms/part" comes from here:
@@ -372,12 +388,6 @@ suspend fun importMessages(
                 )
             )
         }
-        val addressExcludedKeys = setOf(
-            Telephony.Mms.Addr._ID,
-            Telephony.Mms.Addr._COUNT,
-            Telephony.Mms.Addr.MSG_ID,
-            "__display_name"
-        )
         val threadIdMap = HashMap<String, String>()
         uri.let { zipUri ->
             val mmsPartMap =
@@ -538,7 +548,7 @@ suspend fun importMessages(
                                 senderAddress?.let {
                                     val address = ContentValues()
                                     it.keys().forEach { addressKey ->
-                                        if (addressKey !in addressExcludedKeys) address.put(
+                                        if (addressKey in addressColumns) address.put(
                                             addressKey, senderAddress.getString(addressKey)
                                         )
                                     }
@@ -551,7 +561,7 @@ suspend fun importMessages(
                                         val recipientAddress = recipientAddresses.getJSONObject(i)
                                         val address = ContentValues()
                                         for (recipientAddressKey in recipientAddress.keys()) {
-                                            if (recipientAddressKey !in addressExcludedKeys) {
+                                            if (recipientAddressKey in addressColumns) {
                                                 address.put(
                                                     recipientAddressKey, recipientAddress.getString(
                                                         recipientAddressKey
@@ -604,20 +614,22 @@ suspend fun importMessages(
                                     updateProgress(progress)
                                     val messageId = insertUri.lastPathSegment
                                     val addressUri = "content://mms/$messageId/addr".toUri()
+                                    //Log.d(LOG_TAG, "addresses: $addresses")
                                     addresses.forEach { address ->
-                                        // Some MMS address metadata contain sub_ids, and attempting to import them can cause the address import to fail:
+                                        // "sub_id"s were added to the MMS address table here:
+                                        // https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/a97076d34e2613d4a89c92d56c40daa1066c488a
+                                        // Attempting to import "sub_id"s can cause address import to fail:
                                         // See: https://github.com/tmo1/sms-ie/issues/213
-                                        if (!prefs.getBoolean(
-                                                "import_sub_ids", false
-                                            ) && address.containsKey("sub_id")
+                                        if (!importSubIds && address.containsKey("sub_id")
                                         ) {
                                             address.put("sub_id", "-1")
                                         }
                                         address.put(
                                             Telephony.Mms.Addr.MSG_ID, messageId
-                                        )/*Log.v(
+                                        )
+                                        /*Log.d(
                                             LOG_TAG,
-                                            "Trying to insert MMS address - metadata:" + address.toString()
+                                            "Trying to insert MMS address - uri: ${addressUri}, metadata:$address"
                                         )*/
                                         val insertAddressUri = appContext.contentResolver.insert(
                                             addressUri, address
@@ -639,15 +651,19 @@ suspend fun importMessages(
                                                     partKey, messagePart.getString(partKey)
                                                 )
                                             }
-                                            // Some MMS part metadata contain sub_ids, and attempting to import them can cause a FileNotFoundException: No entry for content
+                                            // sub_ids were added to the MMS address table here:
+                                            // https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/a97076d34e2613d4a89c92d56c40daa1066c488a
+                                            // Attempting to import sub_ids can cause a "FileNotFoundException: No entry for content"
                                             // when subsequently trying to write the part's binary data.
                                             // See: https://github.com/tmo1/sms-ie/issues/142
-                                            if (!prefs.getBoolean(
-                                                    "import_sub_ids", false
-                                                ) && part.containsKey("sub_id")
+                                            if (!importSubIds && part.containsKey("sub_id")
                                             ) {
                                                 part.put("sub_id", "-1")
                                             }
+                                            /*Log.v(
+                                                LOG_TAG,
+                                                "Trying to insert MMS part - uri: ${partUri}, metadata:$part"
+                                            )*/
                                             val insertPartUri = appContext.contentResolver.insert(
                                                 partUri, part
                                             )
