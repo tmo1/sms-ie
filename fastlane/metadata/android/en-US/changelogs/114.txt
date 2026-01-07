@@ -1,1 +1,3 @@
  - Fix a problem that prevented MMS addresses exported from recent versions of Android from import into earlier versions of Android (issue #322).
+
+ - Remove 'android.permission.ACCESS_NETWORK_STATE' (issue #324).
