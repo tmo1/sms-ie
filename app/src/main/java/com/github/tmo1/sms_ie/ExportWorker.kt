@@ -202,7 +202,7 @@ fun updateExportWork(context: Context, cancel: Boolean) {
         }
         val exportIntervalDays = prefs.getString("export_interval_days", "")?.toIntOrNull() ?: 1
         if (exportIntervalDays > 1) {
-            exportTime.add(Calendar.DAY_OF_MONTH, exportIntervalDays)
+            exportTime.add(Calendar.DAY_OF_MONTH, exportIntervalDays - 1)
         }
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
         Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
