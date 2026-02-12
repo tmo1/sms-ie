@@ -5,28 +5,32 @@
 
 ![GitHub Release](https://img.shields.io/github/v/release/tmo1/sms-ie)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/tmo1/sms-ie)
-![F-Droid Version](https://img.shields.io/f-droid/v/com.github.tmo1.sms_ie)
+![F-Droid Version](https://img.shields.io/f-droid/v/com.github.tmo1.sms_ie?label=F-Droid)
+![IzzyOnDroid Version](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.github.tmo1.sms_ie/&label=IzzyOnDroid)
+![Reproducible Build Status](https://shields.rbtlog.dev/simple/com.github.tmo1.sms_ie)
 
 ![GitHub issues](https://img.shields.io/github/issues/tmo1/sms-ie)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/tmo1/sms-ie)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tmo1/sms-ie)
 
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/tmo1/sms-ie/total?label=GitHub%20downloads%20(total))
+![IzzyOnDroid Yearly Downloads](https://img.shields.io/badge/dynamic/json?url=https://dlstats.izzyondroid.org/iod-stats-collector/stats/basic/yearly/rolling.json&query=$.['com.github.tmo1.sms_ie']&label=IzzyOnDroid%20downloads%20(yearly))
+
 SMS Import / Export is a simple Android app that imports and exports SMS and MMS messages, call logs, contacts, and blocked numbers from and to (ND)JSON files. (Contacts import and export are currently functional but considered experimental.) Root is not required.
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/com.github.tmo1.sms_ie/)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.github.tmo1.sms_ie/)
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="80" alt="Get it at IzzyOnDroid">](https://apt.izzysoft.de/packages/com.github.tmo1.sms_ie/)
 
-## Changes In Version 2.0.0 ##
+## Changes In Version 2.0.0
 
 Version 2.0.0 introduced a major rewrite of the SMS and MMS messages import / export code, implementing a new message storage format (`v2`):
 
- - The messages are now stored in a [Newline-delimited JSON](https://en.wikipedia.org/wiki/JSON_streaming#Newline-delimited_JSON) file (always named `messages.ndjson`), as opposed to the standard JSON previously used.
- 
- - Binary MMS data is now stored separately from message text data and metadata; the `messages.ndjson` file, along with a `data/` directory containing the MMS binary data files copied directly from the Android filesystem (with their original filenames), are both encapsulated in a ZIP file.
- 
- - All (ND)JSON tags added by SMS Import / Export are now prefixed with a double underscore (e.g., `__display_name`, `__parts`), to clearly indicate that they have been added by the app.
- 
+- The messages are now stored in a [Newline-delimited JSON](https://en.wikipedia.org/wiki/JSON_streaming#Newline-delimited_JSON) file (always named `messages.ndjson`), as opposed to the standard JSON previously used.
+
+- Binary MMS data is now stored separately from message text data and metadata; the `messages.ndjson` file, along with a `data/` directory containing the MMS binary data files copied directly from the Android filesystem (with their original filenames), are both encapsulated in a ZIP file.
+
+- All (ND)JSON tags added by SMS Import / Export are now prefixed with a double underscore (e.g., `__display_name`, `__parts`), to clearly indicate that they have been added by the app.
+
 For a discussion of the advantages and disadvantages of the new format over the old one (`v1`), see [here](https://github.com/tmo1/sms-ie/commit/a505f66cdfae19cd2a21edae2774bc3f37fb5af9).
 
 The NDJSON file is not as human-readable as the previous pretty-printed JSON file, due to the necessary absence of newlines within each JSON message record, but this is easily rectified by feeding the NDJSON to the [jq](https://jqlang.github.io/jq/) tool, which will pretty-print it:
@@ -37,11 +41,11 @@ The NDJSON file is not as human-readable as the previous pretty-printed JSON fil
 
 **These format changes unfortunately render versions of the app from 2.0.0 and on incompatible with JSON message files produced by earlier versions of the app.** Several solutions to this incompatibility are possible:
 
- - An earlier version of the app (with a 1.x.x version number) can be used to import messages in `v1` format.
- 
- - Where feasible, a current version of the app can be used to re-export the messages to `v2` format.
- 
- - A conversion tool to convert message files from `v1` to `v2` format is available [here](https://github.com/tmo1/sms-ie/blob/master/tools/v1-v2-convert.py) (documented [here](https://github.com/tmo1/sms-ie/blob/master/tools/Tools.md)). This tool is experimental, and has not been extensively tested.
+- An earlier version of the app (with a 1.x.x version number) can be used to import messages in `v1` format.
+
+- Where feasible, a current version of the app can be used to re-export the messages to `v2` format.
+
+- A conversion tool to convert message files from `v1` to `v2` format is available [here](https://github.com/tmo1/sms-ie/blob/master/tools/v1-v2-convert.py) (documented [here](https://github.com/tmo1/sms-ie/blob/master/tools/Tools.md)). This tool is experimental, and has not been extensively tested.
 
 The above applies only to SMS and MMS messages; the format for call logs and contacts is currently unchanged, although they may be switched to the new format in the future.
 
@@ -49,10 +53,10 @@ The above applies only to SMS and MMS messages; the format for call logs and con
 
 SMS Import / Export is available from [GitHub](https://github.com/tmo1/sms-ie). Releases, which include pre-built APK packages, can be downloaded from the [Releases page](https://github.com/tmo1/sms-ie/releases), and are also available at [F-Droid](https://f-droid.org/packages/com.github.tmo1.sms_ie/). Automatically built (debug) packages of the latest code pushed to the repository are generally available [here](https://github.com/tmo1/sms-ie/actions/workflows/build.yml) (click on the latest workflow run, then click on `com.github.tmo1.sms_ie` in the `Artifacts` section).
 
- - Application ID: `com.github.tmo1.sms_ie`
- 
- - App signing certificate fingerprint (SHA-256) (for GitHub, as opposed to F-Droid, releases): `C1:05:E6:D9:67:55:42:D4:34:A9:CD:E9:DC:79:B2:49:F1:AC:0A:FC:3B:8A:AE:C7:D5:C8:20:11:36:CF:FD:BE`
- 
+- Application ID: `com.github.tmo1.sms_ie`
+
+- App signing certificate fingerprint (SHA-256) (for GitHub, as opposed to F-Droid, releases): `C1:05:E6:D9:67:55:42:D4:34:A9:CD:E9:DC:79:B2:49:F1:AC:0A:FC:3B:8A:AE:C7:D5:C8:20:11:36:CF:FD:BE`
+
 For instructions on building the app from its source code, see [`BUILDING.md`](BUILDING.md).
 
 The app is currently available in two ["product flavors"](https://developer.android.com/build/build-variants#product-flavors): `standard` and `legacy`. `standard` will only run on devices with API level >= 23 ([Android 6.0 Marshmallow](https://developer.android.com/about/versions/marshmallow) or later), and uses the latest versions of all of its dependencies. `legacy` will run on devices with API level as low as 19 ([Android 4.4 KitKat](https://developer.android.com/about/versions/kitkat) or later), but uses outdated versions of many of its dependencies. *There is no difference in functionality between the two flavors* (although some functionality is dependent on the *actual API level* of the device on which the app is run, as per the following section, regardless of which app flavor is used); accordingly, the `standard` flavor should always be used except when deploying to devices with API level < 23.
@@ -65,9 +69,9 @@ The app is tested primarily on stock Android and [LineageOS](https://lineageos.o
 
 ## Usage
 
- - Import or export messages, call logs, contacts, or blocked numbers: Click the respective button, then select an import or export source or destination.
- 
- - Wipe messages: Click the `Wipe Messages` button, then confirm by pressing the `Wipe` button in the pop-up dialog box.
+- Import or export messages, call logs, contacts, or blocked numbers: Click the respective button, then select an import or export source or destination.
+
+- Wipe messages: Click the `Wipe Messages` button, then confirm by pressing the `Wipe` button in the pop-up dialog box.
 
 These operations may take some time for large amounts of data. The app will report the total number of SMS and MMS messages, calls, contacts, or blocked numbers imported or exported, and the elapsed time, upon successful conclusion.
 
@@ -125,9 +129,9 @@ On recent versions of Android, scheduled exports that export many MMS messages o
 
 When scheduled exports are enabled, the following options can be used to control retention:
 
- - `Delete old exports` - If this option is not enabled (the default), then any old exports will be left untouched (i.e., all exports are retained indefinitely). If it is enabled, then for each data type (contacts, call log, and messages), upon successful export, the app will try to delete any old exports (i.e., all files with names of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`, where `<data-type>` is the data type successfully exported, and `<yyyy-MM-dd>` is a datestamp). Selective retention of a subset of old exports can be accomplished by enabling this option in conjunction with the use of external software with snapshotting and selective retention functionality, such as [rsnapshot](https://rsnapshot.org/) or [borg](https://borgbackup.readthedocs.io/en/stable/usage/prune.html), running either on the local device, or on a system to which the exports are synced via software such as [Syncthing](https://syncthing.net/). This software should be scheduled to run between exports, and configured to preserve copies of the previous exports before the app deletes them following its next scheduled exports.
- 
- - `Remove datestamps from filenames` - Scheduled exports are always initially created with filenames of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`. If this option is enabled (in addition to the previous one), then after attempting to delete all old exports (of the relevant data type), the app will then attempt to remove the datestamp from the current export's filename by renaming it to `<data-type>.[zip|json]`. This is intended to make successive exports appear to be different versions of the same file, which may be useful in conjunction with external software that implements some form of file versioning, such as [Syncthing](https://docs.syncthing.net/users/versioning.html) or [Nextcloud](https://docs.nextcloud.com/server/latest/user_manual/en/files/version_control.html).
+- `Delete old exports` - If this option is not enabled (the default), then any old exports will be left untouched (i.e., all exports are retained indefinitely). If it is enabled, then for each data type (contacts, call log, and messages), upon successful export, the app will try to delete any old exports (i.e., all files with names of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`, where `<data-type>` is the data type successfully exported, and `<yyyy-MM-dd>` is a datestamp). Selective retention of a subset of old exports can be accomplished by enabling this option in conjunction with the use of external software with snapshotting and selective retention functionality, such as [rsnapshot](https://rsnapshot.org/) or [borg](https://borgbackup.readthedocs.io/en/stable/usage/prune.html), running either on the local device, or on a system to which the exports are synced via software such as [Syncthing](https://syncthing.net/). This software should be scheduled to run between exports, and configured to preserve copies of the previous exports before the app deletes them following its next scheduled exports.
+
+- `Remove datestamps from filenames` - Scheduled exports are always initially created with filenames of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`. If this option is enabled (in addition to the previous one), then after attempting to delete all old exports (of the relevant data type), the app will then attempt to remove the datestamp from the current export's filename by renaming it to `<data-type>.[zip|json]`. This is intended to make successive exports appear to be different versions of the same file, which may be useful in conjunction with external software that implements some form of file versioning, such as [Syncthing](https://docs.syncthing.net/users/versioning.html) or [Nextcloud](https://docs.nextcloud.com/server/latest/user_manual/en/files/version_control.html).
 
 ### Permissions
 
@@ -172,12 +176,12 @@ SMS messages contain a single `address` tag; depending on the message direction,
 
 MMS message objects have the following additions to the tag-value pairs of their internal Android MMS representation:
 
- - A tag-value pair of the form `"__sender_address": { ... }`
- 
- - A tag-value pair of the form `"__recipient_addresses": [ { ... }, { ... } ]`. The child JSON objects associated with `__sender_address` and `__recipient_addresses` contain a series of tag-value pairs taken directly from Android's internal MMS address structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Addr), plus possibly a single added tag-value pair of the form `"__display_name": "Alice"`, as with SMS messages.
- 
- - A tag-value pair of the form `"__parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part).
- 
+- A tag-value pair of the form `"__sender_address": { ... }`
+
+- A tag-value pair of the form `"__recipient_addresses": [ { ... }, { ... } ]`. The child JSON objects associated with `__sender_address` and `__recipient_addresses` contain a series of tag-value pairs taken directly from Android's internal MMS address structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Addr), plus possibly a single added tag-value pair of the form `"__display_name": "Alice"`, as with SMS messages.
+
+- A tag-value pair of the form `"__parts": [ { ... }, { ... }]`, where the child JSON objects contain a series of tag-value pairs taken directly from Android's internal MMS part structure, documented [here](https://developer.android.com/reference/android/provider/Telephony.Mms.Part).
+
 If BLOB values are exported (see [the usage section](#usage)), they will be base64 encoded, and their tags will have the suffix `__base64__` appended to indicate this. This will also prevent such data from being included when importing, since the suffix will prevent the tags from matching any columns present in the target system's MMS database table.
 
 Android stores binary data of MMS parts as individual files in its filesystem. SMS Import / Export copies these files directly into a `data/` directory in the ZIP file, retaining their original filenames (without the full path). The association of these files with MMS parts is based on the values of the [`_DATA`](https://developer.android.com/reference/android/provider/Telephony.Mms.Part#_DATA) tags of the MMS parts. (SMS Import / Export utilizes only the actual filename (the last segment of the path) for this association. If there is [a problem accessing the binary data](https://github.com/tmo1/sms-ie/issues/42), then the data may not be present.)
@@ -194,12 +198,12 @@ The exported JSON is an array of JSON objects representing calls. Each JSON call
 
 As explained in [the official documentation](https://developer.android.com/guide/topics/providers/contacts-provider), Android stores contacts in a complex system of three related database tables:
 
- - [`ContactsContract.Contacts`](https://developer.android.com/reference/android/provider/ContactsContract.Contacts): Rows representing different people, based on aggregations of raw contact rows.
- 
- - [`ContactsContract.RawContact`](https://developer.android.com/reference/android/provider/ContactsContract.RawContacts): Rows containing a summary of a person's data, specific to a user account and type. 
- 
- - [`ContactsContract.Data`](https://developer.android.com/reference/android/provider/ContactsContract.Data): Rows containing the details for raw contact, such as email addresses or phone numbers.
- 
+- [`ContactsContract.Contacts`](https://developer.android.com/reference/android/provider/ContactsContract.Contacts): Rows representing different people, based on aggregations of raw contact rows.
+
+- [`ContactsContract.RawContact`](https://developer.android.com/reference/android/provider/ContactsContract.RawContacts): Rows containing a summary of a person's data, specific to a user account and type. 
+
+- [`ContactsContract.Data`](https://developer.android.com/reference/android/provider/ContactsContract.Data): Rows containing the details for raw contact, such as email addresses or phone numbers.
+
 SMS Import / Export simply dumps these tables in structured JSON format, resulting in a rather cluttered representation of the data with a great deal of repetition and redundancy. This is in accordance with the design principles of the app, which prioritize making sure that no useful information is excluded from the export, and avoiding the code complexity and coding time that would be necessary to filter and / or reorganize the raw data.
 
 The exported JSON is an array of JSON objects representing aggregated contacts, each containing a series of tag-value pairs taken directly from the `Contacts` table. To each contact JSON object, a tag-value pair of the form `"raw_contacts": [ { ... }, { ... }]` is added, where the child JSON objects represent the (aggregated) contacts' associated raw contacts, and each contain a series of tag-value pairs taken directly from the `RawContacts` table. To each raw contact JSON object, a tag-value pair of the form `"contacts_data": [ { ... }, { ... }]` is added, where the child JSON objects represent the raw contacts' associated data (i.e., the actual details of the contacts, such as phone numbers, postal mail addresses, and email addresses), and each contain a series of tag-value pairs taken directly from the `Data` table.
@@ -214,12 +218,12 @@ Contacts import and export is currently considered experimental, and the JSON fo
 
 Blocked number records contain just three fields, documented [here](https://developer.android.com/reference/android/provider/BlockedNumberContract):
 
- - `original_number`: The actual number.
- 
- - `e164_number`: A normalized version of the number (if normalization is possible).
- 
- - `_ID`: The SQLite `ID`.
- 
+- `original_number`: The actual number.
+
+- `e164_number`: A normalized version of the number (if normalization is possible).
+
+- `_ID`: The SQLite `ID`.
+
 ## Limitations
 
 ### Contacts
@@ -279,13 +283,13 @@ SMS Import / Export has no explicit support for [RCS](https://en.wikipedia.org/w
 ## Translations
 
 SMS Import / Export has been translated (from the original English) into the following languages (note that some of these translations may contain inaccuracies, due to changes to the app's original text since they were made):
- 
+
 <a href="https://hosted.weblate.org/engage/sms-import-export/">
 	<img src="https://hosted.weblate.org/widgets/sms-import-export/-/ui-strings/multi-auto.svg" alt="Translation status" />
 </a>
-  
+
 To add a translation into a new language, or to correct, update, or improve an existing translation, see [here](CONTRIBUTING.md).
- 
+
 ## Tools
 
 The [`tools`](/tools/) directory contains various tools that may be useful in conjunction with SMS Import / Export; see [`Tools.md`](/tools/Tools.md) for details and documentation.
@@ -294,7 +298,7 @@ The [`tools`](/tools/) directory contains various tools that may be useful in co
 
 The following are various features and improvements to the app that have been suggested and may be implemented in the future:
 
- - Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
+- Greater flexibility of scheduled exporting, including intervals other than daily, incremental / differential exporting, and retention handling (discussion in [issue #7](https://github.com/tmo1/sms-ie/issues/7))
 
 ## Contributing
 
