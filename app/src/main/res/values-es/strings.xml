@@ -41,7 +41,6 @@
 \nTiempo transcurrido: %3$s</string>
     <string name="export_call_log_results">%1$d llamada(s) exportada(s)
 \nTiempo transcurrido: %2$s</string>
-    <string name="default_sms_app_requirement">Esta aplicación debe ser la aplicación de predeterminada de SMS para poder importar o borrar los mensajes.</string>
     <string name="call_logs_read_write_permissions_required">Para importar los registros de llamadas se requiere permisos para leer y escribir en los registros de llamadas.</string>
     <string name="settings">Ajustes</string>
     <string name="include_binary_data">Incluir los datos binarios de los MMS</string>

@@ -28,5 +28,4 @@
     <string name="call_log_export_progress">%1$d / %2$d വിളി(കൾ) കയറ്റുമതി ചെയ്തു</string>
     <string name="import_messages_results">%1$d എസ്എംഎസ്(കളും) %2$d എംഎംഎസ്(കളും) ഇറക്കുമതി ചെയ്തു
 \nകഴിഞ്ഞ സമയം: %3$s</string>
-    <string name="default_sms_app_requirement">സന്ദേശങ്ങൾ ഇറക്കുമതി ചെയ്യാനോ മായ്‌ക്കാനോ ഉള്ള സ്ഥിരസ്ഥിതി എസ്എംഎസ് പ്രയോഗം ഈ പ്രയോഗം ആയിരിക്കണം.</string>
 </resources>

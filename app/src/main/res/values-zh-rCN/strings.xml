@@ -15,7 +15,6 @@
     <string name="message_import_progress">导入了 %1$d 条短信、%2$d 条彩信</string>
     <string name="export_messages_results">导出了 %1$d 条短信、%2$d 条彩信
 \n用时 %3$s</string>
-    <string name="default_sms_app_requirement">需将本应用程序作为默认的短信应用，以便导入及擦除消息。</string>
     <string name="settings">设置</string>
     <string name="include_binary_data">不排除掉二进制彩信数据</string>
     <string name="wipe_cancelled">取消了擦除命令</string>

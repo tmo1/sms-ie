@@ -20,7 +20,6 @@
     <string name="export_contacts_results">Wyeksportowano %1$d kontaktów\nZajęło to: %2$s.</string>
     <string name="import_contacts_results">Zaimportowano %1$d kontaktów\nZajęło to: %2$s</string>
     <string name="sms_permissions_required">Eksportowanie wiadomości wymaga uprawnień do odczytu SMSów i kontaktów.</string>
-    <string name="default_sms_app_requirement">Ta aplikacja musi być domyślną aplikacją do obsługi SMSów, aby można było importować lub usuwać wiadomości.</string>
     <string name="call_logs_permissions_required">Eksportowanie listy połączeń wymaga uprawnień do odczytu listy połączeń i kontaktów.</string>
     <string name="call_logs_read_write_permissions_required">Importowanie listy połączeń wymaga uprawnień do odczytu i zapisu listy połączeń.</string>
     <string name="contacts_read_permission_required">Eksportowanie kontaktów wymaga uprawnień do odczytu kontaktów.</string>

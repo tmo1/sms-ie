@@ -37,7 +37,6 @@
     <string name="export_call_log_results">%1$d opkald eksporteret\nVarighed: %2$s</string>
     <string name="import_call_log_results">%1$d opkald importeret\nVarighed: %2$s</string>
     <string name="sms_permissions_required">Eksport af beskeder kræver tilladelse til at læse SMS\'er og kontakter.</string>
-    <string name="default_sms_app_requirement">Denne app skal være standardbeskedapp for at importere eller slette beskeder.</string>
     <string name="contacts_read_permission_required">Eksport af kontakter kræver tilladelse til at læse kontakter.</string>
     <string name="include_binary_data">Inkluder binær MMS-data</string>
     <string name="persistent_channel_name">Baggrundstjenester</string>

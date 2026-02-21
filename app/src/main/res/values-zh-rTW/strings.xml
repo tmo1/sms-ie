@@ -10,7 +10,6 @@
     <string name="import_messages_results">已匯入 %1$d 則簡訊和 %2$d 則多媒體訊息\n耗時：%3$s</string>
     <string name="contacts_export_progress">已匯出聯絡人 %1$d / %2$d</string>
     <string name="import_contacts_results">已匯入 %1$d 位聯絡人\n耗時：%2$s</string>
-    <string name="default_sms_app_requirement">必須設為預設簡訊應用程式才能匯入或清除訊息。</string>
     <string name="settings">設定</string>
     <string name="include_binary_data">包含二進制多媒體訊息資料</string>
     <string name="call_logs_read_write_permissions_required">需要讀取與寫入通話記錄權限才能匯入資料。</string>

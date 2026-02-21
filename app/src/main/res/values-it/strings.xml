@@ -17,7 +17,6 @@
 \nTempo trascorso: %3$s</string>
     <string name="export_call_log_results">%1$d chiamata/e esportata/e
 \nTempo trascorso: %2$s</string>
-    <string name="default_sms_app_requirement">Questa applicazione deve essere l\'applicazione SMS predefinita per importare o cancellare i messaggi.</string>
     <string name="call_logs_permissions_required">L\'esportazione del registro delle chiamate richiede l\'autorizzazione per leggere il registro delle chiamate e i contatti.</string>
     <string name="call_logs_read_write_permissions_required">L\'importazione del registro delle chiamate richiede l\'autorizzazione per leggere e scrivere il registro delle chiamate.</string>
     <string name="contacts_read_permission_required">L\'esportazione dei contatti richiede l\'autorizzazione per leggere i contatti.</string>
