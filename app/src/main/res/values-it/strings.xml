@@ -8,8 +8,8 @@
 \nTempo trascorso: %3$s</string>
     <string name="import_call_log_results">%1$d chiamata/e importata/e
 \nTempo trascorso: %2$s</string>
-    <string name="import_contacts_results">%1$d contatto/i importato/i \nTempo trascorso: %2$s.</string>
-    <string name="export_contacts_results">%1$d contatto/i esportato/i \nTempo trascorso: %2$s.</string>
+    <string name="import_contacts_results">%1$d contatto/i importato/i \nTempo trascorso: %2$s</string>
+    <string name="export_contacts_results">%1$d contatto/i esportato/i \nTempo trascorso: %2$s</string>
     <string name="sms_permissions_required">L\'esportazione dei messaggi richiede l\'autorizzazione per leggere SMS e contatti.</string>
     <string name="app_name">SMS Import / Export</string>
     <string name="sms_export_progress">%1$d di %2$d SMS esportati</string>
@@ -63,4 +63,18 @@
     <string name="default_sms_app_warning"><b>Attenzione</b>: al momento questa è l\'applicazione predefinita per gli SMS. Significa che SMS e MMS in arrivo andranno persi! Per evitare questo problema, impostare un\'app SMS predefinita adeguata.</string>
     <string name="alerts_channel_description">Avvisi di successo/fallimento al completamento delle esportazioni programmate</string>
     <string name="donations">Donazioni:</string>
+    <string name="blocked_numbers_export_progress">%1$d di %2$d numero/i bloccato/i esportato/i</string>
+    <string name="blocked_numbers_import_progress">%1$d numero/i bloccato/i importato/i</string>
+    <string name="export_blocked_numbers_results">%1$d numero/i bloccato/i esportato/i\nTempo trascorso: %2$s</string>
+    <string name="import_blocked_numbers_results">%1$d numero/i bloccato/i importato/i\nTempo trascorso: %2$s</string>
+    <string name="scheduled_export_error_title">Errore di esportazione programmata</string>
+    <string name="messages_export_error_title">Errore di esportazione messaggi</string>
+    <string name="messages_import_error_title">Errore di importazione messaggi</string>
+    <string name="call_log_export_error_title">Errore di esportazione registro chiamate</string>
+    <string name="call_log_import_error_title">Errore di importazione registro chiamate</string>
+    <string name="contacts_export_error_title">Errore di esportazione contatti</string>
+    <string name="contacts_import_error_title">Errore di importazione contatti</string>
+    <string name="blocked_numbers_export_error_title">Errore di esportazione numeri bloccati</string>
+    <string name="blocked_numbers_import_error_title">Errore di importazione numeri bloccati</string>
+    <string name="messages_wipe_error_title">Errore di eliminazione messaggi</string>
 </resources>
