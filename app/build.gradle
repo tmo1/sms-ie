@@ -1,6 +1,6 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
- * call logs, and contacts, from and to JSON / NDJSON files.
+ * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
  *
  * Copyright (c) 2021-2026 Thomas More
  *
@@ -17,8 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>
- *
+ * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '2.3.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.3.10'
 }
 
 android {
@@ -94,14 +93,14 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
     implementation 'androidx.preference:preference-ktx:1.2.1'
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"
 
     standardImplementation 'androidx.core:core-ktx:1.17.0'
     standardImplementation 'com.google.android.material:material:1.13.0'
     standardImplementation 'androidx.documentfile:documentfile:1.1.0'
     standardImplementation 'androidx.appcompat:appcompat:1.7.1'
     standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    standardImplementation 'androidx.work:work-runtime-ktx:2.11.0'
+    standardImplementation 'androidx.work:work-runtime-ktx:2.11.1'
 
     legacyImplementation 'androidx.core:core-ktx:1.13.1'
     legacyImplementation 'com.google.android.material:material:1.12.0'
