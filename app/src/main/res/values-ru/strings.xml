@@ -11,7 +11,6 @@
     <string name="about">О приложении</string>
     <string name="issue_tracker">Отслеживание задач:</string>
     <string name="import_contacts_results">%1$d контакт(ов) импортирован(о) \nЗатрачено времени: %2$s</string>
-    <string name="default_sms_app_requirement">Это приложение должно быть SMS-приложением по умолчанию для импорта или очистки сообщений.</string>
     <string name="messages_wiped">Сообщения очищены</string>
     <string name="homepage">Домашняя страница:</string>
     <string name="app_name">SMS Import / Export</string>

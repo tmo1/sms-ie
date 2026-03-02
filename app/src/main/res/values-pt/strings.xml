@@ -17,7 +17,6 @@
     <string name="export_call_log_results">%1$d chamada(s) exportadas
 \nTempo utilizado: %2$s</string>
     <string name="sms_permissions_required">A exportação de mensagens requer permissão para ler SMSs e contactos.</string>
-    <string name="default_sms_app_requirement">Esta aplicação tem de ser a aplicação de SMS padrão para importar ou apagar mensagens.</string>
     <string name="call_logs_permissions_required">A exportação de registo de chamadas requer permissão para ler os Registos das Chamadas e os Contactos.</string>
     <string name="call_logs_read_write_permissions_required">A importação de Registos de Chamadas requer permissão para ler e escrever registos de chamadas.</string>
     <string name="settings">Definições</string>
