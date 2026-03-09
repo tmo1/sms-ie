@@ -7,9 +7,3 @@
  - Bump standard flavor minSdkVersion to 23.
 
  - Update various translations.
-
- - Update various dependencies.
-
- - Update AGP to 8.13.2.
-
- - Update Kotlin serialization plugin to 2.3.0.
