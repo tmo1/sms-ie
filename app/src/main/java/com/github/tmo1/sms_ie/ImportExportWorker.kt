@@ -1,8 +1,8 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
- * call logs, and contacts, from and to JSON / NDJSON files.
+ * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
  *
- * Copyright (c) 2022-2023,2025 Thomas More
+ * Copyright (c) 2022-2023,2025-26 Thomas More
  * Copyright (c) 2023-2024 Andrew Gunnerson
  *
  * This file is part of SMS Import / Export.
@@ -61,7 +61,7 @@ enum class Action {
     EXPORT_AUTOMATIC, EXPORT_CALL_LOG_MANUAL, IMPORT_CALL_LOG_MANUAL, EXPORT_CONTACTS_MANUAL, IMPORT_CONTACTS_MANUAL, EXPORT_MESSAGES_MANUAL, IMPORT_MESSAGES_MANUAL, EXPORT_BLOCKED_NUMBERS_MANUAL, IMPORT_BLOCKED_NUMBERS_MANUAL, WIPE_MESSAGES_MANUAL, ;
 
     // Wiping calls ContentResolver.delete(), which does not have a variant that accepts a
-    // CancellationSignal instance. The operation cannot be cancelled without killing the app.
+    // CancellationSignal instance. The operation cannot be canceled without killing the app.
     val isCancellable: Boolean
         get() = this != WIPE_MESSAGES_MANUAL
 }
@@ -139,7 +139,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     private suspend fun updateProgress(progress: Progress) {
         // [Unthrottled] For updating MainActivity and anything else that might be monitoring this
         // worker's progress. We currently funnel information about whether the operation can be
-        // cancelled here because WorkInfo does not expose the input parameters like the action.
+        // canceled here because WorkInfo does not expose the input parameters like the action.
         // MainActivity has no other way to know if this is cancellable.
         setProgress(progress.copy(canCancel = action.isCancellable).toWorkData())
         // [Throttled] For updating the foreground service notification.
@@ -168,10 +168,10 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             ProcessBuilder("logcat", "*:V", *logcatExtraArgs).apply {
-                    if (logcatUseStdout) {
-                        redirectOutput(logcatFile)
-                    }
-                }.redirectErrorStream(true).start()
+                if (logcatUseStdout) {
+                    redirectOutput(logcatFile)
+                }
+            }.redirectErrorStream(true).start()
         } else {
             null
         }
@@ -198,7 +198,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             val message = buildString {
                 append(e.localizedMessage)
 
-                // If we're showing an user-friendly error message, also include the description of
+                // If we're showing a user-friendly error message, also include the description of
                 // the direct cause.
                 if (e is UserFriendlyException) {
                     e.cause?.let {
@@ -235,7 +235,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             notificationManager.cancel(NOTIFICATION_ID_PERSISTENT)
         }
 
-        // Don't show completion notifications for cancelled jobs since cancellations are always
+        // Don't show completion notifications for canceled jobs since cancellations are always
         // initiated by the user. There's no need to annoy them with a cancellation exception error
         // message.
         if (!isStopped) {
@@ -586,5 +586,8 @@ fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
                 // Instead, we'll just assume that no parameters means scheduled automatic exports.
                 .build()
         WorkManager.getInstance(context).enqueue(exportRequest)
+    } else {
+        Log.d(LOG_TAG, "Scheduled export disabled - canceling any scheduled exports")
+        WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
     }
 }
