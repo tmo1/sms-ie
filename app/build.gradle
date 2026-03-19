@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '2.3.10'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.3.20'
 }
 
 android {
@@ -95,7 +95,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"
 
-    standardImplementation 'androidx.core:core-ktx:1.17.0'
+    standardImplementation 'androidx.core:core-ktx:1.18.0'
     standardImplementation 'com.google.android.material:material:1.13.0'
     standardImplementation 'androidx.documentfile:documentfile:1.1.0'
     standardImplementation 'androidx.appcompat:appcompat:1.7.1'
