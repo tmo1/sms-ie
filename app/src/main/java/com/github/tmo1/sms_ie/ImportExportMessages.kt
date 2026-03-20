@@ -359,14 +359,13 @@ suspend fun importMessages(
         // I don't know if there's a way to query the MMS address table without supplying a
         // dummy message ID, but this seems to work:
         val addressTableUri = "content://mms/0/addr".toUri()
-        val addressCursor = appContext.contentResolver.query(addressTableUri, null, null, null, null)
+        val addressCursor =
+            appContext.contentResolver.query(addressTableUri, null, null, null, null)
         addressCursor?.use {
             addressColumns.addAll(it.columnNames)
             addressColumns.removeAll(
                 setOf(
-                    Telephony.Mms.Addr.MSG_ID,
-                    Telephony.Mms.Addr._ID,
-                    Telephony.Mms.Addr._COUNT
+                    Telephony.Mms.Addr.MSG_ID, Telephony.Mms.Addr._ID, Telephony.Mms.Addr._COUNT
                 )
             )
         }
@@ -428,7 +427,7 @@ suspend fun importMessages(
                             }
                             if (!messageJSON.has("m_type")) { // it's SMS
                                 Log.d(LOG_TAG, "Message is SMS")
-                                // It would obviously be more efficient to break rather then continue when hitting 'max_records', but this option is primarily for debugging and the inefficiency doesn't matter very much
+                                // It would obviously be more efficient to break rather than continue when hitting 'max_records', but this option is primarily for debugging and the inefficiency doesn't matter very much
                                 if (!prefs.getBoolean(
                                         "sms", true
                                     ) || totals.sms == (prefs.getString(
@@ -620,14 +619,12 @@ suspend fun importMessages(
                                         // https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/a97076d34e2613d4a89c92d56c40daa1066c488a
                                         // Attempting to import "sub_id"s can cause address import to fail:
                                         // See: https://github.com/tmo1/sms-ie/issues/213
-                                        if (!importSubIds && address.containsKey("sub_id")
-                                        ) {
+                                        if (!importSubIds && address.containsKey("sub_id")) {
                                             address.put("sub_id", "-1")
                                         }
                                         address.put(
                                             Telephony.Mms.Addr.MSG_ID, messageId
-                                        )
-                                        /*Log.d(
+                                        )/*Log.d(
                                             LOG_TAG,
                                             "Trying to insert MMS address - uri: ${addressUri}, metadata:$address"
                                         )*/
@@ -656,11 +653,9 @@ suspend fun importMessages(
                                             // Attempting to import sub_ids can cause a "FileNotFoundException: No entry for content"
                                             // when subsequently trying to write the part's binary data.
                                             // See: https://github.com/tmo1/sms-ie/issues/142
-                                            if (!importSubIds && part.containsKey("sub_id")
-                                            ) {
+                                            if (!importSubIds && part.containsKey("sub_id")) {
                                                 part.put("sub_id", "-1")
-                                            }
-                                            /*Log.v(
+                                            }/*Log.v(
                                                 LOG_TAG,
                                                 "Trying to insert MMS part - uri: ${partUri}, metadata:$part"
                                             )*/

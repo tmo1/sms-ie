@@ -1,3 +1,10 @@
- - Fix a problem that prevented MMS addresses exported from recent versions of Android from import into earlier versions of Android (issue #322).
+ - Apply message filtering to wipe operations (issue #237)
+
+ - Don't insert into non-existent MMS address columns upon import (issue #322).
+
+ - Cancel any scheduled exports when the 'Enable scheduled export' preference is disabled (issue #326).
 
  - Remove 'android.permission.ACCESS_NETWORK_STATE' (issue #324).
+
+ - Update Italian translation.
+

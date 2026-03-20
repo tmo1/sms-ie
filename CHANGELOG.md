@@ -8,9 +8,14 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+### Changed
+
+ - **Breaking:** Apply message filtering to wipe operations ([issue #237](https://github.com/tmo1/sms-ie/issues/237))
+ 
 ### Fixed
 
  - Don't insert into non-existent MMS address columns upon import ([issue #322](https://github.com/tmo1/sms-ie/issues/322))
+ - Cancel any scheduled exports when the `Enable scheduled export` preference is disabled ([issue #326](https://github.com/tmo1/sms-ie/issues/326))
  - Remove `android.permission.ACCESS_NETWORK_STATE` ([issue #324](https://github.com/tmo1/sms-ie/issues/324))
  - Update Italian translation ([c001e65](https://github.com/tmo1/sms-ie/commit/c001e656f539656d7afac5b85ecbedb3e96b6ead), [ae76174](https://github.com/tmo1/sms-ie/commit/ae7617428457a2e35c1f8d3b68fb25033d552ac1)) (Random)
 
