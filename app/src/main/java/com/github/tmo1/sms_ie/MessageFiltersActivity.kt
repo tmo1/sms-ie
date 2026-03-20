@@ -39,7 +39,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.preference.PreferenceManager
@@ -99,7 +98,6 @@ class MessageFiltersActivity : AppCompatActivity() {
                     position, Json.encodeToString(list[position])
                 )
                 newFragment.show(supportFragmentManager, "edit_message_filter")
-                true
             }
         val addMessageFiltersButton: Button = findViewById(R.id.add_message_filter_button)
         addMessageFiltersButton.setOnClickListener {
@@ -135,11 +133,12 @@ class AddEditDeleteMessageFilterFragment : DialogFragment() {
                 )
                 // https://developer.android.com/guide/fragments/communicate#fragment-result
                 setFragmentResult(
-                    "saveFilter", bundleOf(
-                        "filter" to Json.encodeToString<MessageFilter>(messageFilter),
-                        "position" to (position ?: -1)
-                    )
-                )
+                    "saveFilter", Bundle().apply {
+                        putString(
+                            "filter", Json.encodeToString<MessageFilter>(messageFilter)
+                        )
+                        putInt("position", position ?: -1)
+                    })
             }.setNegativeButton(
                 "Cancel"
             ) { dialog, id ->
@@ -149,8 +148,7 @@ class AddEditDeleteMessageFilterFragment : DialogFragment() {
                 builder.setNeutralButton("Delete") { dialog, id ->
                     // https://developer.android.com/guide/fragments/communicate#fragment-result
                     setFragmentResult(
-                        "deleteFilter", bundleOf("filterPosition" to position)
-                    )
+                        "deleteFilter", Bundle().apply { putInt("filterPosition", position) })
                 }
             }
             // https://developer.android.com/develop/ui/views/components/spinner
@@ -235,7 +233,7 @@ fun messageSelection(appContext: Context, messageType: Int): String? {
         }.joinToString(separator = " AND ") {
             var value = it.value
             if (it.column == "date" || it.column == "date_sent") {
-                if (messageType == SMS && value.length <= 11) value = value + "000"
+                if (messageType == SMS && value.length <= 11) value += "000"
                 else if (messageType == MMS && value.length > 11) value = value.dropLast(3)
             }
             "${it.column.substringAfter('.')} ${it.operator} $value"
