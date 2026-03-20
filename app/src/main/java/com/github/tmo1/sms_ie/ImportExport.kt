@@ -142,11 +142,11 @@ suspend fun wipeSmsAndMmsMessages(appContext: Context, updateProgress: suspend (
     withContext(Dispatchers.IO) {
         if (prefs.getBoolean("sms", true)) {
             updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_sms_messages)))
-            appContext.contentResolver.delete(Telephony.Sms.CONTENT_URI, null, null)
+            appContext.contentResolver.delete(Telephony.Sms.CONTENT_URI, messageSelection(appContext, SMS), null)
         }
         if (prefs.getBoolean("mms", true)) {
             updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_mms_messages)))
-            appContext.contentResolver.delete(Telephony.Mms.CONTENT_URI, null, null)
+            appContext.contentResolver.delete(Telephony.Mms.CONTENT_URI, messageSelection(appContext, MMS), null)
         }
     }
 }

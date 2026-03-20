@@ -1,20 +1,22 @@
 # Message Filtering
 
-Sms Import / Export currently implements a rudimentary but powerful mechanism for filtering messages upon export. In order to use this mechanism effectively, it is important to understand how Android stores messages internally and how SMS I/E accesses them.
+Sms Import / Export currently implements a rudimentary but powerful mechanism for filtering messages when exporting or wiping them. In order to use this mechanism effectively, it is important to understand how Android stores messages internally and how SMS I/E accesses them.
 
 ## Background
 
-Android stores both SMS and MMS messages in an [SQLite](https://en.wikipedia.org/wiki/SQLite) database. For SMSs messages, a single table contains both the message data (in the `body` column) and all its metadata (in various other columns). (The name of the other party to the message is not stored in the message table, since a message contains only an "address" (phone number) but not any sort of contact name. Android associates a name with the message via user provided contact information, and this information is stored in a different database.)
+Android stores both SMS and MMS messages in an [SQLite](https://en.wikipedia.org/wiki/SQLite) database. For SMS messages, a single table contains both the message data (in the `body` column) and all its metadata (in various other columns). (The name of the other party to the message is not stored in the message table, since a message contains only an "address" (phone number) but not any sort of contact name. Android associates a name with the message via user provided contact information, and this information is stored in a different database.)
 
 For MMS messages, however, the situation is more complicated. The main MMS message table contains most of the message metadata (including the dates the message was sent and received in the `date_sent` and `date` columns (present in the SMS message table as well) respectively), but not the sender and recipient "addresses" or the actual message data ("parts," both text and binary), which are stored in different tables.
 
-Android provides a [`ContentProvider`](https://developer.android.com/guide/topics/providers/content-provider-basics) API for accessing SMS and MMS messages, which functions as a thin abstraction layer over the underlying SQLite API. Due to the previously described internal message storage architecture, for SMS messages. SMS I/E executes a single query to retrieve all data and metadata of all messages (except for the contact names of the messages' other parties, which requires additional queries since they are stored in a separate database, as above). For MMS messages, however, SMS I/E initially executes a single query to retrieve the message metadata (of all messages) that is stored in the main MMS table, but then executes additional queries for each message to retrieve its sender and recipient "addresses" and its "parts."
+Android provides a [`ContentProvider`](https://developer.android.com/guide/topics/providers/content-provider-basics) API for accessing SMS and MMS messages, which functions as a thin abstraction layer over the underlying SQLite API. Due to the previously described internal message storage architecture, when exporting SMS messages, SMS I/E issues a single query to retrieve all data and metadata of all messages (except for the contact names of the messages' other parties, which requires additional queries since they are stored in a separate database, as above). When exporting MMS messages, however, SMS I/E initially issues a single query to retrieve the message metadata (of all messages) that is stored in the main MMS table, but then issues additional queries for each message to retrieve its sender and recipient "addresses" and its "parts."
 
 **The current message filtering mechanism is implemented by constructing an SQLite `WHERE` clause out of user-specified filters, which is used with the queries of the main SMS and MMS tables.** Consequently, SMS messages can be filtered based on their data and (in principle) any of their metadata, whereas MMS messages can be filtered based only on their metadata that is present in the main MMS table.
 
+Similarly, when wiping messages SMS I/E issues one delete command to the SMS table and one to the MMS table, both of which are filtered in the same way that queries are.
+
 ## Usage
 
-To use message filtering, it must be enabled in the app's Settings (under Export Settings), and one or more filters must be configured (and set to `Active`) using the Message Filtering interface. When an export (manual or scheduled) is executed, the app will combine all active filters using the SQLite `AND` keyword and use the result as an SQLite `WHERE` clause. (A filter that is not currently desired but may be desired in the future can be set to `Inactive` rather than deleted in order to avoid having to reconfigure it later.)
+To use message filtering, it must be enabled in the app's Settings (under Export Settings), and one or more filters must be configured (and set to `Active`) using the Message Filtering interface. When an export (manual or scheduled) or wipe is executed, the app will combine all active filters using the SQLite `AND` keyword and use the result as an SQLite `WHERE` clause. (A filter that is not currently desired but may be desired in the future can be set to `Inactive` rather than deleted in order to avoid having to reconfigure it later.)
 
 Message filters have three fields:
 
@@ -22,7 +24,7 @@ Message filters have three fields:
  - `Operator`: an SQLite operator (these are officially documented [here](https://sqlite.org/lang_expr.html), and somewhat more readably [here](https://www.sqlitetutorial.net/sqlite-where/)).
  - `Column value`: a user-provided value.
  
-> [!WARNING] The app does not perform any syntax checking of provided column values, and it is the user's responsibility to ensure that the configured filter constitutes valid SQLite syntax. If it does not, subsequent exports will fail with [`SQLiteException`](https://developer.android.com/reference/android/database/sqlite/SQLiteException)s.
+> [!WARNING] The app does not perform any syntax checking of provided column values, and it is the user's responsibility to ensure that the configured filter constitutes valid SQLite syntax. If it does not, subsequent exports and wipes will fail with [`SQLiteException`](https://developer.android.com/reference/android/database/sqlite/SQLiteException)s.
 
 ### Dates
 

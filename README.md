@@ -87,7 +87,7 @@ SMS Import / Export does all input and output via the Android [Storage Access Fr
 
 ## Message Filtering
 
-SMS Import / Export can filter messages on export; see [here](MESSAGE-FILTERING.md) for an explanation of the filtering system and usage examples.
+SMS Import / Export can filter messages when exporting or wiping them; see [here](MESSAGE-FILTERING.md) for an explanation of the filtering system and usage examples.
 
 ### Encryption
 
