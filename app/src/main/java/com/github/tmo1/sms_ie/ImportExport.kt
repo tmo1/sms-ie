@@ -1,8 +1,8 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
- * call logs, and contacts, from and to JSON / NDJSON files.
+ * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2022,2024-2025 Thomas More
+ * Copyright (c) 2021-2022,2024-2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -22,7 +22,7 @@
 
 /*
  * This file contains various utility functions used by the various import and export routines
- * (which are in their own eponymous files), as well as the message database wiping routine.
+ * (which are in their own eponymous files), as well as the message wiping and counting routines.
  */
 
 package com.github.tmo1.sms_ie
@@ -69,18 +69,10 @@ data class Progress(
 class UserFriendlyException(message: String? = null, cause: Throwable? = null) :
     Exception(message, cause)
 
-fun checkReadSMSContactsPermissions(appContext: Context): Boolean {
+fun checkReadSMSPermission(appContext: Context): Boolean {
     return ContextCompat.checkSelfPermission(
         appContext, Manifest.permission.READ_SMS
-    ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-        appContext, Manifest.permission.READ_CONTACTS
-    ) == PackageManager.PERMISSION_GRANTED/*else {
-        Toast.makeText(
-            appContext,
-            appContext.getString(R.string.sms_permissions_required),
-            Toast.LENGTH_LONG
-        ).show()
-    }*/
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
 fun checkReadCallLogsContactsPermissions(appContext: Context): Boolean {
@@ -142,12 +134,41 @@ suspend fun wipeSmsAndMmsMessages(appContext: Context, updateProgress: suspend (
     withContext(Dispatchers.IO) {
         if (prefs.getBoolean("sms", true)) {
             updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_sms_messages)))
-            appContext.contentResolver.delete(Telephony.Sms.CONTENT_URI, messageSelection(appContext, SMS), null)
+            appContext.contentResolver.delete(
+                Telephony.Sms.CONTENT_URI, messageSelection(appContext, SMS), null
+            )
         }
         if (prefs.getBoolean("mms", true)) {
             updateProgress(Progress(0, 0, appContext.getString(R.string.wiping_mms_messages)))
-            appContext.contentResolver.delete(Telephony.Mms.CONTENT_URI, messageSelection(appContext, MMS), null)
+            appContext.contentResolver.delete(
+                Telephony.Mms.CONTENT_URI, messageSelection(appContext, MMS), null
+            )
         }
+    }
+}
+
+suspend fun countMessages(appContext: Context): MessageTotal {
+    Log.d(LOG_TAG, "Counting messages")
+    val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    return withContext(Dispatchers.IO) {
+        val totals = MessageTotal()
+        if (prefs.getBoolean("sms", true)) {
+            val smsCursor = appContext.contentResolver.query(
+                Telephony.Sms.CONTENT_URI, null, messageSelection(appContext, SMS), null, null
+            )
+            smsCursor?.use {
+                totals.sms = smsCursor.count
+            }
+        }
+        if (prefs.getBoolean("mms", true)) {
+            val mmsCursor = appContext.contentResolver.query(
+                Telephony.Mms.CONTENT_URI, null, messageSelection(appContext, MMS), null, null
+            )
+            mmsCursor?.use {
+                totals.mms = mmsCursor.count
+            }
+        }
+        totals
     }
 }
 

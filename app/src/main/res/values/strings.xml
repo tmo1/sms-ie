@@ -44,6 +44,7 @@
     <string name="import_contacts_results">%1$d contact(s) imported\nElapsed time: %2$s</string>
     <string name="export_blocked_numbers_results">%1$d blocked number(s) exported\nElapsed time: %2$s</string>
     <string name="import_blocked_numbers_results">%1$d blocked number(s) imported\nElapsed time: %2$s</string>
+    <string name="count_messages_results">%1$d SMS(s) and %2$d MMS(s) counted</string>
 
     <string name="scheduled_export_error_title">Scheduled export error</string>
     <string name="messages_export_error_title">Messages export error</string>
@@ -55,6 +56,7 @@
     <string name="blocked_numbers_export_error_title">Blocked numbers export error</string>
     <string name="blocked_numbers_import_error_title">Blocked numbers import error</string>
     <string name="messages_wipe_error_title">Messages wipe error</string>
+    <string name="messages_count_error_title">Messages count error</string>
 
     <string name="json_parse_error">Error parsing JSON file</string>
     <string name="missing_messages_ndjson_error">Can\'t find \'messages.ndjson\'. Please make sure that the provided file is a ZIP file in the correct format.</string>
@@ -65,11 +67,12 @@
     <string name="pref_save_logcat_name">Save logcat</string>
     <string name="pref_save_logcat_desc">Save logcat to %1$s when an operation is running.</string>
 
-    <string name="sms_permissions_required">Exporting messages requires permission to read SMSs and contacts.</string>
+    <string name="sms_and_contacts_read_permissions_required">Exporting messages requires permission to read SMSs and contacts.</string>
     <string name="call_logs_permissions_required">Exporting call logs requires permission to read Call Logs and Contacts.</string>
     <string name="call_logs_read_write_permissions_required">Importing call logs requires permission to read and write call logs.</string>
     <string name="contacts_read_permission_required">Exporting contacts requires permission to read Contacts.</string>
     <string name="contacts_write_permissions_required">Importing contacts requires permission to write Contacts.</string>
+    <string name="sms_read_permission_required">Counting messages requires permission to read SMSs.</string>
     <string name="settings">Settings</string>
     <string name="include_binary_data">Include binary MMS data</string>
     <string name="persistent_channel_name">Background services</string>
@@ -95,7 +98,7 @@
 \n
 \nVersion %1$s
 \n
-\nCopyright © 2021–2025
+\nCopyright © 2021–2026
 \n
 \nReleased under the GNU GPLv3</string>
     <string name="homepage">Homepage:</string>
@@ -117,6 +120,7 @@
     <string name="exporting_blocked_numbers">Exporting blocked numbers …</string>
     <string name="importing_blocked_numbers">Importing blocked numbers …</string>
     <string name="wiping_messages">Wiping messages …</string>
+    <string name="counting_messages">Counting messages …</string>
     <string name="become_default_sms_app_warning">SMS Import / Export must be the default SMS app in order to import or wipe messages or to import or export blocked numbers. Please read the README and make sure you understand the implications of doing this before proceeding.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Default SMS App</string>
@@ -139,4 +143,5 @@
     <string name="active">Active:</string>
     <string name="export_blocked_numbers">Export Blocked Numbers</string>
     <string name="import_blocked_numbers">Import Blocked Numbers</string>
+    <string name="count_messages">Count messages</string>
 </resources>

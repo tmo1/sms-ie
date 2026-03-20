@@ -1,8 +1,8 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
- * call logs, and contacts, from and to JSON / NDJSON files.
+ * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2025 Thomas More
+ * Copyright (c) 2021-2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -52,7 +52,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.os.bundleOf
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
@@ -76,10 +75,7 @@ private const val STATE_PENDING_ACTION = "pending_action"
 private const val STATE_POST_SMS_ROLE_ACTION = "post_sms_role_action"
 
 private enum class PostSmsRoleAction {
-    IMPORT_MESSAGES,
-    EXPORT_BLOCKED_NUMBERS,
-    IMPORT_BLOCKED_NUMBERS,
-    WIPE_MESSAGES,
+    IMPORT_MESSAGES, EXPORT_BLOCKED_NUMBERS, IMPORT_BLOCKED_NUMBERS, WIPE_MESSAGES,
 }
 
 class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,
@@ -218,6 +214,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val exportBlockedNumbersButton: Button = findViewById(R.id.export_blocked_numbers_button)
         val importBlockedNumbersButton: Button = findViewById(R.id.import_blocked_numbers_button)
         val wipeAllMessagesButton: Button = findViewById(R.id.wipe_all_messages_button)
+        val countMessagesButton: Button = findViewById(R.id.count_messages_button)
         val setDefaultSMSAppButton: Button = findViewById(R.id.set_default_sms_app_button)
         val statusReportText: TextView = findViewById(R.id.status_report)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
@@ -244,6 +241,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             postSmsRoleAction = PostSmsRoleAction.WIPE_MESSAGES
             checkDefaultSMSApp()
         }
+        countMessagesButton.setOnClickListener { countMessagesManual() }
         setDefaultSMSAppButton.setOnClickListener {
             startActivity(
                 Intent(
@@ -271,8 +269,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     NotificationManager.IMPORTANCE_LOW
                 ).apply {
                     description = getString(R.string.persistent_channel_description)
-                }
-            )
+                })
 
             notificationManager.createNotificationChannel(
                 NotificationChannel(
@@ -281,22 +278,19 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
                     description = getString(R.string.alerts_channel_description)
-                }
-            )
+                })
 
             // Remove legacy notification channels to accommodate upgrades
             notificationManager.deleteNotificationChannel("MYCHANNEL")
         }
 
         val workManager = WorkManager.getInstance(this)
-        workManager
-            .getWorkInfosLiveData(
+        workManager.getWorkInfosLiveData(
                 WorkQuery.fromTags(
                     ImportExportWorker.TAG_MANUAL_ACTION,
                     ImportExportWorker.TAG_AUTOMATIC_EXPORT,
                 )
-            )
-            .observe(this, Observer {
+            ).observe(this, Observer {
                 var isRunning = false
                 var canCancel = false
 
@@ -336,7 +330,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                                 failure.savedLogcat,
                             ).show(supportFragmentManager, "error")
                         }
-                        // Cancelled work can occur when changing scheduled export settings or when
+                        // Canceled work can occur when changing scheduled export settings or when
                         // the user explicitly cancels a running operation. We want both to be
                         // pruned below.
                         WorkInfo.State.CANCELLED -> {
@@ -372,6 +366,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                     exportBlockedNumbersButton,
                     importBlockedNumbersButton,
                     wipeAllMessagesButton,
+                    countMessagesButton,
                     setDefaultSMSAppButton
                 ).forEach { button -> button.isEnabled = !isRunning }
             })
@@ -380,8 +375,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     override fun onResume() {
         super.onResume()
         val defaultSMSAppWarning: TextView = findViewById(R.id.default_sms_app_warning)
-        val setDefaultSMSAppButton: Button =
-            findViewById(R.id.set_default_sms_app_button)
+        val setDefaultSMSAppButton: Button = findViewById(R.id.set_default_sms_app_button)
         val areWeDefaultSMSApp = if (SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(RoleManager::class.java)
             roleManager.isRoleHeld(RoleManager.ROLE_SMS)
@@ -409,13 +403,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     private fun exportMessagesManual() {
-        if (checkReadSMSContactsPermissions(this)) {
+        if (checkReadSMSPermission(this) && checkReadContactsPermission(this)) {
             pendingAction = Action.EXPORT_MESSAGES_MANUAL
             val date = getCurrentDateTime()
             val dateInString = date.toString("yyyy-MM-dd")
             requestNewZipFile.launch("messages-$dateInString.zip")
         } else {
-            setStatusReport(getString(R.string.sms_permissions_required))
+            setStatusReport(getString(R.string.sms_and_contacts_read_permissions_required))
         }
     }
 
@@ -499,13 +493,21 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         ConfirmWipeFragment().show(supportFragmentManager, "wipe")
     }
 
+    private fun countMessagesManual() {
+        if (checkReadSMSPermission(this)) {
+            scheduleManualAction(this, Action.COUNT_MESSAGES_MANUAL, null)
+        } else {
+            setStatusReport(getString(R.string.sms_read_permission_required))
+        }
+    }
+
     private fun launchPendingAction(uri: Uri?, nullUriAllowed: Boolean) {
         if (uri != null || nullUriAllowed) {
             scheduleManualAction(this, pendingAction!!, uri)
         }
 
-        // Always clear the pending action, even if we don't start anything (eg. if the user
-        // cancelled the file selection).
+        // Always clear the pending action, even if we don't start anything (e.g. if the user
+        // canceled the file selection).
         pendingAction = null
     }
 
@@ -528,8 +530,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
     override fun onDefaultSMSAppDialogPositiveClick(dialog: DialogFragment) {
         val intent = if (SDK_INT >= Build.VERSION_CODES.Q) {
-            getSystemService(RoleManager::class.java)
-                .createRequestRoleIntent(RoleManager.ROLE_SMS)
+            getSystemService(RoleManager::class.java).createRequestRoleIntent(RoleManager.ROLE_SMS)
         } else {
             Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
                 putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
@@ -549,8 +550,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         // https://stackoverflow.com/questions/59554835/android-10-default-sms-app-dialog-not-showing-up/60372137#60372137
         val haveRole = if (SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(RoleManager::class.java)
-            !roleManager.isRoleAvailable(RoleManager.ROLE_SMS)
-                    || roleManager.isRoleHeld(RoleManager.ROLE_SMS)
+            !roleManager.isRoleAvailable(RoleManager.ROLE_SMS) || roleManager.isRoleHeld(RoleManager.ROLE_SMS)
         } else {
             Telephony.Sms.getDefaultSmsPackage(this) == packageName
         }
@@ -580,20 +580,18 @@ class ErrorMessageFragment : DialogFragment() {
     companion object {
         fun newInstance(title: String, message: String, savedLogcat: Boolean) =
             ErrorMessageFragment().apply {
-                arguments = bundleOf(
-                    "title" to title,
-                    "message" to message,
-                    "saved_logcat" to savedLogcat,
-                )
+                arguments = Bundle().apply {
+                    putString("title", title)
+                    putString("message", message)
+                    putBoolean("saved_logcat", savedLogcat)
+                }
             }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        AlertDialog.Builder(requireContext())
-            .setTitle(requireArguments().getString("title"))
+        AlertDialog.Builder(requireContext()).setTitle(requireArguments().getString("title"))
             .setMessage(requireArguments().getString("message"))
-            .setPositiveButton(android.R.string.ok) { _, _ -> }
-            .apply {
+            .setPositiveButton(android.R.string.ok) { _, _ -> }.apply {
                 if (requireArguments().getBoolean("saved_logcat")) {
                     setNeutralButton(R.string.open_log_dir) { _, _ ->
                         // The external files directory (/sdcard/Android/data/<package>/files) is
@@ -623,8 +621,7 @@ class ErrorMessageFragment : DialogFragment() {
                         startActivity(intent)
                     }
                 }
-            }
-            .create()
+            }.create()
 }
 
 // https://developer.android.com/guide/topics/ui/dialogs

@@ -1,4 +1,6 @@
- - Apply message filtering to wipe operations (issue #237)
+ - Apply message filtering to wipe operations (issue #237).
+
+ - Add count messages operation (issue #237).
 
  - Don't insert into non-existent MMS address columns upon import (issue #322).
 
@@ -7,4 +9,3 @@
  - Remove 'android.permission.ACCESS_NETWORK_STATE' (issue #324).
 
  - Update Italian translation.
-

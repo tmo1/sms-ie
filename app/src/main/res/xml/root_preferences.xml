@@ -1,6 +1,6 @@
 <!--
   ~ SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
-  ~ call logs, and contacts, from and to JSON / NDJSON files.
+  ~ call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
   ~
   ~ Copyright (c) 2021-2026 Thomas More
   ~ Copyright (c) 2023 Andrew Gunnerson
@@ -26,6 +26,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:key="main_preference_screen">
 
+    <SwitchPreferenceCompat
+        android:key="message_filtering"
+        android:title="Enable message filtering"
+        app:defaultValue="false"
+        app:singleLineTitle="false" />
+    
     <PreferenceCategory android:title="Scheduled export"
         android:key="scheduled_export_preference_category">
 
@@ -109,12 +115,6 @@
             android:key="include_blobs"
             android:title="Include BLOBs present in the MMS database table"
             app:defaultValue="true"
-            app:singleLineTitle="false" />
-
-        <SwitchPreferenceCompat
-            android:key="message_filtering"
-            android:title="Enable message filtering"
-            app:defaultValue="false"
             app:singleLineTitle="false" />
 
     </PreferenceCategory>

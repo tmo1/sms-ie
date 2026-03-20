@@ -1,6 +1,6 @@
 # Message Filtering
 
-Sms Import / Export currently implements a rudimentary but powerful mechanism for filtering messages when exporting or wiping them. In order to use this mechanism effectively, it is important to understand how Android stores messages internally and how SMS I/E accesses them.
+Sms Import / Export currently implements a rudimentary but powerful mechanism for filtering messages when exporting, wiping, or counting them. In order to use this mechanism effectively, it is important to understand how Android stores messages internally and how SMS I/E accesses them.
 
 ## Background
 
@@ -12,11 +12,13 @@ Android provides a [`ContentProvider`](https://developer.android.com/guide/topic
 
 **The current message filtering mechanism is implemented by constructing an SQLite `WHERE` clause out of user-specified filters, which is used with the queries of the main SMS and MMS tables.** Consequently, SMS messages can be filtered based on their data and (in principle) any of their metadata, whereas MMS messages can be filtered based only on their metadata that is present in the main MMS table.
 
-Similarly, when wiping messages SMS I/E issues one delete command to the SMS table and one to the MMS table, both of which are filtered in the same way that queries are.
+Similarly, when wiping or counting messages SMS I/E issues one delete or query command to the SMS table and one to the MMS table, both of which are filtered in the same way as queries issued when exporting messages are.
 
 ## Usage
 
-To use message filtering, it must be enabled in the app's Settings (under Export Settings), and one or more filters must be configured (and set to `Active`) using the Message Filtering interface. When an export (manual or scheduled) or wipe is executed, the app will combine all active filters using the SQLite `AND` keyword and use the result as an SQLite `WHERE` clause. (A filter that is not currently desired but may be desired in the future can be set to `Inactive` rather than deleted in order to avoid having to reconfigure it later.)
+To use message filtering, it must be enabled in the app's Settings, and one or more filters must be configured (and set to `Active`) using the Message Filtering interface. When an export (manual or scheduled) or wipe is executed, the app will combine all active filters using the SQLite `AND` keyword and use the result as an SQLite `WHERE` clause. (A filter that is not currently desired but may be desired in the future can be set to `Inactive` rather than deleted in order to avoid having to reconfigure it later.)
+
+**Note** Even filters that are marked `Active` will **not** be used if Message Filtering is not enabled in the app's Settings.
 
 Message filters have three fields:
 

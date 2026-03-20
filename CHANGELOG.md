@@ -12,6 +12,10 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
  - **Breaking:** Apply message filtering to wipe operations ([issue #237](https://github.com/tmo1/sms-ie/issues/237))
  
+### Added
+
+ - Add count messages operation ([issue #237](https://github.com/tmo1/sms-ie/issues/237))
+ 
 ### Fixed
 
  - Don't insert into non-existent MMS address columns upon import ([issue #322](https://github.com/tmo1/sms-ie/issues/322))

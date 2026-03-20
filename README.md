@@ -73,6 +73,8 @@ The app is tested primarily on stock Android and [LineageOS](https://lineageos.o
 
 - Wipe messages: Click the `Wipe Messages` button, then confirm by pressing the `Wipe` button in the pop-up dialog box.
 
+- Count messages: Click the `Count Messages` button.
+
 These operations may take some time for large amounts of data. The app will report the total number of SMS and MMS messages, calls, contacts, or blocked numbers imported or exported, and the elapsed time, upon successful conclusion.
 
 By default, binary MMS data (such as images and videos) are exported. The user can choose not to include them, which will often result in a much smaller ZIP file. This behavior is controlled by the settings toggle `Include binary MMS data`.
@@ -87,7 +89,7 @@ SMS Import / Export does all input and output via the Android [Storage Access Fr
 
 ## Message Filtering
 
-SMS Import / Export can filter messages when exporting or wiping them; see [here](MESSAGE-FILTERING.md) for an explanation of the filtering system and usage examples.
+SMS Import / Export can filter messages when exporting, wiping, or counting them; see [MESSAGE-FILTERING.md](MESSAGE-FILTERING.md) for an explanation of the filtering system and usage examples.
 
 ### Encryption
 
@@ -141,6 +143,8 @@ To import or wipe messages or import or export blocked numbers, SMS Import / Exp
 
 > [!WARNING] 
 > **While an app is the default messaging app, it takes full responsibility for handling incoming SMS and MMS messages, and if does not store them, they will be lost. SMS Import / Export ignores incoming messages, so in order to avoid losing such messages, the device it is running on should be disconnected from the network (by putting it into airplane mode, or similar means) before the app is made the default messaging app, and only reconnected to the network after a proper messaging app is made the default.**
+
+To count messages, permission to read SMSs is required.
 
 To export call logs, permission to read Call Logs and Contacts is required (the need for the latter is explained below). Currently, the app does not ask permission to read Call Logs, and it must be granted by the user on his own initiative.
 

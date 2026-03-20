@@ -58,7 +58,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 enum class Action {
-    EXPORT_AUTOMATIC, EXPORT_CALL_LOG_MANUAL, IMPORT_CALL_LOG_MANUAL, EXPORT_CONTACTS_MANUAL, IMPORT_CONTACTS_MANUAL, EXPORT_MESSAGES_MANUAL, IMPORT_MESSAGES_MANUAL, EXPORT_BLOCKED_NUMBERS_MANUAL, IMPORT_BLOCKED_NUMBERS_MANUAL, WIPE_MESSAGES_MANUAL, ;
+    EXPORT_AUTOMATIC, EXPORT_CALL_LOG_MANUAL, IMPORT_CALL_LOG_MANUAL, EXPORT_CONTACTS_MANUAL, IMPORT_CONTACTS_MANUAL, EXPORT_MESSAGES_MANUAL, IMPORT_MESSAGES_MANUAL, EXPORT_BLOCKED_NUMBERS_MANUAL, IMPORT_BLOCKED_NUMBERS_MANUAL, WIPE_MESSAGES_MANUAL, COUNT_MESSAGES_MANUAL, ;
 
     // Wiping calls ContentResolver.delete(), which does not have a variant that accepts a
     // CancellationSignal instance. The operation cannot be canceled without killing the app.
@@ -193,6 +193,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 Action.EXPORT_BLOCKED_NUMBERS_MANUAL -> R.string.blocked_numbers_export_error_title
                 Action.IMPORT_BLOCKED_NUMBERS_MANUAL -> R.string.blocked_numbers_import_error_title
                 Action.WIPE_MESSAGES_MANUAL -> R.string.messages_wipe_error_title
+                Action.COUNT_MESSAGES_MANUAL -> R.string.messages_count_error_title
             }
             val title = context.getString(titleResId)
             val message = buildString {
@@ -272,6 +273,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             Action.EXPORT_BLOCKED_NUMBERS_MANUAL -> R.string.exporting_blocked_numbers
             Action.IMPORT_BLOCKED_NUMBERS_MANUAL -> R.string.importing_blocked_numbers
             Action.WIPE_MESSAGES_MANUAL -> R.string.wiping_messages
+            Action.COUNT_MESSAGES_MANUAL -> R.string.counting_messages
         }
         val title = applicationContext.getString(titleResId)
 
@@ -376,7 +378,8 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private suspend fun performAction(): SuccessData {
-        if (actionFile == null && action != Action.EXPORT_AUTOMATIC && action != Action.WIPE_MESSAGES_MANUAL) {
+        if (actionFile == null && action !in listOf(Action.EXPORT_AUTOMATIC, Action.WIPE_MESSAGES_MANUAL,
+                Action.COUNT_MESSAGES_MANUAL)) {
             throw IllegalStateException("No file specified for $action")
         }
 
@@ -501,6 +504,14 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 wipeSmsAndMmsMessages(context, ::updateProgress)
 
                 context.getString(R.string.messages_wiped)
+            }
+
+            Action.COUNT_MESSAGES_MANUAL -> {
+                val messages = countMessages(context)
+
+                context.getString(
+                    R.string.count_messages_results, messages.sms, messages.mms
+                    )
             }
         }
 
