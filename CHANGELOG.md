@@ -8,6 +8,8 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+## [2.9.0] - 2026-03-23
+
 ### Changed
 
  - **Breaking:** Apply message filtering to wipe operations ([issue #237](https://github.com/tmo1/sms-ie/issues/237))
@@ -44,3 +46,4 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 [Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.8.0...HEAD
 [2.8.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.8.0
+[2.9.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.9.0
