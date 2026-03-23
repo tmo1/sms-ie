@@ -34,7 +34,6 @@
     <string name="open_log_dir">Abrir diretório de registro</string>
     <string name="pref_save_logcat_name">Salvar logcat</string>
     <string name="pref_save_logcat_desc">Salve o logcat em %1$s quando uma operação estiver em execução.</string>
-    <string name="sms_permissions_required">A exportação de mensagens requer permissão para ler SMSs e contatos.</string>
     <string name="call_logs_permissions_required">A exportação do registro de chamadas requer permissão para ler os Registros das Chamadas e os Contatos.</string>
     <string name="call_logs_read_write_permissions_required">A importação de registros de chamadas requer permissão para ler e escrever Registros das Chamadas.</string>
     <string name="contacts_read_permission_required">A exportação de contatos requer permissão para ler os Contatos.</string>

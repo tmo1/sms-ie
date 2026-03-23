@@ -23,7 +23,6 @@
 \nThời gian đã trôi qua: %2$s</string>
     <string name="export_contacts_results">%1$d liên hệ đã được xuất \nThời gian đã trôi qua: %2$s.</string>
     <string name="import_contacts_results">%1$d liên hệ đã được nhập \nThời gian đã trôi qua: %2$s.</string>
-    <string name="sms_permissions_required">Việc xuất tin nhắn cần có quyền đọc SMS và danh bạ.</string>
     <string name="okay">ĐƯỢC</string>
     <string name="wiping_sms_messages">Đang xóa tin nhắn SMS …</string>
     <string name="messages_wiped">Đã xóa tin nhắn</string>

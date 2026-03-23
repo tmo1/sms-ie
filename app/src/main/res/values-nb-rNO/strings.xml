@@ -13,7 +13,6 @@
     <string name="import_call_log_results">%1$d anrop importert
 \ni løpet av %2$s.</string>
     <string name="call_logs_permissions_required">Eksportering av anropslogger krever tilgang til å lese anropslogg og kontaktliste.</string>
-    <string name="sms_permissions_required">Eksportering av meldinger krever tilgang til å lese SMS-er og kontaktliste.</string>
     <string name="scheduled_export_success">%1$d SMS(-er), %2$d MMS(-er), og %3$d anrop eksportert.</string>
     <string name="wipe_messages">Tøm meldinger</string>
     <string name="homepage">Hjemmeside:</string>

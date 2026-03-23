@@ -49,7 +49,6 @@
 \nGeçen zaman: %2$s</string>
     <string name="export_contacts_results">%1$d kişi dışa aktarıldı \nGeçen zaman: %2$s.</string>
     <string name="import_contacts_results">%1$d kişi içe aktarıldı \nGeçen zaman: %2$s.</string>
-    <string name="sms_permissions_required">Mesajları dışa aktarmak için SMS\'leri ve kişileri okuma izni gerekir.</string>
     <string name="call_logs_permissions_required">Arama geçmişini dışa aktarmak için Arama Geçmişi ve Kişileri okuma izni gerekir.</string>
     <string name="call_logs_read_write_permissions_required">Arama geçmişini içe aktarmak için arama geçmişini okuma ve yazma izni gerekir.</string>
     <string name="contacts_read_permission_required">Kişileri dışa aktarmak için Kişileri okuma izni gerekir.</string>

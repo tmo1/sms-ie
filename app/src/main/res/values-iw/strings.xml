@@ -30,7 +30,6 @@
     <string name="import_messages_button_label">ייבאו הודעות</string>
     <string name="import_call_log_button_label">ייבוא יומן שיחות</string>
     <string name="call_log_export_progress">%1$d מתוך %2$d שיחות יוצאו</string>
-    <string name="sms_permissions_required">ייצוא הודעות דורש הרשאה לקרוא הודעות סמס ואנשי קשר.</string>
     <string name="export_contacts">ייצאו אנשי קשר</string>
     <string name="wipe">מחק</string>
     <string name="export_call_log_results">%1$d שיחות יוצאו

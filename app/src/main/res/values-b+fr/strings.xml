@@ -47,7 +47,6 @@
     <string name="import_call_log_results">%1$d appel(s) importé(s)\nTemps écoulé : %2$s</string>
     <string name="export_contacts_results">%1$d contact(s) exporté(s)\nTemps écoulé : %2$s</string>
     <string name="import_contacts_results">%1$d contact(s) importé(s)\nTemps écoulé : %2$s</string>
-    <string name="sms_permissions_required">L\'exportation des messages nécessite l\'autorisation de lire les SMS et les contacts.</string>
     <string name="call_logs_permissions_required">L\'exportation de l\'historique des appels nécessite l\'autorisation de lire l\'historique des appels et les contacts.</string>
     <string name="call_logs_read_write_permissions_required">L\'importation de l\'historique des appels nécessite l\'autorisation de lire et écrire l\'historique des appels.</string>
     <string name="contacts_read_permission_required">L\'exportation des contacts nécessite l\'autorisation de lire les contacts.</string>
