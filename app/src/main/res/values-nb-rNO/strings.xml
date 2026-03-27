@@ -17,7 +17,7 @@
     <string name="wipe_messages">Tøm meldinger</string>
     <string name="homepage">Hjemmeside:</string>
     <string name="app_about_text">SMS-import/eksport \n \nav Thomas More og andre bidragsytere \n \nVersjon %1$s \n \nOpphavsrett © 2021–24 \n \nLisensiert GPLv3+</string>
-    <string name="dialog_confirm_wipe">Advarsel: Vil du slette alle meldinger fra enheten for godt, uten å kunne angre\?</string>
+    <string name="dialog_confirm_wipe">Advarsel: Vil du slette alle meldinger fra enheten for godt, uten å kunne angre?</string>
     <string name="about">Om</string>
     <string name="export_messages_button_label">Eksporter meldinger</string>
     <string name="import_messages_button_label">Importer meldinger</string>
