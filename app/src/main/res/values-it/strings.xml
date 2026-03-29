@@ -24,7 +24,7 @@
     <string name="include_binary_data">Includi dati binari MMS</string>
     <string name="scheduled_export_executed">Esportazione pianificata eseguita</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d chiamate e %4$d contatti esportati.</string>
-    <string name="dialog_confirm_wipe">Attenzione: cancellare permanentemente tutti i messaggi da questo dispositivo\?</string>
+    <string name="dialog_confirm_wipe">Attenzione: cancellare permanentemente tutti i messaggi da questo dispositivo?</string>
     <string name="wipe_messages">Elimina messaggi</string>
     <string name="wipe">Elimina</string>
     <string name="cancel">Annulla</string>

@@ -33,14 +33,14 @@
     <string name="scheduled_export_executed">Zaplanowany eksport wykonany</string>
     <string name="scheduled_export_success">Wyeksportowano %1$d SMSów, %2$d MMSów, %3$d połączeń i %4$d kontaktów.</string>
     <string name="wipe_messages">Usuń wiadomości</string>
-    <string name="dialog_confirm_wipe">Ostrzeżenie: czy chcesz usunąć wszystkie wiadomości z tego urządzenia bez możliwości ich przywrócenia\?</string>
+    <string name="dialog_confirm_wipe">Ostrzeżenie: Czy chcesz trwale usunąć wszystkie wiadomości (z zastrzeżeniem wiadomości przefiltrowanych, jeśli ta funkcja jest włączona) z tego urządzenia, bez możliwości cofnięcia tej czynności?</string>
     <string name="wipe">Usuń</string>
     <string name="cancel">Anuluj</string>
     <string name="wipe_cancelled">Anulowano usuwanie</string>
     <string name="messages_wiped">Usunięto wiadomości</string>
     <string name="wiping_sms_messages">Usuwanie wiadomości SMS …</string>
     <string name="wiping_mms_messages">Usuwanie wiadomości MMS …</string>
-    <string name="app_about_text">Import / Eksport SMS \n \nStworzone przez Thomasa More\'a oraz innych współtwórców \n \nWersja %1$s \n \nPrawa autorskie © 2021–2025 \n \nWydane na licencji GNU GPLv3</string>
+    <string name="app_about_text">Import / Eksport SMS \n \nStworzone przez Thomasa More\'a oraz innych współtwórców \n \nWersja %1$s \n \nPrawa autorskie © 2021–2026 \n \nWydane na licencji GNU GPLv3</string>
     <string name="homepage">Strona internetowa:</string>
     <string name="documentation">Dokumentacja:</string>
     <string name="issue_tracker">Zgłoś problem:</string>
@@ -102,4 +102,10 @@
     <string name="active">Aktywny:</string>
     <string name="export_blocked_numbers">Eksportuj zablokowane numery</string>
     <string name="import_blocked_numbers">Importuj zablokowane numery</string>
+    <string name="count_messages_results">Zliczono %1$d wiadomości SMS oraz %2$d wiadomości MMS</string>
+    <string name="messages_count_error_title">Błąd podczas zliczania wiadomości</string>
+    <string name="sms_and_contacts_read_permissions_required">Eksportowanie wiadomości wymaga uprawnień do odczytu wiadomości SMS i kontaktów.</string>
+    <string name="sms_read_permission_required">Zliczanie wiadomości wymaga uprawnienia do odczytu wiadomości SMS.</string>
+    <string name="counting_messages">Zliczanie wiadomości …</string>
+    <string name="count_messages">Zlicz wiadomości</string>
 </resources>
