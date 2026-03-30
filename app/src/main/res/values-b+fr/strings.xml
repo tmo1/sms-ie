@@ -61,14 +61,14 @@
     <string name="scheduled_export_executed">Exportation planifiée exécutée</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d appel(s), et %4$d contact(s) exporté(s).</string>
     <string name="wipe_messages">Effacer les messages</string>
-    <string name="dialog_confirm_wipe">Attention : Supprimer définitivement tous les messages de cet équipement, sans possibilité d\'annulation ?</string>
+    <string name="dialog_confirm_wipe">Attention : Supprimer définitivement tous les messages de cet équipement (en appliquant les filtres, si activé), sans possibilité d\'annulation ?</string>
     <string name="wipe">Supprimer</string>
     <string name="cancel">Annuler</string>
     <string name="wipe_cancelled">Suppression annulée</string>
     <string name="messages_wiped">Messages nettoyés</string>
     <string name="wiping_sms_messages">Suppression des SMS…</string>
     <string name="wiping_mms_messages">Suppression des MMS…</string>
-    <string name="app_about_text">SMS Import / Export \n \npar Thomas More \net d\'autres contributeurs \n \nVersion %1$s \n \nCopyright © 2021–2025 \n \nDélivré sous GNU GPLv3</string>
+    <string name="app_about_text">SMS Import / Export \n \npar Thomas More \net d\'autres contributeurs \n \nVersion %1$s \n \nCopyright © 2021–2026 \n \nDélivré sous GNU GPLv3</string>
     <string name="homepage">Page d\'accueil :</string>
     <string name="app_homepage" translatable="false">https://github.com/tmo1/sms-ie</string>
     <string name="documentation">Documentation :</string>
@@ -133,4 +133,10 @@
     <string name="see_logcat_save_disabled">Voir les journaux logcat pour plus d\'informations. Activez l\'option dans les paramètres de débuggage pour qu\'ils soient enregistrés dans un fichier.</string>
     <string name="see_logcat_save_enabled">Voir les journaux logcat pour plus d\'informations.</string>
     <string name="open_log_dir">Ouvrir le dossier des journaux</string>
+    <string name="count_messages">Compter les messages</string>
+    <string name="count_messages_results">%1$d SMS et %2$d MMS comptés</string>
+    <string name="messages_count_error_title">Erreur du compte des messages</string>
+    <string name="sms_and_contacts_read_permissions_required">L\'exportation des messages nécessite la permission de lire les SMS et les contacts.</string>
+    <string name="sms_read_permission_required">Compter les messages nécessite la permission de lire les SMS.</string>
+    <string name="counting_messages">Comptage des messages…</string>
 </resources>
