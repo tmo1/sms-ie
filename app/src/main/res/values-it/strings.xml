@@ -24,7 +24,7 @@
     <string name="include_binary_data">Includi dati binari MMS</string>
     <string name="scheduled_export_executed">Esportazione pianificata eseguita</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d chiamate e %4$d contatti esportati.</string>
-    <string name="dialog_confirm_wipe">Attenzione: cancellare permanentemente tutti i messaggi da questo dispositivo?</string>
+    <string name="dialog_confirm_wipe">Attenzione: cancellare permanentemente tutti i messaggi (soggetto al filtro messaggi, se attivo) da questo dispositivo?</string>
     <string name="wipe_messages">Elimina messaggi</string>
     <string name="wipe">Elimina</string>
     <string name="cancel">Annulla</string>
@@ -41,7 +41,7 @@
     <string name="export_call_log_button_label">Esporta registro chiamate</string>
     <string name="ready">Pronto</string>
     <string name="import_contacts">Importa contatti</string>
-    <string name="app_about_text">SMS Import / Export \n \ndi Thomas More \ne altri collaboratori \n \nVersione %1$s \n \nCopyright © 2021-2024 \n \nSoftware libero con copyleft, licenza GNU GPLv3+</string>
+    <string name="app_about_text">SMS Import / Export \n \ndi Thomas More \ne altri collaboratori \n \nVersione %1$s \n \nCopyright © 2021-2026 \n \nPubblicato sotto licenza GNU GPLv3</string>
     <string name="documentation">Documentazione:</string>
     <string name="issue_tracker">Segnalazione problemi:</string>
     <string name="about">Informazioni</string>
@@ -106,4 +106,10 @@
     <string name="active">Attivo:</string>
     <string name="export_blocked_numbers">Esporta numeri bloccati</string>
     <string name="import_blocked_numbers">Importa numeri bloccati</string>
+    <string name="count_messages_results">Contati %1$d SMS e %2$d MMS</string>
+    <string name="messages_count_error_title">Errore di conteggio messaggi</string>
+    <string name="sms_and_contacts_read_permissions_required">L\'esportazione di messaggi richiede l\'autorizzazione di leggere SMS e contatti.</string>
+    <string name="sms_read_permission_required">Contare i messaggi richiede l\'autorizzazione di leggere gli SMS.</string>
+    <string name="counting_messages">Conto dei messaggi …</string>
+    <string name="count_messages">Conta i messaggi</string>
 </resources>
