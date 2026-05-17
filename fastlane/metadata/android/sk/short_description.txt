@@ -1,0 +1,1 @@
+Umožňuje importovať a exportovať správy SMS a MMS a ďalšie údaje.
