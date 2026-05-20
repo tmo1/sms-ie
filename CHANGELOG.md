@@ -15,9 +15,12 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 ### Added
 
  - Add support for ISO 8601 dates in message filters ([7623731](https://github.com/tmo1/sms-ie/commit/76237312b6fc2c118a0c6c1d1b48ca425b9024d4))
+ - Add Slovak translation ([7b3ccef](https://github.com/tmo1/sms-ie/commit/7b3ccef76ca48e8f79ca87191f309e600af1eef5), [840abf8](https://github.com/tmo1/sms-ie/commit/840abf825836e69d73d83bd3835564e476366308)) (Peter Vágner)
 
 ### Fixed
 
+ - Retry throttled notifications when idle. This fixes an issue where notifications that change infrequently are
+sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21504ffbd7f1f99995cfe4a70686377f04)) (Andrew Gunnerson)
  - Update Chinese (Simplified Han script) translation ([86ca934](https://github.com/tmo1/sms-ie/commit/86ca934f3b9b630da91b430eafd527d50db33e3a), [5caa952](https://github.com/tmo1/sms-ie/commit/5caa9528a92d2eff0e0727856420bfdce85d1318)) (大王叫我来巡山)
  - Update Polish translation ([a5a51fb](https://github.com/tmo1/sms-ie/commit/a5a51fb58e1c81abc50b3c67e6ac4d7d0bc377bd)) (rehork)
  - Update French translation ([cdb336b](https://github.com/tmo1/sms-ie/commit/cdb336b5f1dcf3e6147efcbad3d1f6099b459057)) (MarcMush)

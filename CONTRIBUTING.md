@@ -6,7 +6,7 @@ SMS Import / Export is integrated with [Weblate](https://weblate.org). Translati
 
 ## Contributors
 
-The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong) has contributed major architectural and user experience improvements. The following individuals have contributed to the app:
+The primary author of SMS Import / Export is [Thomas More](https://github.com/tmo1). The following individuals have contributed to the app ([Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong) in particular has contributed major architectural and user experience improvements):
 
 ### Code
 
@@ -14,7 +14,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Bindu (vbh)](https://github.com/vbh): call log import support ([PR #21](https://github.com/tmo1/sms-ie/pull/21))
  - [Jan Hustak (codingjourney)](https://github.com/codingjourney): bug fix ([PR #30](https://github.com/tmo1/sms-ie/pull/30))
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): bug fix ([PR #39](https://github.com/tmo1/sms-ie/pull/39))
- - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131)); overhaul of the notification framework (PRs [#187](https://github.com/tmo1/sms-ie/pull/187), [#281](https://github.com/tmo1/sms-ie/pull/281), and [#289](https://github.com/tmo1/sms-ie/pull/289)); redesign to run all manual operations in worker processes ([PR #268](https://github.com/tmo1/sms-ie/pull/268)); add full support for edge-to-edge ([PR #279](https://github.com/tmo1/sms-ie/pull/279)); save logcat of the most recent operation to a user-accessible file ([PR #278](https://github.com/tmo1/sms-ie/pull/278)); bug fix ([PR #282](https://github.com/tmo1/sms-ie/pull/282))
+ - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131)); overhaul of the notification framework (PRs [#187](https://github.com/tmo1/sms-ie/pull/187), [#281](https://github.com/tmo1/sms-ie/pull/281), [#289](https://github.com/tmo1/sms-ie/pull/289)), and [#336](https://github.com/tmo1/sms-ie/pull/336); redesign to run all manual operations in worker processes ([PR #268](https://github.com/tmo1/sms-ie/pull/268)); add full support for edge-to-edge ([PR #279](https://github.com/tmo1/sms-ie/pull/279)); save logcat of the most recent operation to a user-accessible file ([PR #278](https://github.com/tmo1/sms-ie/pull/278)); bug fix ([PR #282](https://github.com/tmo1/sms-ie/pull/282))
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): addition of [`ScrollView`](https://developer.android.com/reference/android/widget/ScrollView) to "About" screen ([PR #133](https://github.com/tmo1/sms-ie/pull/133))
  - [Andrew (andr5w)](https://github.com/andr5w): bug fix ([PR #168](https://github.com/tmo1/sms-ie/pull/168))
  - [farfromrefuge](https://github.com/farfromrefug): bug fix ([PR #231](https://github.com/tmo1/sms-ie/pull/231))
@@ -57,11 +57,14 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - Random: update to Italian
  - [MarcMush](https://github.com/MarcMush): update to French
  - 大王叫我来巡山: update to Chinese (Traditional Han script)
+ - Peter Vágner: Slovak
  
 ### Translations (Fastlane)
 
  - [Unknownman820](https://github.com/Unknownman820): Chinese (Traditional Han Script)
  - [rehork](https://github.com/rehork): Polish
+ - Peter Vágner: Slovak
+ - [MarcMush](https://github.com/MarcMush): French
 
 ### Other
 
