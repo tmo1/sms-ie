@@ -40,7 +40,7 @@
     <string name="import_call_log_results">%1$d שיחות יובאו\nזמן שחלף: %2$s</string>
     <string name="contacts_read_permission_required">ייצוא אנשי קשר דורש הרשאה לקריאת אנשי קשר.</string>
     <string name="issue_tracker">מאתר בעיות:</string>
-    <string name="app_about_text">ייבוא/ייצוא של SMS \n \nמאת Thomas More ותורמים אחרים \n \nגרסה %1$s \n \nזכויות יוצרים © 2021-2025\n \nשוחרר תחת GNU GPLv3</string>
+    <string name="app_about_text">ייבוא/ייצוא של SMS \n \nמאת Thomas More ותורמים אחרים \n \nגרסה %1$s \n \nזכויות יוצרים © 2021-2026\n \nשוחרר תחת GNU GPLv3</string>
     <string name="contacts_import_progress">%1$d אנשי קשר יובאו</string>
     <string name="import_contacts_results">%1$d אנשי קשר יובאו\nזמן שחלף: %2$s.</string>
     <string name="contacts_write_permissions_required">ייבוא אנשי קשר דורש הרשאה לכתוב אנשי קשר.</string>

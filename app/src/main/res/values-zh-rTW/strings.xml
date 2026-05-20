@@ -51,7 +51,7 @@
     <string name="issue_tracker">問題追蹤：</string>
     <string name="importing_messages">正在匯入訊息…</string>
     <string name="export_contacts">匯出聯絡人</string>
-    <string name="app_about_text">SMS 匯入 / 匯出 \n \nThomas More \n和多位協力者 \n \n版本 %1$s \n \n版權所有 © 2021–2025 \n \n依據 GNU GPL 第 3 版發行</string>
+    <string name="app_about_text">SMS 匯入 / 匯出 \n \nThomas More \n和多位協力者 \n \n版本 %1$s \n \n版權所有 © 2021–2026 \n \n依據 GNU GPL 第 3 版發行</string>
     <string name="default_sms_app_warning"><b>警告</b>：目前已設為預設簡訊應用程式，將會無法接收任何簡訊或多媒體訊息，請選擇其他簡訊應用程式避免發生問題。</string>
     <string name="persistent_channel_name">背景服務</string>
     <string name="persistent_channel_description">預定的背景匯出作業持續性通知</string>

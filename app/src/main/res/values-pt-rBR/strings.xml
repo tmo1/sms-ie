@@ -56,7 +56,7 @@
     <string name="messages_wiped">Mensagens apagadas</string>
     <string name="wiping_sms_messages">Apagando mensagens SMS …</string>
     <string name="wiping_mms_messages">Apagando mensagens MMS …</string>
-    <string name="app_about_text">Importar / Exportar SMS\n\npor Thomas More\ne outros colaboradores\n\nVersão %1$s\n\nDireitos Autorais © 2021–2025\n\nLançado sob a LPG GNU v3</string>
+    <string name="app_about_text">Importar / Exportar SMS\n\npor Thomas More\ne outros colaboradores\n\nVersão %1$s\n\nDireitos Autorais © 2021–2026\n\nLançado sob a LPG GNU v3</string>
     <string name="homepage">Página inicial:</string>
     <string name="documentation">Documentação:</string>
     <string name="issue_tracker">Rastreador dos erros:</string>
