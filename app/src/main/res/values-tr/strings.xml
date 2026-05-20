@@ -47,8 +47,8 @@
 \nGeçen zaman: %2$s</string>
     <string name="import_call_log_results">%1$d arama içe aktarıldı
 \nGeçen zaman: %2$s</string>
-    <string name="export_contacts_results">%1$d kişi dışa aktarıldı \nGeçen zaman: %2$s.</string>
-    <string name="import_contacts_results">%1$d kişi içe aktarıldı \nGeçen zaman: %2$s.</string>
+    <string name="export_contacts_results">%1$d kişi dışa aktarıldı\nGeçen zaman: %2$s</string>
+    <string name="import_contacts_results">%1$d kişi içe aktarıldı\nGeçen zaman: %2$s</string>
     <string name="call_logs_permissions_required">Arama geçmişini dışa aktarmak için Arama Geçmişi ve Kişileri okuma izni gerekir.</string>
     <string name="call_logs_read_write_permissions_required">Arama geçmişini içe aktarmak için arama geçmişini okuma ve yazma izni gerekir.</string>
     <string name="contacts_read_permission_required">Kişileri dışa aktarmak için Kişileri okuma izni gerekir.</string>
@@ -86,4 +86,6 @@
     <string name="persistent_channel_description">Arka planda zamanlanan dışa aktarmalar için kalıcı bildirim</string>
     <string name="alerts_channel_name">Zamanlanan dışa aktarma uyarıları</string>
     <string name="alerts_channel_description">Zamanlanan dışa aktarmalar tamamlandığında başarı/başarısızlık uyarıları</string>
+    <string name="blocked_numbers_export_progress">%2$d taneden %1$d engelli numara çıkarıldı</string>
+    <string name="blocked_numbers_import_progress">%1$d engelli numara içeri aktarıldı</string>
 </resources>
