@@ -48,7 +48,7 @@
     <string name="scheduled_export_executed">Geplanter Export ausgeführt</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS , %3$d Anruf(e) und %4$d Kontakt(e) exportiert.</string>
     <string name="wipe_messages">Lösche Nachrichten</string>
-    <string name="dialog_confirm_wipe">Warnung: Alle Nachrichten von diesem Gerät dauerhaft löschen, ohne es rückgängig machen zu können?</string>
+    <string name="dialog_confirm_wipe">Warnung: Alle Nachrichten (vorbehaltlich der Nachrichtenfilterung, falls aktiviert) von diesem Gerät dauerhaft löschen, ohne dass dies rückgängig gemacht werden kann?</string>
     <string name="wipe">Löschen</string>
     <string name="cancel">Abbrechen</string>
     <string name="wipe_cancelled">Löschen abgebrochen</string>
@@ -128,4 +128,10 @@
     <string name="see_logcat_save_enabled">Weitere Informationen findest du unter Logcat im Protokollverzeichnis.</string>
     <string name="pref_save_logcat_desc">Logcat bei laufendem Vorgang unter %1$s speichern.</string>
     <string name="blocked_numbers_api_24_requirement">Das Importieren und Exportieren von blockierten Nummern ist nur unter Android Nougat / 7.0 (API-Level 24) oder höher möglich.</string>
+    <string name="count_messages_results">%1$d SMS und %2$d MMS gezählt</string>
+    <string name="messages_count_error_title">Fehler beim Zählen von Nachrichten</string>
+    <string name="sms_and_contacts_read_permissions_required">Zum Exportieren von Nachrichten ist die Berechtigung zum Lesen von SMS und Kontakten erforderlich.</string>
+    <string name="sms_read_permission_required">Um Nachrichten zu zählen, ist die Berechtigung zum Lesen von SMS erforderlich.</string>
+    <string name="counting_messages">Nachrichten werden gezählt…</string>
+    <string name="count_messages">Nachrichten zählen</string>
 </resources>
