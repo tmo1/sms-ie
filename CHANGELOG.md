@@ -16,6 +16,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
  - Add support for ISO 8601 dates in message filters ([7623731](https://github.com/tmo1/sms-ie/commit/76237312b6fc2c118a0c6c1d1b48ca425b9024d4))
  - Add Slovak translation ([7b3ccef](https://github.com/tmo1/sms-ie/commit/7b3ccef76ca48e8f79ca87191f309e600af1eef5), [840abf8](https://github.com/tmo1/sms-ie/commit/840abf825836e69d73d83bd3835564e476366308)) (Peter Vágner)
+ - Add Indonesian translation ([3307ebd](https://github.com/tmo1/sms-ie/commit/3307ebd926d2e48905d727ae4551594e3f71f6c0)) (Arif Budiman)
 
 ### Fixed
 
@@ -25,6 +26,7 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
  - Update Polish translation ([a5a51fb](https://github.com/tmo1/sms-ie/commit/a5a51fb58e1c81abc50b3c67e6ac4d7d0bc377bd)) (rehork)
  - Update French translation ([cdb336b](https://github.com/tmo1/sms-ie/commit/cdb336b5f1dcf3e6147efcbad3d1f6099b459057)) (MarcMush)
  - Update Italian translation ([99daf11](https://github.com/tmo1/sms-ie/commit/99daf11c4c5c48dbd5e97dbb75bd9dc47fd62979)) (Random)
+ - Update German translation ([6cc6908](https://github.com/tmo1/sms-ie/commit/6cc690853ef95d3c0a14a96dce1f7df60cfb5381)) (nautilusx)
 
 ## [2.9.0] - 2026-03-23
 
