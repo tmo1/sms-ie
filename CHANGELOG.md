@@ -8,6 +8,8 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-06-17
+
 ### Changed
 
  - Bump `compileSdk` and `targetSdkVersion` to 37 ([16fe214](https://github.com/tmo1/sms-ie/commit/16fe21485bcc933d6dd7a22e19791618f2fc65c7))
@@ -15,7 +17,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 ### Added
 
  - Add support for ISO 8601 dates in message filters ([7623731](https://github.com/tmo1/sms-ie/commit/76237312b6fc2c118a0c6c1d1b48ca425b9024d4))
- - Add settings to exclude user specified addresses from calls to `[getOrCreateThreadId](https://developer.android.com/reference/android/provider/Telephony.Threads#getOrCreateThreadId(android.content.Context,%20java.util.Set%3Cjava.lang.String%3E))` and (optionally) from insertion into the address table when importing MMS messages ([issue #275](https://github.com/tmo1/sms-ie/issues/275))
+ - Add settings to exclude user specified addresses from calls to [`getOrCreateThreadId`](https://developer.android.com/reference/android/provider/Telephony.Threads#getOrCreateThreadId(android.content.Context,%20java.util.Set%3Cjava.lang.String%3E)) and (optionally) from insertion into the address table when importing MMS messages ([issue #275](https://github.com/tmo1/sms-ie/issues/275))
  - Add Slovak translation ([7b3ccef](https://github.com/tmo1/sms-ie/commit/7b3ccef76ca48e8f79ca87191f309e600af1eef5), [840abf8](https://github.com/tmo1/sms-ie/commit/840abf825836e69d73d83bd3835564e476366308)) (Peter Vágner)
  - Add Indonesian translation ([3307ebd](https://github.com/tmo1/sms-ie/commit/3307ebd926d2e48905d727ae4551594e3f71f6c0)) (Arif Budiman)
 
@@ -28,6 +30,7 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
  - Update French translation ([cdb336b](https://github.com/tmo1/sms-ie/commit/cdb336b5f1dcf3e6147efcbad3d1f6099b459057)) (MarcMush)
  - Update Italian translation ([99daf11](https://github.com/tmo1/sms-ie/commit/99daf11c4c5c48dbd5e97dbb75bd9dc47fd62979)) (Random)
  - Update German translation ([6cc6908](https://github.com/tmo1/sms-ie/commit/6cc690853ef95d3c0a14a96dce1f7df60cfb5381)) (nautilusx)
+ - Update Turkish translation ([e316462](https://github.com/tmo1/sms-ie/commit/e3164622eda3d1b074f25b382be544f82cf10b55)) (baturax)
 
 ## [2.9.0] - 2026-03-23
 
@@ -67,4 +70,5 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
 
 [2.8.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.8.0
 [2.9.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.9.0
-[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.9.0...HEAD
+[2.10.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.0
+[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.10.0...HEAD
