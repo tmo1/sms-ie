@@ -91,9 +91,29 @@ SMS Import / Export does all input and output via the Android [Storage Access Fr
 
 SMS Import / Export can filter messages when exporting, wiping, or counting them; see [MESSAGE-FILTERING.md](MESSAGE-FILTERING.md) for an explanation of the filtering system and usage examples.
 
-### Encryption
+## Encryption
 
 [SMS Import / Export does not have any internal encryption / decryption functionality](https://github.com/tmo1/sms-ie/issues/82), and [there are currently no plans to add such functionality](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908098763). Instead, the currently recommended method for automatic encryption / decryption is to use an [Rclone crypt remote](https://rclone.org/crypt/) via [RSAF](https://github.com/chenxiaolong/RSAF) to transparently encrypt data as it is exported and decrypt it as it is imported. (The RSAF developer explains how to do this [here](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1907097444), but cautions that he would only suggest this method for those already familiar with Rclone.) [Note](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908772982) that this method will only work for internal storage or cloud storage accessible via Rclone, but not for SD card or USB attached storage.
+
+## Exporting Messages
+
+### Scheduled Export
+
+To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
+
+(Scheduled export of blocked numbers is not implemented, since [accessing the blocked numbers database requires that the app be the default SMS app or the default phone app](https://developer.android.com/reference/android/provider/BlockedNumberContract#permissions), and switching the default SMS or phone apps to SMS Import / Export and then back to proper SMS and phone apps require manual intervention.)
+
+#### Running As A Foreground Service
+
+On recent versions of Android, scheduled exports that export many MMS messages or that run for more than ten minutes may be killed by the system. To avoid this, scheduled exports can be run as a foreground service, which requires disabling battery optimizations for the app. (See [issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131).)
+
+#### Retention
+
+When scheduled exports are enabled, the following options can be used to control retention:
+
+- `Delete old exports` - If this option is not enabled (the default), then any old exports will be left untouched (i.e., all exports are retained indefinitely). If it is enabled, then for each data type (contacts, call log, and messages), upon successful export, the app will try to delete any old exports (i.e., all files with names of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`, where `<data-type>` is the data type successfully exported, and `<yyyy-MM-dd>` is a datestamp). Selective retention of a subset of old exports can be accomplished by enabling this option in conjunction with the use of external software with snapshotting and selective retention functionality, such as [rsnapshot](https://rsnapshot.org/) or [borg](https://borgbackup.readthedocs.io/en/stable/usage/prune.html), running either on the local device, or on a system to which the exports are synced via software such as [Syncthing](https://syncthing.net/). This software should be scheduled to run between exports, and configured to preserve copies of the previous exports before the app deletes them following its next scheduled exports.
+
+- `Remove datestamps from filenames` - Scheduled exports are always initially created with filenames of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`. If this option is enabled (in addition to the previous one), then after attempting to delete all old exports (of the relevant data type), the app will then attempt to remove the datestamp from the current export's filename by renaming it to `<data-type>.[zip|json]`. This is intended to make successive exports appear to be different versions of the same file, which may be useful in conjunction with external software that implements some form of file versioning, such as [Syncthing](https://docs.syncthing.net/users/versioning.html) or [Nextcloud](https://docs.nextcloud.com/server/latest/user_manual/en/files/version_control.html).
 
 ## Importing Messages
 
@@ -117,25 +137,21 @@ Message deduplication is tricky, since on the one hand, unlike email messages, S
 
 Call log deduplication works similarly but is simpler: call log entries are assumed to be identical if they have identical [`NUMBER`](https://developer.android.com/reference/android/provider/CallLog.Calls#NUMBER), [`TYPE`](https://developer.android.com/reference/android/provider/CallLog.Calls#TYPE), and [`DATE`](https://developer.android.com/reference/android/provider/CallLog.Calls#DATE) fields.
 
-### Scheduled Export
+### Exclude Addresses
 
-To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
+Although Android includes the user's phone number in the list of numbers it associates with MMS messages, it treats the user specially for the purpose of conversation organization. For example, if there are MMS messages sent by the user Alice to both Bob and Charlie, and from Bob and Charlie to both each other and Alice, Android will group them into a conversation with only Bob and Charlie (or their numbers, depending on whether they're in the user's contacts) displayed at the top of the screen, and (if the list of Bob and Charlie is clicked on) it will describe the conversation as between "you and 2 others," with "2 other people."
 
-(Scheduled export of blocked numbers is not implemented, since [accessing the blocked numbers database requires that the app be the default SMS app or the default phone app](https://developer.android.com/reference/android/provider/BlockedNumberContract#permissions), and switching the default SMS or phone apps to SMS Import / Export and then back to proper SMS and phone apps require manual intervention.)
+The default behavior of SMS I/E when importing is to import all numbers associated each messages. Unfortunately, this results in Android not treating the user specially and instead including his number in the conversation list. E.g., when the messages in the example of the previous paragraph are imported, Android will group them into a conversation between Alice, Bob, and Charlie, mischaracterizing the conversation as being between "you and 3 others," with "3 other people," and putting the messages into a separate conversation from that in which natively stored messages between the user, Bob, and Charlie are grouped.
 
-#### Running As A Foreground Service
+SMS I/E provides a couple of experimental settings (under `Settings / Import options`) that attempt to rectify this:
 
-On recent versions of Android, scheduled exports that export many MMS messages or that run for more than ten minutes may be killed by the system. To avoid this, scheduled exports can be run as a foreground service, which requires disabling battery optimizations for the app. (See [issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131).)
+* "Addresses (numbers) to exclude from thread (conversation) reconstruction (comma separated list, typically the source device phone number[s])": Any numbers specified here will be excluded from calls to `getOrCreateThreadId`, [the Android API call that creates a thread containing the provided recipients](https://developer.android.com/reference/android/provider/Telephony.Threads#getOrCreateThreadId(android.content.Context,%20java.util.Set%3Cjava.lang.String%3E)).
+* "Insert excluded addresses into address table": This option (off by default) instructs SMS I/E to not insert the addresses specified in the previous setting into its address table (in addition to excluding them from calls to `getOrCreateThreadId`).
 
-#### Retention
+> [!WARNING] 
+# These settings are experimental. For discussion of them and the problem they were introduced to solve, see [issue #275](https://github.com/tmo1/sms-ie/issues/275). If you use these settings, please consider reporting your experience - positive or negative - in that issue.
 
-When scheduled exports are enabled, the following options can be used to control retention:
-
-- `Delete old exports` - If this option is not enabled (the default), then any old exports will be left untouched (i.e., all exports are retained indefinitely). If it is enabled, then for each data type (contacts, call log, and messages), upon successful export, the app will try to delete any old exports (i.e., all files with names of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`, where `<data-type>` is the data type successfully exported, and `<yyyy-MM-dd>` is a datestamp). Selective retention of a subset of old exports can be accomplished by enabling this option in conjunction with the use of external software with snapshotting and selective retention functionality, such as [rsnapshot](https://rsnapshot.org/) or [borg](https://borgbackup.readthedocs.io/en/stable/usage/prune.html), running either on the local device, or on a system to which the exports are synced via software such as [Syncthing](https://syncthing.net/). This software should be scheduled to run between exports, and configured to preserve copies of the previous exports before the app deletes them following its next scheduled exports.
-
-- `Remove datestamps from filenames` - Scheduled exports are always initially created with filenames of the form `<data-type>-<yyyy-MM-dd>.[zip|json]`. If this option is enabled (in addition to the previous one), then after attempting to delete all old exports (of the relevant data type), the app will then attempt to remove the datestamp from the current export's filename by renaming it to `<data-type>.[zip|json]`. This is intended to make successive exports appear to be different versions of the same file, which may be useful in conjunction with external software that implements some form of file versioning, such as [Syncthing](https://docs.syncthing.net/users/versioning.html) or [Nextcloud](https://docs.nextcloud.com/server/latest/user_manual/en/files/version_control.html).
-
-### Permissions
+## Permissions
 
 To export messages, permission to read SMSs and Contacts is required (the need for the latter is explained below). The app will ask for these permissions on startup, if it does not already have them.
 
@@ -158,7 +174,7 @@ To post notifications regarding the result(s) of a scheduled export run, permiss
 
 To run scheduled exports as a foreground service, permission to disable battery optimizations for the app is required (see [Running As A Foreground Service](#running-as-a-foreground-service)).
 
-### Contacts
+## Contacts
 
 SMS and MMS messages include phone numbers ("addresses") but not the names of the communicating parties. The contact information displayed by Android is generated by cross-referencing phone numbers with the device's Contacts database. When exporting messages, SMS Import / Export does this cross-referencing in order to include the contact names in its output; this is why permission to read Contacts in necessary. When importing, included contact names are ignored, since the app (at least currently) does not add entries to or modify the Android Contacts database during message import. The best way to maintain the association of messages with contacts is to separately transfer contacts to the device into which SMS Import / Export is importing messages, via either SMS Import / Export's contacts export / import functionality or Android's built in contacts export / import functionality. Contacts cross-referencing is performed for call log export as well, despite the fact that call log metadata will often already include the contact name; see below for a discussion of this point.
 

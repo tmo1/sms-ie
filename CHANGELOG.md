@@ -15,6 +15,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 ### Added
 
  - Add support for ISO 8601 dates in message filters ([7623731](https://github.com/tmo1/sms-ie/commit/76237312b6fc2c118a0c6c1d1b48ca425b9024d4))
+ - Add settings to exclude user specified addresses from calls to `[getOrCreateThreadId](https://developer.android.com/reference/android/provider/Telephony.Threads#getOrCreateThreadId(android.content.Context,%20java.util.Set%3Cjava.lang.String%3E))` and (optionally) from insertion into the address table when importing MMS messages ([issue #275](https://github.com/tmo1/sms-ie/issues/275))
  - Add Slovak translation ([7b3ccef](https://github.com/tmo1/sms-ie/commit/7b3ccef76ca48e8f79ca87191f309e600af1eef5), [840abf8](https://github.com/tmo1/sms-ie/commit/840abf825836e69d73d83bd3835564e476366308)) (Peter Vágner)
  - Add Indonesian translation ([3307ebd](https://github.com/tmo1/sms-ie/commit/3307ebd926d2e48905d727ae4551594e3f71f6c0)) (Arif Budiman)
 

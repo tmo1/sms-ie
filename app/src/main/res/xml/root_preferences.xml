@@ -31,9 +31,10 @@
         android:title="Enable message filtering"
         app:defaultValue="false"
         app:singleLineTitle="false" />
-    
-    <PreferenceCategory android:title="Scheduled export"
-        android:key="scheduled_export_preference_category">
+
+    <PreferenceCategory
+        android:key="scheduled_export_preference_category"
+        android:title="Scheduled export">
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
@@ -53,15 +54,15 @@
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_success_notification"
-            android:title="Export success notification"
             android:summary="A notification will always be issued upon export failure, regardless of the value of this setting."
+            android:title="Export success notification"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:key="disable_battery_optimizations"
-            android:title="Disable battery optimizations"
-            android:summary="Required on Android 14+ when exporting many items."
             android:persistent="false"
+            android:summary="Required on Android 14+ when exporting many items."
+            android:title="Disable battery optimizations"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
@@ -131,6 +132,18 @@
             android:key="import_sub_ids"
             android:title="Include Subscription IDs in import"
             app:defaultValue="false"
+            app:singleLineTitle="false" />
+
+        <EditTextPreference
+            android:key="excluded_addresses"
+            android:title="Addresses (numbers) to exclude from thread (conversation) reconstruction (comma separated list, typically the source device phone number[s])"
+            app:defaultValue=""
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            android:key="insert_excluded_addresses"
+            android:title="Insert excluded addresses into address table"
+            app:defaultValue="true"
             app:singleLineTitle="false" />
 
     </PreferenceCategory>

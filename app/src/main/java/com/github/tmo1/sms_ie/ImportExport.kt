@@ -32,8 +32,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.provider.ContactsContract
 import android.provider.Telephony
+import android.telephony.PhoneNumberUtils
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -44,6 +46,7 @@ import androidx.work.workDataOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.util.Locale
 
 data class Progress(
     val current: Int,
@@ -277,4 +280,10 @@ fun deleteOldExports(
         }
         Log.i(LOG_TAG, "$total exports deleted")
     }
+}
+
+fun comparePhoneNumbers(number1: String, number2: String): Boolean {
+    val defaultCountryIso: String by lazy { Locale.getDefault().country }
+    return if (SDK_INT >= 31) PhoneNumberUtils.areSamePhoneNumber(number1, number2, defaultCountryIso)
+    else PhoneNumberUtils.compare(number1, number2)
 }
