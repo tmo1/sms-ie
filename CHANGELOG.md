@@ -8,6 +8,10 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+## [2.10.1] - 2026-06-18
+
+This release does not change anything from [release 2.10.0](https://github.com/tmo1/sms-ie/releases/tag/v2.10.0), but was created since the uploaded build of v2.10.0 is broken ([issue #347](https://github.com/tmo1/sms-ie/issues/347), [issue #348](https://github.com/tmo1/sms-ie/issues/348))
+
 ## [2.10.0] - 2026-06-17
 
 ### Changed
@@ -71,4 +75,5 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
 [2.8.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.8.0
 [2.9.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.9.0
 [2.10.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.0
-[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.10.0...HEAD
+[2.10.1]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.1
+[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.10.1...HEAD
