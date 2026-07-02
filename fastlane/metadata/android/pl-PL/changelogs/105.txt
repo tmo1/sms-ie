@@ -1,0 +1,7 @@
+- Tłumaczenie na język wietnamski - autorstwa ngocanhtve
+
+- Aktualizacje tłumaczenia rosyjskiego - autorstwa Axusa Wizixa i Artema
+
+- Modyfikacja obsługi wiadomości SMS z wieloma odbiorcami po zaimportowaniu (patrz zgłoszenie nr 159)
+
+- Naprawiono błąd, który uniemożliwiał aplikacji stanie się domyślną aplikacją do SMS-ów - autorstwa Andrew (andr5w) (zgłoszenie nr 167 / zgłoszenie nr 168)

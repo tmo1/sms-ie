@@ -1,0 +1,5 @@
+- Naprawiono błąd, który w niektórych przypadkach uniemożliwiał importowanie fragmentów wiadomości MMS (patrz problem nr 79)
+
+- Ulepszono układ ekranów Główny, Preferencje i Informacje
+
+- Aktualizacja do wersji włoskiej

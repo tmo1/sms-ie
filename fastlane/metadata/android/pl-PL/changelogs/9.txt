@@ -1,0 +1,11 @@
+- Poprawki błędów
+
+- Nowa ikona aplikacji
+
+- Tłumaczenie na norweski bokmål
+
+- Tłumaczenie na chiński uproszczony
+
+- Tłumaczenie na portugalski
+
+- Aktualizacja do tłumaczenia na niemiecki
