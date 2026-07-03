@@ -1,0 +1,11 @@
+- Ekran preferencji
+
+- Eksport rejestru połączeń
+
+- Naprawiono błąd (problemy nr 11, 12, 14), który powodował awarie podczas importowania
+wiadomości wyeksportowanych z wersji Androida, której pola wiadomości
+nie były dostępne w obecnej wersji
+
+- (Częściowe) tłumaczenie na język niemiecki
+
+- Tłumaczenie na język francuski

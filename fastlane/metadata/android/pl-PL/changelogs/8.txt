@@ -1,0 +1,5 @@
+- Raportowanie postępów
+
+- Czyszczenie wiadomości
+
+- Ekran „Informacje”

@@ -1,0 +1,9 @@
+- Naprawiono błąd (#63), który uniemożliwiał importowanie połączeń w pewnych okolicznościach.
+
+- Dodano sprawdzanie przy uruchamianiu / prośbę o pozwolenie na zapis kontaktów (patrz zgłoszenie #69).
+
+- Tłumaczenie na włoski
+
+- Tłumaczenie na polski
+
+- Tłumaczenie na hiszpański

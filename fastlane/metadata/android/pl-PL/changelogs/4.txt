@@ -1,0 +1,7 @@
+- Pełny eksport MMS-ów
+
+- Naprawiono błąd (https://github.com/tmo1/sms-ie/issues/4), który powodował awarię aplikacji w przypadku wiadomości SMS z pustym polem „adres”
+
+- Znaczna poprawa wydajności eksportu dzięki buforowaniu nazw kontaktów
+
+- Poprawa jakości kodu
