@@ -1,0 +1,15 @@
+Wersja 2.0.0 wprowadza gruntowną przebudowę kodu odpowiedzialnego za import i eksport wiadomości SMS i MMS, wdrażając nowy format przechowywania wiadomości („v2”):
+
+<ul>
+
+ <li>Wiadomości są teraz przechowywane w pliku JSON rozdzielonym znakami nowej linii (zawsze o nazwie „messages.ndjson”), w przeciwieństwie do standardowego formatu JSON używanego wcześniej.</li>
+
+ <li>Dane binarne wiadomości MMS są teraz przechowywane oddzielnie od danych tekstowych wiadomości i metadanych; plik „messages.ndjson” wraz z katalogiem „data/” zawierającym pliki z danymi binarnymi wiadomości MMS skopiowane bezpośrednio z systemu plików Androida (z zachowaniem oryginalnych nazw plików) są razem spakowane w plik ZIP.</li>
+
+ <li>Wszystkie tagi (ND)JSON dodane przez funkcję importu/eksportu SMS-ów mają teraz przedrostek w postaci podwójnego podkreślenia (np. „__display_name”, „__parts”), aby wyraźnie wskazać, że zostały dodane przez aplikację.</li>
+
+</ul>
+
+<strong>Te zmiany formatu sprawiają niestety, że wersje aplikacji od 2.0.0 wzwyż są niekompatybilne z plikami wiadomości JSON utworzonymi przez wcześniejsze wersje aplikacji.</strong>
+
+Więcej informacji na temat nowego formatu, w tym różne rozwiązania dotyczące wyżej wspomnianej niekompatybilności, można znaleźć w pliku README pod adresem https://github.com/tmo1/sms-ie#readme

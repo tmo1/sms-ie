@@ -1,0 +1,5 @@
+- Naprawiono regresję, która powodowała pomijanie wychodzących wiadomości SMS zawierających adresy (numery telefonów) z odstępami podczas importowania (zobacz zgłoszenia nr 159, 205 i 128).
+
+ - Zaktualizowano tłumaczenia na język niemiecki i rosyjski.
+
+ - Zaktualizowano konfigurację kompilacji Gradle.
