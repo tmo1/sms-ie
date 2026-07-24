@@ -1,0 +1,11 @@
+- Nowe opcje przechowywania eksportu: „Usuń stare eksporty” i „Usuń znaczniki daty z nazw plików” 
+
+- Prawidłowa obsługa nietekstowych danych kontaktowych (np. zdjęć) 
+
+- Naprawiono awarię związaną z brakującymi danymi binarnymi części MMS 
+
+- Płynne odzyskiwanie po błędach napotkanych podczas importowania (np. Błędy analizy JSON) 
+
+- Tłumaczenie rosyjskie 
+
+- Aktualizacje kilku poprzednich tłumaczeń

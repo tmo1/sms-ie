@@ -1,0 +1,3 @@
+- Pełny import MMS-ów
+
+- Całkowite przepisanie w celu wykorzystania strumieniowania JSON, co znacząco zmniejsza zużycie pamięci podczas eksportowania lub importowania dużych ilości danych

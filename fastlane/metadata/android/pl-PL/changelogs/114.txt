@@ -1,0 +1,11 @@
+- Zastosowanie filtrowania komunikatów do operacji czyszczenia (#237).
+
+ - Dodanie operacji zliczania komunikatów (#237).
+
+ - Nie wstawianie danych do nieistniejących kolumn adresów MMS podczas importu (#322).
+
+ - Anulowanie wszelkich zaplanowanych eksportów, gdy opcja „Włącz zaplanowany eksport” jest wyłączona (#326).
+
+ - Usunięcie uprawnienia „android.permission.ACCESS_NETWORK_STATE” (#324).
+
+ - Aktualizacja tłumaczenia na język włoski.

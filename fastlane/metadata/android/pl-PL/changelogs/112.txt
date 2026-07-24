@@ -1,0 +1,11 @@
+- Implementacja filtrowania komunikatów klauzuli WHERE w SQLite.
+
+- Implementacja importu i eksportu zablokowanych numerów.
+
+- Naprawiono obsługę logu wywołań „max_records”.
+
+- Aktualizacja tłumaczenia na język rosyjski.
+
+- Refaktoryzacja.
+
+- Aktualizacja AGP do wersji 8.13.0.

@@ -1,0 +1,3 @@
+- Import rejestru połączeń
+
+- Zaplanowany eksport

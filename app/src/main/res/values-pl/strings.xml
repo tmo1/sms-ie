@@ -17,7 +17,7 @@
     <string name="import_messages_results">Zaimportowano %1$d SMSów i %2$d MMSów\nZajęło to: %3$s</string>
     <string name="export_call_log_results">Wyeksportowano %1$d połączeń\nZajęło to: %2$s</string>
     <string name="import_call_log_results">Zaimportowano %1$d połączeń\nZajęło to: %2$s</string>
-    <string name="export_contacts_results">Wyeksportowano %1$d kontaktów\nZajęło to: %2$s.</string>
+    <string name="export_contacts_results">Wyeksportowano %1$d kontaktów\nZajęło to: %2$s</string>
     <string name="import_contacts_results">Zaimportowano %1$d kontaktów\nZajęło to: %2$s</string>
     <string name="call_logs_permissions_required">Eksportowanie listy połączeń wymaga uprawnień do odczytu listy połączeń i kontaktów.</string>
     <string name="call_logs_read_write_permissions_required">Importowanie listy połączeń wymaga uprawnień do odczytu i zapisu listy połączeń.</string>
@@ -40,15 +40,15 @@
     <string name="messages_wiped">Usunięto wiadomości</string>
     <string name="wiping_sms_messages">Usuwanie wiadomości SMS …</string>
     <string name="wiping_mms_messages">Usuwanie wiadomości MMS …</string>
-    <string name="app_about_text">Import / Eksport SMS \n \nStworzone przez Thomasa More\'a oraz innych współtwórców \n \nWersja %1$s \n \nPrawa autorskie © 2021–2026 \n \nWydane na licencji GNU GPLv3</string>
+    <string name="app_about_text">Import/Eksport SMS\n\nautorstwa Thomasa More\'a\ni innych współautorów\n\nWersja %1$s\n\nCopyright © 2021–2026\n\nWydano na licencji GNU GPL v3</string>
     <string name="homepage">Strona internetowa:</string>
     <string name="documentation">Dokumentacja:</string>
     <string name="issue_tracker">Zgłoś problem:</string>
     <string name="about">O aplikacji</string>
     <string name="export_contacts">Eksport kontaktów</string>
     <string name="import_contacts">Import kontaktów</string>
-    <string name="copying_mms_binary_data">Kopiowanie binarnych danych MMS...</string>
-    <string name="importing_messages">Importowanie wiadomości...</string>
+    <string name="copying_mms_binary_data">Kopiowanie binarnych danych MMS …</string>
+    <string name="importing_messages">Importowanie wiadomości…</string>
     <string name="become_default_sms_app_warning">Aby importować lub usuwać wiadomości SMS lub importować lub eksportować zablokowane numery, aplikacja SMS Import / Export musi być domyślną aplikacją do obsługi wiadomości SMS. Przed kontynuowaniem przeczytaj plik README i upewnij się, że rozumiesz konsekwencje tej czynności.</string>
     <string name="okay">OK</string>
     <string name="default_sms_app_dialog_title">Domyślna aplikacja dla SMSów</string>

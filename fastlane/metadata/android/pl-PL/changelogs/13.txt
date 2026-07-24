@@ -1,0 +1,7 @@
+- Tłumaczenie na język turecki
+
+- Aktualizacja do tłumaczenia na język polski
+
+- Aktualizacja do tłumaczenia na język francuski
+
+- Poprawa estetyki interfejsu użytkownika

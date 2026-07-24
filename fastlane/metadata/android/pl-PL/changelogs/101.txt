@@ -1,0 +1,5 @@
+- Opcjonalna deduplikacja wiadomości podczas importu (eksperymentalna)
+
+- Pomiń wpisy poczty głosowej podczas importowania rejestru połączeń (patrz https://github.com/tmo1/sms-ie/issues/110)
+
+- Zastąp komunikaty Toast powiadomieniami TextView (patrz https://github.com/tmo1/sms-ie/issues/122)
