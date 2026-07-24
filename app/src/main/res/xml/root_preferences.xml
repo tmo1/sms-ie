@@ -33,6 +33,35 @@
         app:singleLineTitle="false" />
 
     <PreferenceCategory
+        android:key="encryption_preference_category"
+        android:title="Encryption">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="encryption_manual_operations"
+            android:title="Perform encryption and decryption for manual operations"
+            app:singleLineTitle="false" />
+
+        <SwitchPreferenceCompat
+            android:key="encryption_stored_passphrase_manual_operations"
+            android:title="Use stored passphrase for encryption and decryption for manual operations"
+            android:defaultValue="false"
+            app:singleLineTitle="false"
+            app:dependency="encryption_manual_operations" />
+
+        <SwitchPreferenceCompat
+            android:key="encryption_scheduled_operations"
+            android:title="Perform encryption for scheduled operations (using stored passphrase)"
+            android:defaultValue="false"
+            app:singleLineTitle="false" />
+
+        <Preference
+            android:key="encryption_store_passphrase"
+            android:widgetLayout="@layout/store_passphrase" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="scheduled_export_preference_category"
         android:title="Scheduled export">
 
@@ -177,6 +206,13 @@
             android:title="Process MMS messages"
             app:defaultValue="true"
             app:dependency="debugging" />
+
+        <EditTextPreference
+            android:key="secretstream_chunk_size"
+            android:title="SecretStream chunk size"
+            app:defaultValue=""
+            app:dependency="debugging"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 

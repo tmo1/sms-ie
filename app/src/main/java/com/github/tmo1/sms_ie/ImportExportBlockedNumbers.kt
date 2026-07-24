@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
  *
- * Copyright (c) 2025 Thomas More
+ * Copyright (c) 2025-2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -20,11 +20,12 @@
  * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+//  This file contains the routines that import and export blocked numbers.
+
 package com.github.tmo1.sms_ie
 
 import android.content.ContentValues
 import android.content.Context
-import android.net.Uri
 import android.provider.BaseColumns
 import android.provider.BlockedNumberContract
 import android.util.Log
@@ -34,26 +35,24 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.BufferedReader
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.coroutines.coroutineContext
 
 suspend fun exportBlockedNumbers(
-    appContext: Context, file: Uri, updateProgress: suspend (Progress) -> Unit
+    appContext: Context, outputStream: OutputStream?, updateProgress: suspend (Progress) -> Unit
 ): Int {
     return withContext(Dispatchers.IO) {
         val total: Int
-        appContext.contentResolver.openOutputStream(file).use { outputStream ->
-            ZipOutputStream(outputStream).use { zipOutputStream ->
-                val jsonZipEntry = ZipEntry("blocked_numbers.ndjson")
-                zipOutputStream.putNextEntry(jsonZipEntry)
-                total = blockedNumbersToJson(
-                    appContext, zipOutputStream, updateProgress
-                )
-                zipOutputStream.closeEntry()
-            }
+        ZipOutputStream(outputStream).use { zipOutputStream ->
+            val jsonZipEntry = ZipEntry("blocked_numbers.ndjson")
+            zipOutputStream.putNextEntry(jsonZipEntry)
+            total = blockedNumbersToJson(appContext, zipOutputStream, updateProgress)
+            zipOutputStream.closeEntry()
             total
         }
     }
@@ -100,7 +99,7 @@ private suspend fun blockedNumbersToJson(
 }
 
 suspend fun importBlockedNumbers(
-    appContext: Context, uri: Uri, updateProgress: suspend (Progress) -> Unit
+    appContext: Context, inputStream: InputStream?, updateProgress: suspend (Progress) -> Unit
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var progress = Progress(0, 0, null)
@@ -112,61 +111,55 @@ suspend fun importBlockedNumbers(
         blockedNumberCursor?.use {
             blockedNumberColumns.addAll(it.columnNames subtract setOf(BaseColumns._ID))
         }
-        uri.let { zipUri ->
-            appContext.contentResolver.openInputStream(zipUri).use { inputStream ->
-                ZipInputStream(inputStream).use { zipInputStream ->
-                    var zipEntry = zipInputStream.nextEntry
-                    while (zipEntry != null) {
-                        if (zipEntry.name == "blocked_numbers.ndjson") {
-                            break
+        inputStream.let { _ ->
+            ZipInputStream(inputStream).use { zipInputStream ->
+                var zipEntry = zipInputStream.nextEntry
+                while (zipEntry != null) {
+                    if (zipEntry.name == "blocked_numbers.ndjson") break
+                    zipEntry = zipInputStream.nextEntry
+                }
+                if (zipEntry == null) {
+                    throw UserFriendlyException(
+                        appContext.getString(R.string.missing_blocked_numbers_ndjson_error)
+                    )
+                }
+                progress =
+                    progress.copy(message = appContext.getString(R.string.importing_blocked_numbers))
+                updateProgress(progress)
+                BufferedReader(InputStreamReader(zipInputStream)).useLines { lines ->
+                    lines.forEachIndexed JSONLine@{ lineNumber, line ->
+                        if (progress.current == (prefs.getString(
+                                "max_records", ""
+                            )?.toIntOrNull() ?: -1)
+                        ) {
+                            Log.d(LOG_TAG, "Skipping due to debug settings")
+                            return@JSONLine
                         }
-                        zipEntry = zipInputStream.nextEntry
-                    }
-                    if (zipEntry == null) {
-                        throw UserFriendlyException(
-                            appContext.getString(R.string.missing_blocked_numbers_ndjson_error)
-                        )
-                    }
-                    progress =
-                        progress.copy(message = appContext.getString(R.string.importing_blocked_numbers))
-                    updateProgress(progress)
-                    BufferedReader(InputStreamReader(zipInputStream)).useLines { lines ->
-                        lines.forEachIndexed JSONLine@{ lineNumber, line ->
-                            if (progress.current == (prefs.getString(
-                                    "max_records", ""
-                                )?.toIntOrNull() ?: -1)
-                            ) {
-                                Log.d(LOG_TAG, "Skipping due to debug settings")
-                                return@JSONLine
-                            }
-                            coroutineContext.ensureActive()
-                            Log.d(LOG_TAG, "Processing line #$lineNumber")
-                            // Log.d(LOG_TAG, "Processing: $line")
-                            val blockedNumberMetadata = ContentValues()
-                            val blockedNumberJSON = JSONObject(line)
-                            blockedNumberJSON.keys().forEach { key ->
-                                if (key in blockedNumberColumns) blockedNumberMetadata.put(
-                                    key, blockedNumberJSON.getString(key)
-                                )
-                            }
-                            val insertUri = appContext.contentResolver.insert(
-                                BlockedNumberContract.BlockedNumbers.CONTENT_URI,
-                                blockedNumberMetadata
+                        coroutineContext.ensureActive()
+                        Log.d(LOG_TAG, "Processing line #$lineNumber")
+                        // Log.d(LOG_TAG, "Processing: $line")
+                        val blockedNumberMetadata = ContentValues()
+                        val blockedNumberJSON = JSONObject(line)
+                        blockedNumberJSON.keys().forEach { key ->
+                            if (key in blockedNumberColumns) blockedNumberMetadata.put(
+                                key, blockedNumberJSON.getString(key)
                             )
-                            if (insertUri == null) {
-                                Log.e(LOG_TAG, "Blocked number insert failed!")
-                            } else {
-                                Log.d(LOG_TAG, "Blocked number insert succeeded")
+                        }
+                        val insertUri = appContext.contentResolver.insert(
+                            BlockedNumberContract.BlockedNumbers.CONTENT_URI, blockedNumberMetadata
+                        )
+                        if (insertUri == null) {
+                            Log.e(LOG_TAG, "Blocked number insert failed!")
+                        } else {
+                            Log.d(LOG_TAG, "Blocked number insert succeeded")
 
-                                progress = progress.copy(
-                                    current = progress.current + 1,
-                                    message = appContext.getString(
-                                        R.string.blocked_numbers_import_progress,
-                                        progress.current + 1,
-                                    )
+                            progress = progress.copy(
+                                current = progress.current + 1, message = appContext.getString(
+                                    R.string.blocked_numbers_import_progress,
+                                    progress.current + 1,
                                 )
-                                updateProgress(progress)
-                            }
+                            )
+                            updateProgress(progress)
                         }
                     }
                 }

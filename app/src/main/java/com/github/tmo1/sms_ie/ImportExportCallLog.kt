@@ -2,7 +2,7 @@
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
  * call logs, contacts, and blocked numbers, from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2025 Thomas More
+ * Copyright (c) 2021-2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -26,37 +26,38 @@ package com.github.tmo1.sms_ie
 
 import android.content.ContentValues
 import android.content.Context
-import android.net.Uri
 import android.provider.BaseColumns
 import android.provider.CallLog
 import android.util.JsonReader
 import android.util.JsonWriter
 import android.util.Log
+import android.util.MalformedJsonException
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import org.json.JSONException
 import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStream
 import java.io.OutputStreamWriter
 import kotlin.coroutines.coroutineContext
 
 suspend fun exportCallLog(
-    appContext: Context, file: Uri, updateProgress: suspend (Progress) -> Unit
+    appContext: Context, outputStream: OutputStream?, updateProgress: suspend (Progress) -> Unit
 ): Int {
     return withContext(Dispatchers.IO) {
         val total: Int
         val displayNames = mutableMapOf<String, String?>()
-        appContext.contentResolver.openOutputStream(file).use { outputStream ->
-            BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                val jsonWriter = JsonWriter(writer)
-                jsonWriter.setIndent("  ")
-                jsonWriter.beginArray()
-                total = callLogToJSON(appContext, jsonWriter, displayNames, updateProgress)
-                jsonWriter.endArray()
-            }
+        BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
+            val jsonWriter = JsonWriter(writer)
+            jsonWriter.setIndent("  ")
+            jsonWriter.beginArray()
+            total = callLogToJSON(appContext, jsonWriter, displayNames, updateProgress)
+            jsonWriter.endArray()
         }
         total
     }
@@ -81,7 +82,6 @@ private suspend fun callLogToJSON(
             val addressIndex = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
             do {
                 coroutineContext.ensureActive()
-
                 jsonWriter.beginObject()
                 it.columnNames.forEachIndexed { i, columnName ->
                     val value = it.getString(i)
@@ -106,10 +106,7 @@ private suspend fun callLogToJSON(
                 )
                 updateProgress(progress)
 
-                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull()
-                        ?: -1)
-                )
-                {
+                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) {
                     Log.d(LOG_TAG, "Breaking due to debug settings")
                     break
                 }
@@ -120,7 +117,7 @@ private suspend fun callLogToJSON(
 }
 
 suspend fun importCallLog(
-    appContext: Context, uri: Uri, updateProgress: suspend (Progress) -> Unit
+    appContext: Context, inputStream: InputStream?, updateProgress: suspend (Progress) -> Unit
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var progress = Progress(0, 0, null)
@@ -131,96 +128,89 @@ suspend fun importCallLog(
             CallLog.Calls.CONTENT_URI, null, null, null, null
         )
         callLogCursor?.use { callLogColumns.addAll(it.columnNames) }
-        uri.let {
-            appContext.contentResolver.openInputStream(it).use { inputStream ->
-                BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                    val jsonReader = JsonReader(reader)
-                    val callLogMetadata = ContentValues()
-                    try {
-                        jsonReader.beginArray()
+        inputStream.let {
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                val jsonReader = JsonReader(reader)
+                val callLogMetadata = ContentValues()
+                try {
+                    jsonReader.beginArray()
 
-                        progress =
-                            progress.copy(message = appContext.getString(R.string.importing_calls))
-                        updateProgress(progress)
+                    progress =
+                        progress.copy(message = appContext.getString(R.string.importing_calls))
+                    updateProgress(progress)
 
-                        JSONReader@ while (jsonReader.hasNext()) {
+                    JSONReader@ while (jsonReader.hasNext()) {
 
-                            ensureActive()
+                        ensureActive()
 
-                            jsonReader.beginObject()
-                            callLogMetadata.clear()
-                            while (jsonReader.hasNext()) {
-                                val name = jsonReader.nextName()
-                                val value = jsonReader.nextString()
-                                // https://github.com/tmo1/sms-ie/issues/210
-                                if ((callLogColumns.contains(name)) and (name !in setOf(
-                                        BaseColumns._ID, BaseColumns._COUNT, "LAST_SEVEN_NUMBER"
-                                    ))
-                                ) {
-                                    callLogMetadata.put(name, value)
-                                }
-                            }
-                            jsonReader.endObject()
-                            if (callLogMetadata.keySet()
-                                    .contains(CallLog.Calls.NUMBER) && callLogMetadata.getAsString(
-                                    CallLog.Calls.TYPE
-                                ) != "4"
+                        jsonReader.beginObject()
+                        callLogMetadata.clear()
+                        while (jsonReader.hasNext()) {
+                            val name = jsonReader.nextName()
+                            val value = jsonReader.nextString()
+                            // https://github.com/tmo1/sms-ie/issues/210
+                            if ((callLogColumns.contains(name)) and (name !in setOf(
+                                    BaseColumns._ID, BaseColumns._COUNT, "LAST_SEVEN_NUMBER"
+                                ))
                             ) {
-                                if (deduplication) {
-                                    val callDuplicatesCursor = appContext.contentResolver.query(
-                                        CallLog.Calls.CONTENT_URI,
-                                        arrayOf(CallLog.Calls._ID),
-                                        "${CallLog.Calls.NUMBER}=? AND ${CallLog.Calls.TYPE}=? AND ${CallLog.Calls.DATE}=?",
-                                        arrayOf(
-                                            callLogMetadata.getAsString(CallLog.Calls.NUMBER),
-                                            callLogMetadata.getAsString(CallLog.Calls.TYPE),
-                                            callLogMetadata.getAsString(CallLog.Calls.DATE)
-
-                                        ),
-                                        null
-                                    )
-                                    val isDuplicate = callDuplicatesCursor?.use { _ ->
-                                        if (callDuplicatesCursor.moveToFirst()) {
-                                            Log.d(LOG_TAG, "Duplicate call - skipping")
-                                            true
-                                        } else {
-                                            false
-                                        }
-                                    }
-                                    if (isDuplicate == true) {
-                                        continue@JSONReader
-                                    }
-                                }
-                                val insertUri = appContext.contentResolver.insert(
-                                    CallLog.Calls.CONTENT_URI, callLogMetadata
-                                )
-                                if (insertUri == null) {
-                                    Log.v(LOG_TAG, "Call insert failed!")
-                                } else {
-                                    progress = progress.copy(
-                                        current = progress.current + 1,
-                                        message = appContext.getString(
-                                            R.string.call_log_import_progress,
-                                            progress.current + 1,
-                                        ),
-                                    )
-                                    updateProgress(progress)
-                                }
-                            }
-                            if (progress.current == (prefs.getString(
-                                    "max_records", ""
-                                )?.toIntOrNull() ?: -1)
-                            ) {
-                                Log.d(LOG_TAG, "Breaking due to debug settings")
-                                break
+                                callLogMetadata.put(name, value)
                             }
                         }
-                        jsonReader.endArray()
-                    } catch (e: Exception) {
-                        throw UserFriendlyException(
-                            appContext.getString(R.string.json_parse_error), e
-                        )
+                        jsonReader.endObject()
+                        if (callLogMetadata.keySet()
+                                .contains(CallLog.Calls.NUMBER) && callLogMetadata.getAsString(
+                                CallLog.Calls.TYPE
+                            ) != "4"
+                        ) {
+                            if (deduplication) {
+                                val callDuplicatesCursor = appContext.contentResolver.query(
+                                    CallLog.Calls.CONTENT_URI,
+                                    arrayOf(CallLog.Calls._ID),
+                                    "${CallLog.Calls.NUMBER}=? AND ${CallLog.Calls.TYPE}=? AND ${CallLog.Calls.DATE}=?",
+                                    arrayOf(
+                                        callLogMetadata.getAsString(CallLog.Calls.NUMBER),
+                                        callLogMetadata.getAsString(CallLog.Calls.TYPE),
+                                        callLogMetadata.getAsString(CallLog.Calls.DATE)
+
+                                    ),
+                                    null
+                                )
+                                val isDuplicate = callDuplicatesCursor?.use { _ ->
+                                    if (callDuplicatesCursor.moveToFirst()) {
+                                        Log.d(LOG_TAG, "Duplicate call - skipping")
+                                        true
+                                    } else false
+                                }
+                                if (isDuplicate == true) continue@JSONReader
+                            }
+                            val insertUri = appContext.contentResolver.insert(
+                                CallLog.Calls.CONTENT_URI, callLogMetadata
+                            )
+                            if (insertUri == null) Log.v(LOG_TAG, "Call insert failed!")
+                            else {
+                                progress = progress.copy(
+                                    current = progress.current + 1,
+                                    message = appContext.getString(
+                                        R.string.call_log_import_progress,
+                                        progress.current + 1,
+                                    ),
+                                )
+                                updateProgress(progress)
+                            }
+                        }
+                        if (progress.current == (prefs.getString(
+                                "max_records", ""
+                            )?.toIntOrNull() ?: -1)
+                        ) {
+                            Log.d(LOG_TAG, "Breaking due to debug settings")
+                            break
+                        }
                     }
+                    jsonReader.endArray()
+                } catch (e: MalformedJsonException) {
+                    throw UserFriendlyException(
+                        appContext.getString(R.string.json_parse_error), e
+                    )
                 }
             }
             progress.current

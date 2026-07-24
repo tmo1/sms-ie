@@ -1,6 +1,8 @@
 /*
- * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021-2022 Thomas More
+ * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+ * call logs, contacts, and blocked numbers, from and to JSON / NDJSON files.
+ *
+ * Copyright (c) 2021-2022,2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -18,47 +20,49 @@
  * along with SMS Import / Export.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+//  This file contains the routines that import and export contacts.
+
 package com.github.tmo1.sms_ie
 
 import android.content.ContentProviderOperation
 import android.content.Context
 import android.database.Cursor.FIELD_TYPE_BLOB
-import android.net.Uri
 import android.provider.BaseColumns
 import android.provider.ContactsContract
 import android.util.Base64
 import android.util.JsonReader
 import android.util.JsonWriter
 import android.util.Log
+import android.util.MalformedJsonException
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStream
 import java.io.OutputStreamWriter
 import kotlin.coroutines.coroutineContext
 
 suspend fun exportContacts(
     appContext: Context,
-    file: Uri,
+    outputStream: OutputStream?,
     updateProgress: suspend (Progress) -> Unit,
 ): Int {
     return withContext(Dispatchers.IO) {
         var total: Int
-        appContext.contentResolver.openOutputStream(file).use { outputStream ->
-            BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                val jsonWriter = JsonWriter(writer)
-                jsonWriter.setIndent("  ")
-                jsonWriter.beginArray()
-                total = contactsToJSON(
-                    appContext,
-                    jsonWriter,
-                    updateProgress,
-                )
-                jsonWriter.endArray()
-            }
+        BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
+            val jsonWriter = JsonWriter(writer)
+            jsonWriter.setIndent("  ")
+            jsonWriter.beginArray()
+            total = contactsToJSON(
+                appContext,
+                jsonWriter,
+                updateProgress,
+            )
+            jsonWriter.endArray()
         }
         total
     }
@@ -72,20 +76,14 @@ private suspend fun contactsToJSON(
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     var progress = Progress(0, 0, null)
     //TODO
-    val contactsCursor =
-        appContext.contentResolver.query(
-            //Uri.parse("content://call_log/calls"),
-            ContactsContract.Contacts.CONTENT_URI,
-            null,
-            null,
-            null,
-            null
-        )
-    contactsCursor?.use { it ->
+    val contactsCursor = appContext.contentResolver.query(
+        //Uri.parse("content://call_log/calls"),
+        ContactsContract.Contacts.CONTENT_URI, null, null, null, null
+    )
+    contactsCursor?.use {
         if (it.moveToFirst()) {
             progress = progress.copy(total = it.count)
             updateProgress(progress)
-
             val contactsIdIndex = it.getColumnIndexOrThrow(BaseColumns._ID)
             do {
                 jsonWriter.beginObject()
@@ -109,7 +107,6 @@ private suspend fun contactsToJSON(
                         jsonWriter.beginArray()
                         do {
                             coroutineContext.ensureActive()
-
                             jsonWriter.beginObject()
                             raw.columnNames.forEachIndexed { i, columnName ->
                                 val value = raw.getString(i)
@@ -140,8 +137,7 @@ private suspend fun contactsToJSON(
                                                 if (value != null) jsonWriter.name("${columnName}__base64__")
                                                     .value(
                                                         Base64.encodeToString(
-                                                            value,
-                                                            Base64.NO_WRAP
+                                                            value, Base64.NO_WRAP
                                                         )
                                                     )
                                             }
@@ -168,7 +164,9 @@ private suspend fun contactsToJSON(
                 )
                 updateProgress(progress)
 
-                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull() ?: -1)) break
+                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull()
+                        ?: -1)
+                ) break
             } while (it.moveToNext())
         }
     }
@@ -177,126 +175,115 @@ private suspend fun contactsToJSON(
 
 suspend fun importContacts(
     appContext: Context,
-    uri: Uri,
+    inputStream: InputStream?,
     updateProgress: suspend (Progress) -> Unit,
 ): Int {
     return withContext(Dispatchers.IO) {
         var progress = Progress(0, 0, null)
-        uri.let {
-            appContext.contentResolver.openInputStream(it).use { inputStream ->
-                BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                    val jsonReader = JsonReader(reader)
-                    val contactDataFields = mutableSetOf<String>()
-                    for (i in 1..15) {
-                        contactDataFields.add("data$i")
-                    }
-                    contactDataFields.add("mimetype")
-                    try {
-                        jsonReader.beginArray()
-                        // Loop through Contacts
-                        while (jsonReader.hasNext()) {
-                            ensureActive()
+        inputStream.let {
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                val jsonReader = JsonReader(reader)
+                val contactDataFields = mutableSetOf<String>()
+                for (i in 1..15) {
+                    contactDataFields.add("data$i")
+                }
+                contactDataFields.add("mimetype")
+                try {
+                    jsonReader.beginArray()
+                    // Loop through Contacts
+                    while (jsonReader.hasNext()) {
+                        ensureActive()
 
-                            jsonReader.beginObject()
-                            // Loop through Contact fields until we find the array of Raw Contacts
-                            while (jsonReader.hasNext()) {
-                                var name = jsonReader.nextName()
-                                if (name == "raw_contacts") {
-                                    jsonReader.beginArray()
+                        jsonReader.beginObject()
+                        // Loop through Contact fields until we find the array of Raw Contacts
+                        while (jsonReader.hasNext()) {
+                            var name = jsonReader.nextName()
+                            if (name == "raw_contacts") {
+                                jsonReader.beginArray()
+                                while (jsonReader.hasNext()) {
+                                    // See https://developer.android.com/guide/topics/providers/contacts-provider#Transactions
+                                    val ops = arrayListOf<ContentProviderOperation>()
+                                    var op: ContentProviderOperation.Builder =
+                                        ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                                            .withValue(
+                                                ContactsContract.RawContacts.ACCOUNT_TYPE, null
+                                            ).withValue(
+                                                ContactsContract.RawContacts.ACCOUNT_NAME, null
+                                            )
+                                    ops.add(op.build())
+                                    jsonReader.beginObject()
+                                    // Loop through Raw Contact fields until we find the array of Contacts Data
                                     while (jsonReader.hasNext()) {
-                                        // See https://developer.android.com/guide/topics/providers/contacts-provider#Transactions
-                                        val ops = arrayListOf<ContentProviderOperation>()
-                                        var op: ContentProviderOperation.Builder =
-                                            ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                                                .withValue(
-                                                    ContactsContract.RawContacts.ACCOUNT_TYPE,
-                                                    null
-                                                )
-                                                .withValue(
-                                                    ContactsContract.RawContacts.ACCOUNT_NAME,
-                                                    null
-                                                )
-                                        ops.add(op.build())
-                                        jsonReader.beginObject()
-                                        // Loop through Raw Contact fields until we find the array of Contacts Data
-                                        while (jsonReader.hasNext()) {
-                                            name = jsonReader.nextName()
-                                            if (name == "contacts_data") {
-                                                jsonReader.beginArray()
-                                                while (jsonReader.hasNext()) {
-                                                    jsonReader.beginObject()
-                                                    op = ContentProviderOperation.newInsert(
-                                                        ContactsContract.Data.CONTENT_URI
+                                        name = jsonReader.nextName()
+                                        if (name == "contacts_data") {
+                                            jsonReader.beginArray()
+                                            while (jsonReader.hasNext()) {
+                                                jsonReader.beginObject()
+                                                op = ContentProviderOperation.newInsert(
+                                                    ContactsContract.Data.CONTENT_URI
+                                                ).withValueBackReference(
+                                                        ContactsContract.Data.RAW_CONTACT_ID, 0
                                                     )
-                                                        .withValueBackReference(
-                                                            ContactsContract.Data.RAW_CONTACT_ID,
-                                                            0
-                                                        )
-                                                    while (jsonReader.hasNext()) {
-                                                        name = jsonReader.nextName()
-                                                        val dataValue = jsonReader.nextString()
-                                                        var base64 = false
-                                                        if (name.length > 10 && name.substring(name.length - 10) == "__base64__") {
-                                                            base64 = true
-                                                            name =
-                                                                name.substring(0, name.length - 10)
-                                                        }
-                                                        if (name in contactDataFields) {
-                                                            if (base64) {
-                                                                op.withValue(
-                                                                    name,
-                                                                    Base64.decode(
-                                                                        dataValue,
-                                                                        Base64.NO_WRAP
-                                                                    )
+                                                while (jsonReader.hasNext()) {
+                                                    name = jsonReader.nextName()
+                                                    val dataValue = jsonReader.nextString()
+                                                    var base64 = false
+                                                    if (name.length > 10 && name.substring(name.length - 10) == "__base64__") {
+                                                        base64 = true
+                                                        name = name.substring(0, name.length - 10)
+                                                    }
+                                                    if (name in contactDataFields) {
+                                                        if (base64) {
+                                                            op.withValue(
+                                                                name, Base64.decode(
+                                                                    dataValue, Base64.NO_WRAP
                                                                 )
-                                                            } else {
-                                                                op.withValue(name, dataValue)
-                                                            }
+                                                            )
+                                                        } else {
+                                                            op.withValue(name, dataValue)
                                                         }
                                                     }
-                                                    op.withYieldAllowed(true)
-                                                    ops.add(op.build())
-                                                    jsonReader.endObject()
                                                 }
-                                                jsonReader.endArray()
-                                            } else {
-                                                jsonReader.nextString()
+                                                op.withYieldAllowed(true)
+                                                ops.add(op.build())
+                                                jsonReader.endObject()
                                             }
+                                            jsonReader.endArray()
+                                        } else {
+                                            jsonReader.nextString()
                                         }
-                                        try {
-                                            appContext.contentResolver.applyBatch(
-                                                ContactsContract.AUTHORITY,
-                                                ops
-                                            )
-
-                                            progress = progress.copy(
-                                                current = progress.current + 1,
-                                                message = appContext.getString(
-                                                    R.string.contacts_import_progress,
-                                                    progress.current + 1,
-                                                ),
-                                            )
-                                            updateProgress(progress)
-                                        } catch (e: Exception) {
-                                            Log.e(
-                                                LOG_TAG,
-                                                "Exception encountered while inserting contact: $e"
-                                            )
-                                        }
-                                        jsonReader.endObject()
                                     }
-                                    jsonReader.endArray()
-                                } else {
-                                    jsonReader.nextString()
+                                    try {
+                                        appContext.contentResolver.applyBatch(
+                                            ContactsContract.AUTHORITY, ops
+                                        )
+
+                                        progress = progress.copy(
+                                            current = progress.current + 1,
+                                            message = appContext.getString(
+                                                R.string.contacts_import_progress,
+                                                progress.current + 1,
+                                            ),
+                                        )
+                                        updateProgress(progress)
+                                    } catch (e: Exception) {
+                                        Log.e(
+                                            LOG_TAG,
+                                            "Exception encountered while inserting contact: $e"
+                                        )
+                                    }
+                                    jsonReader.endObject()
                                 }
+                                jsonReader.endArray()
+                            } else {
+                                jsonReader.nextString()
                             }
-                            jsonReader.endObject()
                         }
-                        jsonReader.endArray()
-                    } catch (e: Exception) {
-                        throw UserFriendlyException(appContext.getString(R.string.json_parse_error), e)
+                        jsonReader.endObject()
                     }
+                    jsonReader.endArray()
+                } catch (e: MalformedJsonException) {
+                    throw UserFriendlyException(appContext.getString(R.string.json_parse_error), e)
                 }
             }
             progress.current
