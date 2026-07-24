@@ -35,6 +35,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -85,6 +86,15 @@ class SettingsActivity : AppCompatActivity() {
         //prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         setTitle(R.string.settings)
+
+        supportFragmentManager.setFragmentResultListener(
+            "setPassphrase", this
+        ) { requestKey, bundle ->
+            bundle.getString("passphrase")?.let {
+                val passphraseManager = PassphraseManager("passphrase_key", this)
+                passphraseManager.storePassphrase(it)
+            }
+        }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
@@ -113,9 +123,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         override fun onCreateRecyclerView(
-            inflater: LayoutInflater,
-            parent: ViewGroup,
-            savedInstanceState: Bundle?
+            inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?
         ): RecyclerView {
             val view = super.onCreateRecyclerView(inflater, parent, savedInstanceState)
 
@@ -186,21 +194,22 @@ class SettingsActivity : AppCompatActivity() {
             // see: https://stackoverflow.com/questions/26242581/call-method-after-changing-preferences-in-android
             // https://stackoverflow.com/questions/7020446/android-registeronsharedpreferencechangelistener-causes-crash-in-a-custom-view#7021068
             // https://stackoverflow.com/questions/66449883/kotlin-onsharedpreferencechangelistener
-            val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
-                if (key == "schedule_export") {
-                    context?.let { scheduleAutomaticExport(it, true) }
-                    if (SDK_INT >= 33 && sharedPrefs.getBoolean(key, false)) {
-                        context?.let {
-                            if (ContextCompat.checkSelfPermission(
-                                    it, Manifest.permission.POST_NOTIFICATIONS
-                                ) != PackageManager.PERMISSION_GRANTED
-                            ) {
-                                requestPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
+            val prefListener =
+                SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
+                    if (key == "schedule_export") {
+                        context?.let { scheduleAutomaticExport(it, true) }
+                        if (SDK_INT >= 33 && sharedPrefs.getBoolean(key, false)) {
+                            context?.let {
+                                if (ContextCompat.checkSelfPermission(
+                                        it, Manifest.permission.POST_NOTIFICATIONS
+                                    ) != PackageManager.PERMISSION_GRANTED
+                                ) {
+                                    requestPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
                             }
                         }
                     }
                 }
-            }
             prefs?.registerOnSharedPreferenceChangeListener(prefListener)
         }
 
@@ -283,8 +292,7 @@ class SettingsActivity : AppCompatActivity() {
         private fun updateBatteryOptimizationState() {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 val context = requireContext()
-                val pm: PowerManager =
-                    context.getSystemService(POWER_SERVICE) as PowerManager
+                val pm: PowerManager = context.getSystemService(POWER_SERVICE) as PowerManager
                 disableBattOptPreference.isChecked =
                     pm.isIgnoringBatteryOptimizations(context.packageName)
             } else {
@@ -292,4 +300,9 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun onPassphraseButtonClick(view: View) {
+        PassphraseEntryFragment().show(supportFragmentManager, "passphrase_entry")
+    }
+
 }

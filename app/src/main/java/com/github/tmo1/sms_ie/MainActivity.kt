@@ -38,12 +38,15 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
 import android.provider.Telephony
+import android.text.method.PasswordTransformationMethod
+//import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
@@ -55,11 +58,16 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import com.goterl.lazysodium.LazySodiumAndroid
+import com.goterl.lazysodium.SodiumAndroid
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -71,17 +79,24 @@ const val CHANNEL_ID_ALERTS = "ALERTS"
 const val NOTIFICATION_ID_PERSISTENT = 0
 const val NOTIFICATION_ID_ALERT = 1
 
+const val ENCRYPTED_FILE_EXTENSION = "ssef"
+
 private const val STATE_PENDING_ACTION = "pending_action"
 private const val STATE_POST_SMS_ROLE_ACTION = "post_sms_role_action"
+private const val URI_STRING = "uri_string"
+private const val NULL_URI_ALLOWED = "null_uri_allowed"
+private const val PASSPHRASE = "passphrase"
 
 private enum class PostSmsRoleAction {
     IMPORT_MESSAGES, EXPORT_BLOCKED_NUMBERS, IMPORT_BLOCKED_NUMBERS, WIPE_MESSAGES,
 }
 
+val sodium = SodiumAndroid()
+val lazySodiumAndroid = LazySodiumAndroid(sodium)
+
 class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,
     BecomeDefaultSMSAppFragment.NoticeDialogListener {
     private lateinit var prefs: SharedPreferences
-
     private val requestPermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
             // We currently request permissions on startup, but don't block UI interactions if they
@@ -89,27 +104,48 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             // grant permissions.
         }
     private val requestExistingFile =
-        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            launchPendingAction(uri, false)
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { u ->
+            uri = u
+            nullUriAllowed = false
+            launchPendingAction()
         }
     private val requestNewJsonFile =
-        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            launchPendingAction(uri, false)
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { u ->
+            uri = u
+            nullUriAllowed = false
+            launchPendingAction()
         }
     private val requestNewZipFile =
-        registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
-            launchPendingAction(uri, false)
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { u ->
+            uri = u
+            nullUriAllowed = false
+            launchPendingAction()
+        }
+
+    private val requestNewBinaryFile =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { u ->
+            uri = u
+            nullUriAllowed = false
+            launchPendingAction()
         }
     private val requestSmsRole =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             launchPostSmsRoleAction(result.resultCode == RESULT_OK)
         }
 
-    // Action to perform after file selection. Saved across Activity recreation.
+    // The following variables are all saved across Activity recreation in onSavedInstanceState.
+    // Action to perform after file selection.
     private var pendingAction: Action? = null
 
-    // Action to perform after the SMS role has been acquired. Saved across Activity recreation.
+    // Action to perform after the SMS role has been acquired.
     private var postSmsRoleAction: PostSmsRoleAction? = null
+
+    // User supplied passphrase
+    private var passphrase: String? = null
+
+    // User supplied URI
+    private var uri: Uri? = null
+    private var nullUriAllowed: Boolean = false
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -243,13 +279,18 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         }
         countMessagesButton.setOnClickListener { countMessagesManual() }
         setDefaultSMSAppButton.setOnClickListener {
-            startActivity(
-                Intent(
-                    ACTION_MANAGE_DEFAULT_APPS_SETTINGS
-                )
-            )
+            startActivity(Intent(ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
         }
         //actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        supportFragmentManager.setFragmentResultListener(
+            "setPassphrase", this
+        ) { requestKey, bundle ->
+            //passphrase = bundle.getString("passphrase")
+            //Toast.makeText(this, "Passphrase: $passphrase", Toast.LENGTH_SHORT).show()
+            //launchPendingAction()
+            scheduleManualAction(this, pendingAction!!, uri, bundle.getString("passphrase"))
+        }
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -286,90 +327,90 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
         val workManager = WorkManager.getInstance(this)
         workManager.getWorkInfosLiveData(
-                WorkQuery.fromTags(
-                    ImportExportWorker.TAG_MANUAL_ACTION,
-                    ImportExportWorker.TAG_AUTOMATIC_EXPORT,
-                )
-            ).observe(this, Observer {
-                var isRunning = false
-                var canCancel = false
+            WorkQuery.fromTags(
+                ImportExportWorker.TAG_MANUAL_ACTION,
+                ImportExportWorker.TAG_AUTOMATIC_EXPORT,
+            )
+        ).observe(this, Observer {
+            var isRunning = false
+            var canCancel = false
 
-                // There should only be one active worker. The only other one would be the enqueued
-                // work for the next scheduled export.
-                for (workInfo in it) {
-                    when (workInfo.state) {
-                        WorkInfo.State.RUNNING -> {
-                            isRunning = true
+            // There should only be one active worker. The only other one would be the enqueued
+            // work for the next scheduled export.
+            for (workInfo in it) {
+                when (workInfo.state) {
+                    WorkInfo.State.RUNNING -> {
+                        isRunning = true
 
-                            val progress = Progress(workInfo.progress)
-                            progressBar.isIndeterminate = progress.total == 0
-                            progressBar.max = progress.total
-                            progressBar.progress = progress.current
-                            statusReportText.text = progress.message
-                            canCancel = progress.canCancel
+                        val progress = Progress(workInfo.progress)
+                        progressBar.isIndeterminate = progress.total == 0
+                        progressBar.max = progress.total
+                        progressBar.progress = progress.current
+                        statusReportText.text = progress.message
+                        canCancel = progress.canCancel
 
-                            cancelButton.setOnClickListener {
-                                workManager.cancelWorkById(workInfo.id)
-                            }
+                        cancelButton.setOnClickListener {
+                            workManager.cancelWorkById(workInfo.id)
                         }
-
-                        WorkInfo.State.SUCCEEDED -> {
-                            val success = SuccessData(workInfo.outputData)
-                            statusReportText.text = success.message
-                        }
-
-                        WorkInfo.State.FAILED -> {
-                            val failure = FailureData(workInfo.outputData)
-                            // Just show the general error from the title in the status. The more
-                            // detailed message will be shown in the dialog box.
-                            statusReportText.text = failure.title
-
-                            ErrorMessageFragment.newInstance(
-                                failure.title,
-                                failure.message,
-                                failure.savedLogcat,
-                            ).show(supportFragmentManager, "error")
-                        }
-                        // Canceled work can occur when changing scheduled export settings or when
-                        // the user explicitly cancels a running operation. We want both to be
-                        // pruned below.
-                        WorkInfo.State.CANCELLED -> {
-                            statusReportText.text = getString(R.string.operation_cancelled)
-                        }
-
-                        else -> continue
                     }
 
-                    // WorkManager keeps a history of completed jobs for a certain period of time.
-                    // We want to get rid of this history once we've seen the result and updated the
-                    // UI accordingly. It's a bit hacky, but this way, we'll only see new status
-                    // updates without needing to separately keep track of which completed work IDs
-                    // we've already observed.
-                    if (workInfo.state.isFinished) {
-                        workManager.pruneWork()
+                    WorkInfo.State.SUCCEEDED -> {
+                        val success = SuccessData(workInfo.outputData)
+                        statusReportText.text = success.message
                     }
+
+                    WorkInfo.State.FAILED -> {
+                        val failure = FailureData(workInfo.outputData)
+                        // Just show the general error from the title in the status. The more
+                        // detailed message will be shown in the dialog box.
+                        statusReportText.text = failure.title
+
+                        ErrorMessageFragment.newInstance(
+                            failure.title,
+                            failure.message,
+                            failure.savedLogcat,
+                        ).show(supportFragmentManager, "error")
+                    }
+                    // Canceled work can occur when changing scheduled export settings or when
+                    // the user explicitly cancels a running operation. We want both to be
+                    // pruned below.
+                    WorkInfo.State.CANCELLED -> {
+                        statusReportText.text = getString(R.string.operation_cancelled)
+                    }
+
+                    else -> continue
                 }
 
-                progressBar.visibility = if (isRunning) View.VISIBLE else View.INVISIBLE
-                cancelButton.visibility = if (canCancel) View.VISIBLE else View.INVISIBLE
+                // WorkManager keeps a history of completed jobs for a certain period of time.
+                // We want to get rid of this history once we've seen the result and updated the
+                // UI accordingly. It's a bit hacky, but this way, we'll only see new status
+                // updates without needing to separately keep track of which completed work IDs
+                // we've already observed.
+                if (workInfo.state.isFinished) {
+                    workManager.pruneWork()
+                }
+            }
 
-                // Although ImportExportWorker uses a unique work ID to guarantee that multiple
-                // operations won't run at the same time, we should still try to prevent the user
-                // from causing this situation.
-                listOf(
-                    exportMessagesButton,
-                    importMessagesButton,
-                    exportCallLogButton,
-                    importCallLogButton,
-                    exportContactsButton,
-                    importContactsButton,
-                    exportBlockedNumbersButton,
-                    importBlockedNumbersButton,
-                    wipeAllMessagesButton,
-                    countMessagesButton,
-                    setDefaultSMSAppButton
-                ).forEach { button -> button.isEnabled = !isRunning }
-            })
+            progressBar.visibility = if (isRunning) View.VISIBLE else View.INVISIBLE
+            cancelButton.visibility = if (canCancel) View.VISIBLE else View.INVISIBLE
+
+            // Although ImportExportWorker uses a unique work ID to guarantee that multiple
+            // operations won't run at the same time, we should still try to prevent the user
+            // from causing this situation.
+            listOf(
+                exportMessagesButton,
+                importMessagesButton,
+                exportCallLogButton,
+                importCallLogButton,
+                exportContactsButton,
+                importContactsButton,
+                exportBlockedNumbersButton,
+                importBlockedNumbersButton,
+                wipeAllMessagesButton,
+                countMessagesButton,
+                setDefaultSMSAppButton
+            ).forEach { button -> button.isEnabled = !isRunning }
+        })
     }
 
     override fun onResume() {
@@ -400,17 +441,22 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         postSmsRoleAction?.let {
             outState.putInt(STATE_POST_SMS_ROLE_ACTION, it.ordinal)
         }
+        uri?.let {
+            outState.putString(URI_STRING, it.toString())
+        }
+        nullUriAllowed.let {
+            outState.putBoolean(NULL_URI_ALLOWED, it)
+        }
+        passphrase?.let {
+            outState.putString(PASSPHRASE, it)
+        }
     }
 
     private fun exportMessagesManual() {
-        if (checkReadSMSPermission(this) && checkReadContactsPermission(this)) {
-            pendingAction = Action.EXPORT_MESSAGES_MANUAL
-            val date = getCurrentDateTime()
-            val dateInString = date.toString("yyyy-MM-dd")
-            requestNewZipFile.launch("messages-$dateInString.zip")
-        } else {
-            setStatusReport(getString(R.string.sms_and_contacts_read_permissions_required))
-        }
+        if (checkReadSMSPermission(this) && checkReadContactsPermission(this)) launchDispatcher(
+            "messages", "zip", true, Action.EXPORT_MESSAGES_MANUAL
+        )
+        else setStatusReport(getString(R.string.sms_and_contacts_read_permissions_required))
     }
 
     private fun importMessagesManual() {
@@ -418,52 +464,60 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             setStatusReport(getString(R.string.message_import_api_23_requirement))
             return
         }
-
         pendingAction = Action.IMPORT_MESSAGES_MANUAL
         //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-        requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/zip"))
+        requestExistingFile.launch(
+            arrayOf(
+                if (SDK_INT < 29 || prefs.getBoolean(
+                        "encryption_manual_operations", false
+                    )
+                ) "*/*" else "application/zip"
+            )
+        )
     }
 
     private fun exportCallLogManual() {
-        if (checkReadCallLogsContactsPermissions(this)) {
-            pendingAction = Action.EXPORT_CALL_LOG_MANUAL
-            val date = getCurrentDateTime()
-            val dateInString = date.toString("yyyy-MM-dd")
-            requestNewJsonFile.launch("calls-$dateInString.json")
-        } else {
-            setStatusReport(getString(R.string.call_logs_permissions_required))
-        }
+        if (checkReadCallLogsContactsPermissions(this)) launchDispatcher(
+            "calls", "json", false, Action.EXPORT_CALL_LOG_MANUAL
+        )
+        else setStatusReport(getString(R.string.call_logs_permissions_required))
     }
 
     private fun importCallLogManual() {
         if (checkReadWriteCallLogPermissions(this)) {
             pendingAction = Action.IMPORT_CALL_LOG_MANUAL
             //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-            requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/json"))
-        } else {
-            setStatusReport(getString(R.string.call_logs_read_write_permissions_required))
-        }
+            requestExistingFile.launch(
+                arrayOf(
+                    if (SDK_INT < 29 || prefs.getBoolean(
+                            "encryption_manual_operations", false
+                        )
+                    ) "*/*" else "application/json"
+                )
+            )
+        } else setStatusReport(getString(R.string.call_logs_read_write_permissions_required))
     }
 
     private fun exportContactsManual() {
-        if (checkReadContactsPermission(this)) {
-            pendingAction = Action.EXPORT_CONTACTS_MANUAL
-            val date = getCurrentDateTime()
-            val dateInString = date.toString("yyyy-MM-dd")
-            requestNewJsonFile.launch("contacts-$dateInString.json")
-        } else {
-            setStatusReport(getString(R.string.contacts_read_permission_required))
-        }
+        if (checkReadContactsPermission(this)) launchDispatcher(
+            "contacts", "json", false, Action.EXPORT_CONTACTS_MANUAL
+        )
+        else setStatusReport(getString(R.string.contacts_read_permission_required))
     }
 
     private fun importContactsManual() {
         if (checkWriteContactsPermission(this)) {
             pendingAction = Action.IMPORT_CONTACTS_MANUAL
             //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-            requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/json"))
-        } else {
-            setStatusReport(getString(R.string.contacts_write_permissions_required))
-        }
+            requestExistingFile.launch(
+                arrayOf(
+                    if (SDK_INT < 29 || prefs.getBoolean(
+                            "encryption_manual_operations", false
+                        )
+                    ) "*/*" else "application/json"
+                )
+            )
+        } else setStatusReport(getString(R.string.contacts_write_permissions_required))
     }
 
     private fun exportBlockedNumbersManual() {
@@ -471,11 +525,7 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             setStatusReport(getString(R.string.blocked_numbers_api_24_requirement))
             return
         }
-
-        pendingAction = Action.EXPORT_BLOCKED_NUMBERS_MANUAL
-        val date = getCurrentDateTime()
-        val dateInString = date.toString("yyyy-MM-dd")
-        requestNewZipFile.launch("blocked_numbers-$dateInString.zip")
+        launchDispatcher("blocked_numbers", "zip", true, Action.EXPORT_BLOCKED_NUMBERS_MANUAL)
     }
 
     private fun importBlockedNumbersManual() {
@@ -483,10 +533,16 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             setStatusReport(getString(R.string.blocked_numbers_api_24_requirement))
             return
         }
-
         pendingAction = Action.IMPORT_BLOCKED_NUMBERS_MANUAL
         //see https://github.com/tmo1/sms-ie/issues/3#issuecomment-900518890
-        requestExistingFile.launch(arrayOf(if (SDK_INT < 29) "*/*" else "application/zip"))
+        requestExistingFile.launch(
+            arrayOf(
+                if (SDK_INT < 29 || prefs.getBoolean(
+                        "encryption_manual_operations", false
+                    )
+                ) "*/*" else "application/zip"
+            )
+        )
     }
 
     private fun wipeMessagesManual() {
@@ -494,18 +550,48 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     private fun countMessagesManual() {
-        if (checkReadSMSPermission(this)) {
-            scheduleManualAction(this, Action.COUNT_MESSAGES_MANUAL, null)
-        } else {
-            setStatusReport(getString(R.string.sms_read_permission_required))
-        }
+        if (checkReadSMSPermission(this)) scheduleManualAction(
+            this, Action.COUNT_MESSAGES_MANUAL, null, null
+        )
+        else setStatusReport(getString(R.string.sms_read_permission_required))
     }
 
-    private fun launchPendingAction(uri: Uri?, nullUriAllowed: Boolean) {
-        if (uri != null || nullUriAllowed) {
-            scheduleManualAction(this, pendingAction!!, uri)
-        }
+    private fun launchDispatcher(
+        dataType: String, extension: String, zipfile: Boolean, action: Action
+    ) {
+        pendingAction = action
+        val date = getCurrentDateTime()
+        val dateInString = date.toString("yyyy-MM-dd")
+        val filename = "$dataType-$dateInString.$extension"
+        if (prefs.getBoolean(
+                "encryption_manual_operations", false
+            )
+        ) requestNewBinaryFile.launch("$filename.${ENCRYPTED_FILE_EXTENSION}")
+        else if (zipfile) requestNewZipFile.launch(filename) else requestNewJsonFile.launch(filename)
+    }
 
+    private fun launchPendingAction() {
+        if (uri != null) {
+            if (prefs.getBoolean("encryption_manual_operations", false)) {
+                if (prefs.getBoolean("encryption_stored_passphrase_manual_operations", false)) {
+                    val passphraseManager = PassphraseManager("passphrase_key", this)
+                    val passphrase = passphraseManager.retrievePassphrase()
+                    if (passphrase == null) {
+                        GeneralErrorDialogFragment.newInstance(
+                            getString(R.string.encryption_passphrase_retrieval_failure_title),
+                            getString(R.string.encryption_passphrase_retrieval_manual_operations_failure_message)
+                        ).show(supportFragmentManager, GeneralErrorDialogFragment.TAG)
+                        return
+                    }
+                    scheduleManualAction(this, pendingAction!!, uri, passphrase)
+                    return
+                }
+                PassphraseEntryFragment().show(supportFragmentManager, "passphrase_entry")
+                return
+            }
+            scheduleManualAction(this, pendingAction!!, uri, null)
+        }
+        if (nullUriAllowed) scheduleManualAction(this, pendingAction!!, null, null)
         // Always clear the pending action, even if we don't start anything (e.g. if the user
         // canceled the file selection).
         pendingAction = null
@@ -520,7 +606,9 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
 
     override fun onWipeDialogPositiveClick(dialog: DialogFragment) {
         pendingAction = Action.WIPE_MESSAGES_MANUAL
-        launchPendingAction(null, true)
+        uri = null
+        nullUriAllowed = true
+        launchPendingAction()
     }
 
     override fun onWipeDialogNegativeClick(dialog: DialogFragment) {
@@ -529,13 +617,13 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
     }
 
     override fun onDefaultSMSAppDialogPositiveClick(dialog: DialogFragment) {
-        val intent = if (SDK_INT >= Build.VERSION_CODES.Q) {
-            getSystemService(RoleManager::class.java).createRequestRoleIntent(RoleManager.ROLE_SMS)
-        } else {
-            Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
+        val intent =
+            if (SDK_INT >= Build.VERSION_CODES.Q) getSystemService(RoleManager::class.java).createRequestRoleIntent(
+                RoleManager.ROLE_SMS
+            )
+            else Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
                 putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
             }
-        }
         requestSmsRole.launch(intent)
     }
 
@@ -551,15 +639,10 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
         val haveRole = if (SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(RoleManager::class.java)
             !roleManager.isRoleAvailable(RoleManager.ROLE_SMS) || roleManager.isRoleHeld(RoleManager.ROLE_SMS)
-        } else {
-            Telephony.Sms.getDefaultSmsPackage(this) == packageName
-        }
+        } else Telephony.Sms.getDefaultSmsPackage(this) == packageName
 
-        if (haveRole) {
-            launchPostSmsRoleAction(true)
-        } else {
-            BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
-        }
+        if (haveRole) launchPostSmsRoleAction(true)
+        else BecomeDefaultSMSAppFragment().show(supportFragmentManager, "become_default_sms_app")
     }
 
     private fun launchPostSmsRoleAction(canLaunch: Boolean) {
@@ -571,7 +654,6 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 PostSmsRoleAction.WIPE_MESSAGES -> wipeMessagesManual()
             }
         }
-
         postSmsRoleAction = null
     }
 }
@@ -617,7 +699,6 @@ class ErrorMessageFragment : DialogFragment() {
                                 "vnd.android.document/directory",
                             )
                         }
-
                         startActivity(intent)
                     }
                 }
@@ -699,10 +780,67 @@ class BecomeDefaultSMSAppFragment : DialogFragment() {
         try {
             listener = context as NoticeDialogListener
         } catch (_: ClassCastException) {
-            throw ClassCastException(
-                ("$context must implement NoticeDialogListener")
-            )
+            throw ClassCastException(("$context must implement NoticeDialogListener"))
         }
+    }
+}
+
+class GeneralErrorDialogFragment : DialogFragment() {
+    companion object {
+        const val TAG = "GeneralErrorDialogFragment"
+        const val MESSAGE_KEY = "message"
+        const val TITLE_KEY = "title"
+        fun newInstance(title: String, message: String): GeneralErrorDialogFragment {
+            val fragment = GeneralErrorDialogFragment()
+            val args = Bundle()
+            args.putString(MESSAGE_KEY, message)
+            args.putString(TITLE_KEY, title)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val title = arguments?.getString(TITLE_KEY) ?: "Unknown error"
+        val message = arguments?.getString(MESSAGE_KEY) ?: "An unknown error occurred."
+        return AlertDialog.Builder(requireActivity()).setTitle(title).setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dismiss() }.setCancelable(false).create()
+    }
+}
+
+class PassphraseEntryFragment : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            val textInputLayout = TextInputLayout(it).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                hint = "Passphrase"
+                endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
+                val textInputEditText = TextInputEditText(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    transformationMethod = PasswordTransformationMethod.getInstance()
+                }
+                addView(textInputEditText)
+            }
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle("Enter encryption passphrase")
+                .setIcon(android.R.drawable.ic_dialog_info).setView(textInputLayout)
+                .setPositiveButton(
+                    R.string.okay
+                ) { dialog, id ->
+                    setFragmentResult(
+                        "setPassphrase", Bundle().apply {
+                            putString(
+                                "passphrase", textInputLayout.editText?.text.toString().trim()
+                            )
+                        })
+                }
+            builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
     }
 }
 

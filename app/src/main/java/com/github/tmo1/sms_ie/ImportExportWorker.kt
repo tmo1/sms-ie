@@ -124,6 +124,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         }
     }
     private val actionFile = inputData.getString("file")?.toUri()
+    private val passphrase = inputData.getString("passphrase")
 
     private val notificationManager = NotificationManagerCompat.from(applicationContext)
     private var notification = createForegroundNotification(Progress(0, 0, null))
@@ -224,19 +225,17 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 }
 
                 append("\n\n")
-                if (logcatProcess != null) {
-                    append(context.getString(R.string.see_logcat_save_enabled))
-                } else {
-                    append(context.getString(R.string.see_logcat_save_disabled))
-                }
+                append(
+                    if (logcatProcess != null) context.getString(R.string.see_logcat_save_enabled) else context.getString(
+                        R.string.see_logcat_save_disabled
+                    )
+                )
             }
 
             Result.failure(FailureData(title, message, logcatProcess != null).toOutputData())
         } finally {
             // Regardless of what happens, ensure that the next scheduled run occurs.
-            if (action == Action.EXPORT_AUTOMATIC) {
-                scheduleAutomaticExport(context, false)
-            }
+            if (action == Action.EXPORT_AUTOMATIC) scheduleAutomaticExport(context, false)
         }
 
         // Cancel the pending retry for a throttled notification update because the work is complete
@@ -260,14 +259,11 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         // Don't show completion notifications for canceled jobs since cancellations are always
         // initiated by the user. There's no need to annoy them with a cancellation exception error
         // message.
-        if (!isStopped) {
-            notifyResult(result, action)
-        }
-
+        if (!isStopped) notifyResult(result, action)
         Log.i(LOG_TAG, "$action result: $result")
-
         // This log message also serves as an indicator to know that the logs are complete. See the
         // note about the -f option above.
+
         logcatProcess?.let {
             try {
                 Log.d(LOG_TAG, "Stopping log file")
@@ -278,7 +274,6 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 it.waitFor()
             }
         }
-
         return result
     }
 
@@ -338,7 +333,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 refreshForegroundNotificationLocked()
             }
         } catch (_: CancellationException) {
-            // Cancelled either by refreshForegroundNotificationLocked() because a newer
+            // Canceled either by refreshForegroundNotificationLocked() because a newer
             // notification could be shown in the meantime or by doWork() because the work is
             // complete.
         }
@@ -435,12 +430,12 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private suspend fun performAction(): SuccessData {
-        if (actionFile == null && action !in listOf(Action.EXPORT_AUTOMATIC, Action.WIPE_MESSAGES_MANUAL,
-                Action.COUNT_MESSAGES_MANUAL)) {
-            throw IllegalStateException("No file specified for $action")
-        }
-
         val context = applicationContext
+        if (actionFile == null && action !in listOf(
+                Action.EXPORT_AUTOMATIC, Action.WIPE_MESSAGES_MANUAL, Action.COUNT_MESSAGES_MANUAL
+            )
+        ) throw IllegalStateException("No file specified for $action")
+
         val startTime = System.nanoTime()
 
         val successMsg = when (action) {
@@ -459,7 +454,10 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             Action.EXPORT_MESSAGES_MANUAL -> {
-                val messages = exportMessages(context, actionFile!!, ::updateProgress)
+                val messages = exportMessages(
+                    context, getOutputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
+                //val messages = exportMessages(context, actionFile!!, ::updateProgress)
 
                 context.getString(
                     R.string.export_messages_results, messages.sms, messages.mms, formatElapsedTime(
@@ -472,8 +470,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
             Action.IMPORT_MESSAGES_MANUAL -> {
                 // MainActivity will not launch this action if the Android version is too old.
-                @SuppressLint("NewApi") val messages =
-                    importMessages(context, actionFile!!, ::updateProgress)
+                @SuppressLint("NewApi") val messages = importMessages(
+                    context, getInputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
 
                 context.getString(
                     R.string.import_messages_results, messages.sms, messages.mms, formatElapsedTime(
@@ -485,7 +484,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             Action.EXPORT_CALL_LOG_MANUAL -> {
-                val calls = exportCallLog(context, actionFile!!, ::updateProgress)
+                val calls = exportCallLog(
+                    context, getOutputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
 
                 context.getString(
                     R.string.export_call_log_results, calls, formatElapsedTime(
@@ -497,7 +498,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             Action.IMPORT_CALL_LOG_MANUAL -> {
-                val calls = importCallLog(context, actionFile!!, ::updateProgress)
+                val calls = importCallLog(
+                    context, getInputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
 
                 context.getString(
                     R.string.import_call_log_results, calls, formatElapsedTime(
@@ -509,7 +512,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             Action.EXPORT_CONTACTS_MANUAL -> {
-                val contacts = exportContacts(context, actionFile!!, ::updateProgress)
+                val contacts = exportContacts(
+                    context, getOutputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
 
                 context.getString(
                     R.string.export_contacts_results, contacts, formatElapsedTime(
@@ -521,7 +526,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             Action.IMPORT_CONTACTS_MANUAL -> {
-                val contacts = importContacts(context, actionFile!!, ::updateProgress)
+                val contacts = importContacts(
+                    context, getInputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
 
                 context.getString(
                     R.string.import_contacts_results, contacts, formatElapsedTime(
@@ -533,7 +540,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             Action.EXPORT_BLOCKED_NUMBERS_MANUAL -> {
-                val blockedNumbers = exportBlockedNumbers(context, actionFile!!, ::updateProgress)
+                val blockedNumbers = exportBlockedNumbers(
+                    context, getOutputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
 
                 context.getString(
                     R.string.export_blocked_numbers_results, blockedNumbers, formatElapsedTime(
@@ -545,7 +554,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             Action.IMPORT_BLOCKED_NUMBERS_MANUAL -> {
-                val blockedNumbers = importBlockedNumbers(context, actionFile!!, ::updateProgress)
+                val blockedNumbers = importBlockedNumbers(
+                    context, getInputStream(context, actionFile!!, passphrase), ::updateProgress
+                )
 
                 context.getString(
                     R.string.import_blocked_numbers_results, blockedNumbers, formatElapsedTime(
@@ -568,7 +579,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
                 context.getString(
                     R.string.count_messages_results, messages.sms, messages.mms
-                    )
+                )
             }
         }
 
@@ -579,9 +590,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     private fun notifyResult(result: Result, action: Action) {
         // We only show completion notifications for the scheduled export. For manual actions, the
         // error is communicated back to MainActivity through the worker result.
-        if (action != Action.EXPORT_AUTOMATIC) {
-            return
-        }
+        if (action != Action.EXPORT_AUTOMATIC) return
 
         val havePermissions = ActivityCompat.checkSelfPermission(
             applicationContext,
@@ -610,10 +619,8 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 }
 
-fun scheduleManualAction(context: Context, action: Action, file: Uri?) {
-    if (action == Action.EXPORT_AUTOMATIC) {
-        throw IllegalArgumentException("Cannot schedule for manual action: $action")
-    }
+fun scheduleManualAction(context: Context, action: Action, file: Uri?, passphrase: String?) {
+    if (action == Action.EXPORT_AUTOMATIC) throw IllegalArgumentException("Cannot schedule for manual action: $action")
 
     val request =
         OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_MANUAL_ACTION)
@@ -621,15 +628,14 @@ fun scheduleManualAction(context: Context, action: Action, file: Uri?) {
                 workDataOf(
                     "action" to action.ordinal,
                     "file" to file?.toString(),
+                    "passphrase" to passphrase
                 )
             ).build()
     WorkManager.getInstance(context).enqueue(request)
 }
 
 fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
-    if (cancel) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
-    }
+    if (cancel) WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
     if (prefs.getBoolean("schedule_export", false)) {
         // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java
@@ -640,9 +646,7 @@ fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
         exportTime.set(Calendar.SECOND, 0)
         exportTime.set(Calendar.MILLISECOND, 0)
         exportTime.add(Calendar.MINUTE, prefs.getInt("export_time", 0))
-        if (exportTime < now) {
-            exportTime.add(Calendar.DAY_OF_MONTH, 1)
-        }
+        if (exportTime < now) exportTime.add(Calendar.DAY_OF_MONTH, 1)
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
         Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
         val exportRequest =

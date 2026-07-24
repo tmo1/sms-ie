@@ -58,7 +58,7 @@
     <string name="messages_wipe_error_title">Messages wipe error</string>
     <string name="messages_count_error_title">Messages count error</string>
 
-    <string name="json_parse_error">Error parsing JSON file</string>
+    <string name="json_parse_error">Error parsing JSON file. Please make sure that the provided file is a JSON file in the correct format.</string>
     <string name="missing_messages_ndjson_error">Can\'t find \'messages.ndjson\'. Please make sure that the provided file is a ZIP file in the correct format.</string>
     <string name="missing_blocked_numbers_ndjson_error">Can\'t find \'blocked_numbers.ndjson\'. Please make sure that the provided file is a ZIP file in the correct format.</string>
     <string name="see_logcat_save_disabled">See logcat for more information. Enable \"Save logcat\" in the debug settings to automatically save the logcat to a file for future operations.</string>
@@ -144,4 +144,9 @@
     <string name="export_blocked_numbers">Export Blocked Numbers</string>
     <string name="import_blocked_numbers">Import Blocked Numbers</string>
     <string name="count_messages">Count messages</string>
+    <string name="encryption_invalid_format">Selected file is not an SMS I/E encrypted file</string>
+    <string name="encryption_store_passphrase">Store passphrase</string>
+    <string name="encryption_passphrase_retrieval_failure_title">Passphrase retrieval failure</string>
+    <string name="encryption_passphrase_retrieval_manual_operations_failure_message">\'Use stored passphrase for manual operations\' is enabled, but passphrase retrieval failed. Please store a passphrase and retry the operation.</string>
+    <string name="encryption_passphrase_retrieval_failure_scheduled_operations_message">Encryption for scheduled operations is enabled but passphrase retrieval failed - aborting scheduled export</string>
 </resources>

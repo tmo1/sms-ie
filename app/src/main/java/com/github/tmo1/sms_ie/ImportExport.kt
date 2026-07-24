@@ -46,6 +46,10 @@ import androidx.work.workDataOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.nio.ByteBuffer
+import java.security.SecureRandom
 import java.util.Locale
 
 data class Progress(
@@ -180,6 +184,11 @@ suspend fun automaticExport(
 ): Triple<MessageTotal, Int, Int> {
 
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    val passphrase = if (prefs.getBoolean("encryption_scheduled_operations", false)) {
+        val passphraseManager = PassphraseManager("passphrase_key", appContext)
+        passphraseManager.retrievePassphrase()
+            ?: throw UserFriendlyException(appContext.getString(R.string.encryption_passphrase_retrieval_failure_scheduled_operations_message))
+    } else null
 
     var messages = MessageTotal()
     var calls = 0
@@ -198,22 +207,26 @@ suspend fun automaticExport(
 
     if (prefs.getBoolean("export_messages", true)) {
         try {
-            val file = documentTree.createFile("application/zip", "messages$dateInString.zip")
-                ?: throw IOException("Failed to create messages output file")
-
-            messages = exportMessages(appContext, file.uri, updateProgress)
+            val file = createFile(
+                documentTree, "application/zip", "messages$dateInString.zip", passphrase != null
+            )
+            messages = exportMessages(
+                appContext, getOutputStream(appContext, file.uri, passphrase), updateProgress
+            )
             deleteOldExports(prefs, documentTree, file, "messages")
         } catch (e: Exception) {
-            firstException = firstException ?: e
+            firstException = e
         }
     }
 
     if (prefs.getBoolean("export_calls", true)) {
         try {
-            val file = documentTree.createFile("application/json", "calls$dateInString.json")
-                ?: throw IOException("Failed to create call log output file")
-
-            calls = exportCallLog(appContext, file.uri, updateProgress)
+            val file = createFile(
+                documentTree, "application/json", "calls$dateInString.json", passphrase != null
+            )
+            calls = exportCallLog(
+                appContext, getOutputStream(appContext, file.uri, passphrase), updateProgress
+            )
             deleteOldExports(prefs, documentTree, file, "calls")
         } catch (e: Exception) {
             firstException = firstException ?: e
@@ -222,10 +235,12 @@ suspend fun automaticExport(
 
     if (prefs.getBoolean("export_contacts", true)) {
         try {
-            val file = documentTree.createFile("application/json", "contacts$dateInString.json")
-                ?: throw IOException("Failed to create contacts output file")
-
-            contacts = exportContacts(appContext, file.uri, updateProgress)
+            val file = createFile(
+                documentTree, "application/json", "contacts$dateInString.json", passphrase != null
+            )
+            contacts = exportContacts(
+                appContext, getOutputStream(appContext, file.uri, passphrase), updateProgress
+            )
             deleteOldExports(prefs, documentTree, file, "contacts")
         } catch (e: Exception) {
             firstException = firstException ?: e
@@ -249,9 +264,7 @@ suspend fun automaticExport(
         }
     }*/
 
-    if (firstException != null) {
-        throw firstException
-    }
+    if (firstException != null) throw firstException
 
     return Triple(messages, calls, contacts)
 }
@@ -268,9 +281,13 @@ fun deleteOldExports(
         val files = documentTree.listFiles()
         var total = 0
         val extension = if (prefix == "messages") "zip" else "json"
+        val encryptedFileExtension = "$extension.${ENCRYPTED_FILE_EXTENSION}"
         files.forEach {
             val name = it.name
-            if (name != null && name != newFilename && name.startsWith(prefix) && name.endsWith(".$extension")) {
+            if (name != null && name != newFilename && name.startsWith(prefix) && (name.endsWith(".$extension") || (name.endsWith(
+                    ".${encryptedFileExtension}"
+                )))
+            ) {
                 it.delete()
                 total++
             }
@@ -284,6 +301,80 @@ fun deleteOldExports(
 
 fun comparePhoneNumbers(number1: String, number2: String): Boolean {
     val defaultCountryIso: String by lazy { Locale.getDefault().country }
-    return if (SDK_INT >= 31) PhoneNumberUtils.areSamePhoneNumber(number1, number2, defaultCountryIso)
+    return if (SDK_INT >= 31) PhoneNumberUtils.areSamePhoneNumber(
+        number1, number2, defaultCountryIso
+    )
     else PhoneNumberUtils.compare(number1, number2)
+}
+
+fun createFile(
+    documentTree: DocumentFile, baseMimetype: String, baseFilename: String, encryption: Boolean
+): DocumentFile {
+    val (mimetype, filename) = if (encryption) Pair(
+        "application/octet-stream", "$baseFilename.${ENCRYPTED_FILE_EXTENSION}"
+    ) else Pair(baseMimetype, baseFilename)
+    return documentTree.createFile(mimetype, filename)
+        ?: throw IOException("Failed to create messages output file")
+}
+
+val MAGIC_NUMBER = "SSEF".toByteArray() + 0x00 + 0xFF.toByte()
+val FORMAT_VERSION = byteArrayOf(0x00, 0x01)
+
+// Argon2id parameters
+// These are the values of the "SECOND RECOMMENDED option" of RFC 9106, for situations where
+// "much less memory is available."
+// https://datatracker.ietf.org/doc/html/rfc9106#name-parameter-choice
+
+const val T_COST_IN_ITERATIONS = 3
+const val M_COST_IN_KIBIBYTES = 65536
+
+// libsodium doesn't expose the Argon2 parallelism parameter:
+// https://github.com/jedisct1/libsodium/issues/488
+// https://github.com/jedisct1/libsodium/issues/986
+// https://github.com/jedisct1/libsodium/issues/993
+// https://github.com/jedisct1/libsodium/discussions/1092
+//const val PARALLELISM = 4
+const val SALT_LENGTH = 16
+
+const val INTEGER_LENGTH = Int.SIZE_BYTES
+fun getOutputStream(appContext: Context, uri: Uri, passphrase: String?): OutputStream? {
+    val outputStream = appContext.contentResolver.openOutputStream(uri) ?: return null
+    return if (passphrase == null) outputStream else {
+        val salt = ByteArray(SALT_LENGTH)
+        val secureRandom = SecureRandom()
+        secureRandom.nextBytes(salt)
+        val key = passphraseToKey(passphrase, T_COST_IN_ITERATIONS, M_COST_IN_KIBIBYTES, salt)
+        outputStream.write(
+            MAGIC_NUMBER + FORMAT_VERSION + ByteBuffer.allocate(INTEGER_LENGTH)
+                .putInt(T_COST_IN_ITERATIONS).array() + ByteBuffer.allocate(INTEGER_LENGTH)
+                .putInt(M_COST_IN_KIBIBYTES).array() + salt
+        )
+        val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+        val chunkSize = prefs.getString("secretstream_chunk_size", "")?.toIntOrNull()
+        if (chunkSize != null) SecretStreamOutputStream(outputStream, key, chunkSize)
+        else SecretStreamOutputStream(outputStream, key)
+    }
+}
+
+fun getInputStream(appContext: Context, uri: Uri, passphrase: String?): InputStream? {
+    val inputStream = appContext.contentResolver.openInputStream(uri) ?: return null
+    return if (passphrase == null) inputStream else {
+        val magicNumber = ByteArray(MAGIC_NUMBER.size)
+        inputStream.read(magicNumber)
+        if (!magicNumber.contentEquals(MAGIC_NUMBER)) throw UserFriendlyException(
+            appContext.getString(
+                R.string.encryption_invalid_format
+            )
+        )
+        inputStream.skip(FORMAT_VERSION.size.toLong()) // we don't currently do anything with the FORMAT_VERSION
+        val byteArray = ByteArray(INTEGER_LENGTH)
+        inputStream.read(byteArray)
+        val tCostInIterations = ByteBuffer.wrap(byteArray).getInt()
+        inputStream.read(byteArray)
+        val mCostInKibibytes = ByteBuffer.wrap(byteArray).getInt()
+        val salt = ByteArray(SALT_LENGTH)
+        inputStream.read(salt)
+        val decryptionKey = passphraseToKey(passphrase, tCostInIterations, mCostInKibibytes, salt)
+        SecretStreamInputStream(inputStream, decryptionKey)
+    }
 }
