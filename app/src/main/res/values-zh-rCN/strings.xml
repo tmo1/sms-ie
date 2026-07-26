@@ -67,7 +67,7 @@
     <string name="blocked_numbers_export_error_title">导出拦截号码错误</string>
     <string name="blocked_numbers_import_error_title">导入拦截号码错误</string>
     <string name="messages_wipe_error_title">消息擦除错误</string>
-    <string name="json_parse_error">JSON 文件解析错误</string>
+    <string name="json_parse_error">JSON 文件解析错误，请确保提供的文件是格式正确的 JSON 文件。</string>
     <string name="missing_messages_ndjson_error">找不到 “messages.ndjson”。请确保所提供 ZIP 文件格式正确。</string>
     <string name="missing_blocked_numbers_ndjson_error">找不到 “blocked_numbers.ndjson”。请确保所提供 ZIP 文件格式正确。</string>
     <string name="see_logcat_save_disabled">更多信息见 logcat。在调试设置中开启 “Save logcat” 自动保存 logcat 到一个文件用于未来操作。</string>
@@ -112,4 +112,9 @@
     <string name="sms_read_permission_required">计算消息数需要读取短信的权限。</string>
     <string name="counting_messages">正在计算消息数…</string>
     <string name="count_messages">计算消息数</string>
+    <string name="encryption_invalid_format">所选文件不是 SMS I/E 加密文件</string>
+    <string name="encryption_store_passphrase">存储密码短语</string>
+    <string name="encryption_passphrase_retrieval_failure_title">密码短语获取失败</string>
+    <string name="encryption_passphrase_retrieval_manual_operations_failure_message">已启用“使用已存储的密码短语进行手动操作”，但密码短语获取失败。请保存一个密码短语并重试该操作。</string>
+    <string name="encryption_passphrase_retrieval_failure_scheduled_operations_message">已启用计划操作的加密，但密码短语获取失败−− 计划导出终止</string>
 </resources>
