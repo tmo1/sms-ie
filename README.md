@@ -93,7 +93,7 @@ SMS Import / Export can filter messages when exporting, wiping, or counting them
 
 ## Encryption
 
-[SMS Import / Export does not have any internal encryption / decryption functionality](https://github.com/tmo1/sms-ie/issues/82), and [there are currently no plans to add such functionality](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908098763). Instead, the currently recommended method for automatic encryption / decryption is to use an [Rclone crypt remote](https://rclone.org/crypt/) via [RSAF](https://github.com/chenxiaolong/RSAF) to transparently encrypt data as it is exported and decrypt it as it is imported. (The RSAF developer explains how to do this [here](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1907097444), but cautions that he would only suggest this method for those already familiar with Rclone.) [Note](https://github.com/tmo1/sms-ie/issues/82#issuecomment-1908772982) that this method will only work for internal storage or cloud storage accessible via Rclone, but not for SD card or USB attached storage.
+SMS I/E can now natively encrypt data upon export and decrypt it upon import; see [ENCRYPTION.md](ENCRYPTION.md) for details.
 
 ## Exporting Messages
 

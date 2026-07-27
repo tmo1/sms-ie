@@ -1,6 +1,6 @@
 # Tools
 
-This directory contains several command line tools intended to be used in conjunction with SMS Import / Export. They are written in Python 3, and have no external dependencies beyond Python itself. They have been developed and tested on Linux, although they will likely run in any Python environment with little or no modification. They have not been extensively tested, and should be considered experimental.
+This directory contains several command line tools intended to be used in conjunction with SMS Import / Export. They are written in Python 3, and have no external dependencies beyond Python itself, unless otherwise specified. They have been developed and tested on Linux, although they will likely run in any Python environment with little or no modification. They have not been extensively tested, and should be considered experimental.
 
 ### `redact-messages.py`
 
@@ -8,7 +8,9 @@ See [here](../README.md#redaction) for documentation of this script.
 
 ### `v1-v2-convert.py`
 
-This script converts message files in SMS I/E `v1` format to `v2` format. Usage:
+This script converts message files in SMS I/E `v1` format to `v2` format.
+
+Usage:
 
 `v1-v2-convert.py <messages-xxx.json>`
 
@@ -16,7 +18,9 @@ This will read messages from <messages-xxx.json> and write them to <messages-xxx
 
 ### `silence-convert.py`
 
-This script converts SMS messages in [Silence](https://silence.im/) XML format to SMS I/E `v2` format. Usage:
+This script converts SMS messages in [Silence](https://silence.im/) XML format to SMS I/E `v2` format.
+
+Usage:
 
 `silence-convert.py <silence-xxx.xml>`
 
@@ -39,6 +43,16 @@ then run the converter on the fixed XML:
 `silence-convert.py <silence-xxx-fixed.xml>`
 
 (See [issue #121](https://github.com/tmo1/sms-ie/issues/121).)
+
+### `ssef-decrypt.py`
+
+This script decrypts SMS I/E encrypted files. It has a dependency on [PyNaCl](https://github.com/pyca/pynacl) (Debian package `python3-nacl`).
+
+Usage:
+
+`ssef-decrypt.py <encrypted-file> [<decrypted-file>]`
+
+If the encrypted filename is of the form `filename.ssef`, then `<decrypted-file>` can be omitted and the decrypted file will be written to `filename`.
 
 ## v1 Conversion Tools
 
