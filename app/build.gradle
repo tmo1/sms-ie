@@ -87,6 +87,20 @@ android {
         buildConfig true
     }
 
+    // https://developer.android.com/build/dependencies#dependency-info-play
+    // https://android.izzysoft.de/articles/named/iod-scan-apkchecks#blobs
+    // https://izzyondroid.org/about/security/ApkScans/#signingblock-checks
+
+    android {
+        dependenciesInfo {
+            // Disables dependency metadata when building APKs.
+            includeInApk = false
+            // Disables dependency metadata when building Android App Bundles.
+            includeInBundle = false
+        }
+    }
+
+
 }
 
 dependencies {
