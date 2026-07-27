@@ -66,7 +66,7 @@
     <string name="messages_export_error_title">Błąd eksportu wiadomości</string>
     <string name="messages_import_error_title">Błąd importu wiadomości</string>
     <string name="messages_wipe_error_title">Błąd usuwania wiadomości</string>
-    <string name="json_parse_error">Błąd analizowania pliku JSON</string>
+    <string name="json_parse_error">Błąd analizowania pliku JSON. Upewnij się, że dostarczony plik jest plikiem JSON w prawidłowym formacie.</string>
     <string name="missing_messages_ndjson_error">Nie można znaleźć pliku \"messages.ndjson\". Upewnij się, że dostarczony plik jest plikiem ZIP w prawidłowym formacie.</string>
     <string name="operation_cancelled">Operacja anulowana</string>
     <string name="exporting_messages">Eksportowanie wiadomości …</string>
@@ -108,4 +108,9 @@
     <string name="sms_read_permission_required">Zliczanie wiadomości wymaga uprawnienia do odczytu wiadomości SMS.</string>
     <string name="counting_messages">Zliczanie wiadomości …</string>
     <string name="count_messages">Zlicz wiadomości</string>
+    <string name="encryption_invalid_format">Wybrany plik nie jest plikiem zaszyfrowanym za pomocą algorytmu SMS I/E</string>
+    <string name="encryption_store_passphrase">Zapisz hasło</string>
+    <string name="encryption_passphrase_retrieval_failure_title">Błąd podczas odzyskiwania hasła</string>
+    <string name="encryption_passphrase_retrieval_manual_operations_failure_message">Opcja „Użyj zapisanej frazy hasła do operacji ręcznych” jest włączona, ale nie udało się pobrać frazy hasła. Zapisz frazę hasła i spróbuj ponownie wykonać operację.</string>
+    <string name="encryption_passphrase_retrieval_failure_scheduled_operations_message">Szyfrowanie zaplanowanych operacji jest włączone, ale nie udało się odzyskać hasła – przerywanie zaplanowanego eksportu</string>
 </resources>

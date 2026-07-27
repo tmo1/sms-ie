@@ -102,7 +102,7 @@
     <string name="blocked_numbers_import_error_title">Engellenen numara içe aktarma hatası</string>
     <string name="messages_wipe_error_title">Mesaj silme hatası</string>
     <string name="messages_count_error_title">Mesaj sayma hatası</string>
-    <string name="json_parse_error">JSON dosyası ayrıştırma hatası</string>
+    <string name="json_parse_error">JSON dosyası ayrıştırılırken hata oluştu. Lütfen sağladığınız dosyanın doğru biçimde bir JSON dosyası olduğundan emin olun.</string>
     <string name="missing_messages_ndjson_error">\'messages.ndjson\' bulunamıyor. Lütfen sağlanan dosyanın doğru biçimde bir ZIP dosyası olduğundan emin olun.</string>
     <string name="missing_blocked_numbers_ndjson_error">\'blocked_numbers.ndjson\' bulunamıyor. Lütfen sağlanan dosyanın doğru biçimde bir ZIP dosyası olduğundan emin olun.</string>
     <string name="see_logcat_save_disabled">Daha fazla bilgi için logcat\'e bakın. Gelecekteki işlemler için logcat\'i otomatik olarak bir dosyaya kaydetmek üzere hata ayıklama ayarlarında \"Logcat kaydet\" seçeneğini etkinleştirin.</string>
@@ -138,4 +138,9 @@
     <string name="export_blocked_numbers">Engellenen Numaraları Dışa Aktar</string>
     <string name="import_blocked_numbers">Engellenen Numaraları İçe Aktar</string>
     <string name="count_messages">Mesajları say</string>
+    <string name="encryption_invalid_format">Seçilen dosya SMS I/E şifreli bir dosya değil</string>
+    <string name="encryption_store_passphrase">Parolayı kaydet</string>
+    <string name="encryption_passphrase_retrieval_failure_title">Parola alma hatası</string>
+    <string name="encryption_passphrase_retrieval_manual_operations_failure_message">\'Elle işlemler için kaydedilen parolayı kullan\' etkinleştirildi, ancak parola alınması başarısız oldu. Lütfen bir parola kaydedin ve işlemi tekrar deneyin.</string>
+    <string name="encryption_passphrase_retrieval_failure_scheduled_operations_message">Zamanlanan işlemler için şifreleme etkinleştirildi ancak parola alınması başarısız oldu - zamanlanan dışa aktarma iptal ediliyor</string>
 </resources>
