@@ -12,7 +12,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 **Note:** While this release does not introduce any known breaking changes to previously documented functionality, it does contain substantial architectural changes and code refactorization that were introduced in the course of adding support for encryption and decryption, and these may have introduced bugs; please report any bugs encountered.
 
- - Add optional authenticated encryption and decryption on devices with API level >= 21 (Android 6) ([aa40268](https://github.com/tmo1/sms-ie/commit/aa402689b1b54e0a1e91b100e0f4d6d4dfd9385d), [71eafbc](https://github.com/tmo1/sms-ie/commit/71eafbcf3231b36ecb890d91005307517022f1bd))
+ - Add optional authenticated encryption and decryption on devices with API level >= 21 (Android 6) ([aa40268](https://github.com/tmo1/sms-ie/commit/aa402689b1b54e0a1e91b100e0f4d6d4dfd9385d), [71eafbc](https://github.com/tmo1/sms-ie/commit/71eafbcf3231b36ecb890d91005307517022f1bd), [517d69c](https://github.com/tmo1/sms-ie/commit/517d69c5b3a5a0f6c76020c89b7a5a120a55113c))
  - Update Turkish translation ([6634678](https://github.com/tmo1/sms-ie/commit/66346789b2defdcda26bd5a0c6ecc925d2afc039), [0f4bb2f](https://github.com/tmo1/sms-ie/commit/0f4bb2fa6a4af264fdae441937b0f42f12446594)) (Oğuz Ersen)
  - Update Chinese (Simplified Han script) translation ([322b560](https://github.com/tmo1/sms-ie/commit/322b5605fb30e2ee5f9ac085626e134b15b47c3b)) (Hosted Weblate user 54392)
  - Update Polish translation ([35e1097](https://github.com/tmo1/sms-ie/commit/35e109700e55a2de3d737dce51473516d90e05ff), [3f7071b](https://github.com/tmo1/sms-ie/commit/3f7071b43ec92942e74216ffac53483a9c48533e)) (rehork, NooB9496)
