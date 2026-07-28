@@ -8,9 +8,11 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
-### Added
+## [2.11.0] - 2026-07-28
 
 **Note:** While this release does not introduce any known breaking changes to previously documented functionality, it does contain substantial architectural changes and code refactorization that were introduced in the course of adding support for encryption and decryption, and these may have introduced bugs; please report any bugs encountered.
+
+### Added
 
  - Add optional authenticated encryption and decryption on devices with API level >= 21 (Android 6) ([aa40268](https://github.com/tmo1/sms-ie/commit/aa402689b1b54e0a1e91b100e0f4d6d4dfd9385d), [71eafbc](https://github.com/tmo1/sms-ie/commit/71eafbcf3231b36ecb890d91005307517022f1bd), [517d69c](https://github.com/tmo1/sms-ie/commit/517d69c5b3a5a0f6c76020c89b7a5a120a55113c))
  - Update Turkish translation ([6634678](https://github.com/tmo1/sms-ie/commit/66346789b2defdcda26bd5a0c6ecc925d2afc039), [0f4bb2f](https://github.com/tmo1/sms-ie/commit/0f4bb2fa6a4af264fdae441937b0f42f12446594)) (Oğuz Ersen)
@@ -90,4 +92,5 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
 [2.10.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.0
 [2.10.1]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.1
 [2.10.2]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.2
-[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.10.2...HEAD
+[2.11.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.11.0
+[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.11.0...HEAD
