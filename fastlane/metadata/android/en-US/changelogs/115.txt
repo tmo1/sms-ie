@@ -1,0 +1,8 @@
+ - Add optional authenticated encryption and decryption on devices with API level >= 21 (Android 6).
+
+ - Update Turkish translation.
+
+ - Update Chinese (Simplified Han script) translation.
+
+ - Update Polish translation.
+

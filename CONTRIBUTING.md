@@ -59,6 +59,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - 大王叫我来巡山: update to Chinese (Traditional Han script)
  - Peter Vágner: Slovak
  - [Arif Budiman (arifpedia)](https://github.com/arifpedia): Indonesian
+ - Hosted Weblate user 54392: update to Chinese (Simplified Han script)
  
 ### Translations (Fastlane)
 
