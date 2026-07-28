@@ -1,8 +1,8 @@
 /*
  * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
- * call logs, and contacts, from and to JSON / NDJSON files.
+ * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
  *
- * Copyright (c) 2021-2023 Thomas More
+ * Copyright (c) 2021-2023,2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -47,7 +47,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceScreen
+import androidx.preference.PreferenceGroup
 import androidx.preference.SwitchPreferenceCompat
 import androidx.recyclerview.widget.RecyclerView
 
@@ -115,11 +115,7 @@ class SettingsActivity : AppCompatActivity() {
         private val requestPostNotification = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
-            if (isGranted) {
-                Log.d("Permission: ", "Granted")
-            } else {
-                Log.d("Permission: ", "Denied")
-            }
+            Log.d("Permission: ", if (isGranted) "Granted" else "Denied")
         }
 
         override fun onCreateRecyclerView(
@@ -145,19 +141,27 @@ class SettingsActivity : AppCompatActivity() {
 
         @SuppressLint("BatteryLife")
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)/* The time picker is somehow calling 'android.widget.TimePicker.setHour', which was added in API level 23,
-             and 'Intent.ACTION_OPEN_DOCUMENT_TREE' was added in API level 21, so we remove scheduled export functionality for API < 23
-             https://stackoverflow.com/questions/32297765/android-timepicker-methods-being-stubs
-             https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE
-             */
+            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+            // The lazysodium Android binding requires API >= 21.
+            // https://github.com/terl/lazysodium-android/blob/76e18548a0af285215f536c0d6d17369ac598311/app/build.gradle#L42
+            if (SDK_INT < 21) {
+                val encryption = findPreference<PreferenceGroup>("encryption_preference_category")
+                encryption?.isEnabled = false
+                encryption?.summary = "Encryption requires API level >= 21"
+            }
+
+            // The time picker is somehow calling 'android.widget.TimePicker.setHour', which was
+            // added in API level 23, and 'Intent.ACTION_OPEN_DOCUMENT_TREE', which was added in
+            // API level 21, so we disable scheduled export for API < 23.
+            // https://stackoverflow.com/questions/32297765/android-timepicker-methods-being-stubs
+            // https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE
+
             if (SDK_INT < 23) {
-                // https://stackoverflow.com/a/45274037
-                val preferenceScreen = findPreference<PreferenceScreen>("main_preference_screen")
-                val preferenceCategory =
-                    findPreference<Preference>("scheduled_export_preference_category")
-                if (preferenceCategory != null && preferenceScreen != null) {
-                    preferenceScreen.removePreference(preferenceCategory)
-                }
+                val scheduledExport =
+                    findPreference<PreferenceGroup>("scheduled_export_preference_category")
+                scheduledExport?.isEnabled = false
+                scheduledExport?.summary = "Scheduled export requires API level >= 23"
             } else {
                 targetDirPreference.setOnPreferenceClickListener {
                     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
@@ -295,9 +299,7 @@ class SettingsActivity : AppCompatActivity() {
                 val pm: PowerManager = context.getSystemService(POWER_SERVICE) as PowerManager
                 disableBattOptPreference.isChecked =
                     pm.isIgnoringBatteryOptimizations(context.packageName)
-            } else {
-                disableBattOptPreference.isVisible = false
-            }
+            } else disableBattOptPreference.isVisible = false
         }
     }
 

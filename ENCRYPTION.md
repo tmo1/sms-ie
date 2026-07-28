@@ -1,6 +1,6 @@
 # Encryption
 
-SMS I/E can optionally encrypt data upon export and decrypt it upon import. It uses [authenticated encryption](https://en.wikipedia.org/wiki/Authenticated_encryption), which guarantees (assuming the use of a sufficiently strong passphrase) both data confidentiality (an attacker cannot determine the plaintext) and authenticity (an attacker cannot alter the plaintext without the tampering being detected).
+SMS I/E can optionally encrypt data upon export and decrypt it upon import. It uses [authenticated encryption](https://en.wikipedia.org/wiki/Authenticated_encryption), which guarantees (assuming the use of a sufficiently strong passphrase) both data confidentiality (an attacker cannot determine the plaintext) and authenticity (an attacker cannot alter the plaintext without the tampering being detected). Encryption and decryption are only available on devices with API level >= 21 (Android 6).
 
 ## App settings
 

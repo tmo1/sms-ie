@@ -91,7 +91,7 @@ private enum class PostSmsRoleAction {
     IMPORT_MESSAGES, EXPORT_BLOCKED_NUMBERS, IMPORT_BLOCKED_NUMBERS, WIPE_MESSAGES,
 }
 
-val sodium = SodiumAndroid()
+val sodium = if (SDK_INT >= 21) SodiumAndroid() else null
 val lazySodiumAndroid = LazySodiumAndroid(sodium)
 
 class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListener,

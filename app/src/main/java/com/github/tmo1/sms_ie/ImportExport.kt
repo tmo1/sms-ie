@@ -340,6 +340,7 @@ const val INTEGER_LENGTH = Int.SIZE_BYTES
 fun getOutputStream(appContext: Context, uri: Uri, passphrase: String?): OutputStream? {
     val outputStream = appContext.contentResolver.openOutputStream(uri) ?: return null
     return if (passphrase == null) outputStream else {
+        if (SDK_INT < 23) throw RuntimeException("Encryption requires API >= 23")
         val salt = ByteArray(SALT_LENGTH)
         val secureRandom = SecureRandom()
         secureRandom.nextBytes(salt)
@@ -359,6 +360,7 @@ fun getOutputStream(appContext: Context, uri: Uri, passphrase: String?): OutputS
 fun getInputStream(appContext: Context, uri: Uri, passphrase: String?): InputStream? {
     val inputStream = appContext.contentResolver.openInputStream(uri) ?: return null
     return if (passphrase == null) inputStream else {
+        if (SDK_INT < 23) throw RuntimeException("Decryption requires API >= 23")
         val magicNumber = ByteArray(MAGIC_NUMBER.size)
         inputStream.read(magicNumber)
         if (!magicNumber.contentEquals(MAGIC_NUMBER)) throw UserFriendlyException(

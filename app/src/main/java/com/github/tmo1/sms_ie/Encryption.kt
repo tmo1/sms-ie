@@ -25,6 +25,7 @@ package com.github.tmo1.sms_ie
 import android.util.Log
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build.VERSION.SDK_INT
 import com.goterl.lazysodium.exceptions.SodiumException
 import com.goterl.lazysodium.interfaces.PwHash
 import com.goterl.lazysodium.interfaces.SecretStream
@@ -94,6 +95,7 @@ class PassphraseManager(private val passphraseKeyAlias: String, context: Context
     }
 
     fun storePassphrase(passphrase: String) {
+        if (SDK_INT < 23) throw RuntimeException("Passphrase storage requires API >= 23")
         if (!keyStore.containsAlias(passphraseKeyAlias)) {
             val keyGenerator =
                 KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
@@ -180,7 +182,7 @@ class SecretStreamOutputStream(
 
     private fun writeNonFinalChunk() {
         //Log.d(LOG_TAG, "Writing a chunk")
-        sodium.crypto_secretstream_xchacha20poly1305_push(
+        sodium!!.crypto_secretstream_xchacha20poly1305_push(
             st,
             ciphertextChunk,
             null,
@@ -196,7 +198,7 @@ class SecretStreamOutputStream(
 
     override fun close() {
         //Log.d(LOG_TAG, "Writing final chunk")
-        sodium.crypto_secretstream_xchacha20poly1305_push(
+        sodium!!.crypto_secretstream_xchacha20poly1305_push(
             st,
             ciphertextChunk,
             null,
@@ -272,7 +274,7 @@ class SecretStreamInputStream(
             return
         }
         if (finalChunkRead) throw SodiumException("End of stream reached before end of file")
-        if (sodium.crypto_secretstream_xchacha20poly1305_pull(
+        if (sodium!!.crypto_secretstream_xchacha20poly1305_pull(
                 st, plaintextChunk, null, tag, ciphertextChunk, bytesRead.toLong(), null, 0
             ) != 0
         ) throw SodiumException("Decryption failure on chunk $chunkNumber")
