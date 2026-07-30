@@ -75,7 +75,7 @@
     <string name="blocked_numbers_export_error_title">Errore di esportazione numeri bloccati</string>
     <string name="blocked_numbers_import_error_title">Errore di importazione numeri bloccati</string>
     <string name="messages_wipe_error_title">Errore di eliminazione messaggi</string>
-    <string name="json_parse_error">Errore di lettura del file JSON</string>
+    <string name="json_parse_error">Errore di lettura del file JSON. Assicurati che il file fornito sia un file JSON nel formato corretto.</string>
     <string name="missing_messages_ndjson_error">Impossibile trovare \'messages.ndjson\'. Assicurati che il file fornito sia un file ZIP nel formato corretto.</string>
     <string name="missing_blocked_numbers_ndjson_error">Impossibile trovare \'blocked_numbers.ndjson\'. Assicurati che il file fornito sia un file ZIP nel formato corretto.</string>
     <string name="see_logcat_save_disabled">Vedi il logcat per maggiori informazioni. Attiva \"Salva logcat\" nelle impostazioni di debug per salvare automaticamente il logcat in un file per le operazioni future.</string>
@@ -112,4 +112,9 @@
     <string name="sms_read_permission_required">Contare i messaggi richiede l\'autorizzazione di leggere gli SMS.</string>
     <string name="counting_messages">Conto dei messaggi …</string>
     <string name="count_messages">Conta i messaggi</string>
+    <string name="encryption_invalid_format">Il file selezionato non è un file crittografato SMS I/E</string>
+    <string name="encryption_store_passphrase">Memorizza password</string>
+    <string name="encryption_passphrase_retrieval_failure_title">Recupero password fallito</string>
+    <string name="encryption_passphrase_retrieval_manual_operations_failure_message">\'Usa la password salvata per le operazioni manuali\' è attivo, ma il recupero della password è fallito. Salva una password e riprova l\'operazione.</string>
+    <string name="encryption_passphrase_retrieval_failure_scheduled_operations_message">La crittografia per le operazioni programmate è attiva, ma il recupero della password è fallito: annullo l\'esportazione programmata</string>
 </resources>
