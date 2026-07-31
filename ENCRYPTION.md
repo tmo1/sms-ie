@@ -56,3 +56,7 @@ SMS I/E initially writes a 36 byte header to the file:
 #### Encrypted data
 
 SMS I/E then writes the SecretStream encrypted data. This consists of a 24 byte SecretStream header, which is opaque to applications using SecretStream, followed by a series of chunks of encrypted data, each of which consists of a chunk of plaintext transformed into ciphertext, plus an additional 17 bytes added by the SecretStream algorithm. All chunks of plaintext / ciphertext (except possibly the last one) are the size specified in the file header.
+
+## Decryption / authentication failure
+
+When decryption of a chunk fails, libsodium does not (cannot?) report the reason for the failure. Accordingly, if decryption fails at any point in the process of importing an encrypted file, SMS I/E will abort the import and report `Decryption failure on chunk nnnn`. If `nnnn` is 1, then there are a variety of possible reasons for the failure, including the use of a passphrase different from the one used during encryption, but if `nnnn` is greater than 1, then the only possible explanation for the failure is that the file has been altered (either deliberately or accidentally).

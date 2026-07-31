@@ -8,6 +8,14 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+### Added
+
+ - Update Italian translation ([d068542](https://github.com/tmo1/sms-ie/commit/d068542aa452c7e5727c43a8fb67d43dcdb1ae6c)) (Random)
+ 
+### Fixed
+
+ - Add ProGuard rules necessary for JNA to run without crashing ([issue #357](https://github.com/tmo1/sms-ie/issues/357), [PR #358](https://github.com/tmo1/sms-ie/pull/358)) (Andrew Gunnerson)
+ 
 ## [2.11.0] - 2026-07-28
 
 **Note:** While this release does not introduce any known breaking changes to previously documented functionality, it does contain substantial architectural changes and code refactorization that were introduced in the course of adding support for encryption and decryption, and these may have introduced bugs; please report any bugs encountered.

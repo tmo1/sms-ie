@@ -1,0 +1,3 @@
+ - Update Italian translation (Random)
+
+ - Add ProGuard rules necessary for JNA to run without crashing (issue #357) (Andrew Gunnerson)

@@ -18,7 +18,7 @@ SCRIPT_NAME = 'ssef-decrypt.py'
 if len(sys.argv) < 2 or len(sys.argv) > 3:
     sys.exit(f'Usage: {SCRIPT_NAME} <encrypted_file> [<decrypted_file>]')
 if len(sys.argv) == 2 and not sys.argv[1].endswith(FILENAME_SUFFIX):
-    sys.exit('Two argument form is only allowed with a filename ending in \'.ssef\'')
+    sys.exit(f'Two argument form is only allowed with a filename ending in {FILENAME_SUFFIX}')
 decrypted_filename = sys.argv[2] if len(sys.argv) == 3 else sys.argv[1].removesuffix(FILENAME_SUFFIX)
 with open(sys.argv[1], 'rb') as encrypted_file:
     with open(decrypted_filename, 'wb') as decrypted_file:
