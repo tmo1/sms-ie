@@ -35,8 +35,8 @@ android {
         applicationId "com.github.tmo1.sms_ie"
         minSdkVersion 19
         targetSdkVersion 37
-        versionCode 118
-        versionName "2.11.0"
+        versionCode 119
+        versionName "2.11.1"
         base.archivesName = applicationId + '-v' + versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
