@@ -115,7 +115,7 @@ dependencies {
     standardImplementation 'com.google.android.material:material:1.14.0'
     standardImplementation 'androidx.documentfile:documentfile:1.1.0'
     standardImplementation 'androidx.appcompat:appcompat:1.7.1'
-    standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.2'
     standardImplementation 'androidx.work:work-runtime-ktx:2.11.2'
 
     legacyImplementation 'androidx.core:core-ktx:1.13.1'
