@@ -108,7 +108,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
-    implementation "com.goterl:lazysodium-android:5.2.0@aar"
+    implementation "cz.mormegil:lazysodium-android:6.2.0@aar"
     implementation "net.java.dev.jna:jna:5.19.1@aar"
 
     standardImplementation 'androidx.core:core-ktx:1.19.0'
