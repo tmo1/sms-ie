@@ -149,7 +149,7 @@ SMS I/E provides a couple of experimental settings (under `Settings / Import opt
 * "Insert excluded addresses into address table": This option (off by default) instructs SMS I/E to not insert the addresses specified in the previous setting into its address table (in addition to excluding them from calls to `getOrCreateThreadId`).
 
 > [!WARNING] 
-# These settings are experimental. For discussion of them and the problem they were introduced to solve, see [issue #275](https://github.com/tmo1/sms-ie/issues/275). If you use these settings, please consider reporting your experience - positive or negative - in that issue.
+> These settings are experimental. For discussion of them and the problem they were introduced to solve, see [issue #275](https://github.com/tmo1/sms-ie/issues/275). If you use these settings, please consider reporting your experience - positive or negative - in that issue.
 
 ## Permissions
 
