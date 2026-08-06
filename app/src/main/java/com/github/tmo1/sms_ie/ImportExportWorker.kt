@@ -171,9 +171,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
         // fflush() only when outputting to stdout. When using -f, interrupting logcat may mean that
         // its buffered data doesn't get flushed.
         val logcatProcess = if (prefs.getBoolean("save_logcat", false)) {
-            Log.d(LOG_TAG, "Starting log file")
-            Log.d(LOG_TAG, "- App version: ${BuildConfig.VERSION_NAME}")
-            Log.d(LOG_TAG, "- API level: ${Build.VERSION.SDK_INT}")
+            Log.i(LOG_TAG, "Starting log file")
+            Log.i(LOG_TAG, "- App version: ${BuildConfig.VERSION_NAME}")
+            Log.i(LOG_TAG, "- API level: ${Build.VERSION.SDK_INT}")
 
             val logcatFile = logcatFile(context)
             val logcatUseStdout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
@@ -266,7 +266,7 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
 
         logcatProcess?.let {
             try {
-                Log.d(LOG_TAG, "Stopping log file")
+                Log.i(LOG_TAG, "Stopping log file")
                 delay(100)
 
                 it.destroy()
@@ -648,7 +648,7 @@ fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
         exportTime.add(Calendar.MINUTE, prefs.getInt("export_time", 0))
         if (exportTime < now) exportTime.add(Calendar.DAY_OF_MONTH, 1)
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
-        Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
+        Log.i(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
         val exportRequest =
             OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
                 .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS)
@@ -659,7 +659,7 @@ fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
                 .build()
         WorkManager.getInstance(context).enqueue(exportRequest)
     } else {
-        Log.d(LOG_TAG, "Scheduled export disabled - canceling any scheduled exports")
+        Log.i(LOG_TAG, "Scheduled export disabled - canceling any scheduled exports")
         WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
     }
 }
