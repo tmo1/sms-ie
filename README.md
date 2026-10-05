@@ -302,13 +302,15 @@ SMS Import / Export has no explicit support for [RCS](https://en.wikipedia.org/w
 
 ## Translations
 
-SMS Import / Export has been translated (from the original English) into the following languages (note that some of these translations may contain inaccuracies, due to changes to the app's original text since they were made):
+SMS Import / Export has been translated (from the original English) into the following languages:
 
 <a href="https://hosted.weblate.org/engage/sms-import-export/">
 	<img src="https://hosted.weblate.org/widgets/sms-import-export/-/ui-strings/multi-auto.svg" alt="Translation status" />
 </a>
 
 To add a translation into a new language, or to correct, update, or improve an existing translation, see [here](CONTRIBUTING.md).
+
+**Note:** All translations have been contributed by third parties, and the SMS I/E developers take no responsibility for their accuracy. Additionally, some translations may contain inaccuracies due to changes to the app's original text since they were made.
 
 ## Tools
 
