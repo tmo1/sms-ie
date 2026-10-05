@@ -1,0 +1,9 @@
+- Aktualizacje tłumaczeń na język chiński (uproszczony), francuski, włoski, polski, rosyjski, hiszpański i turecki
+
+ - Zablokowano orientację ekranu głównego, aby zapobiec przerwaniu działania aplikacji w wyniku obrotu ekranu (problem nr 85)
+
+ - Podczas importowania wiadomości dodawani są fikcyjni odbiorcy do wiadomości MMS bez odbiorców, aby umożliwić poprawny import takich wiadomości (problem nr 150)
+
+ - Podczas importowania wiadomości domyślnie nie uwzględniać części „sub_ids” wiadomości MMS, ponieważ jej uwzględnienie może spowodować awarię aplikacji (problem nr 142)
+
+ - Aktualizacja Gradle i jego zależności

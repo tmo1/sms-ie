@@ -1,0 +1,13 @@
+- Wprowadzenie deduplikacji wpisów w dzienniku połączeń (zgłoszenie nr 176).
+
+ - Gdy ta aplikacja jest domyślną aplikacją do obsługi SMS-ów, dodanie ostrzeżenia na ekranie głównym aplikacji oraz przycisku umożliwiającego wyświetlenie domyślnych ustawień aplikacji (gdy poziom API jest >= 24) (zgłoszenie nr 139).
+
+ - Obsługa ciemnego motywu (zgłoszenie nr 181).
+
+ - Gruntowna przebudowa struktury powiadomień – autor: Andrew Gunnerson (chenxiaolong) (zgłoszenia nr 34, 179, 183 / PR nr 187).
+
+ - Aktualizacja tłumaczeń na język francuski, hiszpański, turecki i wietnamski.
+
+ - Aktualizacja wersji wtyczki Android Gradle Plugin (AGP) oraz różnych zależności Gradle.
+
+ - Refaktoryzacja.

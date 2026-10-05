@@ -1,0 +1,21 @@
+- Uruchamianie wszystkich operacji ręcznych w procesach Android Worker, tak aby zachowały się one po zmianach konfiguracji urządzenia (zgłoszenie nr 85), zamknięciu aplikacji oraz wyłączeniu ekranu (zgłoszenie nr 266) – autor: Andrew Gunnerson (PR nr 268).
+
+ - Dodano przycisk „Anuluj” dla wszystkich operacji z wyjątkiem usuwania wiadomości – autor: Andrew Gunnerson (PR #268).
+
+ - Wyłączono przyciski operacji, gdy operacja jest już w toku (zgłoszenie nr 273) – autor: Andrew Gunnerson (PR #268).
+
+ - Przeprowadzono refaktoryzację kodu – autor: Andrew Gunnerson (PR #268).
+
+ - Naprawiono błąd uniemożliwiający import połączeń na urządzeniach z systemem Huawei EMUI (zgłoszenie nr 210).
+
+ - Naprawiono błąd uniemożliwiający import wiadomości na urządzeniach z systemem Xiaomi MIUI (zgłoszenie nr 263) – autor: MarcMush (PR nr 264).
+
+ - Dodano tłumaczenie na język chiński (tradycyjny alfabet Han) – autor: Unknownman820.
+
+ - Zaktualizowano różne tłumaczenia.
+
+ - Zaktualizowano wartości „compileSdk” i „targetSdkVersion” do 36.
+
+ - Zaktualizowano wersje Javy w plikach kompilacji do 17.
+
+ - Zaktualizowano Gradle, wtyczkę Android Gradle Plugin oraz zależności Gradle.

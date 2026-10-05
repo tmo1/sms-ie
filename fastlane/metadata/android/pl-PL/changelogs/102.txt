@@ -1,0 +1,9 @@
+- Aplikacja wyświetla teraz prośbę o ustawienie jej jako domyślnej aplikacji do obsługi SMS-ów podczas importowania lub usuwania wiadomości
+
+ - Aplikacja działa teraz, z dostępną większością funkcji, na poziomie API 19 (KitKat / 4.4) lub nowszym, chociaż import wiadomości i zaplanowany eksport wiadomości nadal wymagają poziomu API 23 (Marshmallow / 6.0) lub nowszego
+
+ - Ulepszone logowanie (szczególnie w wersjach debugowych)
+
+ - Mniejszy rozmiar pliku APK (wersji wydanych, dzięki kompresji R8)
+
+ - Zaktualizowana konfiguracja Gradle i zależności

@@ -1,0 +1,13 @@
+- Unikanie nakładania się marginesów paska systemowego (zgłoszenie nr 242).
+
+ - Naprawiono awarię występującą podczas importowania wiadomości na urządzenie z systemem MIUI, które zostały wyeksportowane z innego urządzenia z systemem MIUI – autor: Askorbinovaya Kislota (zgłoszenia nr 103, 152, 164, 206, 232 / PR nr 236).
+
+ - Dodano przełącznik w ustawieniach umożliwiający kontrolowanie wyświetlania powiadomień po pomyślnym zakończeniu zaplanowanego eksportu (zgłoszenie nr 227).
+
+ - Dodano funkcję przewijania na głównym ekranie aplikacji, aby zapobiec nakładaniu się elementów interfejsu użytkownika na małych ekranach (zgłoszenie nr 238).
+
+ - Zaktualizowano ekran „O aplikacji”.
+
+ - Dodano tłumaczenie na język duński – autor: catsnote (cat).
+
+ - Zaktualizowano tłumaczenie na język hebrajski – autor: elid34 (elid).

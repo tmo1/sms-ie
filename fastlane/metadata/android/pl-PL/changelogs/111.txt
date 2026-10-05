@@ -1,0 +1,15 @@
+- Dodano opcję debugowania umożliwiającą zapisanie logcatu ostatniej operacji w pliku dostępnym dla użytkownika – autor: Andrew Gunnerson (PR #278).
+
+ - Dodano pełną obsługę trybu „od krawędzi do krawędzi” – autor: Andrew Gunnerson (PR #279).
+
+ - Naprawiono regresję, która powodowała niepowodzenie operacji ręcznych w przypadku wyłączenia ekranu (zgłoszenie #277) – autor: Andrew Gunnerson (PR #289).
+
+ - Naprawiono regresję, która powodowała niepowodzenie operacji w wersjach Androida starszych niż 12 (zgłoszenia #288 i #292) – autorzy: Andrew Gunnerson i Thomas More (PR #289).
+
+ - Naprawiono regresję powodującą nadmierną liczbę powiadomień (zgłoszenie nr 276) – autor: Andrew Gunnerson (PR nr 281).
+
+ - Naprawiono błąd powodujący niepowodzenie eksportu kontaktów w pewnych okolicznościach (zgłoszenie nr 280) – autor: Andrew Gunnerson (PR nr 282).
+
+ - Zaktualizowano różne tłumaczenia.
+
+ - Zaktualizowano zależności Gradle oraz wersję AGP.

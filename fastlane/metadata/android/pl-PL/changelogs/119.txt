@@ -1,0 +1,3 @@
+- Aktualizacja tłumaczenia na język włoski (losowo)
+
+ - Dodano reguły ProGuard niezbędne do działania JNA bez awarii (zgłoszenie nr 357) (Andrew Gunnerson)

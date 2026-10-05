@@ -1,0 +1,9 @@
+- Identyfikatory subskrypcji MMS i SMS (wartości „sub_id”) są teraz domyślnie ustawiane na „-1” („nie można określić identyfikatora subskrypcji”) podczas importu, ponieważ zachowanie oryginalnych wartości może powodować zniknięcie wiadomości w systemie Android 14 (problem nr 128).
+
+ - Zaplanowane eksporty można teraz uruchamiać jako usługę działającą w tle, jeśli optymalizacja baterii jest wyłączona. Zapobiega to przerywaniu długotrwałych eksportów lub eksportów obejmujących dużą liczbę wiadomości MMS w najnowszych wersjach systemu Android. – autor: Andrew Gunnerson (zgłoszenie nr 129 / PR nr 131)
+
+ - Aplikacja prosi teraz o uprawnienie do wysyłania powiadomień, gdy włączone są zaplanowane eksporty, co pozwala na wysyłanie powiadomień po zakończeniu zaplanowanego eksportu w najnowszych wersjach systemu Android (zgłoszenie nr 129).
+
+ - Ikona monochromatyczna (do motywów ikon) – autor: Biswapriyo Nath (zgłoszenie nr 114 / PR nr 132)
+
+ - ScrollView dla ekranu „O aplikacji” – autor: Biswapriyo Nath (PR nr 133)

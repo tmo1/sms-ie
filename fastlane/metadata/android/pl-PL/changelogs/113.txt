@@ -1,0 +1,9 @@
+- Obsługa danych BLOB w wiadomościach MMS bez powodowania awarii podczas eksportu. Dane te mogą być uwzględnione w eksporcie (ustawienie domyślne) lub pominięte, co można kontrolować za pomocą przełącznika w ustawieniach (zgłoszenie nr 87).
+
+ - Anulowanie powiadomienia stałego, gdy usługa nie działa w tle (zgłoszenia nr 298, 309 i 311) – autor: Andrew Gunnerson (PR nr 300).
+
+ - Naprawiono problemy z czytelnością tekstu w aktywności „Filtry wiadomości” (zgłoszenie nr 304) – autor: Andrew Gunnerson (PR nr 305).
+
+ - Podwyższono wersję minSdkVersion dla wersji standardowej do 23.
+
+ - Zaktualizowano różne tłumaczenia.

@@ -1,0 +1,7 @@
+- Dodano opcjonalne szyfrowanie i deszyfrowanie z uwierzytelnianiem na urządzeniach o poziomie API >= 21 (Android 6).
+
+ - Zaktualizowano tłumaczenie na język turecki.
+
+ - Zaktualizowano tłumaczenie na język chiński (pisma han uproszczonego).
+
+ - Zaktualizowano tłumaczenie na język polski.

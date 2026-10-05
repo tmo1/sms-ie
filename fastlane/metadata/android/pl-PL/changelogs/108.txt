@@ -1,0 +1,13 @@
+- Wprowadzono wersje produktów „standardowe” i „starsze” — szczegóły znajdziesz w pliku README.
+
+ - Naprawiono błąd powodujący awarię podczas eksportowania wiadomości MMS bez [„nazw wyświetlanych”](https://developer.android.com/reference/android/provider/ContactsContract.ContactsColumns#DISPLAY_NAME) – autor: farfromrefug (zgłoszenie nr 230 / PR nr 231).
+
+ - Naprawiono inne błędy.
+
+ - Tłumaczenie na język tamilski – autor: TamilNeram (தமிழ்เวลา).
+
+ - Zaktualizowano tłumaczenia na język włoski i polski.
+
+ - Zwiększono wartości zarówno „targetSdkVersion”, jak i „compileSdk” do 35.
+
+ - Zaktualizowano Gradle, wtyczkę Android Gradle Plugin (AGP) oraz zależności.

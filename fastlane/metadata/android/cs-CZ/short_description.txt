@@ -1,0 +1,1 @@
+Importuje a exportuje SMS a MMS zprávy a další data.

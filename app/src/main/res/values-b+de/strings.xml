@@ -21,7 +21,7 @@
     <string name="app_name">SMS Import / Export</string>
     <string name="export_messages_button_label">Exportiere Nachrichten</string>
     <string name="import_messages_button_label">Importiere Nachrichten</string>
-    <string name="export_call_log_button_label">Exportiere Anrufliste</string>
+    <string name="export_call_log_button_label">Anrufliste exportieren</string>
     <string name="import_call_log_button_label">Importiere Anrufliste</string>
     <string name="ready">Bereit</string>
     <!--<string name="begin_exporting_messages">Exportiere Nachrichten …</string>
@@ -120,7 +120,7 @@
     <string name="export_blocked_numbers">Gesperrte Nummern exportieren</string>
     <string name="import_blocked_numbers">Gesperrte Nummern importieren</string>
     <string name="messages_wipe_error_title">Fehler beim Löschen von Nachrichten</string>
-    <string name="json_parse_error">Fehler beim Analysieren der JSON-Datei</string>
+    <string name="json_parse_error">Fehler beim Analysieren der JSON-Datei. Bitte stelle sicher, dass es sich bei der bereitgestellten Datei um eine JSON-Datei im korrekten Format handelt.</string>
     <string name="missing_messages_ndjson_error">Kann „messages.ndjson“ nicht finden. Bitte stelle sicher, dass die bereitgestellte Datei eine ZIP-Datei im richtigen Format ist.</string>
     <string name="missing_blocked_numbers_ndjson_error">Kann „blocked_numbers.ndjson” nicht finden. Bitte stelle sicher, dass die bereitgestellte Datei eine ZIP-Datei im richtigen Format ist.</string>
     <string name="pref_save_logcat_name">Logcat speichern</string>
@@ -134,4 +134,9 @@
     <string name="sms_read_permission_required">Um Nachrichten zu zählen, ist die Berechtigung zum Lesen von SMS erforderlich.</string>
     <string name="counting_messages">Nachrichten werden gezählt…</string>
     <string name="count_messages">Nachrichten zählen</string>
+    <string name="encryption_invalid_format">Ausgewählte Datei ist keine SMS-I/E-verschlüsselte Datei</string>
+    <string name="encryption_store_passphrase">Passphrase speichern</string>
+    <string name="encryption_passphrase_retrieval_failure_title">Fehler beim Abrufen der Passphrase</string>
+    <string name="encryption_passphrase_retrieval_failure_scheduled_operations_message">Die Verschlüsselung für geplante Vorgänge ist aktiviert, aber das Abrufen der Passphrase ist fehlgeschlagen – der geplante Export wird abgebrochen</string>
+    <string name="encryption_passphrase_retrieval_manual_operations_failure_message">‚Passphrase für manuelle Vorgänge verwenden‘ ist aktiviert, aber das Abrufen der Passphrase ist fehlgeschlagen. Bitte Passphrase speichern und den Vorgang erneut versuchen.</string>
 </resources>

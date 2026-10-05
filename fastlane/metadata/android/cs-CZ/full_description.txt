@@ -1,0 +1,5 @@
+SMS Import / Export importuje a exportuje SMS a MMS zprávy, seznamy hovorů, kontakty a blokovaná čísla z a do (ND)JSON / ZIP souborů. (Import a export kontaktů je funkční, ale je považován za experimentální funkci.) Aplikace nevyžaduje root oprávnění.
+
+Autorem SMS Import / Export je Thomas More. Další lidé přispěli do zdrojového kódu nebo překladem. Software má copyright 2021-2026 a je vydán pro licencí GNU General Public Licence verze 3 nebo vyšší.
+
+SMS Import / Export vychází z projektu  <a href="https://github.com/tmo1/sms-db">sms-db</a>, Linuxového nástroje, který umožňuje vytvořit SQLite databázi z SMS a MMS zpráv v různých formátech. sms-db bude snad jednou umět importovat ZIP soubory vytvořené aplikací SMS Import / Export a  exportovat svoji databázi do ZIP souboru, který bude umět SMS Import / Export importovat.
