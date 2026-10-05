@@ -55,7 +55,7 @@ android {
     productFlavors {
         standard {
             dimension "api"
-            minSdkVersion 23
+            minSdkVersion 24
             versionCode 10000 + android.defaultConfig.versionCode
             versionNameSuffix "-standard"
             getIsDefault().set(true)
@@ -116,7 +116,7 @@ dependencies {
     standardImplementation 'androidx.documentfile:documentfile:1.1.0'
     standardImplementation 'androidx.appcompat:appcompat:1.8.0'
     standardImplementation 'androidx.constraintlayout:constraintlayout:2.2.2'
-    standardImplementation 'androidx.work:work-runtime-ktx:2.11.2'
+    standardImplementation 'androidx.work:work-runtime-ktx:2.12.0'
 
     legacyImplementation 'androidx.core:core-ktx:1.13.1'
     legacyImplementation 'com.google.android.material:material:1.12.0'
