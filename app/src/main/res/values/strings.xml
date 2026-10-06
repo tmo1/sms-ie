@@ -127,6 +127,7 @@
     <string name="message_import_api_23_requirement">Importing messages is only possible on Android Marshmallow / 6.0 (API level 23) or later.</string>
     <string name="blocked_numbers_api_24_requirement">Importing and exporting blocked numbers is only possible on Android Nougat / 7.0 (API level 24) or later.</string>
     <string name="default_sms_app_warning"><b>Warning</b>: This app is currently the default SMS app, which means that any incoming SMS or MMS messages will be lost! To avoid this, set a proper default SMS app.</string>
+    <string name="no_read_restricted_messages_warning"><b>Warning</b>: This app cannot currently access \"restricted\" messages, which will prevent the export of encrypted RCS messages. See the \"Encrypted RCS Messages\" section of the README for more information.</string>
     <string name="set_default_sms_app">Set default SMS app</string>
     <string name="donations">Donations:</string>
     <string name="app_donations">https://ko-fi.com/thomasmore</string>

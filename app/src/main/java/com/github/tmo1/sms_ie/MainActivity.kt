@@ -23,6 +23,7 @@
 package com.github.tmo1.sms_ie
 
 import android.Manifest
+import android.app.AppOpsManager
 import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -424,11 +425,26 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
             Telephony.Sms.getDefaultSmsPackage(this) == packageName
         }
         if (areWeDefaultSMSApp) {
+            defaultSMSAppWarning.text = getString(R.string.default_sms_app_warning)
             defaultSMSAppWarning.visibility = View.VISIBLE
             setDefaultSMSAppButton.visibility = if (SDK_INT >= 24) View.VISIBLE else View.GONE
         } else {
-            defaultSMSAppWarning.visibility = View.GONE
-            setDefaultSMSAppButton.visibility = View.GONE
+            try {
+                val appOpsManager = getSystemService(AppOpsManager::class.java)
+                // AppOpsManager.OPSTR_READ_RESTRICTED_MESSAGES is not public.
+                val op = "android:read_restricted_messages"
+                val mode = appOpsManager.checkOpNoThrow(op, android.os.Process.myUid(), packageName)
+                if (mode != AppOpsManager.MODE_ALLOWED) {
+                    defaultSMSAppWarning.text = getString(R.string.no_read_restricted_messages_warning)
+                    defaultSMSAppWarning.visibility = View.VISIBLE
+                    setDefaultSMSAppButton.visibility =
+                        if (SDK_INT >= 24) View.VISIBLE else View.GONE
+                }
+            } catch (_: IllegalArgumentException) {
+                // This Android version does not support READ_RESTRICTED_MESSAGES.
+                defaultSMSAppWarning.visibility = View.GONE
+                setDefaultSMSAppButton.visibility = View.GONE
+            }
         }
     }
 

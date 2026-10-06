@@ -209,7 +209,6 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="30dp"
                 android:paddingEnd="20dp"
-                android:text="@string/default_sms_app_warning"
                 android:textSize="20sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/set_default_sms_app_button"

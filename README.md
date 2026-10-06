@@ -170,9 +170,30 @@ To export contacts, permission to read Contacts is required.
 
 To import contacts, permission to write Contacts is required. (Granting the app permission to access Contacts grants both read and write permission, although if the app is upgraded from an earlier version which did not declare that it uses permission to write Contacts, then it may be necessary to deny and re-grant Contacts permission in order to enable permission to write Contacts.)
 
-To post notifications regarding the result(s) of a scheduled export run, permission to post notifications is required on Android 13 (API level 33) and later.
+To post notifications regarding the result(s) of a scheduled export run, permission to post notifications is required on [Android 13 (API level 33)](https://developer.android.com/about/versions/13) and later.
 
-To run scheduled exports as a foreground service, permission to disable battery optimizations for the app is required (see [Running As A Foreground Service](#running-as-a-foreground-service)).
+To run scheduled exports as a foreground service, permission to disable battery optimizations for the app is required (see [Running As A Foreground Service](#running-as-a-foreground-service) above).
+
+### Encrypted RCS Messages
+
+Beginning with [Android 17 (API level 37)](https://developer.android.com/about/versions/17) (and perhaps some versions of [Android 16 (API level 36)](https://developer.android.com/about/versions/16)), Android marks encrypted RCS messages as "restricted" and denies ordinary apps access to them, which will normally prevent their export. When this restriction applies, the app will warn the user of it on its main screen. See [issue #374](https://github.com/tmo1/sms-ie/issues/374) for detailed discussion of this issue.
+
+There are two ways to grant the app access to restricted messages:
+
+#### Default Messaging App
+
+The app can be granted access to restricted messages by making it the default messaging app (which is allowed to access restricted messages), but be sure to note the above warning before doing so. This method is convenient for manual exports, but less so for scheduled ones.
+
+#### Android Debug Bridge (adb)
+
+The app can be granted access to restricted messages via the [Android Debug Bridge (adb)](https://en.wikipedia.org/wiki/Android_Debug_Bridge) with the following command:
+
+```
+adb shell appops set com.github.tmo1.sms_ie READ_RESTRICTED_MESSAGES allow
+```
+
+For more information on adb usage, see [its official documentation](https://developer.android.com/tools/adb).
+
 
 ## Contacts
 
