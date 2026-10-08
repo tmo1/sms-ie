@@ -35,7 +35,6 @@ import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
-import android.os.SystemClock
 import android.text.format.DateUtils.formatElapsedTime
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -113,7 +112,6 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     companion object {
         const val TAG_MANUAL_ACTION = "manual"
         const val TAG_AUTOMATIC_EXPORT = "export"
-        private const val PROGRESS_INTERVAL_MS = 250L
     }
 
     private val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
@@ -151,25 +149,12 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     private var foregroundDelayedRetry: Job? = null
     private val foregroundLock = Mutex()
 
-    // Throttle WorkManager progress updates: setProgress() performs a database write on every
-    // call, which is significant overhead when invoked once per message. The per-message
-    // progress strings embed the running counter, so they always differ; the interval check
-    // is what actually throttles. Null-message updates pass through immediately, and the
-    // terminal state is delivered via the work Result, so no information is lost.
-    private var lastSetProgressTimestamp = 0L
-    private var lastSetProgressMessage: String? = null
-
     private suspend fun updateProgress(progress: Progress) {
-        // [Throttled] For updating MainActivity and anything else that might be monitoring this
+        // [Unthrottled] For updating MainActivity and anything else that might be monitoring this
         // worker's progress. We currently funnel information about whether the operation can be
         // canceled here because WorkInfo does not expose the input parameters like the action.
         // MainActivity has no other way to know if this is cancellable.
-        val now = SystemClock.elapsedRealtime()
-        if (progress.message == null || now - lastSetProgressTimestamp >= PROGRESS_INTERVAL_MS) {
-            lastSetProgressMessage = progress.message
-            lastSetProgressTimestamp = now
-            setProgress(progress.copy(canCancel = action.isCancellable).toWorkData())
-        }
+        setProgress(progress.copy(canCancel = action.isCancellable).toWorkData())
         // [Throttled] For updating the foreground service notification.
         foregroundLock.withLock {
             foregroundProgress = progress
