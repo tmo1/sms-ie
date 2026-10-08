@@ -47,7 +47,7 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
-import java.util.zip.Deflater
+import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -63,8 +63,8 @@ data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 data class MmsBinaryPart(val uri: Uri, val filename: String, val compressible: Boolean)
 
 // MMS parts carrying already-compressed payloads (images, audio, video, ...)
-// only waste CPU and battery when deflated again, so they get NO_COMPRESSION;
-// text and SMIL parts still compress usefully.
+// only waste CPU and battery when deflated again, so they are STORED
+// uncompressed; text and SMIL parts still compress usefully.
 private fun isCompressibleContentType(contentType: String): Boolean {
     return contentType.isEmpty() || contentType.startsWith("text/")
             || contentType == "application/smil"
@@ -112,13 +112,29 @@ suspend fun exportMessages(
                 mmsPartList.forEach {
                     ensureActive()
 
-                    zipOutputStream.setLevel(
-                        if (it.compressible) Deflater.DEFAULT_COMPRESSION
-                        else Deflater.NO_COMPRESSION
-                    )
                     val partZipEntry = ZipEntry(it.filename)
-                    zipOutputStream.putNextEntry(partZipEntry)
                     try {
+                        if (!it.compressible) {
+                            // STORED entries must declare their size and CRC-32
+                            // before they are written, which costs one extra
+                            // read pass over the provider stream; still far
+                            // cheaper than deflating incompressible data.
+                            appContext.contentResolver.openInputStream(it.uri)?.use { inputStream ->
+                                var size = 0L
+                                val crc = CRC32()
+                                var n = inputStream.read(buffer)
+                                while (n > -1) {
+                                    crc.update(buffer, 0, n)
+                                    size += n
+                                    n = inputStream.read(buffer)
+                                }
+                                partZipEntry.method = ZipEntry.STORED
+                                partZipEntry.size = size
+                                partZipEntry.compressedSize = size
+                                partZipEntry.crc = crc.value
+                            }
+                        }
+                        zipOutputStream.putNextEntry(partZipEntry)
                         appContext.contentResolver.openInputStream(it.uri)?.use { inputStream ->
                             var n = inputStream.read(buffer)
                             while (n > -1) {
