@@ -395,7 +395,6 @@ suspend fun importMessages(
         val importMms = prefs.getBoolean("mms", true)
         val maxRecords = prefs.getString("max_records", "")?.toIntOrNull() ?: -1
         val includeBinaryData = prefs.getBoolean("include_binary_data", true)
-        val verboseLogging = prefs.getBoolean("save_logcat", false)
         // The following line assumes that no binary data file is ever referenced by more than one message part
         val mmsPartMap = mutableMapOf<String, Uri>()
         ZipInputStream(inputStream).use { zipInputStream ->
@@ -414,7 +413,7 @@ suspend fun importMessages(
             BufferedReader(InputStreamReader(zipInputStream)).lineSequence()
                 .forEachIndexed JSONLine@{ lineNumber, line ->
                     coroutineContext.ensureActive()
-                    if (verboseLogging) Log.d(LOG_TAG, "Processing line #$lineNumber")
+                    Log.d(LOG_TAG, "Processing line #$lineNumber")
                     // Log.d(LOG_TAG, "Processing: $line")
                     val messageMetadata = ContentValues()
                     val messageJSON = JSONObject(line)
@@ -427,13 +426,10 @@ suspend fun importMessages(
                         "thread_id", threadIdMap[oldThreadId]
                     )
                     if (!messageJSON.has("m_type")) { // it's SMS
-                        if (verboseLogging) Log.d(LOG_TAG, "Message is SMS")
+                        Log.d(LOG_TAG, "Message is SMS")
                         // It would obviously be more efficient to break rather than continue when hitting 'max_records', but this option is primarily for debugging and the inefficiency doesn't matter very much
                         if (!importSms || totals.sms == maxRecords) {
-                            if (verboseLogging) Log.d(
-                                LOG_TAG,
-                                "Skipping due to debug settings"
-                            )
+                            Log.d(LOG_TAG, "Skipping due to debug settings")
                             return@JSONLine
                         }
                         if (deduplication) {
@@ -451,10 +447,7 @@ suspend fun importMessages(
                             )
                             smsDuplicatesCursor?.use {
                                 if (it.moveToFirst()) {
-                                    if (verboseLogging) Log.d(
-                                        LOG_TAG,
-                                        "Duplicate message - skipping"
-                                    )
+                                    Log.d(LOG_TAG, "Duplicate message - skipping")
                                     return@JSONLine
                                 }
                             }
@@ -483,7 +476,7 @@ suspend fun importMessages(
                         if (insertUri == null) {
                             Log.e(LOG_TAG, "SMS insert failed!")
                         } else {
-                            if (verboseLogging) Log.d(LOG_TAG, "SMS insert succeeded")
+                            Log.d(LOG_TAG, "SMS insert succeeded")
                             totals.sms++
                             progress = progress.copy(
                                 message = appContext.getString(
@@ -495,12 +488,9 @@ suspend fun importMessages(
                             updateProgress(progress)
                         }
                     } else { // it's MMS
-                        if (verboseLogging) Log.d(LOG_TAG, "Message is MMS")
+                        Log.d(LOG_TAG, "Message is MMS")
                         if (!importMms || totals.mms == maxRecords) {
-                            if (verboseLogging) Log.d(
-                                LOG_TAG,
-                                "Skipping due to debug settings"
-                            )
+                            Log.d(LOG_TAG, "Skipping due to debug settings")
                             return@JSONLine
                         }
                         if (deduplication) {
@@ -529,10 +519,7 @@ suspend fun importMessages(
                             )
                             mmsDuplicatesCursor?.use {
                                 if (it.moveToFirst()) {
-                                    if (verboseLogging) Log.d(
-                                        LOG_TAG,
-                                        "Duplicate message - skipping"
-                                    )
+                                    Log.d(LOG_TAG, "Duplicate message - skipping")
                                     return@JSONLine
                                 }
                             }
@@ -585,7 +572,7 @@ suspend fun importMessages(
                         )
                         if (insertUri == null) Log.e(LOG_TAG, "MMS insert failed!")
                         else {
-                            if (verboseLogging) Log.d(LOG_TAG, "MMS insert succeeded")
+                            Log.d(LOG_TAG, "MMS insert succeeded")
                             totals.mms++
                             progress = progress.copy(
                                 message = appContext.getString(
@@ -626,9 +613,7 @@ suspend fun importMessages(
                                 if (insertAddressUri == null) Log.e(
                                     LOG_TAG, "MMS address insert failed!"
                                 )
-                                else if (verboseLogging) Log.d(
-                                    LOG_TAG, "MMS address insert succeeded"
-                                )
+                                else Log.d(LOG_TAG, "MMS address insert succeeded")
                             }
                             val messageParts = messageJSON.optJSONArray("__parts")
                             messageParts?.let {
@@ -661,9 +646,7 @@ suspend fun importMessages(
                                     )
                                     //Log.e(LOG_TAG,"MMS part insert failed! Part metadata: $part")
                                     else {
-                                        if (verboseLogging) Log.d(
-                                            LOG_TAG, "MMS part insert succeeded"
-                                        )
+                                        Log.d(LOG_TAG, "MMS part insert succeeded")
                                         // Log.d(LOG_TAG, "MMS part insert succeeded - old part ID: ${messagePart.getString(Telephony.Mms.Part._ID)}, old message ID: ${messagePart.getString(Telephony.Mms.Part.MSG_ID)}")
                                         if (includeBinaryData) {
                                             val filename =
@@ -689,7 +672,7 @@ suspend fun importMessages(
                     if (zipEntry.name.startsWith("data/")) {
                         val partUri = mmsPartMap[zipEntry.name.substring(5)]
                         partUri?.let {
-                            if (verboseLogging) Log.d(LOG_TAG, "Writing part: $zipEntry")
+                            Log.d(LOG_TAG, "Writing part: $zipEntry")
                             //Log.v(LOG_TAG, "Writing to: $partUri")
                             appContext.contentResolver.openOutputStream(partUri)
                                 ?.use { outputStream ->
