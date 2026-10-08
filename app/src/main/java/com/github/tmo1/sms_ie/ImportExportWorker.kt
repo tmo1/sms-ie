@@ -3,7 +3,7 @@
  * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
  *
  * Copyright (c) 2022-2023,2025-26 Thomas More
- * Copyright (c) 2023-2024 Andrew Gunnerson
+ * Copyright (c) 2023-2026 Andrew Gunnerson
  *
  * This file is part of SMS Import / Export.
  *
@@ -50,18 +50,14 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 enum class Action {
     EXPORT_AUTOMATIC, EXPORT_CALL_LOG_MANUAL, IMPORT_CALL_LOG_MANUAL, EXPORT_CONTACTS_MANUAL, IMPORT_CONTACTS_MANUAL, EXPORT_MESSAGES_MANUAL, IMPORT_MESSAGES_MANUAL, EXPORT_BLOCKED_NUMBERS_MANUAL, IMPORT_BLOCKED_NUMBERS_MANUAL, WIPE_MESSAGES_MANUAL, COUNT_MESSAGES_MANUAL, ;
@@ -139,27 +135,25 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
     //   launched by MainActivity and the screen goes to sleep.
     private var notifyViaForeground = true
 
-    // Avoid updating the notification too frequently or else Android will rate limit us and block
-    // any notification from being sent. Note that the notification will never be stuck showing an
-    // old status for a long time. If the latest progress update couldn't be shown because of
-    // throttling, then foregroundDelayedRetry will be scheduled to retry sending the notification
-    // 1 second later.
-    private var foregroundLastTimestamp = 0L
-    private var foregroundProgress = Progress(0, 0, null)
-    private var foregroundDelayedRetry: Job? = null
-    private val foregroundLock = Mutex()
+    // Throttle setProgress() calls to 250ms to reduce disk I/O since the state is persisted to disk
+    // by WorkManager. These updates are consumed by MainActivity and the throttle delay is
+    // intentionally lower than for notifications to avoid the app feeling sluggish.
+    private var throttledSetProgress = object : ThrottledUpdater<Progress>(250.milliseconds) {
+        override suspend fun onThrottledUpdate(value: Progress) {
+            setProgress(value.toWorkData())
+        }
+    }
+    // Throttle notification updates to 1 per second or else Android will rate limit us and block
+    // any notification from being sent.
+    private var throttledNotification = object : ThrottledUpdater<Progress>(1.seconds) {
+        override suspend fun onThrottledUpdate(value: Progress) {
+            setForegroundNotification(value)
+        }
+    }
 
     private suspend fun updateProgress(progress: Progress) {
-        // [Unthrottled] For updating MainActivity and anything else that might be monitoring this
-        // worker's progress. We currently funnel information about whether the operation can be
-        // canceled here because WorkInfo does not expose the input parameters like the action.
-        // MainActivity has no other way to know if this is cancellable.
-        setProgress(progress.copy(canCancel = action.isCancellable).toWorkData())
-        // [Throttled] For updating the foreground service notification.
-        foregroundLock.withLock {
-            foregroundProgress = progress
-            refreshForegroundNotificationLocked()
-        }
+        throttledSetProgress.setValue(progress)
+        throttledNotification.setValue(progress)
     }
 
     override suspend fun doWork(): Result = GLOBAL_LOCK.withLock {
@@ -238,11 +232,10 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             if (action == Action.EXPORT_AUTOMATIC) scheduleAutomaticExport(context, false)
         }
 
-        // Cancel the pending retry for a throttled notification update because the work is complete
-        // and the notification is about to be dismissed anyway.
-        foregroundLock.withLock {
-            cancelForegroundNotificationDelayedLocked()
-        }
+        // Cancel pending throttled progress updates because the work is complete and we're about to
+        // dismiss the notification anyway.
+        throttledSetProgress.cancelPendingUpdate()
+        throttledNotification.cancelPendingUpdate()
 
         // There are two scenarios where we need to manually dismiss the notification:
         //
@@ -324,55 +317,12 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
             }.build()
     }
 
-    private suspend fun refreshForegroundNotificationDelayed() {
-        try {
-            delay(1_000)
-
-            foregroundLock.withLock {
-                foregroundDelayedRetry = null
-                refreshForegroundNotificationLocked()
-            }
-        } catch (_: CancellationException) {
-            // Canceled either by refreshForegroundNotificationLocked() because a newer
-            // notification could be shown in the meantime or by doWork() because the work is
-            // complete.
-        }
-    }
-
-    private suspend fun cancelForegroundNotificationDelayedLocked() {
-        foregroundDelayedRetry?.let { job ->
-            job.cancelAndJoin()
-            foregroundDelayedRetry = null
-        }
-    }
-
-    private suspend fun refreshForegroundNotificationLocked() {
-        // Throttle to 1 update per second to avoid hitting Android's rate limits.
-        val now = System.nanoTime()
-        if (now - foregroundLastTimestamp < 1_000_000_000) {
-            // We still need to try again later. Otherwise, longer-running actions that don't
-            // provide progress updates, like "Copying MMS binary data …", never get a chance to
-            // have their notification shown if their initial notification got throttled.
-            if (foregroundDelayedRetry == null) {
-                // Don't overwrite a pre-existing retry that was scheduled earlier.
-                foregroundDelayedRetry = CoroutineScope(currentCoroutineContext()).launch {
-                    refreshForegroundNotificationDelayed()
-                }
-            }
-
-            return
-        }
-        foregroundLastTimestamp = now
-
-        // We're about to show the latest update. There's no need for any previously scheduled
-        // retries anymore.
-        cancelForegroundNotificationDelayedLocked()
-
+    private suspend fun setForegroundNotification(progress: Progress) {
         // Android 14 introduced a new battery optimization that will kill apps that perform too
         // many binder transactions in the background, which can happen when exporting many
         // messages. Running the service in the foreground prevents the app from being killed.
         // https://android.googlesource.com/platform/frameworks/base.git/+/71d75c09b9a06732a6edb4d1488d2aa3eb779e14%5E%21/
-        notification = createForegroundNotification(foregroundProgress)
+        notification = createForegroundNotification(progress)
 
         try {
             if (notifyViaForeground) {
