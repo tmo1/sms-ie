@@ -42,10 +42,12 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedOutputStream
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
+import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -58,7 +60,15 @@ const val PDU_HEADERS_FROM = "137"
 
 data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
-data class MmsBinaryPart(val uri: Uri, val filename: String)
+data class MmsBinaryPart(val uri: Uri, val filename: String, val compressible: Boolean)
+
+// MMS parts carrying already-compressed payloads (images, audio, video, ...)
+// only waste CPU and battery when deflated again, so they get NO_COMPRESSION;
+// text and SMIL parts still compress usefully.
+private fun isCompressibleContentType(contentType: String): Boolean {
+    return contentType.isEmpty() || contentType.startsWith("text/")
+            || contentType == "application/smil"
+}
 
 suspend fun exportMessages(
     appContext: Context, outputStream: OutputStream?, updateProgress: suspend (Progress) -> Unit
@@ -70,7 +80,9 @@ suspend fun exportMessages(
         // https://www.reddit.com/r/Kotlin/comments/x5rrj5/any_other_way_to_write_nested_use_blocks/
         // https://bugs.openjdk.org/browse/JDK-8054565
         // https://stackoverflow.com/questions/25175882/java-8-filteroutputstream-exception
-        ZipOutputStream(outputStream).use { zipOutputStream ->
+        // the BufferedOutputStream coalesces the small per-message JSON writes
+        // into larger writes to the (often slow) SAF-provided file descriptor
+        ZipOutputStream(BufferedOutputStream(outputStream)).use { zipOutputStream ->
             val jsonZipEntry = ZipEntry("messages.ndjson")
             zipOutputStream.putNextEntry(jsonZipEntry)
             if (prefs.getBoolean("sms", true)) {
@@ -100,6 +112,10 @@ suspend fun exportMessages(
                 mmsPartList.forEach {
                     ensureActive()
 
+                    zipOutputStream.setLevel(
+                        if (it.compressible) Deflater.DEFAULT_COMPRESSION
+                        else Deflater.NO_COMPRESSION
+                    )
                     val partZipEntry = ZipEntry(it.filename)
                     zipOutputStream.putNextEntry(partZipEntry)
                     try {
@@ -296,7 +312,10 @@ private suspend fun mmsToJSON(
                                 mmsPartList.add(
                                     MmsBinaryPart(
                                         ("content://mms/part/" + part.getString(partIdIndex)).toUri(),
-                                        filename
+                                        filename,
+                                        isCompressibleContentType(
+                                            mmsPart.optString(Telephony.Mms.Part.CONTENT_TYPE)
+                                        ),
                                     )
                                 )
                             }
