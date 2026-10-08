@@ -13,8 +13,8 @@ jobs:
     - name: Setup Java
       uses: actions/setup-java@v6
       with:
-        distribution: 'temurin'
-        java-version: '17'
+        distribution: 'jetbrains'
+        java-version: '21'
     - name: Setup Android SDK
       uses: android-actions/setup-android@v4
     - name: Build
