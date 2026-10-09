@@ -1,0 +1,17 @@
+ - Bump standard flavor `minSdkVersion` to 24
+
+ - Switch to unified `versionCode` for both `standard` and `legacy` app flavors
+
+ - Add option (on by default) to try to avoid compressing relatively incompressible data when exporting MMS messages (see the "Compression" section of the README for more information) (DustinReynoldsPE)
+
+ - Implement various performance improvements (DustinReynoldsPE, Andrew Gunnerson)
+
+ - Overhaul scheduled export framework: Add "Export interval (days):" setting and display dates and times of last successful scheduled export and next scheduled export (tmo1, Apflkuacha)
+
+ - Add an in-app warning when the app cannot access restricted messages, which will prevent the export of encrypted RCS messages (see the README for details of the problem and solutions thereto) (Andrew Gunnerson, tmo1)
+
+ - Add Czech translation (cz-vilda)
+
+ - Update Chinese (Simplified Han script) translation (Crystal RainSlide)
+
+ - Update German translation (Atalanttore, nautilusx)

@@ -1,7 +1,6 @@
 # SMS Import / Export
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmo1/sms-ie/build.yml)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmo1/sms-ie/codeql.yml?label=codeql)
 
 ![GitHub Release](https://img.shields.io/github/v/release/tmo1/sms-ie)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/tmo1/sms-ie)
@@ -97,9 +96,13 @@ SMS I/E can now natively encrypt data upon export and decrypt it upon import; se
 
 ## Exporting Messages
 
+### Compression
+
+SMS messages, MMS message metadata, and compressible MMS message parts (such as text, JSON, and XML parts, or images and audio in compressible formats) are always compressed during export. Compression of relatively incompressible MMS message parts (such as video, or image and audio in relatively incompressible formats) is optional, controlled by a settings toggle. Not compressing such parts (the default) can yield significant reductions in export time as well as CPU and battery usage, at a cost of generally slightly larger export file size (since even such data is often still somewhat compressible). The exact magnitudes of the costs and benefits will depend on the specific composition of the message collection being exported, and presumably upon various aspects of the hardware and software environment in which the app is being run as well. See [PR #377](https://github.com/tmo1/sms-ie/pull/377) for more details.
+
 ### Scheduled Export
 
-To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, select which of the various data types to export.) The app will then attempt to export the selected data to a new, datestamped file or files in the selected directory every day at the selected time. (See [the TODO section](#todo) below.)
+To enable the scheduled export of messages, call logs and / or contacts, enable the feature in the app's Settings, and select a time to export at and a directory to export to. (Optionally, set an interval of days to elapse between exports (default is 1) and which of the various available data types to export (default is all).) The app will then attempt to export the selected data types to a new, datestamped file or files in the selected directory at the selected time, after the set interval of days has elapsed since the last successful scheduled export (or since scheduled export was first enabled). (See [the TODO section](#todo) below.)
 
 (Scheduled export of blocked numbers is not implemented, since [accessing the blocked numbers database requires that the app be the default SMS app or the default phone app](https://developer.android.com/reference/android/provider/BlockedNumberContract#permissions), and switching the default SMS or phone apps to SMS Import / Export and then back to proper SMS and phone apps require manual intervention.)
 

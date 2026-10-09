@@ -8,13 +8,31 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+### Changed
+
+ - **Breaking:** Bump standard flavor `minSdkVersion` to 24 ([e8b9a16](https://github.com/tmo1/sms-ie/commit/e8b9a163d366df4b69ccf85e1bdb7b660f1b1228))
+ - Switch to unified `versionCode` for both `standard` and `legacy` app flavors ([10d8c30](https://github.com/tmo1/sms-ie/commit/10d8c3084b0c91fcd12e28046c2471b7e4128507))
+
 ### Added
 
- - Update Italian translation ([d068542](https://github.com/tmo1/sms-ie/commit/d068542aa452c7e5727c43a8fb67d43dcdb1ae6c)) (Random)
+ - Add option (on by default) to try to avoid compressing relatively incompressible data when exporting MMS messages (see the "Compression" section of the README for more information) ([PR #377](https://github.com/tmo1/sms-ie/pull/377)) (DustinReynoldsPE)
+ - Implement various performance improvements ([PR #376](https://github.com/tmo1/sms-ie/pull/376), [PR #381](https://github.com/tmo1/sms-ie/pull/381)) (DustinReynoldsPE, Andrew Gunnerson)
+ - Overhaul scheduled export framework: Add "Export interval (days):" setting and display dates and times of last successful scheduled export and next scheduled export ([3ae06db](https://github.com/tmo1/sms-ie/commit/3ae06db221293844f52d55b1fd8f69ca6401c214)) (tmo1, Apflkuacha)
+ - Add an in-app warning when the app cannot access restricted messages, which will prevent the export of encrypted RCS messages (see the README for details of the problem and solutions thereto) ([64bbadd](https://github.com/tmo1/sms-ie/commit/64bbaddd9eaf736acf8fd9a083730e83f3f8a90f)) (Andrew Gunnerson, tmo1)
+ - Add Czech translation ([511a7ff](https://github.com/tmo1/sms-ie/commit/511a7fff529f8138e06e9ff66db8316c051c4937)) (cz-vilda)
  
+### Fixed
+ 
+ - Update Chinese (Simplified Han script) translation ([929ffa8](https://github.com/tmo1/sms-ie/commit/929ffa88731f8d45a6d9c1d7fea2f5121eb1a869)) (Crystal RainSlide)
+ - Update German translation ([0b5fc33](https://github.com/tmo1/sms-ie/commit/0b5fc33b0a901fffedc12b80f9a59d1b9a7d7d76), [d062b58](https://github.com/tmo1/sms-ie/commit/d062b584a14dfcf6439199273e140990faa1051a)) (Atalanttore, nautilusx)
+ 
+## [2.11.1] - 2026-07-31
+
 ### Fixed
 
  - Add ProGuard rules necessary for JNA to run without crashing ([issue #357](https://github.com/tmo1/sms-ie/issues/357), [PR #358](https://github.com/tmo1/sms-ie/pull/358)) (Andrew Gunnerson)
+ - Update Italian translation ([d068542](https://github.com/tmo1/sms-ie/commit/d068542aa452c7e5727c43a8fb67d43dcdb1ae6c)) (Random)
+
  
 ## [2.11.0] - 2026-07-28
 
@@ -101,4 +119,5 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
 [2.10.1]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.1
 [2.10.2]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.2
 [2.11.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.11.0
-[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.11.0...HEAD
+[2.11.1]: https://github.com/tmo1/sms-ie/releases/tag/v2.11.1
+[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.11.1...HEAD

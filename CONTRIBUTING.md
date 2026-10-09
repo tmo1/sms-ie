@@ -14,12 +14,14 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [Bindu (vbh)](https://github.com/vbh): call log import support ([PR #21](https://github.com/tmo1/sms-ie/pull/21))
  - [Jan Hustak (codingjourney)](https://github.com/codingjourney): bug fix ([PR #30](https://github.com/tmo1/sms-ie/pull/30))
  - [Dani Wang (EpicOrange)](https://github.com/EpicOrange): bug fix ([PR #39](https://github.com/tmo1/sms-ie/pull/39))
- - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131)); overhaul of the notification framework (PRs [#187](https://github.com/tmo1/sms-ie/pull/187), [#281](https://github.com/tmo1/sms-ie/pull/281), [#289](https://github.com/tmo1/sms-ie/pull/289)), and [#336](https://github.com/tmo1/sms-ie/pull/336); redesign to run all manual operations in worker processes ([PR #268](https://github.com/tmo1/sms-ie/pull/268)); add full support for edge-to-edge ([PR #279](https://github.com/tmo1/sms-ie/pull/279)); save logcat of the most recent operation to a user-accessible file ([PR #278](https://github.com/tmo1/sms-ie/pull/278)); bug fix ([PR #282](https://github.com/tmo1/sms-ie/pull/282)); bug fix ([PR #358](https://github.com/tmo1/sms-ie/pull/358)); solutions for enabling the export of encrypted RCS messages on Android 16 / 17 and later ([Issue #374](https://github.com/tmo1/sms-ie/issues/374))
+ - [Andrew Gunnerson (chenxiaolong)](https://github.com/chenxiaolong): support for running scheduled exports as a foreground service ([Issue #129](https://github.com/tmo1/sms-ie/issues/129) / [PR #131](https://github.com/tmo1/sms-ie/pull/131)); overhaul of the notification framework (PRs [#187](https://github.com/tmo1/sms-ie/pull/187), [#281](https://github.com/tmo1/sms-ie/pull/281), [#289](https://github.com/tmo1/sms-ie/pull/289), [#336](https://github.com/tmo1/sms-ie/pull/336), [#381](https://github.com/tmo1/sms-ie/pull/381)); redesign to run all manual operations in worker processes ([PR #268](https://github.com/tmo1/sms-ie/pull/268)); add full support for edge-to-edge ([PR #279](https://github.com/tmo1/sms-ie/pull/279)); save logcat of the most recent operation to a user-accessible file ([PR #278](https://github.com/tmo1/sms-ie/pull/278)); bug fixes ([PR #282](https://github.com/tmo1/sms-ie/pull/282), [PR #358](https://github.com/tmo1/sms-ie/pull/358), [#382](https://github.com/tmo1/sms-ie/pull/382)); solutions for enabling the export of encrypted RCS messages on Android 16 / 17 and later ([Issue #374](https://github.com/tmo1/sms-ie/issues/374))
  - [Biswapriyo Nath (Biswa96)](https://github.com/Biswa96): addition of [`ScrollView`](https://developer.android.com/reference/android/widget/ScrollView) to "About" screen ([PR #133](https://github.com/tmo1/sms-ie/pull/133))
  - [Andrew (andr5w)](https://github.com/andr5w): bug fix ([PR #168](https://github.com/tmo1/sms-ie/pull/168))
  - [farfromrefuge](https://github.com/farfromrefug): bug fix ([PR #231](https://github.com/tmo1/sms-ie/pull/231))
  - [Askorbinovaya Kislota](https://github.com/askorbinovaya-kislota): bug fix ([PR #236](https://github.com/tmo1/sms-ie/pull/236))
  - [MarcMush](https://github.com/MarcMush): bug fix ([PR #264](https://github.com/tmo1/sms-ie/pull/264))
+ - [Apflkuacha](https://github.com/Apflkuacha): initial code for "Export interval (days):" setting ([PR #256](https://github.com/tmo1/sms-ie/pull/256))
+ - [DustinReynoldsPE](https://github.com/DustinReynoldsPE): performance improvements ([PR #376](https://github.com/tmo1/sms-ie/pull/376), [PR #377](https://github.com/tmo1/sms-ie/pull/377))
 
 ### Translations (Strings)
 
@@ -49,7 +51,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [ngocanhtve](https://github.com/ngocanhtve): Vietnamese
  - [TamilNeram (தமிழ் நேரம்)]( https://github.com/TamilNeram): Tamil
  - [catsnote (cat)](https://github.com/catsnote): Danish
- - [Ettore Atalan (Atalanttore)](https://github.com/Atalanttore): update to German
+ - [Ettore Atalan (Atalanttore)](https://github.com/Atalanttore): updates to German
  - [Vladi69](https://github.com/Vladi69): update to Italian
  - [Unknownman820](https://github.com/Unknownman820): Chinese (Traditional Han script)
  - [Lendary Sayajin (Bardock)](https://github.com/Bardock88): Portuguese (Brazil)
@@ -60,6 +62,8 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - Peter Vágner: Slovak
  - [Arif Budiman (arifpedia)](https://github.com/arifpedia): Indonesian
  - Hosted Weblate user 54392: update to Chinese (Simplified Han script)
+ - [Crystal-RainSlide](https://github.com/Crystal-RainSlide): update to Chinese (Simplified Han script)
+ - [cz-vilda](https://github.com/cz-vilda): Czech
  
 ### Translations (Fastlane)
 
@@ -67,6 +71,7 @@ The primary author of SMS Import / Export is [Thomas More](https://github.com/tm
  - [rehork](https://github.com/rehork): Polish
  - Peter Vágner: Slovak
  - [MarcMush](https://github.com/MarcMush): French
+ - [cz-vilda](https://github.com/cz-vilda): Czech
 
 ### Other
 
