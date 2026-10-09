@@ -33,6 +33,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -45,6 +46,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
@@ -57,7 +59,6 @@ const val DISABLE_BATTERY_OPTIMIZATIONS = "disable_battery_optimizations"
 
 class SettingsActivity : AppCompatActivity() {
 
-    //private lateinit var prefs: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -118,6 +119,13 @@ class SettingsActivity : AppCompatActivity() {
             Log.d("Permission: ", if (isGranted) "Granted" else "Denied")
         }
 
+        // We need to store a reference to the preference change listener here (and not just inside
+        // `onCreatePreferences()`) in order to prevent it from being garbage collected:
+        // https://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called-consistently
+        // https://developer.android.com/develop/ui/views/components/settings/use-saved-values#change-listener
+        // https://developer.android.com/reference/android/content/SharedPreferences.html#registerOnSharedPreferenceChangeListener(android.content.SharedPreferences.OnSharedPreferenceChangeListener)
+        private lateinit var prefListener: SharedPreferences.OnSharedPreferenceChangeListener
+
         override fun onCreateRecyclerView(
             inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?
         ): RecyclerView {
@@ -143,7 +151,7 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-            // The lazysodium Android binding requires API >= 21.
+            // The LazySodium Android binding requires API level >= 21.
             // https://github.com/terl/lazysodium-android/blob/76e18548a0af285215f536c0d6d17369ac598311/app/build.gradle#L42
             if (SDK_INT < 21) {
                 val encryption = findPreference<PreferenceGroup>("encryption_preference_category")
@@ -198,9 +206,11 @@ class SettingsActivity : AppCompatActivity() {
             // see: https://stackoverflow.com/questions/26242581/call-method-after-changing-preferences-in-android
             // https://stackoverflow.com/questions/7020446/android-registeronsharedpreferencechangelistener-causes-crash-in-a-custom-view#7021068
             // https://stackoverflow.com/questions/66449883/kotlin-onsharedpreferencechangelistener
-            val prefListener =
-                SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
-                    if (key == "schedule_export") {
+            prefListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
+
+                when (key) {
+
+                    "schedule_export" -> {
                         context?.let { scheduleAutomaticExport(it, true) }
                         if (SDK_INT >= 33 && sharedPrefs.getBoolean(key, false)) {
                             context?.let {
@@ -213,7 +223,24 @@ class SettingsActivity : AppCompatActivity() {
                             }
                         }
                     }
+
+                    "export_interval_days" -> context?.let {
+                        scheduleAutomaticExport(it, true)
+                    }
+
+                    "last_successful_scheduled_export", "next_scheduled_export" -> {
+                        val pref = findPreference<Preference>(key)
+                        val prefs = prefs
+                        prefs?.let {
+                            val date = prefs.getLong(key, 0)
+                            context?.let {
+                                pref?.summary = if (date > 0) formatDate(it, date) else "<None>"
+                            }
+                        }
+                    }
                 }
+            }
+
             prefs?.registerOnSharedPreferenceChangeListener(prefListener)
         }
 
@@ -221,9 +248,49 @@ class SettingsActivity : AppCompatActivity() {
             super.onStart()
 
             // Changing the option does not reload the activity.
-            if (SDK_INT >= Build.VERSION_CODES.M) {
-                updateBatteryOptimizationState()
+            if (SDK_INT >= Build.VERSION_CODES.M) updateBatteryOptimizationState()
+        }
+
+        override fun onResume() {
+            super.onResume()
+
+            val prefs = prefs
+            prefs?.let {
+
+                // https://developer.android.com/develop/ui/views/components/settings/use-saved-values#change-listener
+                it.registerOnSharedPreferenceChangeListener(prefListener)
+
+                var pref = findPreference<Preference>("last_successful_scheduled_export")
+                var date = prefs.getLong("last_successful_scheduled_export", 0)
+                pref?.summary = if (date > 0) formatDate(requireContext(), date) else "<None>"
+                pref = findPreference("next_scheduled_export")
+                date = prefs.getLong("next_scheduled_export", 0)
+                pref?.summary = if (date > 0) formatDate(requireContext(), date) else "<None>"
+
+                findPreference<EditTextPreference>("export_interval_days")?.let {pref ->
+
+                    pref.setOnBindEditTextListener { editText ->
+                        editText.inputType = InputType.TYPE_CLASS_NUMBER
+                        editText.hint = "Enter a number >= 1"
+                    }
+
+                    // Ensure that export interval >= 1, since if it's 0 the app will go into an
+                    // infinite loop of scheduling and running exports ...
+                    pref.setOnPreferenceChangeListener { _, newValue ->
+                        val interval = (newValue as? String)?.toIntOrNull()
+                        // 'True' means that the new value is accepted and 'False' means that it's
+                        // rejected.
+                        interval != null && interval >= 1
+                    }
+                }
             }
+        }
+
+        override fun onPause() {
+            super.onPause()
+
+            // https://developer.android.com/develop/ui/views/components/settings/use-saved-values#change-listener
+            prefs?.unregisterOnSharedPreferenceChangeListener(prefListener)
         }
 
         // from: https://old.black/2020/09/18/building-custom-timepicker-dialog-preference-in-android-kotlin/

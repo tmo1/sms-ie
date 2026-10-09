@@ -62,6 +62,7 @@ import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import androidx.core.content.edit
 
 enum class Action {
     EXPORT_AUTOMATIC, EXPORT_CALL_LOG_MANUAL, IMPORT_CALL_LOG_MANUAL, EXPORT_CONTACTS_MANUAL, IMPORT_CONTACTS_MANUAL, EXPORT_MESSAGES_MANUAL, IMPORT_MESSAGES_MANUAL, EXPORT_BLOCKED_NUMBERS_MANUAL, IMPORT_BLOCKED_NUMBERS_MANUAL, WIPE_MESSAGES_MANUAL, COUNT_MESSAGES_MANUAL, ;
@@ -443,6 +444,9 @@ class ImportExportWorker(appContext: Context, workerParams: WorkerParameters) :
                 val (messages, calls, contacts) = automaticExport(
                     context, ::updateProgress
                 )
+                val currentTimeMillis = System.currentTimeMillis()
+                prefs.edit { putLong("last_successful_scheduled_export", currentTimeMillis) }
+                Log.d(LOG_TAG, "Scheduled backup successfully concluded")
 
                 context.getString(
                     R.string.scheduled_export_success,
@@ -635,20 +639,32 @@ fun scheduleManualAction(context: Context, action: Action, file: Uri?, passphras
 }
 
 fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
-    if (cancel) WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
+    if (cancel) WorkManager.getInstance(context)
+        .cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
     if (prefs.getBoolean("schedule_export", false)) {
-        // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java
-        val now = Calendar.getInstance()
         val exportTime = Calendar.getInstance()
+        exportTime.timeInMillis = prefs.getLong(
+            "last_successful_scheduled_export",
+            System.currentTimeMillis()
+        )
+        exportTime.add(
+            Calendar.DAY_OF_MONTH,
+            prefs.getString("export_interval_days", "")?.toIntOrNull() ?: 1
+        )
+        // https://stackoverflow.com/questions/4389500/how-can-i-find-the-amount-of-seconds-passed-from-the-midnight-with-java
         exportTime.set(Calendar.HOUR_OF_DAY, 0)
         exportTime.set(Calendar.MINUTE, 0)
         exportTime.set(Calendar.SECOND, 0)
         exportTime.set(Calendar.MILLISECOND, 0)
         exportTime.add(Calendar.MINUTE, prefs.getInt("export_time", 0))
-        if (exportTime < now) exportTime.add(Calendar.DAY_OF_MONTH, 1)
+        val now = Calendar.getInstance()
         val deferMillis = exportTime.timeInMillis - now.timeInMillis
-        Log.d(LOG_TAG, "Scheduling backup for $deferMillis milliseconds from now")
+        val formattedDate = formatDate(context, exportTime.timeInMillis)
+        Log.d(
+            LOG_TAG,
+            "Scheduling export for $formattedDate ($deferMillis milliseconds from now)"
+        )
         val exportRequest =
             OneTimeWorkRequestBuilder<ImportExportWorker>().addTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)
                 .setInitialDelay(deferMillis, TimeUnit.MILLISECONDS)
@@ -658,6 +674,9 @@ fun scheduleAutomaticExport(context: Context, cancel: Boolean) {
                 // Instead, we'll just assume that no parameters means scheduled automatic exports.
                 .build()
         WorkManager.getInstance(context).enqueue(exportRequest)
+        prefs.edit { putLong("next_scheduled_export", exportTime.timeInMillis) }
+        Log.d(LOG_TAG, "Scheduled export successfully concluded")
+
     } else {
         Log.d(LOG_TAG, "Scheduled export disabled - canceling any scheduled exports")
         WorkManager.getInstance(context).cancelAllWorkByTag(ImportExportWorker.TAG_AUTOMATIC_EXPORT)

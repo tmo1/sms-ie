@@ -65,6 +65,16 @@
         android:key="scheduled_export_preference_category"
         android:title="Scheduled export">
 
+        <Preference
+            android:key="last_successful_scheduled_export"
+            android:title="Last successful scheduled export:"
+            app:dependency="schedule_export" />
+
+        <Preference
+            android:key="next_scheduled_export"
+            android:title="Next scheduled export:"
+            app:dependency="schedule_export" />
+
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="schedule_export"
@@ -75,9 +85,16 @@
             android:title="Export at:"
             app:dependency="schedule_export" />
 
+        <EditTextPreference
+            android:key="export_interval_days"
+            android:title="Export interval (days):"
+            android:defaultValue="1"
+            app:dependency="schedule_export"
+            app:useSimpleSummaryProvider="true" />
+
         <Preference
             android:key="export_dir"
-            android:title="Export to directory:"
+            android:title="Export directory:"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat

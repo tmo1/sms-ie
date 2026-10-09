@@ -1,6 +1,8 @@
 /*
- * SMS Import / Export: a simple Android app for importing and exporting SMS messages from and to JSON files.
- * Copyright (c) 2021-2022 Thomas More
+ * SMS Import / Export: a simple Android app for importing and exporting SMS and MMS messages,
+ * call logs, contacts, and blocked numbers from and to JSON / NDJSON files.
+ *
+ * Copyright (c) 2021-2022,2026 Thomas More
  *
  * This file is part of SMS Import / Export.
  *
@@ -39,7 +41,7 @@ class TimePreferenceDialog : PreferenceDialogFragmentCompat() {
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
         val minutesAfterMidnight = (preference as TimePickerPreference)
-            .getPersistedMinutesFromMidnight()
+            .getPersistedMinutesAfterMidnight()
         //timePicker.setIs24HourView(true)
         timePicker.hour = minutesAfterMidnight / 60
         timePicker.minute = minutesAfterMidnight % 60
@@ -49,8 +51,8 @@ class TimePreferenceDialog : PreferenceDialogFragmentCompat() {
         // Save settings
         if(positiveResult) {
             val minutesAfterMidnight = (timePicker.hour * 60) + timePicker.minute
-            (preference as TimePickerPreference).persistMinutesFromMidnight(minutesAfterMidnight)
-            preference.summary = minutesFromMidnightToHourlyTime(minutesAfterMidnight)
+            (preference as TimePickerPreference).persistMinutesAfterMidnight(minutesAfterMidnight)
+            preference.summary = minutesAfterMidnightToHourlyTime(requireContext(), minutesAfterMidnight)
         }
     }
 

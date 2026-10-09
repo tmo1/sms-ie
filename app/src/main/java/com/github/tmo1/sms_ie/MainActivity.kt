@@ -39,6 +39,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
 import android.provider.Telephony
+import android.text.format.DateUtils
 import android.text.method.PasswordTransformationMethod
 //import android.util.Log
 import android.view.Menu
@@ -435,7 +436,8 @@ class MainActivity : AppCompatActivity(), ConfirmWipeFragment.NoticeDialogListen
                 val op = "android:read_restricted_messages"
                 val mode = appOpsManager.checkOpNoThrow(op, android.os.Process.myUid(), packageName)
                 if (mode != AppOpsManager.MODE_ALLOWED) {
-                    defaultSMSAppWarning.text = getString(R.string.no_read_restricted_messages_warning)
+                    defaultSMSAppWarning.text =
+                        getString(R.string.no_read_restricted_messages_warning)
                     defaultSMSAppWarning.visibility = View.VISIBLE
                     setDefaultSMSAppButton.visibility =
                         if (SDK_INT >= 24) View.VISIBLE else View.GONE
@@ -868,4 +870,12 @@ fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String 
 
 fun getCurrentDateTime(): Date {
     return Calendar.getInstance().time
+}
+
+fun formatDate(context: Context, date: Long): String {
+    return DateUtils.formatDateTime(
+        context,
+        date,
+        DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_ABBREV_ALL
+    )
 }
