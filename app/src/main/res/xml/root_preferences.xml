@@ -147,6 +147,14 @@
             app:defaultValue="true"
             app:singleLineTitle="false" />
 
+        <SwitchPreferenceCompat
+            android:key="store_media_uncompressed"
+            android:title="Store media parts uncompressed"
+            android:summary="Write images, audio, and video MMS parts without compression. Faster exports, slightly larger archives."
+            app:defaultValue="true"
+            app:dependency="include_binary_data"
+            app:singleLineTitle="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Import options">
