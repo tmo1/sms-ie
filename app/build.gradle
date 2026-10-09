@@ -56,7 +56,6 @@ android {
         standard {
             dimension "api"
             minSdkVersion 24
-            versionCode 10000 + android.defaultConfig.versionCode
             versionNameSuffix "-standard"
             getIsDefault().set(true)
         }
