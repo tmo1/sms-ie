@@ -338,7 +338,7 @@ const val SALT_LENGTH = 16
 
 const val INTEGER_LENGTH = Int.SIZE_BYTES
 fun getOutputStream(appContext: Context, uri: Uri, passphrase: String?): OutputStream? {
-    val outputStream = appContext.contentResolver.openOutputStream(uri) ?: return null
+    val outputStream = appContext.contentResolver.openOutputStream(uri, "wt") ?: return null
     return if (passphrase == null) outputStream else {
         if (SDK_INT < 23) throw RuntimeException("Encryption requires API >= 23")
         val salt = ByteArray(SALT_LENGTH)

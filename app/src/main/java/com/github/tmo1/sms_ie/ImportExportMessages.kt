@@ -674,7 +674,7 @@ suspend fun importMessages(
                         partUri?.let {
                             Log.d(LOG_TAG, "Writing part: $zipEntry")
                             //Log.v(LOG_TAG, "Writing to: $partUri")
-                            appContext.contentResolver.openOutputStream(partUri)
+                            appContext.contentResolver.openOutputStream(partUri, "wt")
                                 ?.use { outputStream ->
                                     var n = zipInputStream.read(buffer)
                                     while (n > -1) {
