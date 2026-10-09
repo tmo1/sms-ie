@@ -327,7 +327,7 @@ class SettingsActivity : AppCompatActivity() {
                     val fileUri = file?.uri
                     if (fileUri != null) {
 //                  Log.v(LOG_TAG, "File acquired: $fileUri")
-                        context?.contentResolver?.openOutputStream(fileUri).use { outputStream ->
+                        context?.contentResolver?.openOutputStream(fileUri, "wt").use { outputStream ->
                             BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
                                 writer.write("It works!")
                             }

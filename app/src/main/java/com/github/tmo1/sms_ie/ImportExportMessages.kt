@@ -42,10 +42,12 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedOutputStream
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
+import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -58,7 +60,28 @@ const val PDU_HEADERS_FROM = "137"
 
 data class MessageTotal(var sms: Int = 0, var mms: Int = 0)
 
-data class MmsBinaryPart(val uri: Uri, val filename: String)
+data class MmsBinaryPart(val uri: Uri, val filename: String, val compressible: Boolean)
+
+// MMS parts carrying already-compressed payloads (images, audio, video, ...)
+// only waste CPU and battery when deflated again, so they are STORED
+// uncompressed. Uncompressed media formats (per their MIME types) still
+// benefit from deflation.
+private val COMPRESSIBLE_MEDIA_TYPES = setOf(
+    "image/bmp", "image/x-bmp", "image/x-ms-bmp",
+    "image/tiff",
+    "audio/wav", "audio/x-wav", "audio/wave", "audio/vnd.wave",
+    "audio/aiff", "audio/x-aiff",
+    "audio/midi", "audio/x-midi", "audio/mid",
+)
+
+private fun isCompressibleContentType(contentType: String): Boolean {
+    val type = contentType.substringBefore(';').trim().lowercase()
+    return type.isEmpty() || type.startsWith("text/")
+            || type == "application/smil"
+            || type == "application/json" || type == "application/xml"
+            || type.endsWith("+xml") || type.endsWith("+json") || type.endsWith("+text")
+            || type in COMPRESSIBLE_MEDIA_TYPES
+}
 
 suspend fun exportMessages(
     appContext: Context, outputStream: OutputStream?, updateProgress: suspend (Progress) -> Unit
@@ -70,7 +93,9 @@ suspend fun exportMessages(
         // https://www.reddit.com/r/Kotlin/comments/x5rrj5/any_other_way_to_write_nested_use_blocks/
         // https://bugs.openjdk.org/browse/JDK-8054565
         // https://stackoverflow.com/questions/25175882/java-8-filteroutputstream-exception
-        ZipOutputStream(outputStream).use { zipOutputStream ->
+        // the BufferedOutputStream coalesces the small per-message JSON writes
+        // into larger writes to the (often slow) SAF-provided file descriptor
+        ZipOutputStream(BufferedOutputStream(outputStream)).use { zipOutputStream ->
             val jsonZipEntry = ZipEntry("messages.ndjson")
             zipOutputStream.putNextEntry(jsonZipEntry)
             if (prefs.getBoolean("sms", true)) {
@@ -97,12 +122,34 @@ suspend fun exportMessages(
                 )
 
                 val buffer = ByteArray(1048576)
+                val storeMediaUncompressed =
+                    prefs.getBoolean("store_media_uncompressed", true)
                 mmsPartList.forEach {
                     ensureActive()
 
                     val partZipEntry = ZipEntry(it.filename)
-                    zipOutputStream.putNextEntry(partZipEntry)
                     try {
+                        if (!it.compressible && storeMediaUncompressed) {
+                            // STORED entries must declare their size and CRC-32
+                            // before they are written, which costs one extra
+                            // read pass over the provider stream; still far
+                            // cheaper than deflating incompressible data.
+                            appContext.contentResolver.openInputStream(it.uri)?.use { inputStream ->
+                                var size = 0L
+                                val crc = CRC32()
+                                var n = inputStream.read(buffer)
+                                while (n > -1) {
+                                    crc.update(buffer, 0, n)
+                                    size += n
+                                    n = inputStream.read(buffer)
+                                }
+                                partZipEntry.method = ZipEntry.STORED
+                                partZipEntry.size = size
+                                partZipEntry.compressedSize = size
+                                partZipEntry.crc = crc.value
+                            }
+                        }
+                        zipOutputStream.putNextEntry(partZipEntry)
                         appContext.contentResolver.openInputStream(it.uri)?.use { inputStream ->
                             var n = inputStream.read(buffer)
                             while (n > -1) {
@@ -132,6 +179,7 @@ private suspend fun smsToJSON(
     updateProgress: suspend (Progress) -> Unit,
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    val maxRecords = prefs.getString("max_records", "")?.toIntOrNull() ?: -1
     var progress = Progress(0, 0, null)
     val smsCursor = appContext.contentResolver.query(
         Telephony.Sms.CONTENT_URI, null, messageSelection(appContext, SMS), null, null
@@ -163,9 +211,7 @@ private suspend fun smsToJSON(
                 )
                 updateProgress(progress)
 
-                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull()
-                        ?: -1)
-                ) break
+                if (progress.current == maxRecords) break
             } while (it.moveToNext())
         }
     }
@@ -181,6 +227,7 @@ private suspend fun mmsToJSON(
 ): Int {
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     val includeBlobs = prefs.getBoolean("include_blobs", true)
+    val maxRecords = prefs.getString("max_records", "")?.toIntOrNull() ?: -1
     var progress = Progress(0, 0, null)
     val mmsCursor = appContext.contentResolver.query(
         Telephony.Mms.CONTENT_URI, null, messageSelection(appContext, MMS), null, null
@@ -296,7 +343,10 @@ private suspend fun mmsToJSON(
                                 mmsPartList.add(
                                     MmsBinaryPart(
                                         ("content://mms/part/" + part.getString(partIdIndex)).toUri(),
-                                        filename
+                                        filename,
+                                        isCompressibleContentType(
+                                            mmsPart.optString(Telephony.Mms.Part.CONTENT_TYPE)
+                                        ),
                                     )
                                 )
                             }
@@ -315,9 +365,7 @@ private suspend fun mmsToJSON(
                     ),
                 )
                 updateProgress(progress)
-                if (progress.current == (prefs.getString("max_records", "")?.toIntOrNull()
-                        ?: -1)
-                ) break
+                if (progress.current == maxRecords) break
             } while (it.moveToNext())
         }
     }
@@ -392,6 +440,11 @@ suspend fun importMessages(
         val threadIdMap = HashMap<String, String>()
         val excludedAddresses = (prefs.getString("excluded_addresses", "") ?: "").split(",")
         val insertExcludedAddresses = prefs.getBoolean("insert_excluded_addresses", true)
+        // Read once instead of re-reading from SharedPreferences for every imported message
+        val importSms = prefs.getBoolean("sms", true)
+        val importMms = prefs.getBoolean("mms", true)
+        val maxRecords = prefs.getString("max_records", "")?.toIntOrNull() ?: -1
+        val includeBinaryData = prefs.getBoolean("include_binary_data", true)
         // The following line assumes that no binary data file is ever referenced by more than one message part
         val mmsPartMap = mutableMapOf<String, Uri>()
         ZipInputStream(inputStream).use { zipInputStream ->
@@ -416,7 +469,7 @@ suspend fun importMessages(
                     val messageJSON = JSONObject(line)
                     val oldThreadId = messageJSON.optString("thread_id")
                     // See https://github.com/tmo1/sms-ie/issues/128
-                    if (!prefs.getBoolean("import_sub_ids", false)) {
+                    if (!importSubIds) {
                         messageJSON.put("sub_id", "-1")
                     }
                     if (oldThreadId in threadIdMap) messageMetadata.put(
@@ -425,12 +478,7 @@ suspend fun importMessages(
                     if (!messageJSON.has("m_type")) { // it's SMS
                         Log.d(LOG_TAG, "Message is SMS")
                         // It would obviously be more efficient to break rather than continue when hitting 'max_records', but this option is primarily for debugging and the inefficiency doesn't matter very much
-                        if (!prefs.getBoolean(
-                                "sms", true
-                            ) || totals.sms == (prefs.getString(
-                                "max_records", ""
-                            )?.toIntOrNull() ?: -1)
-                        ) {
+                        if (!importSms || totals.sms == maxRecords) {
                             Log.d(LOG_TAG, "Skipping due to debug settings")
                             return@JSONLine
                         }
@@ -491,12 +539,7 @@ suspend fun importMessages(
                         }
                     } else { // it's MMS
                         Log.d(LOG_TAG, "Message is MMS")
-                        if (!prefs.getBoolean(
-                                "mms", true
-                            ) || totals.mms == (prefs.getString(
-                                "max_records", ""
-                            )?.toIntOrNull() ?: -1)
-                        ) {
+                        if (!importMms || totals.mms == maxRecords) {
                             Log.d(LOG_TAG, "Skipping due to debug settings")
                             return@JSONLine
                         }
@@ -655,7 +698,7 @@ suspend fun importMessages(
                                     else {
                                         Log.d(LOG_TAG, "MMS part insert succeeded")
                                         // Log.d(LOG_TAG, "MMS part insert succeeded - old part ID: ${messagePart.getString(Telephony.Mms.Part._ID)}, old message ID: ${messagePart.getString(Telephony.Mms.Part.MSG_ID)}")
-                                        if (prefs.getBoolean("include_binary_data", true)) {
+                                        if (includeBinaryData) {
                                             val filename =
                                                 messagePart.optString(Telephony.Mms.Part._DATA)
                                             if (filename != "") {
@@ -669,7 +712,7 @@ suspend fun importMessages(
                         }
                     }
                 }
-            if (prefs.getBoolean("include_binary_data", true)) {
+            if (includeBinaryData) {
                 progress =
                     progress.copy(message = appContext.getString(R.string.copying_mms_binary_data))
                 updateProgress(progress)
@@ -681,7 +724,7 @@ suspend fun importMessages(
                         partUri?.let {
                             Log.d(LOG_TAG, "Writing part: $zipEntry")
                             //Log.v(LOG_TAG, "Writing to: $partUri")
-                            appContext.contentResolver.openOutputStream(partUri)
+                            appContext.contentResolver.openOutputStream(partUri, "wt")
                                 ?.use { outputStream ->
                                     var n = zipInputStream.read(buffer)
                                     while (n > -1) {
