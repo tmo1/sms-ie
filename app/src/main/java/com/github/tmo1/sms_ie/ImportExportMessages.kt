@@ -109,12 +109,14 @@ suspend fun exportMessages(
                 )
 
                 val buffer = ByteArray(1048576)
+                val storeMediaUncompressed =
+                    prefs.getBoolean("store_media_uncompressed", true)
                 mmsPartList.forEach {
                     ensureActive()
 
                     val partZipEntry = ZipEntry(it.filename)
                     try {
-                        if (!it.compressible) {
+                        if (!it.compressible && storeMediaUncompressed) {
                             // STORED entries must declare their size and CRC-32
                             // before they are written, which costs one extra
                             // read pass over the provider stream; still far
