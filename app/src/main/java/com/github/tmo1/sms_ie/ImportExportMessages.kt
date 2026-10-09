@@ -64,10 +64,23 @@ data class MmsBinaryPart(val uri: Uri, val filename: String, val compressible: B
 
 // MMS parts carrying already-compressed payloads (images, audio, video, ...)
 // only waste CPU and battery when deflated again, so they are STORED
-// uncompressed; text and SMIL parts still compress usefully.
+// uncompressed. Uncompressed media formats (per their MIME types) still
+// benefit from deflation.
+private val COMPRESSIBLE_MEDIA_TYPES = setOf(
+    "image/bmp", "image/x-bmp", "image/x-ms-bmp",
+    "image/tiff",
+    "audio/wav", "audio/x-wav", "audio/wave", "audio/vnd.wave",
+    "audio/aiff", "audio/x-aiff",
+    "audio/midi", "audio/x-midi", "audio/mid",
+)
+
 private fun isCompressibleContentType(contentType: String): Boolean {
-    return contentType.isEmpty() || contentType.startsWith("text/")
-            || contentType == "application/smil"
+    val type = contentType.substringBefore(';').trim().lowercase()
+    return type.isEmpty() || type.startsWith("text/")
+            || type == "application/smil"
+            || type == "application/json" || type == "application/xml"
+            || type.endsWith("+xml") || type.endsWith("+json") || type.endsWith("+text")
+            || type in COMPRESSIBLE_MEDIA_TYPES
 }
 
 suspend fun exportMessages(
