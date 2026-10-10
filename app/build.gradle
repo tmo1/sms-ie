@@ -89,17 +89,19 @@ android {
     // https://developer.android.com/build/dependencies#dependency-info-play
     // https://android.izzysoft.de/articles/named/iod-scan-apkchecks#blobs
     // https://izzyondroid.org/about/security/ApkScans/#signingblock-checks
-
-    android {
-        dependenciesInfo {
-            // Disables dependency metadata when building APKs.
-            includeInApk = false
-            // Disables dependency metadata when building Android App Bundles.
-            includeInBundle = false
-        }
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
     }
 
-
+    // This is temporarily disabled due to an upstream AGP bug since 9.4.0 that causes the lint
+    // analyzer to crash with a NullPointerException:
+    // https://issuetracker.google.com/issues/558217413
+    lint {
+        disable "NullSafeMutableLiveData"
+    }
 }
 
 dependencies {
