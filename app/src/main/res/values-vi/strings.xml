@@ -39,7 +39,7 @@
     <string name="become_default_sms_app_warning">Nhập / Xuất SMS phải là ứng dụng SMS mặc định để nhập hoặc xóa tin nhắn. Vui lòng đọc README và đảm bảo bạn hiểu ý nghĩa của việc này trước khi tiếp tục.</string>
     <string name="default_sms_app_dialog_title">Ứng dụng SMS mặc định</string>
     <string name="message_import_api_23_requirement">Chỉ có thể nhập tin nhắn trên Android Marshmallow / 6.0 (API cấp 23) trở lên.</string>
-    <string name="include_binary_data">Bao gồm dữ liệu MMS nhị phân</string>
+    <string name="pref_include_binary_data_title">Bao gồm dữ liệu MMS nhị phân</string>
     <string name="dialog_confirm_wipe">Cảnh báo: Xóa vĩnh viễn tất cả tin nhắn khỏi thiết bị này mà không thể hoàn tác?</string>
     <string name="wipe">Xóa</string>
     <string name="cancel">Hủy</string>

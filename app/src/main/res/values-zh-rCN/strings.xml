@@ -16,7 +16,7 @@
     <string name="export_messages_results">导出了 %1$d 条短信、%2$d 条彩信
 \n用时 %3$s</string>
     <string name="settings">设置</string>
-    <string name="include_binary_data">不排除掉二进制彩信数据</string>
+    <string name="pref_include_binary_data_title">不排除掉二进制彩信数据</string>
     <string name="wipe_cancelled">取消了擦除命令</string>
     <string name="messages_wiped">消息已经擦除了</string>
     <string name="wiping_sms_messages">正在擦除短信消息……</string>
@@ -73,8 +73,8 @@
     <string name="see_logcat_save_disabled">更多信息见 logcat。在调试设置中开启 “Save logcat” 自动保存 logcat 到一个文件用于未来操作。</string>
     <string name="see_logcat_save_enabled">查看 log 目录中的 logcat 获取更多信息。</string>
     <string name="open_log_dir">打开 log 目录</string>
-    <string name="pref_save_logcat_name">保存 logcat</string>
-    <string name="pref_save_logcat_desc">当操作运行时保存 logcat 到 %1$s。</string>
+    <string name="pref_save_logcat_title">保存 logcat</string>
+    <string name="pref_save_logcat_summary">当操作运行时保存 logcat 到 %1$s。</string>
     <string name="persistent_channel_name">后台服务</string>
     <string name="persistent_channel_description">后台定时导出的持久性通知</string>
     <string name="alerts_channel_name">定时导出警报</string>
