@@ -37,7 +37,7 @@
     <string name="export_call_log_results">%1$d opkald eksporteret\nVarighed: %2$s</string>
     <string name="import_call_log_results">%1$d opkald importeret\nVarighed: %2$s</string>
     <string name="contacts_read_permission_required">Eksport af kontakter kræver tilladelse til at læse kontakter.</string>
-    <string name="include_binary_data">Inkluder binær MMS-data</string>
+    <string name="pref_include_binary_data_title">Inkluder binær MMS-data</string>
     <string name="persistent_channel_name">Baggrundstjenester</string>
     <string name="alerts_channel_name">Varsler om planlagt eksport</string>
     <string name="scheduled_export_executing">Planlagt eksport udføres</string>
@@ -71,8 +71,8 @@
     <string name="see_logcat_save_disabled">Se logcat for flere oplysninger. Aktivér \"Gem logcat\" i fejlfindingsindstillingerne for automatisk at gemme logcat i en fil til fremtidig brug.</string>
     <string name="see_logcat_save_enabled">Se logcat i logmappen for flere oplysninger.</string>
     <string name="open_log_dir">Åbn logmappe</string>
-    <string name="pref_save_logcat_name">Gem logcat</string>
-    <string name="pref_save_logcat_desc">Gem logcat til %1$s, når en handling kører.</string>
+    <string name="pref_save_logcat_title">Gem logcat</string>
+    <string name="pref_save_logcat_summary">Gem logcat til %1$s, når en handling kører.</string>
     <string name="operation_cancelled">Handling afbrudt</string>
     <string name="exporting_messages">Eksporterer beskeder…</string>
     <string name="wiping_messages">Sletter beskeder…</string>

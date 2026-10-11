@@ -41,8 +41,8 @@
     <string name="see_logcat_save_disabled">Lihat logcat untuk informasi lebih lanjut. Aktifkan \"Simpan logcat\" di pengaturan debug untuk menyimpan logcat secara otomatis ke file untuk operasi berikutnya.</string>
     <string name="see_logcat_save_enabled">Lihat logcat di direktori log untuk informasi lebih lanjut.</string>
     <string name="open_log_dir">Buka direktori log</string>
-    <string name="pref_save_logcat_name">Simpan logcat</string>
-    <string name="pref_save_logcat_desc">Simpan logcat ke %1$s saat operasi sedang berjalan.</string>
+    <string name="pref_save_logcat_title">Simpan logcat</string>
+    <string name="pref_save_logcat_summary">Simpan logcat ke %1$s saat operasi sedang berjalan.</string>
     <string name="sms_and_contacts_read_permissions_required">Mengekspor pesan memerlukan izin untuk membaca SMS dan kontak.</string>
     <string name="call_logs_permissions_required">Mengekspor log panggilan memerlukan izin untuk membaca Log Panggilan dan Kontak.</string>
     <string name="call_logs_read_write_permissions_required">Mengimpor log panggilan memerlukan izin untuk membaca dan menulis log panggilan.</string>
@@ -50,7 +50,7 @@
     <string name="contacts_write_permissions_required">Mengimpor kontak memerlukan izin untuk menulis Kontak.</string>
     <string name="sms_read_permission_required">Menghitung pesan memerlukan izin untuk membaca SMS.</string>
     <string name="settings">Pengaturan</string>
-    <string name="include_binary_data">Sertakan data MMS biner</string>
+    <string name="pref_include_binary_data_title">Sertakan data MMS biner</string>
     <string name="persistent_channel_name">Layanan latar belakang</string>
     <string name="persistent_channel_description">Notifikasi persisten untuk ekspor terjadwal di latar belakang</string>
     <string name="alerts_channel_name">Peringatan ekspor terjadwal</string>

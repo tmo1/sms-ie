@@ -183,7 +183,7 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             findPreference<SwitchPreferenceCompat>("save_logcat")!!.summary =
-                getString(R.string.pref_save_logcat_desc, logcatFile(requireContext()))
+                getString(R.string.pref_save_logcat_summary, logcatFile(requireContext()))
 
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 disableBattOptPreference.setOnPreferenceChangeListener { _, newValue ->
