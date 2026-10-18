@@ -8,6 +8,8 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+## [2.12.0] - 2026-10-09
+
 ### Changed
 
  - **Breaking:** Bump standard flavor `minSdkVersion` to 24 ([e8b9a16](https://github.com/tmo1/sms-ie/commit/e8b9a163d366df4b69ccf85e1bdb7b660f1b1228))
@@ -120,4 +122,5 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
 [2.10.2]: https://github.com/tmo1/sms-ie/releases/tag/v2.10.2
 [2.11.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.11.0
 [2.11.1]: https://github.com/tmo1/sms-ie/releases/tag/v2.11.1
-[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.11.1...HEAD
+[2.12.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.12.0
+[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.12.0...HEAD
