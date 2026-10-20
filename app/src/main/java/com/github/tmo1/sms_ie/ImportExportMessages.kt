@@ -228,7 +228,31 @@ private suspend fun mmsToJSON(
     val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
     val includeBlobs = prefs.getBoolean("include_blobs", true)
     val maxRecords = prefs.getString("max_records", "")?.toIntOrNull() ?: -1
+    val includeBinaryData = prefs.getBoolean("include_binary_data", true)
     var progress = Progress(0, 0, null)
+    // Fetch all MMS parts in a single query and group them by message ID, rather
+    // than issuing one provider query per exported message.
+    val partsByMessageId = mutableMapOf<String, JSONArray>()
+    appContext.contentResolver.query(
+        "content://mms/part".toUri(), null, null, null, "mid ASC, seq ASC"
+    )?.use { part ->
+        if (part.moveToFirst()) {
+            val midIndex = part.getColumnIndexOrThrow("mid")
+            do {
+                val mmsPart = JSONObject()
+                part.columnNames.forEachIndexed { i, columnName ->
+                    val value = part.getString(i)
+                    if (value != null) mmsPart.put(columnName, value)
+                }
+                // The part table can contain rows whose mid does not reference an
+                // exported message (orphans, or messages outside the export
+                // selection); grouping is cheap, but binary entries are only
+                // collected below, once a message is actually exported.
+                partsByMessageId.getOrPut(part.getString(midIndex)) { JSONArray() }
+                    .put(mmsPart)
+            } while (part.moveToNext())
+        }
+    }
     val mmsCursor = appContext.contentResolver.query(
         Telephony.Mms.CONTENT_URI, null, messageSelection(appContext, MMS), null, null
     )
@@ -308,52 +332,35 @@ private suspend fun mmsToJSON(
                         mmsMessage.put("__recipient_addresses", mmsRecipientAddresses)
                     }
                 }
-                val partCursor = appContext.contentResolver.query(
-                    "content://mms/part".toUri(),
-//                      Uri.parse("content://mms/$msgId/part"),
-                    null, "mid=?", arrayOf(msgId), "seq ASC"
-                )
-                // write array of MMS parts
-                partCursor?.use { part ->
-                    if (part.moveToFirst()) {
-                        val mmsParts = JSONArray()
-                        val partIdIndex = part.getColumnIndexOrThrow("_id")
-                        val dataIndex = part.getColumnIndexOrThrow("_data")
-                        do {
-                            val mmsPart = JSONObject()
-                            part.columnNames.forEachIndexed { i, columnName ->
-                                val value = part.getString(i)
-                                if (value != null) mmsPart.put(columnName, value)
+                partsByMessageId[msgId]?.let { mmsParts ->
+                    if (includeBinaryData) {
+                        for (i in 0 until mmsParts.length()) {
+                            val mmsPart = mmsParts.getJSONObject(i)
+                            if (!mmsPart.has(Telephony.Mms.Part._DATA)) continue
+                            var filename = mmsPart.getString(Telephony.Mms.Part._DATA)
+                                .toUri().lastPathSegment
+                            // see https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/master/src/com/android/providers/telephony/MmsProvider.java#520
+                            if (filename == null) {
+                                filename =
+                                    "MISSING_FILENAME" + System.currentTimeMillis() + mmsPart.getString(
+                                        Telephony.Mms.Part.CONTENT_LOCATION
+                                    )
+                                mmsPart.put(Telephony.Mms.Part._DATA, filename)
                             }
-                            if (prefs.getBoolean("include_binary_data", true) && part.getString(
-                                    dataIndex
-                                ) != null
-                            ) {
-                                var filename = mmsPart.getString(Telephony.Mms.Part._DATA)
-                                    .toUri().lastPathSegment
-                                // see https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/master/src/com/android/providers/telephony/MmsProvider.java#520
-                                if (filename == null) {
-                                    filename =
-                                        "MISSING_FILENAME" + System.currentTimeMillis() + mmsPart.getString(
-                                            Telephony.Mms.Part.CONTENT_LOCATION
-                                        )
-                                    mmsPart.put(Telephony.Mms.Part._DATA, filename)
-                                }
-                                filename = "data/$filename"
-                                mmsPartList.add(
-                                    MmsBinaryPart(
-                                        ("content://mms/part/" + part.getString(partIdIndex)).toUri(),
-                                        filename,
-                                        isCompressibleContentType(
-                                            mmsPart.optString(Telephony.Mms.Part.CONTENT_TYPE)
-                                        ),
+                            mmsPartList.add(
+                                MmsBinaryPart(
+                                    ("content://mms/part/" + mmsPart.getString(
+                                        Telephony.Mms.Part._ID
+                                    )).toUri(),
+                                    "data/$filename",
+                                    isCompressibleContentType(
+                                        mmsPart.optString(Telephony.Mms.Part.CONTENT_TYPE)
                                     )
                                 )
-                            }
-                            mmsParts.put(mmsPart)
-                        } while (part.moveToNext())
-                        mmsMessage.put("__parts", mmsParts)
+                            )
+                        }
                     }
+                    mmsMessage.put("__parts", mmsParts)
                 }
                 zipOutputStream.write((mmsMessage.toString() + "\n").toByteArray())
                 progress = progress.copy(
