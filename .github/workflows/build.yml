@@ -2,8 +2,13 @@ name: build
 
 on:
   push:
+    paths-ignore:
+      - 'fastlane/**'
+      - '**/*.md'
   pull_request:
-
+    paths-ignore:
+      - 'fastlane/**'
+      - '**/*.md'
 jobs:
   build:
     runs-on: ubuntu-latest
