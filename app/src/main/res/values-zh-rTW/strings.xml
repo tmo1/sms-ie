@@ -11,7 +11,7 @@
     <string name="contacts_export_progress">已匯出聯絡人 %1$d / %2$d</string>
     <string name="import_contacts_results">已匯入 %1$d 位聯絡人\n耗時：%2$s</string>
     <string name="settings">設定</string>
-    <string name="include_binary_data">包含二進制多媒體訊息資料</string>
+    <string name="pref_include_binary_data_title">包含二進制多媒體訊息資料</string>
     <string name="call_logs_read_write_permissions_required">需要讀取與寫入通話記錄權限才能匯入資料。</string>
     <string name="contacts_read_permission_required">需要讀取聯絡人權限才能匯出資料。</string>
     <string name="alerts_channel_name">預定匯出提醒</string>
@@ -77,8 +77,8 @@
     <string name="see_logcat_save_disabled">檢視 Logcat 以取得更多資訊。\n請在偵錯設定啟用「儲存 Logcat」自動記錄日後操作至 Logcat 檔案。</string>
     <string name="see_logcat_save_enabled">檢視儲存路徑中的 Logcat 以取得更多資訊。</string>
     <string name="open_log_dir">開啟記錄資料夾</string>
-    <string name="pref_save_logcat_name">儲存 Logcat</string>
-    <string name="pref_save_logcat_desc">作業執行時儲存 Logcat 至 %1$s。</string>
+    <string name="pref_save_logcat_title">儲存 Logcat</string>
+    <string name="pref_save_logcat_summary">作業執行時儲存 Logcat 至 %1$s。</string>
     <string name="blocked_numbers_export_progress">已匯出 %1$d / %2$d 組封鎖號碼</string>
     <string name="blocked_numbers_import_progress">已匯入 %1$d 組封鎖號碼</string>
     <string name="export_blocked_numbers_results">已匯出 %1$d 組封鎖號碼\n耗時：%2$s</string>

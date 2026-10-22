@@ -24,7 +24,7 @@
     <string name="contacts_read_permission_required">தொடர்புகளை ஏற்றுமதி செய்வதற்கு தொடர்புகளைப் படிக்க இசைவு தேவை.</string>
     <string name="contacts_write_permissions_required">தொடர்புகளை இறக்குமதி செய்ய தொடர்புகளை எழுத இசைவு தேவை.</string>
     <string name="settings">அமைப்புகள்</string>
-    <string name="include_binary_data">பைனரி எம்எம்எச் தரவைச் சேர்க்கவும்</string>
+    <string name="pref_include_binary_data_title">பைனரி எம்எம்எச் தரவைச் சேர்க்கவும்</string>
     <string name="persistent_channel_name">பின்னணி சேவைகள்</string>
     <string name="persistent_channel_description">பின்னணி திட்டமிடப்பட்ட ஏற்றுமதிக்கான தொடர்ச்சியான அறிவிப்பு</string>
     <string name="alerts_channel_name">திட்டமிடப்பட்ட ஏற்றுமதி எச்சரிக்கைகள்</string>

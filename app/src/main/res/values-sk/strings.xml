@@ -40,8 +40,8 @@
     <string name="see_logcat_save_disabled">Viac informácií nájdete v súbore logcat. Povolte „Ukladať logcat“ v možnostiach ladenia, aby ste pre budúce operácie logcat automaticky uložili do súboru.</string>
     <string name="see_logcat_save_enabled">Viac informácií nájdete v súbore logcat v priečinku so záznamami.</string>
     <string name="open_log_dir">Otvoriť priečinok so záznamami</string>
-    <string name="pref_save_logcat_name">Ukladať logcat</string>
-    <string name="pref_save_logcat_desc">Uloží záznamy logcat do priečinka %1$s počas prebiehajúcich operácií.</string>
+    <string name="pref_save_logcat_title">Ukladať logcat</string>
+    <string name="pref_save_logcat_summary">Uloží záznamy logcat do priečinka %1$s počas prebiehajúcich operácií.</string>
     <string name="sms_and_contacts_read_permissions_required">Na export správ je potrebné udeliť oprávnenie čítať SMS správy a kontakty.</string>
     <string name="call_logs_permissions_required">Na export zoznamu hovorov je potrebné udeliť oprávnenie čítať históriu hovorov a kontakty.</string>
     <string name="call_logs_read_write_permissions_required">Na import zoznamu hovorov je potrebné udeliť oprávnenie čítať a zapisovať históriu hovorov.</string>
@@ -49,7 +49,7 @@
     <string name="contacts_write_permissions_required">Na import kontaktov je potrebné udeliť oprávnenie zapisovať kontakty.</string>
     <string name="sms_read_permission_required">Na spočítanie správ je potrebné udeliť oprávnenie čítať správy SMS.</string>
     <string name="settings">Nastavenia</string>
-    <string name="include_binary_data">Zahrnúť binárne údaje MMS</string>
+    <string name="pref_include_binary_data_title">Zahrnúť binárne údaje MMS</string>
     <string name="persistent_channel_name">Služby na pozadí</string>
     <string name="persistent_channel_description">Trvalé upozornenie pre plánované exporty bežiace na pozadí</string>
     <string name="alerts_channel_name">Upozornenia plánovaných exportov</string>
