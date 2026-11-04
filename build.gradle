@@ -22,14 +22,16 @@
  */
 
 buildscript {
-    ext.kotlin_version = "2.4.20"
+    // https://kotlinlang.org/docs/releases.html
+    ext.kotlin_version = "2.4.21"
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.5.0'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10'
+        // https://kotlinlang.org/docs/releases.html
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21'
     }
 }
 
