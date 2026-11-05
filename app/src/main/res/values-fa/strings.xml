@@ -26,7 +26,7 @@
     <string name="wipe_messages">پاک‌سازی پیام‌ها</string>
     <string name="wipe">پاک‌سازی</string>
     <string name="cancel">لغو</string>
-    <string name="include_binary_data">شامل داده‌های پیام چندرسانه‌ای باینری (کد شده)</string>
+    <string name="pref_include_binary_data_title">شامل داده‌های پیام چندرسانه‌ای باینری (کد شده)</string>
     <string name="export_messages_button_label">برون‌برد پیام‌ها</string>
     <string name="homepage">صفحه اصلی:</string>
     <string name="documentation">مستندات:</string>

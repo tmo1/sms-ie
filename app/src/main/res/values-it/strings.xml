@@ -21,7 +21,7 @@
     <string name="contacts_read_permission_required">L\'esportazione dei contatti richiede l\'autorizzazione per leggere i contatti.</string>
     <string name="contacts_write_permissions_required">L\'importazione dei contatti richiede l\'autorizzazione per scrivere i contatti.</string>
     <string name="settings">Impostazioni</string>
-    <string name="include_binary_data">Includi dati binari MMS</string>
+    <string name="pref_include_binary_data_title">Includi dati binari MMS</string>
     <string name="scheduled_export_executed">Esportazione pianificata eseguita</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d chiamate e %4$d contatti esportati.</string>
     <string name="dialog_confirm_wipe">Attenzione: cancellare permanentemente tutti i messaggi (soggetto al filtro messaggi, se attivo) da questo dispositivo?</string>
@@ -81,8 +81,8 @@
     <string name="see_logcat_save_disabled">Vedi il logcat per maggiori informazioni. Attiva \"Salva logcat\" nelle impostazioni di debug per salvare automaticamente il logcat in un file per le operazioni future.</string>
     <string name="see_logcat_save_enabled">Vedere il logcat nella cartella log per ulteriori informazioni.</string>
     <string name="open_log_dir">Apri la cartella di log</string>
-    <string name="pref_save_logcat_name">Salva logcat</string>
-    <string name="pref_save_logcat_desc">Salva il logcat in %1$s quando un\'operazione è in esecuzione.</string>
+    <string name="pref_save_logcat_title">Salva logcat</string>
+    <string name="pref_save_logcat_summary">Salva il logcat in %1$s quando un\'operazione è in esecuzione.</string>
     <string name="operation_cancelled">Operazione annullata</string>
     <string name="exporting_messages">Esportazione messaggi …</string>
     <string name="exporting_calls">Esportazione chiamate …</string>

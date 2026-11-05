@@ -28,30 +28,30 @@
 
     <SwitchPreferenceCompat
         android:key="message_filtering"
-        android:title="Enable message filtering"
+        android:title="@string/pref_message_filtering_title"
         app:defaultValue="false"
         app:singleLineTitle="false" />
 
     <PreferenceCategory
         android:key="encryption_preference_category"
-        android:title="Encryption">
+        android:title="@string/pref_header_encryption">
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="encryption_manual_operations"
-            android:title="Perform encryption and decryption for manual operations"
+            android:title="@string/pref_encryption_manual_operations_title"
             app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:key="encryption_stored_passphrase_manual_operations"
-            android:title="Use stored passphrase for encryption and decryption for manual operations"
+            android:title="@string/pref_encryption_stored_passphrase_manual_operations_title"
             android:defaultValue="false"
             app:singleLineTitle="false"
             app:dependency="encryption_manual_operations" />
 
         <SwitchPreferenceCompat
             android:key="encryption_scheduled_operations"
-            android:title="Perform encryption for scheduled operations (using stored passphrase)"
+            android:title="@string/pref_encryption_scheduled_operations_title"
             android:defaultValue="false"
             app:singleLineTitle="false" />
 
@@ -63,178 +63,178 @@
 
     <PreferenceCategory
         android:key="scheduled_export_preference_category"
-        android:title="Scheduled export">
+        android:title="@string/pref_header_scheduled_export">
 
         <Preference
             android:key="last_successful_scheduled_export"
-            android:title="Last successful scheduled export:"
+            android:title="@string/pref_last_successful_scheduled_export_title"
             app:dependency="schedule_export" />
 
         <Preference
             android:key="next_scheduled_export"
-            android:title="Next scheduled export:"
+            android:title="@string/pref_next_scheduled_export_title"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="schedule_export"
-            android:title="Enable scheduled export" />
+            android:title="@string/pref_schedule_export_title" />
 
         <com.github.tmo1.sms_ie.TimePickerPreference
             android:key="export_time"
-            android:title="Export at:"
+            android:title="@string/pref_export_time_title"
             app:dependency="schedule_export" />
 
         <EditTextPreference
             android:key="export_interval_days"
-            android:title="Export interval (days):"
+            android:title="@string/pref_export_interval_days_title"
             android:defaultValue="1"
             app:dependency="schedule_export"
             app:useSimpleSummaryProvider="true" />
 
         <Preference
             android:key="export_dir"
-            android:title="Export directory:"
+            android:title="@string/pref_export_dir_title"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_success_notification"
-            android:summary="A notification will always be issued upon export failure, regardless of the value of this setting."
-            android:title="Export success notification"
+            android:summary="@string/pref_export_success_notification_summary"
+            android:title="@string/pref_export_success_notification_title"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:key="disable_battery_optimizations"
             android:persistent="false"
-            android:summary="Required on Android 14+ when exporting many items."
-            android:title="Disable battery optimizations"
+            android:summary="@string/pref_disable_battery_optimizations_summary"
+            android:title="@string/pref_disable_battery_optimizations_title"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="delete_old_exports"
-            android:title="Delete old exports"
+            android:title="@string/pref_delete_old_exports_title"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="remove_datestamps_from_filenames"
-            android:title="Remove datestamps from filenames"
+            android:title="@string/pref_remove_datestamps_from_filenames_title"
             app:dependency="delete_old_exports"
             app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_messages"
-            android:title="Export messages"
+            android:title="@string/pref_export_messages_title"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_calls"
-            android:title="Export calls"
+            android:title="@string/pref_export_calls_title"
             app:dependency="schedule_export" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_contacts"
-            android:title="Export contacts"
+            android:title="@string/pref_export_contacts_title"
             app:dependency="schedule_export" />
 
         <!--<SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="export_blocked_numbers"
-            android:title="Export blocked_numbers"
+            android:title="@string/pref_export_blocked_numbers_title"
             app:dependency="schedule_export" />-->
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Export options">
+    <PreferenceCategory app:title="@string/pref_header_export_options">
 
         <SwitchPreferenceCompat
             android:key="include_binary_data"
-            android:title="@string/include_binary_data"
+            android:title="@string/pref_include_binary_data_title"
             app:defaultValue="true"
             app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:key="include_blobs"
-            android:title="Include BLOBs present in the MMS database table"
+            android:title="@string/pref_include_blobs_title"
             app:defaultValue="true"
             app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:key="store_media_uncompressed"
-            android:title="Store media parts uncompressed"
-            android:summary="Write images, audio, and video MMS parts without compression. Faster exports, slightly larger archives."
+            android:title="@string/pref_store_media_uncompressed_title"
+            android:summary="@string/pref_store_media_uncompressed_summary"
             app:defaultValue="true"
             app:dependency="include_binary_data"
             app:singleLineTitle="false" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Import options">
+    <PreferenceCategory app:title="@string/pref_header_import_options">
 
         <SwitchPreferenceCompat
             android:key="deduplication"
-            android:title="Message and call log entry deduplication (experimental)"
+            android:title="@string/pref_deduplication_title"
             app:defaultValue="false"
             app:singleLineTitle="false" />
 
         <SwitchPreferenceCompat
             android:key="import_sub_ids"
-            android:title="Include Subscription IDs in import"
+            android:title="@string/pref_import_sub_ids_title"
             app:defaultValue="false"
             app:singleLineTitle="false" />
 
         <EditTextPreference
             android:key="excluded_addresses"
-            android:title="Addresses (numbers) to exclude from thread (conversation) reconstruction (comma separated list, typically the source device phone number[s])"
+            android:title="@string/pref_excluded_addresses_title"
             app:defaultValue=""
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
             android:key="insert_excluded_addresses"
-            android:title="Insert excluded addresses into address table"
+            android:title="@string/pref_insert_excluded_addresses_title"
             app:defaultValue="true"
             app:singleLineTitle="false" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Debugging options">
+    <PreferenceCategory android:title="@string/pref_header_debugging_options">
 
         <SwitchPreferenceCompat
             android:key="save_logcat"
-            android:title="@string/pref_save_logcat_name" />
+            android:title="@string/pref_save_logcat_title" />
 
         <SwitchPreferenceCompat
             android:key="debugging"
-            android:title="Enable debugging options"
+            android:title="@string/pref_debugging_title"
             app:defaultValue="false" />
 
         <EditTextPreference
             android:key="max_records"
-            android:title="Maximum records (SMS messages, MMS messages, contacts, and calls) to import (messages only) or export. (Leave empty or set to 0 for all.)"
+            android:title="@string/pref_max_records_title"
             app:defaultValue=""
             app:dependency="debugging"
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
             android:key="sms"
-            android:title="Process SMS messages"
+            android:title="@string/pref_sms_title"
             app:defaultValue="true"
             app:dependency="debugging" />
 
         <SwitchPreferenceCompat
             android:key="mms"
-            android:title="Process MMS messages"
+            android:title="@string/pref_mms_title"
             app:defaultValue="true"
             app:dependency="debugging" />
 
         <EditTextPreference
             android:key="secretstream_chunk_size"
-            android:title="SecretStream chunk size"
+            android:title="@string/pref_secretstream_chunk_size_title"
             app:defaultValue=""
             app:dependency="debugging"
             app:useSimpleSummaryProvider="true" />

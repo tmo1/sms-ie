@@ -42,7 +42,7 @@
     <string name="contacts_read_permission_required">Для экспорта контактов требуется разрешение на чтение контактов.</string>
     <string name="wipe_cancelled">Очистка отменена</string>
     <string name="wiping_sms_messages">Очистка SMS сообщений …</string>
-    <string name="include_binary_data">Включать двоичные данные MMS</string>
+    <string name="pref_include_binary_data_title">Включать двоичные данные MMS</string>
     <string name="scheduled_export_executed">Запланированный экспорт выполнен</string>
     <string name="app_about_text">SMS Import / Export \n \nАвтор Thomas More и другие участники \n \nВерсия %1$s \n \nАвторские права © 2021–2026 \n \nВыпущено под лицензией GNU GPLv3</string>
     <string name="dialog_confirm_wipe">Предупреждение: Удалить все сообщения с этого устройства навсегда, без возможности отмены?</string>
@@ -71,8 +71,8 @@
     <string name="see_logcat_save_disabled">Дополнительные сведения см. в разделе logcat. Включите опцию \"Сохранять logcat\" в настройках отладки, чтобы автоматически сохранять logcat в файл для последующих операций.</string>
     <string name="see_logcat_save_enabled">Дополнительные сведения см. в разделе logcat в каталоге журналов.</string>
     <string name="open_log_dir">Открыть каталог журналов</string>
-    <string name="pref_save_logcat_name">Сохранять logcat</string>
-    <string name="pref_save_logcat_desc">Сохранять logcat в %1$s во время выполнения операции.</string>
+    <string name="pref_save_logcat_title">Сохранять logcat</string>
+    <string name="pref_save_logcat_summary">Сохранять logcat в %1$s во время выполнения операции.</string>
     <string name="operation_cancelled">Операция отменена</string>
     <string name="exporting_messages">Экспорт сообщений …</string>
     <string name="wiping_messages">Очистка сообщений …</string>

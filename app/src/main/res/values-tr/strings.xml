@@ -54,7 +54,7 @@
     <string name="contacts_read_permission_required">Kişileri dışa aktarmak için Kişileri okuma izni gerekir.</string>
     <string name="contacts_write_permissions_required">Kişileri içe aktarmak için Kişileri yazma izni gerekir.</string>
     <string name="settings">Ayarlar</string>
-    <string name="include_binary_data">İkili MMS verilerini dahil et</string>
+    <string name="pref_include_binary_data_title">İkili MMS verilerini dahil et</string>
     <string name="scheduled_export_executed">Planlanan dışa aktarma gerçekleştirildi</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d arama ve %4$d kisi dışa aktarıldı.</string>
     <string name="wipe_messages">Mesajları Sil</string>
@@ -108,8 +108,8 @@
     <string name="see_logcat_save_disabled">Daha fazla bilgi için logcat\'e bakın. Gelecekteki işlemler için logcat\'i otomatik olarak bir dosyaya kaydetmek üzere hata ayıklama ayarlarında \"Logcat kaydet\" seçeneğini etkinleştirin.</string>
     <string name="see_logcat_save_enabled">Daha fazla bilgi için günlük dizinindeki logcat dosyasına bakın.</string>
     <string name="open_log_dir">Günlük dizinini aç</string>
-    <string name="pref_save_logcat_name">Logcat kaydet</string>
-    <string name="pref_save_logcat_desc">Bir işlem çalışırken logcat\'i %1$s konumuna kaydet.</string>
+    <string name="pref_save_logcat_title">Logcat kaydet</string>
+    <string name="pref_save_logcat_summary">Bir işlem çalışırken logcat\'i %1$s konumuna kaydet.</string>
     <string name="sms_and_contacts_read_permissions_required">Mesajları dışa aktarmak için SMS ve kişileri okuma izni gerekir.</string>
     <string name="sms_read_permission_required">Mesajları saymak için SMS okuma izni gerekir.</string>
     <string name="operation_cancelled">İşlem iptal edildi</string>

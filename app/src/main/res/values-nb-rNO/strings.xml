@@ -30,7 +30,7 @@
     <string name="issue_tracker">Feilsporer:</string>
     <string name="settings">Innstillinger</string>
     <string name="scheduled_export_executed">Planlagt eksport kjørt</string>
-    <string name="include_binary_data">Inkluder (kodet) binær MMS-data</string>
+    <string name="pref_include_binary_data_title">Inkluder (kodet) binær MMS-data</string>
     <string name="cancel">Avbryt</string>
     <string name="wipe">Tøm</string>
     <string name="wipe_cancelled">Tømming avbrutt</string>

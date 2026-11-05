@@ -19,7 +19,7 @@
     <string name="call_logs_permissions_required">A exportação de registo de chamadas requer permissão para ler os Registos das Chamadas e os Contactos.</string>
     <string name="call_logs_read_write_permissions_required">A importação de Registos de Chamadas requer permissão para ler e escrever registos de chamadas.</string>
     <string name="settings">Definições</string>
-    <string name="include_binary_data">Incluir dados binários das MMS</string>
+    <string name="pref_include_binary_data_title">Incluir dados binários das MMS</string>
     <string name="scheduled_export_success">%1$d SMS(s), %2$d MMS(s), %3$d chamadas e %4$d contactos exportados.</string>
     <string name="wipe_messages">Apagar Mensagens</string>
     <string name="dialog_confirm_wipe">Aviso: Apagar permanentemente todas as mensagens deste equipamento, sem possibilidade de as recuperar?</string>
@@ -66,8 +66,8 @@
     <string name="see_logcat_save_disabled">Ver o logcat para mais informações. Active \"Guardar logcat\" nas configurações de depuração para guardar automaticamente o logcat para um ficheiro para operações futuras.</string>
     <string name="see_logcat_save_enabled">Ver logcat na diretoria de registo de eventos para mais informações.</string>
     <string name="open_log_dir">Abrir diretoria de registos</string>
-    <string name="pref_save_logcat_name">Guardar logcat</string>
-    <string name="pref_save_logcat_desc">Guardar logcat para %1$s quando uma operação estiver a decorrer.</string>
+    <string name="pref_save_logcat_title">Guardar logcat</string>
+    <string name="pref_save_logcat_summary">Guardar logcat para %1$s quando uma operação estiver a decorrer.</string>
     <string name="persistent_channel_name">Serviços de fundo</string>
     <string name="persistent_channel_description">Notificação persistente para exportações programadas de fundo</string>
     <string name="alerts_channel_name">Alertas de exportação agendados</string>

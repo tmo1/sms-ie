@@ -52,7 +52,7 @@
     <string name="contacts_read_permission_required">L\'exportation des contacts nécessite l\'autorisation de lire les contacts.</string>
     <string name="contacts_write_permissions_required">L\'importation des contacts nécessite l\'autorisation d\'écrire les contacts.</string>
     <string name="settings">Paramètres</string>
-    <string name="include_binary_data">Inclure les données binaires MMS</string>
+    <string name="pref_include_binary_data_title">Inclure les données binaires MMS</string>
     <string name="persistent_channel_name">Services en arrière-plan</string>
     <string name="persistent_channel_description">Notification persistante pour les exportations planifiées en arrière-plan</string>
     <string name="alerts_channel_name">Alertes pour les exportations planifiées</string>
@@ -128,8 +128,8 @@
     <string name="column_value">Valeur de la colonne :</string>
     <string name="active">Actif :</string>
     <string name="export_blocked_numbers">Exporter les numéros bloqués</string>
-    <string name="pref_save_logcat_name">Enregistrer les journaux logcat</string>
-    <string name="pref_save_logcat_desc">Enregistrer les journaux logcat vers %1$s lorsqu\'une action est en cours.</string>
+    <string name="pref_save_logcat_title">Enregistrer les journaux logcat</string>
+    <string name="pref_save_logcat_summary">Enregistrer les journaux logcat vers %1$s lorsqu\'une action est en cours.</string>
     <string name="see_logcat_save_disabled">Voir les journaux logcat pour plus d\'informations. Activez l\'option dans les paramètres de débuggage pour qu\'ils soient enregistrés dans un fichier.</string>
     <string name="see_logcat_save_enabled">Voir les journaux logcat pour plus d\'informations.</string>
     <string name="open_log_dir">Ouvrir le dossier des journaux</string>

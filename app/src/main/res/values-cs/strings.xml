@@ -39,7 +39,7 @@
     <string name="missing_messages_ndjson_error">Nelze najít \'messages.ndjson\'. Ověřte, že zadaný soubor je ZIP ve správném formátu.</string>
     <string name="missing_blocked_numbers_ndjson_error">Nelze najít \'blocked_numbers.ndjson\'. Ověřte, že zadaný soubor je ZIP ve správném formátu.</string>
     <string name="settings">Nastavení</string>
-    <string name="include_binary_data">Včetně binárních MMS dat</string>
+    <string name="pref_include_binary_data_title">Včetně binárních MMS dat</string>
     <string name="persistent_channel_name">Služby na pozadí</string>
     <string name="scheduled_export_success">%1$d SMS, %2$d MMS, %3$d záznamů hovorů a %4$d kontaků exportováno.</string>
     <string name="wipe_messages">Vymazat zprávy</string>
