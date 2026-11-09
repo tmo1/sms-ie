@@ -22,6 +22,7 @@
   -->
 <resources>
     <string name="app_name">SMS Import / Export</string>
+    <string name="app_name_debug">SMS Import / Export (Debug)</string>
     <string name="export_messages_button_label">Export Messages</string>
     <string name="import_messages_button_label">Import Messages</string>
     <string name="export_call_log_button_label">Export Call Log</string>
