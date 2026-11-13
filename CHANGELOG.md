@@ -8,6 +8,14 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+### Changed
+
+ - Use separate application ID (and modified `android:label`) in debug builds to allow parallel installation of release and debug builds ([PR #389](https://github.com/tmo1/sms-ie/pull/389)) (Andrew Gunnerson)
+ 
+### Fixed
+
+ - Restore accidentally removed scheduled export code ([47d7199](https://github.com/tmo1/sms-ie/commit/47d719959872e1a1e3740c88d341aa1f00209857))
+ 
 ## [2.12.0] - 2026-10-09
 
 ### Changed

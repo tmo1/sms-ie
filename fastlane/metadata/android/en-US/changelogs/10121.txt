@@ -1,0 +1,3 @@
+ - Use separate application ID (and modified `android:label`) in debug builds to allow parallel installation of release and debug builds
+
+ - Restore accidentally removed scheduled export code
