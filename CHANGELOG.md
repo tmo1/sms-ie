@@ -8,6 +8,8 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased]
 
+## [2.13.0] - 2026-11-13
+
 ### Changed
 
  - Use separate application ID (and modified `android:label`) in debug builds to allow parallel installation of release and debug builds ([PR #389](https://github.com/tmo1/sms-ie/pull/389)) (Andrew Gunnerson)
@@ -131,4 +133,5 @@ sometimes never shown. ([e3db6d2](https://github.com/tmo1/sms-ie/commit/e3db6d21
 [2.11.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.11.0
 [2.11.1]: https://github.com/tmo1/sms-ie/releases/tag/v2.11.1
 [2.12.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.12.0
-[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.12.0...HEAD
+[2.13.0]: https://github.com/tmo1/sms-ie/releases/tag/v2.13.0
+[Unreleased]: https://github.com/tmo1/sms-ie/compare/v2.13.0...HEAD
